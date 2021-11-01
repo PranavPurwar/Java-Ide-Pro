@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/pref_cat_appearance">
+        <com.afollestad.materialdialogs.prefs.MaterialListPreference
+            android:persistent="true"
+            android:entries="@array/text_sizes"
+            android:title="@string/pref_text_size_title"
+            android:key="@string/pref_text_size"
+            android:defaultValue="@string/text_size_medium_value"
+            android:entryValues="@array/text_size_values" />
+        <CheckBoxPreference
+            android:persistent="true"
+            android:title="@string/pref_expanded_by_default_title"
+            android:key="@string/pref_expanded_by_default"
+            android:summary="@string/pref_expanded_by_default_summary"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:persistent="true"
+            android:title="@string/pref_show_timestamp_title"
+            android:key="@string/pref_show_timestamp"
+            android:summary="@string/pref_show_timestamp_summary"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_cat_configuration">
+        <com.pluscubed.logcat.widget.MultipleChoicePreference
+            android:persistent="true"
+            android:entries="@array/pref_buffer_choices"
+            android:title="@string/pref_buffer_title"
+            android:key="@string/pref_buffer"
+            android:defaultValue="@string/pref_buffer_choice_main_value"
+            android:entryValues="@array/pref_buffer_choice_values" />
+        <com.afollestad.materialdialogs.prefs.MaterialListPreference
+            android:persistent="true"
+            android:entries="@array/log_levels"
+            android:title="@string/pref_default_log_level_title"
+            android:key="@string/pref_default_log_level"
+            android:defaultValue="@string/log_level_value_verbose"
+            android:entryValues="@array/log_levels_values" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_cat_advanced">
+        <com.pluscubed.logcat.widget.NonnegativeIntegerEditTextPreference
+            android:persistent="true"
+            android:title="@string/pref_log_line_period_title"
+            android:key="@string/pref_log_line_period"
+            android:summary="@string/pref_log_line_period_summary"
+            android:defaultValue="@string/pref_log_line_period_default" />
+        <com.pluscubed.logcat.widget.NonnegativeIntegerEditTextPreference
+            android:persistent="true"
+            android:title="@string/pref_display_limit_title"
+            android:key="@string/pref_display_limit"
+            android:summary="@string/pref_display_limit_summary"
+            android:defaultValue="@string/pref_display_limit_default" />
+        <SwitchPreference
+            android:title="@string/scrubber"
+            android:key="scrubber"
+            android:summary="@string/scrubber_summary"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

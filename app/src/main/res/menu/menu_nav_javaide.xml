@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:icon="@drawable/ic_code_white_24dp"
+        android:id="@id/action_install_cpp_nide"
+        android:title="C/C++ N-IDE" />
+    <item
+        android:icon="@drawable/baseline_lock_open_24"
+        android:id="@id/action_premium"
+        android:visible="true"
+        android:title="@string/title_premium_version" />
+    <item
+        android:icon="@drawable/ic_color_lens_white_24dp"
+        android:id="@id/action_editor_color_scheme"
+        android:visible="true"
+        android:title="@string/editor_theme" />
+    <item
+        android:icon="@drawable/ic_line_weight_white_24dp"
+        android:id="@id/action_see_logcat"
+        android:title="@string/logcat" />
+    <item
+        android:icon="@drawable/ic_code_white_24dp"
+        android:id="@id/action_sample"
+        android:title="@string/sample_code_java" />
+    <item
+        android:icon="@drawable/ic_bug_report_white_24dp"
+        android:id="@id/action_report_bug"
+        android:title="@string/report_bug" />
+    <item
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:enabled="true"
+        android:id="@id/action_compiler_setting"
+        android:title="@string/compiler_setting" />
+</menu>

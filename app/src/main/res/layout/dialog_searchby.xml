@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="horizontal"
+    android:paddingLeft="16.0dip"
+    android:paddingRight="16.0dip"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@id/dialog_searchby_tag_linear"
+        android:background="?selectableItemBackground"
+        android:padding="8.0dip"
+        android:layout_width="0.0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0">
+        <TextView
+            android:textSize="16.0sp"
+            android:ellipsize="marquee"
+            android:paddingBottom="8.0dip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_choice_tag"
+            android:maxLines="1" />
+        <TextView
+            android:textSize="12.0sp"
+            android:typeface="monospace"
+            android:textColor="@color/secondary_text_default_material_dark"
+            android:ellipsize="marquee"
+            android:id="@id/dialog_searchby_tag_text"
+            android:padding="8.0dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@id/dialog_searchby_pid_linear"
+        android:background="?selectableItemBackground"
+        android:padding="8.0dip"
+        android:layout_width="0.0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.0">
+        <TextView
+            android:textSize="16.0sp"
+            android:ellipsize="marquee"
+            android:paddingBottom="8.0dip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_choice_pid"
+            android:maxLines="1" />
+        <TextView
+            android:textSize="12.0sp"
+            android:typeface="monospace"
+            android:textColor="@color/secondary_text_default_material_dark"
+            android:ellipsize="marquee"
+            android:id="@id/dialog_searchby_pid_text"
+            android:padding="8.0dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1" />
+    </LinearLayout>
+</LinearLayout>

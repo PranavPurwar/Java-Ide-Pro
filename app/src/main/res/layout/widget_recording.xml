@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@id/clickable_linear_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:layout_width="64.0dip"
+        android:layout_height="64.0dip"
+        android:src="@mipmap/ic_launcher"
+        android:tint="#ff8f312f"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/logcat" />
+    <LinearLayout
+        android:gravity="end|bottom|center"
+        android:layout_width="64.0dip"
+        android:layout_height="64.0dip"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:id="@id/record_badge_image_view"
+            android:visibility="invisible"
+            android:layout_width="16.0dip"
+            android:layout_height="16.0dip"
+            android:tint="#ffef5350"
+            android:contentDescription="@string/record_log"
+            app:srcCompat="@drawable/ic_record_white_24dp" />
+    </LinearLayout>
+    <TextView
+        android:textSize="14.0sp"
+        android:textColor="@color/primary_text_default_material_dark"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:id="@id/widget_subtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/widget_start_recording"
+        android:layout_centerInParent="true" />
+</RelativeLayout>

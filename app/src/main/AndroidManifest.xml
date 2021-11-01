@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="45"
+    android:versionName="1.4.5"
+    package="com.duy.compiler.javanide">
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="27" />
+    <!-- Have full network access -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Modify or delete the contents of your USB storage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Read the contents of your USB storage -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Prevent phone from sleeping -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Control vibration -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- View Wi-Fi connections -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- View network connections -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <!-- Request install packages -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <permission
+        android:name="com.duy.compiler.javanide.permission.C2D_MESSAGE"
+        android:protectionLevel="0x00000002" />
+    <uses-permission android:name="com.duy.compiler.javanide.permission.C2D_MESSAGE" />
+    <application
+        android:theme="@style/AppThemeDark"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:name="com.duy.ide.javaide.JavaApplication"
+        android:allowBackup="true"
+        android:largeHeap="true"
+        android:supportsRtl="false"
+        android:fullBackupContent="true">
+        <activity
+            android:name="com.duy.ide.javaide.activities.SplashScreenActivity">
+            <intent-filter>
+                <action
+                    android:name="android.intent.action.MAIN" />
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.duy.ide.javaide.theme.ThemeActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.duy.ide.javaide.sample.activities.JavaSampleActivity" />
+        <activity
+            android:name="com.duy.ide.javaide.run.activities.ExecuteActivity"
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
+            android:name="com.duy.ide.javaide.JavaIdeActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name="com.duy.ide.javaide.activities.InstallActivity"
+            android:configChanges="orientation|screenLayout" />
+        <activity
+            android:name="com.duy.ide.javaide.setting.CompilerSettingActivity" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:authorities="com.duy.compiler.javanide.provider"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+        <activity
+            android:name="com.pluscubed.logcat.ui.LogcatActivity"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize">
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/logcat_shortcuts" />
+        </activity>
+        <activity
+            android:name="com.pluscubed.logcat.ui.RecordLogDialogActivity" />
+        <activity
+            android:name="com.pluscubed.logcat.ui.SettingsActivity" />
+        <service
+            android:name="com.pluscubed.logcat.LogcatRecordingService" />
+        <service
+            android:name="com.pluscubed.logcat.CrazyLoggerService" />
+        <activity
+            android:name="com.duy.ide.settings.EditorSettingsActivity" />
+        <activity
+            android:name="com.duy.file.explorer.FileExplorerActivity" />
+        <activity
+            android:name="com.duy.ide.core.api.IdeActivity" />
+        <provider
+            android:name="com.crashlytics.android.CrashlyticsInitProvider"
+            android:exported="false"
+            android:authorities="com.duy.compiler.javanide.crashlyticsinitprovider"
+            android:initOrder="100" />
+        <service
+            android:name="com.google.firebase.components.ComponentDiscoveryService">
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.iid.Registrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+        </service>
+        <receiver
+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
+            android:name="com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver"
+            android:permission="android.permission.INSTALL_PACKAGES"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action
+                    android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.google.android.gms.measurement.AppMeasurementService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
+            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND"
+            android:exported="true">
+            <intent-filter>
+                <action
+                    android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category
+                    android:name="com.duy.compiler.javanide" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.google.firebase.iid.FirebaseInstanceIdService"
+            android:exported="true">
+            <intent-filter android:priority="-500">
+                <action
+                    android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <provider
+            android:name="com.google.firebase.provider.FirebaseInitProvider"
+            android:exported="false"
+            android:authorities="com.duy.compiler.javanide.firebaseinitprovider"
+            android:initOrder="100" />
+        <activity
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+            android:exported="false" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.android.vending.derived.apk.id"
+            android:value="1" />
+    </application>
+</manifest>

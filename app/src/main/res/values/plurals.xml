@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="are_you_sure">
+        <item quantity="other">%d files will be deleted</item>
+        <item quantity="one">%d file will be deleted</item>
+    </plurals>
+    <plurals name="files_deleted">
+        <item quantity="other">%d files deleted</item>
+        <item quantity="one">%d file be deleted</item>
+    </plurals>
+    <plurals name="toast_log_truncated">
+        <item quantity="other">Log too large; showing last %d lines.</item>
+        <item quantity="one">Log too large; showing last %d line.</item>
+    </plurals>
+    <plurals name="x_text_replaced">
+        <item quantity="other">%d text replaced</item>
+        <item quantity="zero">0 found</item>
+    </plurals>
+</resources>

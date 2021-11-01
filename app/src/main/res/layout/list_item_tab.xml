@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.v7.widget.AppCompatTextView
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+        android:textColor="@color/white"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:id="@id/txt_name"
+        android:paddingLeft="8.0dip"
+        android:paddingRight="8.0dip"
+        android:focusable="true"
+        android:clickable="true"
+        android:layout_width="0.0dip"
+        android:layout_height="fill_parent"
+        android:foreground="?android:selectableItemBackground"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:layout_weight="1.0"
+        android:marqueeRepeatLimit="marquee_forever" />
+    <android.support.v7.widget.AppCompatImageView
+        android:gravity="center"
+        android:layout_gravity="end"
+        android:id="@id/btn_close"
+        android:padding="4.0dip"
+        android:focusable="true"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:foreground="?android:selectableItemBackground"
+        android:tint="@color/white"
+        android:contentDescription="@string/close"
+        app:srcCompat="@drawable/baseline_close_black_18" />
+</LinearLayout>

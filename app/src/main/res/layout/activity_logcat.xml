@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    android:id="@id/main_background"
+    android:tag="layout/activity_logcat_0"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <android.support.v7.widget.Toolbar
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:id="@id/toolbar_actionbar"
+            android:background="?colorPrimary"
+            android:layout_width="fill_parent"
+            android:layout_height="?actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+    </android.support.design.widget.AppBarLayout>
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <ProgressBar
+            android:layout_gravity="center"
+            android:id="@id/main_dark_progress_bar"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            style="@style/Widget.AppCompat.ProgressBar" />
+        <ProgressBar
+            android:layout_gravity="center"
+            android:id="@id/main_light_progress_bar"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            style="@style/Widget.AppCompat.ProgressBar" />
+        <android.support.v7.widget.RecyclerView
+            android:scrollbarSize="0.0dip"
+            android:id="@id/list"
+            android:paddingTop="1.0dip"
+            android:paddingBottom="2.0dip"
+            android:scrollbars="vertical"
+            android:clipToPadding="false"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:dividerHeight="0.0dip" />
+        <android.support.design.widget.FloatingActionButton
+            android:layout_gravity="end|bottom|center"
+            android:id="@id/fab"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_compat_margin"
+            app:borderWidth="0.0dip"
+            app:elevation="6.0dip"
+            app:pressedTranslationZ="12.0dip"
+            app:srcCompat="@drawable/ic_stop_white_24dp" />
+    </FrameLayout>
+</LinearLayout>

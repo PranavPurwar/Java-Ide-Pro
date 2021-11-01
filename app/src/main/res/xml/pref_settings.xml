@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/keyboard">
+        <SwitchPreference
+            android:title="@string/enable_ime_keyboard"
+            android:key="@string/key_ime_keyboard"
+            android:summary="@string/ime_desc"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/user_interface">
+        <EditTextPreference
+            android:title="@string/max_page"
+            android:key="@string/key_max_page"
+            android:defaultValue="5"
+            android:inputType="number"
+            android:contentDescription="@string/max_page_desc" />
+    </PreferenceCategory>
+</PreferenceScreen>

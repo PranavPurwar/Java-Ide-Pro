@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:icon="@drawable/ic_shortcut_record"
+        android:enabled="true"
+        android:shortcutId="record"
+        android:shortcutShortLabel="@string/start_recording_log"
+        android:shortcutLongLabel="@string/start_recording_log">
+        <intent
+            android:targetPackage="com.pluscubed.matlog"
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.pluscubed.logcat.ui.LogcatActivity">
+            <extra
+                android:name="shortcut_action"
+                android:value="record" />
+        </intent>
+    </shortcut>
+</shortcuts>
