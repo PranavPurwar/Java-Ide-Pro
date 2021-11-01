@@ -1,12 +1,11 @@
-/* Decompiler 0ms, total 479ms, lines 12 */
 package com.duy.ide.javaide;
 
 import java.io.File;
 
 public interface FileChangeListener {
-   void doOpenFile(File var1);
+   void doOpenFile(File file);
 
-   void onFileCreated(File var1);
+   void onFileCreated(File file);
 
-   void onFileDeleted(File var1);
+   void onFileDeleted(File file);
 }

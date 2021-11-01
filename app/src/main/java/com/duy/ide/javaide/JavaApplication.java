@@ -1,4 +1,3 @@
-/* Decompiler 11ms, total 1465ms, lines 93 */
 package com.duy.ide.javaide;
 
 import android.support.annotation.NonNull;
@@ -17,14 +16,15 @@ public class JavaApplication extends MultiDexApplication {
    private JavaApplication.InterceptorOutputStream systemErr;
    private JavaApplication.InterceptorOutputStream systemOut;
 
-   public void addStdErr(PrintStream var1) {
-      this.systemErr.add(var1);
+   public void addStdErr(PrintStream err) {
+      this.systemErr.add(err);
    }
 
-   public void addStdOut(PrintStream var1) {
-      this.systemOut.add(var1);
+   public void addStdOut(PrintStream out) {
+      this.systemOut.add(out);
    }
 
+   @Override
    public void onCreate() {
       super.onCreate();
       this.systemOut = new JavaApplication.InterceptorOutputStream(System.out, this.out);
@@ -35,59 +35,49 @@ public class JavaApplication extends MultiDexApplication {
       IdePreferenceManager.setDefaultValues(this);
    }
 
-   public void removeErrStream(PrintStream var1) {
-      this.systemErr.remove(var1);
+   public void removeErrStream(PrintStream err) {
+      this.systemErr.remove(err);
    }
 
-   public void removeOutStream(PrintStream var1) {
-      this.systemOut.remove(var1);
+   public void removeOutStream(PrintStream out) {
+      this.systemOut.remove(out);
    }
 
    private static class InterceptorOutputStream extends PrintStream {
       private static final String TAG = "InterceptorOutputStream";
       private ArrayList<PrintStream> streams;
 
-      public InterceptorOutputStream(@NonNull OutputStream var1, ArrayList<PrintStream> var2) {
-         super(var1, true);
-         this.streams = var2;
+      public InterceptorOutputStream(@NonNull OutputStream file, ArrayList<PrintStream> streams) {
+         super(file, true);
+         this.streams = streams;
       }
 
-      public void add(PrintStream var1) {
-         StringBuilder var2 = new StringBuilder();
-         var2.append("add() called with: out = [");
-         var2.append(var1);
-         var2.append("]");
-         Log.d("InterceptorOutputStream", var2.toString());
-         this.streams.add(var1);
+      public void add(PrintStream out) {
+         Log.d(TAG, "add() called with: out = [" + out + "]");
+         this.streams.add(out);
       }
 
       public ArrayList<PrintStream> getStreams() {
          return this.streams;
       }
 
-      public void remove(PrintStream var1) {
-         StringBuilder var2 = new StringBuilder();
-         var2.append("remove() called with: out = [");
-         var2.append(var1);
-         var2.append("]");
-         Log.d("InterceptorOutputStream", var2.toString());
-         this.streams.remove(var1);
+      public void remove(PrintStream out) {
+         Log.d(TAG, "remove() called with: out = [" + out + "]");
+         this.streams.remove(out);
       }
 
-      public void setStreams(ArrayList<PrintStream> var1) {
-         this.streams = var1;
+      public void setStreams(ArrayList<PrintStream> streams) {
+         this.streams = streams;
       }
 
-      public void write(@NonNull byte[] var1, int var2, int var3) {
-         super.write(var1, var2, var3);
-         if (this.streams != null) {
-            Iterator var4 = this.streams.iterator();
-
-            while(var4.hasNext()) {
-               ((PrintStream)var4.next()).write(var1, var2, var3);
+      @Override
+        public void write(@NonNull byte[] buf, int off, int len) {
+            super.write(buf, off, len);
+            if (streams != null) {
+                for (PrintStream printStream : streams) {
+                    printStream.write(buf, off, len);
+                }
             }
-         }
-
-      }
+        }
    }
 }

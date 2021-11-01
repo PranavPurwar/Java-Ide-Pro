@@ -1,4 +1,3 @@
-/* Decompiler 775ms, total 1222ms, lines 290 */
 package com.duy.ide.javaide;
 
 import android.content.Intent;

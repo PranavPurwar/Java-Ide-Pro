@@ -1,4 +1,3 @@
-/* Decompiler 37ms, total 695ms, lines 388 */
 package com.duy.ide.javaide;
 
 import android.content.DialogInterface;
@@ -79,17 +78,17 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 				Toast.makeText(this, "Can not find AndroidManifest.xml", 0).show();
 				return;
 			}
-			
+			// check launcher activity
 			if (((AndroidAppProject)this.mProject).getLauncherActivity() == null) {
-				Toast.makeText(this, this.getString(2131689530), 0).show();
+				Toast.makeText(this, getString(R.string.can_not_find_launcher_activity), 0).show();
 				return;
 			}
 			
-			AndroidAppBuilder var1 = new AndroidAppBuilder(this, (AndroidAppProject)this.mProject);
-			var1.setStdOut(new PrintStream(this.mDiagnosticPresenter.getStandardOutput()));
-			var1.setStdErr(new PrintStream(this.mDiagnosticPresenter.getErrorOutput()));
-			var1.setLogger(new StdLogger(Level.VERBOSE));
-			(new BuildTask(var1, new CompileListener<AndroidAppProject>() {
+			AndroidAppBuilder builder = new AndroidAppBuilder(this, (AndroidAppProject)this.mProject);
+			builder.setStdOut(new PrintStream(this.mDiagnosticPresenter.getStandardOutput()));
+			builder.setStdErr(new PrintStream(this.mDiagnosticPresenter.getErrorOutput()));
+			builder.setLogger(new StdLogger(Level.VERBOSE));
+			new BuildTask(builder, new CompileListener<AndroidAppProject>() {
 				public void onComplete() {
 					JavaIdeActivity.this.updateUIFinish();
 					Toast.makeText(JavaIdeActivity.this, 2131689525, 0).show();
@@ -97,7 +96,7 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 					RootUtils.installApk(JavaIdeActivity.this, ((AndroidAppProject)JavaIdeActivity.this.mProject).getApkSigned());
 				}
 				
-				public void onError(Exception var1) {
+				public void onError(Exception ignored) {
 					JavaIdeActivity.this.updateUIFinish();
 					Toast.makeText(JavaIdeActivity.this, 2131689658, 0).show();
 				}
@@ -105,7 +104,7 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 				public void onStart() {
 					JavaIdeActivity.this.updateUiStartCompile();
 				}
-			})).execute(new AndroidAppProject[0]);
+			}).execute(new AndroidAppProject[0]);
 		} else if (this.mProject != null) {
 			this.toast("This is Java project, please create new Android project");
 		} else {
@@ -121,12 +120,12 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 		(new BuildTask(var1, new CompileListener<JavaProject>() {
 			public void onComplete() {
 				JavaIdeActivity.this.updateUIFinish();
-				Toast.makeText(JavaIdeActivity.this, 2131689577, 0).show();
+				Toast.makeText(JavaIdeActivity.this, R.string.build_success, 0).show();
 				JavaIdeActivity.this.runJava(JavaIdeActivity.this.mProject);
 			}
 			
 			public void onError(Exception var1) {
-				Toast.makeText(JavaIdeActivity.this, 2131689658, 0).show();
+				Toast.makeText(JavaIdeActivity.this, R.string.failed_msg, 0).show();
 				JavaIdeActivity.this.mDiagnosticPresenter.showPanel();
 				JavaIdeActivity.this.updateUIFinish();
 			}
@@ -137,57 +136,54 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 		})).execute(new AndroidAppProject[0]);
 	}
 	
-	private void populateAutoCompleteService(@NonNull SuggestionProvider var1) {
-		Iterator var2 = this.getTabManager().getEditorPagerAdapter().getAllEditor().iterator();
+	private void populateAutoCompleteService(@NonNull SuggestionProvider provider) {
+		Iterator it = this.getTabManager().getEditorPagerAdapter().getAllEditor().iterator();
 		
-		while(var2.hasNext()) {
-			IEditorDelegate var3 = (IEditorDelegate)var2.next();
-			if (var3 != null) {
-				var3.setSuggestionProvider(var1);
+		while(it.hasNext()) {
+			IEditorDelegate deligate = (IEditorDelegate)it.next();
+			if (deligate != null) {
+				deligate.setSuggestionProvider(provider);
 			}
 		}
 		
 	}
 	
-	private void runJava(final JavaProject var1) {
-		File var2 = this.getCurrentFile();
-		if (var2 != null && ProjectUtils.isFileBelongProject(var1, var2)) {
-			Intent var7 = new Intent(this, ExecuteActivity.class);
-			var7.putExtra("DEX_FILE", var1.getDexFile());
-			var7.putExtra("MAIN_CLASS_FILE", var2);
-			this.startActivity(var7);
+	private void runJava(final JavaProject project) {
+		File current = this.getCurrentFile();
+		if (current != null && ProjectUtils.isFileBelongProject(project, current)) {
+			Intent intent = new Intent(this, ExecuteActivity.class);
+			intent.putExtra("DEX_FILE", project.getDexFile());
+			intent.putExtra("MAIN_CLASS_FILE", current);
+			this.startActivity(intent);
 		} else {
-			ArrayList var3 = new ArrayList();
-			var3.add(var1.getJavaSrcDir());
-			final ArrayList<File> javaSources = (new FileCollection(var3)).filter(new FileFilter() {
-				public boolean accept(File var1) {
-					boolean var2;
-					if (var1.isFile() && var1.getName().endsWith(".java")) {
-						var2 = true;
+			ArrayList list = new ArrayList();
+			list.add(project.getJavaSrcDir());
+			final ArrayList<File> javaSources = (new FileCollection(list)).filter(new FileFilter() {
+				public boolean accept(File file) {
+					if (file.isFile() && file.getName().endsWith(".java")) {
+						return true;
 					} else {
-						var2 = false;
+						return false;
 					}
-					
-					return var2;
 				}
 			});
-			Builder var4 = new Builder(this);
+			Builder dialog = new Builder(this);
 			String[] var6 = new String[javaSources.size()];
 			
 			for(int var5 = 0; var5 < javaSources.size(); ++var5) {
 				var6[var5] = ((File)javaSources.get(var5)).getName();
 			}
 			
-			var4.setTitle(R.string.select_class_to_run);
-			var4.setItems(var6, new OnClickListener() {
-				public void onClick(DialogInterface var1x, int var2) {
-					Intent var3x = new Intent(JavaIdeActivity.this, ExecuteActivity.class);
-					var3x.putExtra("DEX_FILE", var1.getDexFile());
-					var3x.putExtra("MAIN_CLASS_FILE", (Serializable)javaSources.get(var2));
-					JavaIdeActivity.this.startActivity(var3x);
+			dialog.setTitle(R.string.select_class_to_run);
+			dialog.setItems(var6, new OnClickListener() {
+				public void onClick(DialogInterface unused, int index) {
+					Intent intent = new Intent(JavaIdeActivity.this, ExecuteActivity.class);
+					intent.putExtra("DEX_FILE", project.getDexFile());
+					intent.putExtra("MAIN_CLASS_FILE", (Serializable)javaSources.get(index));
+					JavaIdeActivity.this.startActivity(intent);
 				}
 			});
-			var4.create().show();
+			dialog.create().show();
 		}
 		
 	}
@@ -251,32 +247,32 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 		
 	}
 	
-	public void onConfigChange(JavaProject var1) {
-		this.mProject = var1;
-		if (var1 != null) {
-			JavaProjectManager.saveProject(this, var1);
+	public void onConfigChange(JavaProject project) {
+		this.mProject = project;
+		if (project != null) {
+			JavaProjectManager.saveProject(this, project);
 		}
 		
 	}
 	
-	protected void onCreate(Bundle var1) {
-		super.onCreate(var1);
+	protected void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
 		this.mCompileProgress = (ProgressBar)this.findViewById(R.id.compile_progress);
 		this.startAutoCompleteService();
 		this.mInAppPurchaseHelper = new InAppPurchaseHelper(this);
 	}
 	
-	protected void onCreateNavigationMenu(Menu var1) {
-		this.getMenuInflater().inflate(R.menu.menu_nav_javaide, var1);
-		var1.findItem(R.id.action_premium).setVisible(false);
-		super.onCreateNavigationMenu(var1);
+	protected void onCreateNavigationMenu(Menu menu) {
+		this.getMenuInflater().inflate(R.menu.menu_nav_javaide, menu);
+		menu.findItem(R.id.action_premium).setVisible(false);
+		super.onCreateNavigationMenu(menu);
 	}
 	
-	public boolean onCreateOptionsMenu(Menu var1) {
-		var1.add(0, R.id.action_run, 0, R.string.run).setIcon(MenuManager.makeToolbarNormalIcon(this, R.drawable.ic_play_arrow_white_24dp)).setShowAsAction(2);
-		super.onCreateOptionsMenu(var1);
-		MenuItem var2 = var1.findItem(R.id.menu_file);
-		(new JavaMenuManager(this)).createFileMenu(var2.getSubMenu());
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, R.id.action_run, 0, R.string.run).setIcon(MenuManager.makeToolbarNormalIcon(this, R.drawable.ic_play_arrow_white_24dp)).setShowAsAction(2);
+		super.onCreateOptionsMenu(menu);
+		MenuItem item = menu.findItem(R.id.menu_file);
+		new JavaMenuManager(this).createFileMenu(item.getSubMenu());
 		return true;
 	}
 	
@@ -291,44 +287,57 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 	
 	public boolean onOptionsItemSelected(MenuItem var1) {
 		switch(var1.getItemId()) {
-			case R.id.action_compiler_setting:
-			this.startActivity(new Intent(this, CompilerSettingActivity.class));
-			return true;
-			case R.id.action_editor_color_scheme:
-			this.startActivityForResult(new Intent(this, ThemeActivity.class), 350);
-			break;
-			case R.id.action_install_cpp_nide:
-			StoreUtil.gotoPlayStore(this, "com.duy.c.cpp.compiler");
-			break;
-			case R.id.action_new_android_project:
-			this.createAndroidProject();
-			break;
-			case R.id.action_new_class:
-			this.createNewClass((File)null);
-			break;
-			case R.id.action_new_file:
-			this.createNewFile((View)null);
-			break;
-			case R.id.action_new_java_project:
-			this.createJavaProject();
-			break;
-			case R.id.action_open_android_project:
-			this.openAndroidProject();
-			break;
-			case R.id.action_open_java_project:
-			this.openJavaProject();
-			break;
-			case R.id.action_report_bug:
-			this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://github.com/tranleduy2000/javaide/issues")));
-			break;
-			case R.id.action_run:
-			this.saveAll(131);
-			break;
-			case R.id.action_sample:
-			this.startActivityForResult(new Intent(this, JavaSampleActivity.class), 1015);
-			break;
-			case R.id.action_see_logcat:
-			this.startActivity(new Intent(this, LogcatActivity.class));
+			case R.id.action_compiler_setting: {
+				this.startActivity(new Intent(this, CompilerSettingActivity.class));
+				return true;
+			}
+			case R.id.action_editor_color_scheme: {
+				this.startActivityForResult(new Intent(this, ThemeActivity.class), 350);
+				break;
+			}
+			case R.id.action_install_cpp_nide: {
+				StoreUtil.gotoPlayStore(this, "com.duy.c.cpp.compiler");
+				break;
+			}
+			case R.id.action_new_android_project: {
+				this.createAndroidProject();
+				break;
+			}
+			case R.id.action_new_class: {
+				this.createNewClass(null);
+				break;
+			}
+			case R.id.action_new_file: {
+				this.createNewFile(null);
+				break;
+			}
+			case R.id.action_new_java_project: {
+				this.createJavaProject();
+				break;
+			}
+			case R.id.action_open_android_project: {
+				this.openAndroidProject();
+				break;
+			}
+			case R.id.action_open_java_project: {
+				this.openJavaProject();
+				break;
+			}
+			case R.id.action_report_bug: {
+				this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://github.com/tranleduy2000/javaide/issues")));
+				break;
+			}
+			case R.id.action_run: {
+				this.saveAll(131);
+				break;
+			}
+			case R.id.action_sample: {
+				this.startActivityForResult(new Intent(this, JavaSampleActivity.class), 1015);
+				break;
+			}
+			case R.id.action_see_logcat: {
+				this.startActivity(new Intent(this, LogcatActivity.class));
+			}
 		}
 		
 		return super.onOptionsItemSelected(var1);
@@ -357,18 +366,24 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 		
 	}
 	
-	protected void populateDiagnostic(@NonNull Presenter var1) {
-		var1.setOutputParser(new PatternAwareOutputParser[]{this.aaptParser, this.javaParser});
-		var1.setFilter(new MessageFilter() {
-			public boolean accept(Message var1) {
-				boolean var2;
-				if (var1.getKind() != Kind.ERROR && var1.getKind() != Kind.WARNING) {
-					var2 = false;
-				} else {
-					var2 = true;
+	protected void populateDiagnostic(@NonNull Presenter presenter) {
+		presenter.setOutputParser(new PatternAwareOutputParser[] {this.aaptParser, this.javaParser});
+		presenter.setFilter(new MessageFilter() {
+			public boolean accept(Message message) {
+				switch (message.getKind()): {
+				    case (Kind.ERROR): {
+				        return true;
+				        break;
+				    }
+				    case (Kind.WARNING): {
+				        return true;
+				        break;
+				    }
+				    default: {
+				        return false;
+				        break;
+				    }
 				}
-				
-				return var2;
 			}
 		});
 	}
@@ -378,7 +393,7 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 	}
 	
 	protected void startAutoCompleteService() {
-		Log.d("MainActivity", "startAutoCompleteService() called");
+		Log.d(TAG, "startAutoCompleteService() called");
 		if (this.mAutoCompleteProvider == null) {
 			if (this.mProject != null) {
 				(new Thread(new Runnable() {
