@@ -1,4 +1,3 @@
-/* Decompiler 4ms, total 432ms, lines 41 */
 package com.duy.ide.javaide.diagnostic.parser.java;
 
 import android.support.annotation.NonNull;

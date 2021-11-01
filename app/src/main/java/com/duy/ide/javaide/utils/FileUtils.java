@@ -2,9 +2,7 @@ package com.duy.ide.javaide.utils;
 
 import java.io.File;
 
-/**
- * Created by duy on 18/07/2017.
- */
+
 
 public class FileUtils {
     public static boolean hasExtension(File file, String... exts) {

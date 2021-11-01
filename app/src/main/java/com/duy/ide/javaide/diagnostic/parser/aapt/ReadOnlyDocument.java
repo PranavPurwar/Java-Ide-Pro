@@ -1,4 +1,3 @@
-/* Decompiler 13ms, total 491ms, lines 113 */
 package com.duy.ide.javaide.diagnostic.parser.aapt;
 
 import com.duy.ide.diagnostic.model.SourcePosition;

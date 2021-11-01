@@ -1,4 +1,3 @@
-/* Decompiler 9ms, total 646ms, lines 23 */
 package com.duy.ide.javaide.diagnostic.parser.aapt;
 
 import com.duy.ide.diagnostic.model.Message;

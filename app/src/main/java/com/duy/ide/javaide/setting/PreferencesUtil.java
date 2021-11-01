@@ -1,4 +1,3 @@
-/* Decompiler 4ms, total 421ms, lines 47 */
 package com.duy.ide.javaide.setting;
 
 import android.preference.EditTextPreference;

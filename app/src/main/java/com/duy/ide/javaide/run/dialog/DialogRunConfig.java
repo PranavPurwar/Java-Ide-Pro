@@ -1,4 +1,3 @@
-/* Decompiler 13ms, total 547ms, lines 145 */
 package com.duy.ide.javaide.run.dialog;
 
 import android.app.Dialog;

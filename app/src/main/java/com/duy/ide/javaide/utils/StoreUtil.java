@@ -5,9 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 
-/**
- * Created by Duy on 10-Jul-17.
- */
+
 
 public class StoreUtil {
     public static void gotoPlayStore(Activity context, String APP_ID) {

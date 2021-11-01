@@ -1,4 +1,3 @@
-/* Decompiler 2ms, total 1412ms, lines 24 */
 package com.duy.ide.javaide.setting;
 
 import android.content.Context;

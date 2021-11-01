@@ -5,9 +5,6 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 
-/**
- * Created by Duy on 27-Mar-17.
- */
 public class DLog {
     public static String TAG = DLog.class.getSimpleName();
     public static boolean DEBUG = true;

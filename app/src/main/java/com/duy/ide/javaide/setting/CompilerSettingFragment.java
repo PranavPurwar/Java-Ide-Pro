@@ -1,4 +1,3 @@
-/* Decompiler 2ms, total 446ms, lines 17 */
 package com.duy.ide.javaide.setting;
 
 import android.os.Bundle;
