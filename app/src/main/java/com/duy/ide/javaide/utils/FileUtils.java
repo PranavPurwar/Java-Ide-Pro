@@ -1,56 +1,42 @@
-/* Decompiler 6ms, total 517ms, lines 56 */
 package com.duy.ide.javaide.utils;
 
 import java.io.File;
 
+/**
+ * Created by duy on 18/07/2017.
+ */
+
 public class FileUtils {
-   public static boolean canEdit(File var0) {
-      boolean var1 = false;
-      boolean var2 = var1;
-      if (var0.canWrite()) {
-         var2 = var1;
-         if (hasExtension(var0, ".java", ".xml", ".txt", ".gradle", ".json")) {
-            var2 = true;
-         }
-      }
+    public static boolean hasExtension(File file, String... exts) {
+        for (String ext : exts) {
+            if (file.getPath().toLowerCase().endsWith(ext.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-      return var2;
-   }
+    public static String fileExt(String url) {
+        if (url.contains("?")) {
+            url = url.substring(0, url.indexOf("?"));
+        }
+        if (url.lastIndexOf(".") == -1) {
+            return null;
+        } else {
+            String ext = url.substring(url.lastIndexOf(".") + 1);
+            if (ext.contains("%")) {
+                ext = ext.substring(0, ext.indexOf("%"));
+            }
+            if (ext.contains("/")) {
+                ext = ext.substring(0, ext.indexOf("/"));
+            }
+            return ext.toLowerCase();
+        }
+    }
 
-   public static String fileExt(String var0) {
-      String var1 = var0;
-      if (var0.contains("?")) {
-         var1 = var0.substring(0, var0.indexOf("?"));
-      }
+    public static boolean canEdit(File file) {
+        String[] exts = {".java", ".xml", ".txt", ".gradle", ".json"};
+        return file.canWrite() && hasExtension(file, exts);
+    }
 
-      if (var1.lastIndexOf(".") == -1) {
-         return null;
-      } else {
-         var1 = var1.substring(var1.lastIndexOf(".") + 1);
-         var0 = var1;
-         if (var1.contains("%")) {
-            var0 = var1.substring(0, var1.indexOf("%"));
-         }
-
-         var1 = var0;
-         if (var0.contains("/")) {
-            var1 = var0.substring(0, var0.indexOf("/"));
-         }
-
-         return var1.toLowerCase();
-      }
-   }
-
-   public static boolean hasExtension(File var0, String... var1) {
-      int var2 = var1.length;
-
-      for(int var3 = 0; var3 < var2; ++var3) {
-         String var4 = var1[var3];
-         if (var0.getPath().toLowerCase().endsWith(var4.toLowerCase())) {
-            return true;
-         }
-      }
-
-      return false;
-   }
 }

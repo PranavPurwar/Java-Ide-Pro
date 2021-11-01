@@ -1,24 +1,27 @@
-/* Decompiler 5ms, total 1794ms, lines 23 */
 package com.duy.ide.javaide.activities;
 
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.SharedPreferences;
 import android.support.annotation.StyleRes;
 import android.support.v7.widget.Toolbar;
-import com.jecelyin.editor.v2.ThemeSupportActivity;
+
 import com.duy.ide.R;
+import com.jecelyin.editor.v2.ThemeSupportActivity;
 
-public class BaseActivity extends ThemeSupportActivity implements OnSharedPreferenceChangeListener {
-   @StyleRes
-   public int getThemeId() {
-      return R.style.AppThemeDark;
-   }
+public class BaseActivity extends ThemeSupportActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-   public void setupToolbar() {
-      Toolbar var1 = (Toolbar)this.findViewById(R.id.toolbar);
-      if (var1 != null) {
-         this.setSupportActionBar(var1);
-         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-      }
+    @StyleRes
+    @Override
+    public int getThemeId() {
+        return R.style.AppThemeDark;
+    }
 
-   }
+    public void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
 }

@@ -1,4 +1,3 @@
-/* Decompiler 881ms, total 2220ms, lines 834 */
 package com.duy.ide.core.api;
 
 import android.app.ProgressDialog;
@@ -108,9 +107,9 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
    @Nullable
    protected TextView mTxtDocumentInfo;
 
-   private void createNewEditor(File var1, int var2, String var3) {
-      if (this.mTabManager.newTab(var1, var2, var3)) {
-         SQLHelper.getInstance(this).addRecentFile(var1.getPath(), var3);
+   private void createNewEditor(File file, int pos, String name) {
+      if (this.mTabManager.newTab(file, pos, name)) {
+         SQLHelper.getInstance(this).addRecentFile(file.getPath(), name);
       }
    }
 
@@ -120,11 +119,11 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
    }
 
    private void initMenuView() {
-      NavigationView var1 = (NavigationView)this.findViewById(id.right_navigation_view);
-      this.onCreateNavigationMenu(var1.getMenu());
-      var1.setNavigationItemSelectedListener(new OnNavigationItemSelectedListener() {
-         public boolean onNavigationItemSelected(@NonNull MenuItem var1) {
-            return IdeActivity.this.onOptionsItemSelected(var1);
+      NavigationView view = (NavigationView)this.findViewById(id.right_navigation_view);
+      this.onCreateNavigationMenu(view.getMenu());
+      view.setNavigationItemSelectedListener(new OnNavigationItemSelectedListener() {
+         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            return this.onOptionsItemSelected(item);
          }
       });
    }
@@ -139,41 +138,36 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       if (this.mTabManager == null) {
          throw new RuntimeException("Create TabManager before call intiDiagnosticView");
       } else {
-         final View var1 = this.findViewById(id.btn_toggle_panel);
+         final View panel = this.findViewById(id.btn_toggle_panel);
          this.mSlidingUpPanelLayout = (SlidingUpPanelLayout)this.findViewById(id.diagnostic_panel);
          this.mSlidingUpPanelLayout.addPanelSlideListener(new SimplePanelSlideListener() {
-            public void onPanelSlide(View var1x, float var2) {
-               var1.animate().rotation(var2 * 180.0F).start();
+            public void onPanelSlide(View view, float value) {
+               panel.animate().rotation(value * 180.0F).start();
             }
          });
-         FragmentManager var2 = this.getSupportFragmentManager();
-         String var3 = DiagnosticFragment.class.getSimpleName();
-         DiagnosticFragment var4 = (DiagnosticFragment)var2.findFragmentByTag(var3);
-         DiagnosticFragment var5 = var4;
-         if (var4 == null) {
-            var5 = DiagnosticFragment.newInstance();
+         FragmentManager manager = this.getSupportFragmentManager();
+         String className = DiagnosticFragment.class.getSimpleName();
+         DiagnosticFragment diagnostic = (DiagnosticFragment)manager.findFragmentByTag(className);
+         if (diagnostic == null) {
+            diagnostic = DiagnosticFragment.newInstance();
          }
 
-         var2.beginTransaction().replace(id.container_diagnostic_list_view, var5, var3).commit();
-         this.mDiagnosticPresenter = new DiagnosticPresenter(var5, this, this.mTabManager, this.mHandler);
+         manager.beginTransaction().replace(id.container_diagnostic_list_view, diagnostic, className).commit();
+         this.mDiagnosticPresenter = new DiagnosticPresenter(diagnostic, this, this.mTabManager, this.mHandler);
          this.populateDiagnostic(this.mDiagnosticPresenter);
       }
    }
 
-   private void openText(CharSequence var1) {
-      if (!TextUtils.isEmpty(var1)) {
-         FileManager var2 = new FileManager(this);
-         StringBuilder var3 = new StringBuilder();
-         var3.append("untitled_");
-         var3.append(System.currentTimeMillis());
-         var3.append(".txt");
-         File var5 = var2.createNewFile(var3.toString());
-
+   private void openText(CharSequence sequence) {
+      if (!TextUtils.isEmpty(sequence)) {
+         FileManager fileManager = new FileManager(this);
+         File file = fileManager.createNewFile("untitled_" + System.currentTimeMillis() + ".txt");
          try {
-            IOUtils.writeAndClose(var1.toString(), var5);
-            this.mTabManager.newTab(var5);
-         } catch (Exception var4) {
-            Toast.makeText(this, var4.getMessage(), 0).show();
+            IOUtils.writeAndClose(sequence.toString(), file);
+            this.mTabManager.newTab(file);
+         } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), 0).show();
          }
 
       }
@@ -184,8 +178,8 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
          if (!this.processIntentImpl()) {
             UIUtils.alert(this, this.getString(string.cannt_handle_intent_x, new Object[]{this.getIntent().toString()}));
          }
-      } catch (Throwable var4) {
-         DLog.e(var4);
+      } catch (Throwable e) {
+         DLog.e(e);
          int var2 = string.handle_intent_x_error;
          StringBuilder var3 = new StringBuilder();
          var3.append(this.getIntent().toString());
@@ -290,43 +284,42 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       if (VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") != 0) {
          this.requestPermissions(new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"}, 5001);
       } else {
-         String[] var1 = this.getSupportedFileExtensions();
-         EditorDelegate var2 = this.getCurrentEditorDelegate();
-         String var4;
-         if (var2 != null) {
-            String var3 = var2.getPath();
-            var4 = var3;
-            if ((new File(var3)).isFile()) {
-               var4 = (new File(var3)).getParent();
+         String[] extensions = this.getSupportedFileExtensions();
+         EditorDelegate delegate = this.getCurrentEditorDelegate();
+         String path;
+         if (delegate != null) {
+            path = delegate.getPath();
+            if (new File(path).isFile()) {
+               path = new File(path).getParent();
             }
          } else {
-            var4 = Environment.getExternalStorageDirectory().getPath();
+            path = Environment.getExternalStorageDirectory().getPath();
          }
 
-         DialogNewFile.newInstance(var1, var4, new OnCreateFileListener() {
-            public void onFileCreated(@NonNull File var1) {
-               IdeActivity.this.mTabManager.newTab(var1);
+         DialogNewFile.newInstance(extensions, path, new OnCreateFileListener() {
+            public void onFileCreated(@NonNull File file) {
+               IdeActivity.this.mTabManager.newTab(file);
             }
          }).show(this.getSupportFragmentManager(), DialogNewFile.class.getSimpleName());
       }
    }
 
-   public void doCommand(Command var1) {
-      EditorDelegate var2 = this.getCurrentEditorDelegate();
-      if (var2 != null) {
-         var2.doCommand(var1);
-         if (var1.what == CommandEnum.HIGHLIGHT && this.mToolbar != null) {
-            this.mToolbar.setTitle(var2.getToolbarText());
+   public void doCommand(Command command) {
+      EditorDelegate delegate = this.getCurrentEditorDelegate();
+      if (delegate != null) {
+         delegate.doCommand(command);
+         if (command.what == CommandEnum.HIGHLIGHT && this.mToolbar != null) {
+            this.mToolbar.setTitle(delegate.getToolbarText());
          }
       }
 
    }
 
-   public void doCommandForAllEditor(Command var1) {
-      Iterator var2 = this.mTabManager.getEditorPagerAdapter().getAllEditor().iterator();
+   public void doCommandForAllEditor(Command command) {
+      Iterator it = this.mTabManager.getEditorPagerAdapter().getAllEditor().iterator();
 
-      while(var2.hasNext()) {
-         ((IEditorDelegate)var2.next()).doCommand(var1);
+      while(it.hasNext()) {
+         (IEditorDelegate)it.next().doCommand(command);
       }
 
    }
@@ -341,15 +334,15 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
    }
 
    public String getCurrentLang() {
-      EditorDelegate var1 = this.getCurrentEditorDelegate();
-      return var1 == null ? null : var1.getLang();
+      EditorDelegate delegate = this.getCurrentEditorDelegate();
+      return delegate == null ? null : delegate.getLang();
    }
 
    @LayoutRes
    protected abstract int getRootLayoutId();
 
    protected String[] getSupportedFileExtensions() {
-      return new String[]{".txt"};
+      return new String[]{".txt", ".json"};
    }
 
    public TabManager getTabManager() {
@@ -360,14 +353,14 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       this.doCommand(new Command(CommandEnum.HIDE_SOFT_INPUT));
    }
 
-   protected void initLeftNavigationView(@NonNull NavigationView var1) {
+   protected void initLeftNavigationView(@NonNull NavigationView navView) {
    }
 
-   public void insertText(CharSequence var1) {
-      if (var1 != null) {
-         Command var2 = new Command(CommandEnum.INSERT_TEXT);
-         var2.object = var1;
-         this.doCommand(var2);
+   public void insertText(CharSequence sequence) {
+      if (sequence != null) {
+         Command command = new Command(CommandEnum.INSERT_TEXT);
+         command.object = sequence;
+         this.doCommand(command);
       }
    }
 
@@ -413,8 +406,8 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       }
    }
 
-   protected void onCreate(Bundle var1) {
-      super.onCreate(var1);
+   protected void onCreate(Bundle bundle) {
+      super.onCreate(bundle);
       this.setContentView(this.getRootLayoutId());
       this.initToolbar();
       MenuManager.init(this);
@@ -425,25 +418,25 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       this.mDrawerLayout = (DrawerLayout)this.findViewById(id.drawer_layout);
       this.mDrawerLayout.setKeepScreenOn(this.mPreferences.isKeepScreenOn());
       this.mDrawerLayout.addDrawerListener(new SimpleDrawerListener() {
-         public void onDrawerOpened(View var1) {
-            super.onDrawerOpened(var1);
-            EditorDelegate var2 = IdeActivity.this.getCurrentEditorDelegate();
-            if (var2 != null) {
-               var2.getEditText().clearFocus();
+         public void onDrawerOpened(View view) {
+            super.onDrawerOpened(view);
+            EditorDelegate delegate = IdeActivity.this.getCurrentEditorDelegate();
+            if (delegate != null) {
+               delegate.getEditText().clearFocus();
             }
 
             IdeActivity.this.mDrawerLayout.requestFocus();
             IdeActivity.this.hideSoftInput();
          }
       });
-      ActionBarDrawerToggle var2 = new ActionBarDrawerToggle(this, this.mDrawerLayout, this.mToolbar, string.open_drawer, string.close_drawer);
-      this.mDrawerLayout.addDrawerListener(var2);
-      var2.syncState();
+      ActionBarDrawerToggle listener = new ActionBarDrawerToggle(this, this.mDrawerLayout, this.mToolbar, string.open_drawer, string.close_drawer);
+      this.mDrawerLayout.addDrawerListener(listener);
+      listener.syncState();
       this.mSymbolBarLayout = (SymbolBarLayout)this.findViewById(id.symbolBarLayout);
       if (this.mSymbolBarLayout != null) {
          this.mSymbolBarLayout.setOnSymbolCharClickListener(new OnSymbolCharClickListener() {
-            public void onClick(View var1, String var2) {
-               IdeActivity.this.insertText(var2);
+            public void onClick(View unused, String text) {
+               IdeActivity.this.insertText(text);
             }
          });
       }
@@ -460,7 +453,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
    }
 
    @CallSuper
-   protected void onCreateNavigationMenu(Menu var1) {
+   protected void onCreateNavigationMenu(Menu menu) {
       MenuFactory var2 = MenuFactory.getInstance(this);
       MenuGroup[] var3 = new MenuGroup[2];
       MenuGroup var4 = MenuGroup.VIEW;

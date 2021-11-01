@@ -1,4 +1,3 @@
-/* Decompiler 3ms, total 439ms, lines 41 */
 package com.duy.ide.code.model;
 
 import android.support.annotation.Nullable;
@@ -18,23 +17,24 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class XmlFormatter implements CodeFormatter {
-   private CharSequence formatImpl(CharSequence var1) throws TransformerException, ParserConfigurationException, IOException, SAXException {
-      Document var2 = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(var1.toString())));
-      Transformer var3 = TransformerFactory.newInstance().newTransformer();
-      var3.setOutputProperty("indent", "yes");
-      var3.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-      StreamResult var4 = new StreamResult(new StringWriter());
-      var3.transform(new DOMSource(var2), var4);
-      return var4.getWriter().toString();
+
+   private CharSequence formatImpl(CharSequence string) throws TransformerException, ParserConfigurationException, IOException, SAXException {
+      Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(string.toString())));
+      Transformer transformer = TransformerFactory.newInstance().newTransformer();
+      transformer.setOutputProperty("indent", "yes");
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+      StreamResult stream = new StreamResult(new StringWriter());
+      transformer.transform(new DOMSource(document), stream);
+      return stream.getWriter().toString();
    }
 
    @Nullable
-   public CharSequence format(CharSequence var1) {
+   public CharSequence format(CharSequence sequence) {
       try {
-         var1 = this.formatImpl(var1);
-         return var1;
-      } catch (Exception var2) {
-         var2.printStackTrace();
+         sequence = this.formatImpl(sequence);
+         return sequence;
+      } catch (Exception e) {
+         e.printStackTrace();
          return null;
       }
    }

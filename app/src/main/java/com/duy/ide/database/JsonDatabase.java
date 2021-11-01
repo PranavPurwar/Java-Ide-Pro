@@ -1,4 +1,3 @@
-/* Decompiler 744ms, total 1395ms, lines 269 */
 package com.duy.ide.database;
 
 import android.content.Context;

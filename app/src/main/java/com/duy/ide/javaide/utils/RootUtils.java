@@ -1,4 +1,3 @@
-/* Decompiler 4ms, total 496ms, lines 65 */
 package com.duy.ide.javaide.utils;
 
 import android.content.Context;
@@ -10,55 +9,67 @@ import com.duy.ide.javaide.setting.AppSetting;
 import java.io.File;
 
 public class RootUtils {
-   public static boolean installApk(Context var0, File var1) {
-      if (var1.exists() && var1.isFile() && var1.canRead()) {
-         if ((new AppSetting(var0)).installViaRootAccess()) {
-            if (installWithoutPrompt(var1)) {
+
+/*
+ * try installing the built apk
+ * @returns boolean whether the apk was installed or not
+ * @param context the context object
+ * @param file the apk file to install
+ */
+
+   public static boolean installApk(Context context, File file) {
+      if (file.exists() && file.isFile() && file.canRead()) {
+         if (new AppSetting(context).installViaRootAccess()) {
+            if (installWithoutPrompt(context)) {
                return true;
             }
          } else {
-            openApk(var0, var1);
+            openApk(context, file);
          }
-
          return false;
       } else {
          return false;
       }
    }
 
-   private static boolean installWithoutPrompt(File var0) {
+/*
+ * Install built apk on rooted devices
+ * it runs adb to install the apk, skipping apk verification
+ * @returns whether the apk was installed or not
+ * @param file the built apk as an file object
+ */
+
+   private static boolean installWithoutPrompt(File file) {
       try {
-         String var1 = var0.getPath();
-         StringBuilder var3 = new StringBuilder();
-         var3.append("adb install -r ");
-         var3.append(var1);
-         String var4 = var3.toString();
-         Runtime.getRuntime().exec(new String[]{"su", "-c", var4}).waitFor();
+         String path = file.getPath();
+         Runtime.getRuntime().exec(new String[]{"su", "-c", "adb install -r " + path}).waitFor();
          return true;
-      } catch (Exception var2) {
-         var2.printStackTrace();
+      } catch (Exception e) {
+         e.printStackTrace();
          return false;
       }
    }
 
-   private static void openApk(Context var0, File var1) {
-      Uri var3;
-      Intent var4;
+/*
+ * Request to install the built apk
+ * @param context context to use for retrieving the package name
+ * @param file the built apk as an file object
+ */
+   private static void openApk(Context context, File file) {
+      Uri uri;
+      Intent intent;
       if (VERSION.SDK_INT >= 24) {
-         StringBuilder var2 = new StringBuilder();
-         var2.append(var0.getPackageName());
-         var2.append(".provider");
-         var3 = FileProvider.getUriForFile(var0, var2.toString(), var1);
-         var4 = new Intent("android.intent.action.INSTALL_PACKAGE");
-         var4.setData(var3);
-         var4.setFlags(1);
-         var0.startActivity(var4);
+         uri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", file);
+         intent = new Intent("android.intent.action.INSTALL_PACKAGE");
+         intent.setData(uri);
+         intent.setFlags(1);
+         context.startActivity(intent);
       } else {
-         var3 = Uri.fromFile(var1);
-         var4 = new Intent("android.intent.action.VIEW");
-         var4.setDataAndType(var3, "application/vnd.android.package-archive");
-         var4.setFlags(268435456);
-         var0.startActivity(var4);
+         uri = Uri.fromFile(file);
+         intent = new Intent("android.intent.action.VIEW");
+         intent.setDataAndType(uri, "application/vnd.android.package-archive");
+         intent.setFlags(268435456);
+         context.startActivity(intent);
       }
 
    }

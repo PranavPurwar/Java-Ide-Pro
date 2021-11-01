@@ -1,4 +1,3 @@
-/* Decompiler 0ms, total 458ms, lines 24 */
 package com.duy.ide.database;
 
 import java.util.ArrayList;

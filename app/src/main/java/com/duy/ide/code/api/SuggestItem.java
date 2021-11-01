@@ -1,4 +1,3 @@
-/* Decompiler 0ms, total 407ms, lines 23 */
 package com.duy.ide.code.api;
 
 import android.support.annotation.NonNull;
@@ -19,5 +18,5 @@ public interface SuggestItem {
 
    char getTypeHeader();
 
-   void onSelectThis(@NonNull IEditAreaView var1);
+   void onSelectThis(@NonNull IEditAreaView view);
 }

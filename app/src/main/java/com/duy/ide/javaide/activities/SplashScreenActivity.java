@@ -1,7 +1,8 @@
-/* Decompiler 46ms, total 570ms, lines 147 */
 package com.duy.ide.javaide.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -10,139 +11,176 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import com.android.annotations.VisibleForTesting;
 import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.SdkManager;
 import com.android.sdklib.internal.project.ProjectCreator;
-import com.android.sdklib.internal.project.ProjectCreator.OutputLevel;
 import com.android.utils.StdLogger;
-import com.android.utils.StdLogger.Level;
 import com.duy.android.compiler.env.Environment;
-import com.duy.android.compiler.utils.FileUtils;
-import com.duy.ide.javaide.JavaIdeActivity;
 import com.duy.ide.javaide.utils.DLog;
 import com.duy.ide.R;
+import com.duy.ide.javaide.JavaIdeActivity;
+
 import java.io.File;
 import java.util.Arrays;
 
+
 public class SplashScreenActivity extends AppCompatActivity {
-   private static final int MY_PERMISSIONS_REQUEST = 11;
-   private static final int REQUEST_INSTALL_SYSTEM = 12;
-   private static final String TAG = "SplashScreenActivity";
+    private static final int MY_PERMISSIONS_REQUEST = 11;
+    private static final String TAG = "SplashScreenActivity";
+    private static final int REQUEST_INSTALL_SYSTEM = 12;
 
-   private void installFailed() {
-   }
-
-   private void installSystem() {
-      this.startActivityForResult(new Intent(this, InstallActivity.class), 12);
-   }
-
-   private boolean permissionGranted() {
-      boolean var1;
-      if (ContextCompat.checkSelfPermission(this, "android.permission.READ_EXTERNAL_STORAGE") != 0 && ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") != 0) {
-         var1 = false;
-      } else {
-         var1 = true;
-      }
-
-      return var1;
-   }
-
-   private void requestPermissions() {
-      ActivityCompat.requestPermissions(this, new String[]{"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"}, 11);
-   }
-
-   private void startMainActivity() {
-      new Handler().postDelayed(new Runnable() {
-         public void run() {
-            Intent var1 = new Intent(SplashScreenActivity.this, JavaIdeActivity.class);
-            var1.addFlags(65536);
-            SplashScreenActivity.this.overridePendingTransition(0, 0);
-            SplashScreenActivity.this.startActivity(var1);
-            SplashScreenActivity.this.finish();
-         }
-      }, 400L);
-   }
-
-   private boolean systemInstalled() {
-      return Environment.isSdkInstalled(this);
-   }
-
-   private void testCreateProject() {
-      StdLogger var1 = new StdLogger(Level.VERBOSE);
-      String var2 = Environment.getSdkDir(this).getAbsolutePath();
-      SdkManager var3 = SdkManager.createManager(var2, var1);
-      ProjectCreator var10 = new ProjectCreator(var3, var2, OutputLevel.VERBOSE, var1);
-      IAndroidTarget[] var4 = var3.getTargets();
-      StringBuilder var11;
-      if (DLog.DEBUG) {
-         var11 = new StringBuilder();
-         var11.append("targets = ");
-         var11.append(Arrays.toString(var4));
-         DLog.d("SplashScreenActivity", var11.toString());
-      }
-
-      int var5 = var4.length;
-      int var6 = 0;
-
-      IAndroidTarget var12;
-      for(var12 = null; var6 < var5; ++var6) {
-         IAndroidTarget var7 = var4[var6];
-         if (var7.getVersion().getApiLevel() == 27) {
-            var12 = var7;
-         }
-      }
-
-      File var8 = new File(Environment.getSdkAppDir(), "DemoAndroid");
-      FileUtils.deleteQuietly(var8);
-      var10.createGradleProject(var8.getAbsolutePath(), "DemoAndroid", "com.duy.example", "MainActivity", var12, false, "1.0");
-      File[] var9 = var8.listFiles();
-      if (DLog.DEBUG) {
-         var11 = new StringBuilder();
-         var11.append("files = ");
-         var11.append(Arrays.toString(var9));
-         DLog.d("SplashScreenActivity", var11.toString());
-      }
-
-   }
-
-   protected void onActivityResult(int var1, int var2, Intent var3) {
-      super.onActivityResult(var1, var2, var3);
-      if (var1 == 12) {
-         if (var2 == -1) {
-            this.startMainActivity();
-         } else {
-            this.installFailed();
-         }
-      }
-
-   }
-
-   public void onCreate(Bundle var1) {
-      super.onCreate(var1);
-      this.setContentView(R.layout.splash);
-      PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
-      if (!this.permissionGranted()) {
-         this.requestPermissions();
-      } else if (this.systemInstalled()) {
-         this.startMainActivity();
-      } else {
-         this.installSystem();
-      }
-
-   }
-
-   public void onRequestPermissionsResult(int var1, @NonNull String[] var2, @NonNull int[] var3) {
-      if (var1 == 11) {
-         if (var3.length > 0 && var3[0] == 0 && var3[1] == 0) {
-            if (this.systemInstalled()) {
-               this.startMainActivity();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.splash);
+        // Here, this is the current activity
+        PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
+        if (!permissionGranted()) {
+            requestPermissions();
+        } else {
+            if (systemInstalled()) {
+                startMainActivity();
             } else {
-               this.installSystem();
+                installSystem();
             }
-         } else {
-            Toast.makeText(this, 2131689837, 0).show();
-         }
-      }
+        }
+    }
 
-   }
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                MY_PERMISSIONS_REQUEST);
+    }
+
+    private boolean permissionGranted() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void installSystem() {
+        Intent intent = new Intent(this, InstallActivity.class);
+        startActivityForResult(intent, REQUEST_INSTALL_SYSTEM);
+    }
+
+    private boolean systemInstalled() {
+        return Environment.isSdkInstalled(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_INSTALL_SYSTEM:
+                if (resultCode == RESULT_OK) {
+                    startMainActivity();
+                } else {
+                    installFailed();
+                }
+                break;
+        }
+    }
+
+    private void installFailed() {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    if (systemInstalled()) {
+                        startMainActivity();
+                    } else {
+                        installSystem();
+                    }
+                } else {
+                    Toast.makeText(this, R.string.permission_denied_storage, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * If receive data from other app (it could be file, text from clipboard),
+     * You will be handle data and send to {@link JavaIdeActivity}
+     */
+    private void startMainActivity() {
+        //noinspection ConstantConditions
+        if (true) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SplashScreenActivity.this, JavaIdeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    overridePendingTransition(0, 0);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 400);
+            return;
+        }
+        try {
+            testCreateProject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @VisibleForTesting
+    private void testCreateProject() {
+        StdLogger log = new StdLogger(StdLogger.Level.VERBOSE);
+        String sdkFolder = Environment.getSdkDir(this).getAbsolutePath();
+        SdkManager sdkManager = SdkManager.createManager(sdkFolder, log);
+        ProjectCreator projectCreator = new ProjectCreator(sdkManager, sdkFolder,
+                ProjectCreator.OutputLevel.VERBOSE, log);
+
+        IAndroidTarget target = null;
+        IAndroidTarget[] targets = sdkManager.getTargets();
+        if (DLog.DEBUG) DLog.d(TAG, "targets = " + Arrays.toString(targets));
+        for (IAndroidTarget tmp : targets) {
+            if (tmp.getVersion().getApiLevel() == 27) {
+                target = tmp;
+            }
+        }
+
+        String projectName = "DemoAndroid";
+        File rootProject = new File(Environment.getSdkAppDir(), projectName);
+        com.duy.android.compiler.utils.FileUtils.deleteQuietly(rootProject);
+        projectCreator.createGradleProject(rootProject.getAbsolutePath(), projectName,
+                "com.duy.example",
+                "MainActivity", target, false, "1.0");
+
+        File[] files = rootProject.listFiles();
+        if (DLog.DEBUG) DLog.d(TAG, "files = " + Arrays.toString(files));
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
