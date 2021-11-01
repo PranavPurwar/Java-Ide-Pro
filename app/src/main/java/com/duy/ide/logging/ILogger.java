@@ -1,4 +1,3 @@
-/* Decompiler 0ms, total 1657ms, lines 20 */
 package com.duy.ide.logging;
 
 import android.support.annotation.NonNull;
@@ -7,14 +6,14 @@ import android.support.annotation.WorkerThread;
 
 public interface ILogger {
    @WorkerThread
-   void error(@Nullable Throwable var1, @Nullable String var2, Object... var3);
+   void error(@Nullable Throwable th, @Nullable String tag, Object... content);
 
    @WorkerThread
-   void info(@NonNull String var1, Object... var2);
+   void info(@NonNull String tag, Object... content);
 
    @WorkerThread
-   void verbose(@NonNull String var1, Object... var2);
+   void verbose(@NonNull String tag, Object... content);
 
    @WorkerThread
-   void warning(@NonNull String var1, Object... var2);
+   void warning(@NonNull String tag, Object... content);
 }

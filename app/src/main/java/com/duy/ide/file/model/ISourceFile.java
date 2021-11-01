@@ -1,4 +1,3 @@
-/* Decompiler 0ms, total 456ms, lines 16 */
 package com.duy.ide.file.model;
 
 import android.support.annotation.NonNull;

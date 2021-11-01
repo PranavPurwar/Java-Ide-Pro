@@ -1,4 +1,3 @@
-/* Decompiler 17ms, total 428ms, lines 78 */
 package com.duy.ide.logging;
 
 import android.support.annotation.NonNull;
@@ -8,23 +7,23 @@ import java.io.PrintStream;
 public class StdLogger implements ILogger {
    private final StdLogger.Level mLevel;
 
-   public StdLogger(@NonNull StdLogger.Level var1) {
-      if (var1 == null) {
+   public StdLogger(@NonNull StdLogger.Level level) {
+      if (level == null) {
          throw new IllegalArgumentException("level cannot be null");
       } else {
-         this.mLevel = var1;
+         this.mLevel = level;
       }
    }
 
-   private void printMessage(String var1, PrintStream var2) {
-      var2.print(var1);
-      if (!var1.endsWith("\n")) {
-         var2.println();
+   private void printMessage(String message, PrintStream stream) {
+      stream.print(message);
+      if (!message.endsWith("\n")) {
+         stream.println();
       }
 
    }
 
-   public void error(@Nullable Throwable var1, @Nullable String var2, Object... var3) {
+   public void error(@Nullable Throwable throwable, @Nullable String var2, Object... var3) {
       if (var2 != null) {
          StringBuilder var4 = new StringBuilder();
          var4.append("Error: ");
@@ -32,8 +31,8 @@ public class StdLogger implements ILogger {
          this.printMessage(String.format(var4.toString(), var3), System.err);
       }
 
-      if (var1 != null) {
-         var1.printStackTrace();
+      if (throwable != null) {
+         throwable.printStackTrace();
       }
 
    }

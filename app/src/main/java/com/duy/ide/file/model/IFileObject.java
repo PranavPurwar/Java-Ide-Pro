@@ -1,4 +1,3 @@
-/* Decompiler 0ms, total 498ms, lines 24 */
 package com.duy.ide.file.model;
 
 import android.net.Uri;

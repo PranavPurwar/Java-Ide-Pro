@@ -1,4 +1,3 @@
-/* Decompiler 1ms, total 459ms, lines 13 */
 package com.duy.ide.file;
 
 import android.text.SpannableStringBuilder;

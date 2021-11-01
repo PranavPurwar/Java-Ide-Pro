@@ -1,4 +1,3 @@
-/* Decompiler 4ms, total 806ms, lines 67 */
 package com.duy.ide.javaide.setting;
 
 import android.annotation.SuppressLint;
@@ -17,8 +16,8 @@ public class AppSetting {
    private SharedPreferences sharedPreferences;
 
    @SuppressLint({"CommitPrefEdits"})
-   public AppSetting(@NonNull Context var1) {
-      this.context = var1;
+   public AppSetting(@NonNull Context context) {
+      this.context = context;
       this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(var1);
       this.editor = this.sharedPreferences.edit();
    }

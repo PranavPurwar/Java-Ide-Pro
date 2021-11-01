@@ -1,4 +1,3 @@
-/* Decompiler 22ms, total 556ms, lines 138 */
 package com.duy.ide.file.dialogs;
 
 import android.content.Intent;
@@ -33,29 +32,24 @@ public class DialogNewFile extends AppCompatDialogFragment {
    private Spinner mSpinnerExt;
 
    private boolean createNewFile() {
-      String var1 = this.mNameEditText.getText().toString();
-      if (this.mNameEditText.length() != 0 && var1.matches("[A-Za-z0-9_./ ]+")) {
-         String var2 = this.mPathExitText.getText().toString();
-         String var3 = var1;
-         if (!var1.contains(".")) {
-            StringBuilder var5 = new StringBuilder();
-            var5.append(var1);
-            var5.append(this.mSpinnerExt.getSelectedItem().toString());
-            var3 = var5.toString();
+      String fileName = this.mNameEditText.getText().toString();
+      if (fileName.length() != 0 && fileName.matches("[A-Za-z0-9_./ ]+")) {
+         String path = this.mPathExitText.getText().toString();
+         if (!fileName.contains(".")) {
+            fileName = fileName + this.mSpinnerExt.getSelectedItem().toString();
          }
 
-         File var6 = new File(var2, var3);
+         File file = new File(path, fileName);
 
          try {
-            var6.getParentFile().mkdirs();
-            var6.createNewFile();
+            file.getParentFile().mkdirs();
+            file.createNewFile();
             if (this.mListener != null) {
-               this.mListener.onFileCreated(var6);
+               this.mListener.onFileCreated(file);
             }
-
             return true;
-         } catch (Exception var4) {
-            Toast.makeText(this.getContext(), var4.getMessage(), 0).show();
+         } catch (Exception e) {
+            Toast.makeText(this.getContext(), e.getMessage(), 0).show();
             return false;
          }
       } else {
@@ -64,14 +58,14 @@ public class DialogNewFile extends AppCompatDialogFragment {
       }
    }
 
-   public static DialogNewFile newInstance(@NonNull String[] var0, @NonNull String var1, DialogNewFile.OnCreateFileListener var2) {
-      Bundle var3 = new Bundle();
-      DialogNewFile var4 = new DialogNewFile();
-      var4.setArguments(var3);
-      var3.putStringArray("fileExtensions", var0);
-      var3.putString("currentDir", var1);
-      var4.mListener = var2;
-      return var4;
+   public static DialogNewFile newInstance(@NonNull String[] extensions, @NonNull String path, DialogNewFile.OnCreateFileListener listener) {
+      Bundle bundle = new Bundle();
+      DialogNewFile dialog = new DialogNewFile();
+      dialog.setArguments(bundle);
+      bundle.putStringArray("fileExtensions", extensions);
+      bundle.putString("currentDir", path);
+      dialog.mListener = listener;
+      return dialog;
    }
 
    private void selectPath() {
@@ -91,12 +85,12 @@ public class DialogNewFile extends AppCompatDialogFragment {
    }
 
    @Nullable
-   public View onCreateView(@NonNull LayoutInflater var1, @Nullable ViewGroup var2, @Nullable Bundle var3) {
-      return var1.inflate(layout.dialog_new_file_default, var2, false);
+   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup group, @Nullable Bundle bundle) {
+      return inflater.inflate(layout.dialog_new_file_default, group, false);
    }
 
-   public void onViewCreated(@NonNull View var1, @Nullable Bundle var2) {
-      super.onViewCreated(var1, var2);
+   public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
+      super.onViewCreated(view, bundle);
       if (this.mCurrentDir == null) {
          this.mCurrentDir = this.getArguments().getString("currentDir");
       }
@@ -105,34 +99,34 @@ public class DialogNewFile extends AppCompatDialogFragment {
          this.fileExtensions = this.getArguments().getStringArray("fileExtensions");
       }
 
-      this.mPathExitText = (EditText)var1.findViewById(id.edit_path);
+      this.mPathExitText = (EditText)view.findViewById(id.edit_path);
       this.mPathExitText.setText(this.mCurrentDir);
-      this.mNameEditText = (EditText)var1.findViewById(id.edit_input);
-      this.mSpinnerExt = (Spinner)var1.findViewById(id.spinner_exts);
-      ArrayAdapter var3 = new ArrayAdapter(this.getContext(), 17367043, this.fileExtensions);
-      var3.setDropDownViewResource(17367055);
-      this.mSpinnerExt.setAdapter(var3);
-      var1.findViewById(id.btn_create).setOnClickListener(new OnClickListener() {
-         public void onClick(View var1) {
+      this.mNameEditText = (EditText)view.findViewById(id.edit_input);
+      this.mSpinnerExt = (Spinner)view.findViewById(id.spinner_exts);
+      ArrayAdapter adapter = new ArrayAdapter(this.getContext(), 17367043, this.fileExtensions);
+      adapter.setDropDownViewResource(17367055);
+      this.mSpinnerExt.setAdapter(adapter);
+      view.findViewById(id.btn_create).setOnClickListener(new OnClickListener() {
+         public void onClick(View unused) {
             if (DialogNewFile.this.createNewFile()) {
                DialogNewFile.this.dismiss();
             }
 
          }
       });
-      var1.findViewById(id.btn_cancel).setOnClickListener(new OnClickListener() {
-         public void onClick(View var1) {
+      view.findViewById(id.btn_cancel).setOnClickListener(new OnClickListener() {
+         public void onClick(View unused) {
             DialogNewFile.this.dismiss();
          }
       });
-      var1.findViewById(id.btn_select_path).setOnClickListener(new OnClickListener() {
-         public void onClick(View var1) {
+      view.findViewById(id.btn_select_path).setOnClickListener(new OnClickListener() {
+         public void onClick(View unused) {
             DialogNewFile.this.selectPath();
          }
       });
    }
 
    public interface OnCreateFileListener {
-      void onFileCreated(@NonNull File var1);
+      void onFileCreated(@NonNull File file);
    }
 }

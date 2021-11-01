@@ -1,4 +1,3 @@
-/* Decompiler 7ms, total 880ms, lines 69 */
 package com.duy.ide.file.model;
 
 import android.net.Uri;
@@ -20,9 +19,9 @@ public class SourceFile implements ISourceFile {
    private final File file;
    private final byte[] md5;
 
-   public SourceFile(File var1, byte[] var2) {
-      this.file = var1;
-      this.md5 = var2;
+   public SourceFile(File file, byte[] md5) {
+      this.file = file;
+      this.md5 = md5;
    }
 
    @NonNull

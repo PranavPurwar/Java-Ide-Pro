@@ -1,4 +1,3 @@
-/* Decompiler 12ms, total 467ms, lines 126 */
 package com.duy.ide.settings;
 
 import android.app.Activity;

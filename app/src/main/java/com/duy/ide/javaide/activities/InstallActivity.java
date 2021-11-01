@@ -16,9 +16,6 @@ import com.duy.ide.R;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by Duy on 16-Jul-17.
- */
 
 public class InstallActivity extends BaseActivity {
     private ProgressBar mProgressBar;

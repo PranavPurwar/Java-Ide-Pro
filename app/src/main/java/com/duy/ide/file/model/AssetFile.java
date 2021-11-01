@@ -1,4 +1,3 @@
-/* Decompiler 9ms, total 2233ms, lines 41 */
 package com.duy.ide.file.model;
 
 import android.content.res.AssetManager;
@@ -14,9 +13,9 @@ public class AssetFile implements IFileObject {
    private final AssetManager assetManager;
    private final String path;
 
-   public AssetFile(AssetManager var1, String var2) {
-      this.assetManager = var1;
-      this.path = var2;
+   public AssetFile(AssetManager manager, String path) {
+      this.assetManager = manager;
+      this.path = path;
    }
 
    public InputStream openInputStream() throws IOException {
