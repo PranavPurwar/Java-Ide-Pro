@@ -6,9 +6,6 @@ import java.io.PrintWriter;
 
 import javax.tools.DiagnosticListener;
 
-/**
- * Created by duy on 19/07/2017.
- */
 
 public class Javac {
 

@@ -1,4 +1,3 @@
-/* Decompiler 4ms, total 483ms, lines 78 */
 package com.duy.android.compiler.builder;
 
 import android.content.Context;

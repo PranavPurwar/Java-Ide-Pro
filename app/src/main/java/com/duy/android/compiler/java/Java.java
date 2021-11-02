@@ -12,9 +12,6 @@ import java.security.InvalidParameterException;
 
 import dalvik.system.DexClassLoader;
 
-/**
- * Created by duy on 19/07/2017.
- */
 
 public class Java {
 

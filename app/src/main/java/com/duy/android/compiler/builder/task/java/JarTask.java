@@ -1,4 +1,3 @@
-/* Decompiler 10ms, total 551ms, lines 22 */
 package com.duy.android.compiler.builder.task.java;
 
 import com.duy.android.compiler.builder.IBuilder;

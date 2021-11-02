@@ -20,9 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Duy on 05-Aug-17.
- */
+
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class AndroidAppProject extends JavaProject {
 
