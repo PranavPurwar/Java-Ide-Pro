@@ -20,7 +20,7 @@ public class RootUtils {
    public static boolean installApk(Context context, File file) {
       if (file.exists() && file.isFile() && file.canRead()) {
          if (new AppSetting(context).installViaRootAccess()) {
-            if (installWithoutPrompt(context)) {
+            if (installWithoutPrompt(file)) {
                return true;
             }
          } else {

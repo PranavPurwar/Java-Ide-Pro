@@ -123,7 +123,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       this.onCreateNavigationMenu(view.getMenu());
       view.setNavigationItemSelectedListener(new OnNavigationItemSelectedListener() {
          public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            return this.onOptionsItemSelected(item);
+            return IdeActivity.this.onOptionsItemSelected(item);
          }
       });
    }
@@ -184,7 +184,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
          StringBuilder var3 = new StringBuilder();
          var3.append(this.getIntent().toString());
          var3.append("\n");
-         var3.append(var4.getMessage());
+         var3.append(e.getMessage());
          UIUtils.alert(this, this.getString(var2, new Object[]{var3.toString()}));
       }
 
@@ -319,7 +319,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       Iterator it = this.mTabManager.getEditorPagerAdapter().getAllEditor().iterator();
 
       while(it.hasNext()) {
-         (IEditorDelegate)it.next().doCommand(command);
+         ((IEditorDelegate)it.next()).doCommand(command);
       }
 
    }
@@ -464,7 +464,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       for(int var6 = var3.length; var5 < var6; ++var5) {
          MenuGroup var7 = var3[var5];
          if (var7 != MenuGroup.TOP) {
-            SubMenu var9 = var1.addSubMenu(var7.getTitleId());
+            SubMenu var9 = menu.addSubMenu(var7.getTitleId());
             Iterator var8 = var2.getMenuItemsWithoutToolbarMenu(var7).iterator();
 
             while(var8.hasNext()) {

@@ -370,20 +370,10 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 		presenter.setOutputParser(new PatternAwareOutputParser[] {this.aaptParser, this.javaParser});
 		presenter.setFilter(new MessageFilter() {
 			public boolean accept(Message message) {
-				switch (message.getKind()): {
-				    case (Kind.ERROR): {
-				        return true;
-				        break;
-				    }
-				    case (Kind.WARNING): {
-				        return true;
-				        break;
-				    }
-				    default: {
-				        return false;
-				        break;
-				    }
-				}
+			    if (message.getKind() == Kind.ERROR || message.getKind() == Kind.WARNING) {
+			        return true;
+			    }
+			    return false;
 			}
 		});
 	}

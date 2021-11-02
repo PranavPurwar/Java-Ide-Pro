@@ -18,7 +18,7 @@ public class AppSetting {
    @SuppressLint({"CommitPrefEdits"})
    public AppSetting(@NonNull Context context) {
       this.context = context;
-      this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(var1);
+      this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
       this.editor = this.sharedPreferences.edit();
    }
 
