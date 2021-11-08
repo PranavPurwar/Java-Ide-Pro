@@ -47,7 +47,7 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
 
    }
 
-   private void openFileByAnotherApp(File var1) {
+   private void openFileByAnotherApp(File file) {
       Exception var10000;
       label50: {
          Uri var2;
@@ -55,22 +55,19 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
          label43: {
             try {
                if (VERSION.SDK_INT >= 24) {
-                  StringBuilder var11 = new StringBuilder();
-                  var11.append(this.getPackageName());
-                  var11.append(".provider");
-                  var2 = FileProvider.getUriForFile(this, var11.toString(), var1);
+                  var2 = FileProvider.getUriForFile(this, this.getPackageName() + ".provider", file);
                   break label43;
                }
-            } catch (Exception var8) {
-               var10000 = var8;
+            } catch (Exception e) {
+               var10000 = e;
                var10001 = false;
                break label50;
             }
 
             try {
-               var2 = Uri.fromFile(var1);
-            } catch (Exception var7) {
-               var10000 = var7;
+               var2 = Uri.fromFile(file);
+            } catch (Exception e) {
+               var10000 = e;
                var10001 = false;
                break label50;
             }
@@ -82,9 +79,9 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
          try {
             var3 = MimeTypeMap.getSingleton();
             var4 = new Intent("android.intent.action.VIEW");
-            var9 = FileUtils.fileExt(var1.getPath());
-         } catch (Exception var6) {
-            var10000 = var6;
+            var9 = FileUtils.fileExt(file.getPath());
+         } catch (Exception e) {
+            var10000 = e;
             var10001 = false;
             break label50;
          }
@@ -99,14 +96,14 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
             var4.addFlags(1);
             this.startActivity(var4);
             return;
-         } catch (Exception var5) {
-            var10000 = var5;
+         } catch (Exception e) {
+            var10000 = e;
             var10001 = false;
          }
       }
 
-      Exception var10 = var10000;
-      Toast.makeText(this, var10.getMessage(), 1).show();
+      Exception except = var10000;
+      Toast.makeText(this, except.getMessage(), 1).show();
    }
 
    public void createAndroidProject() {
@@ -117,38 +114,38 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
       DialogNewJavaProject.newInstance().show(this.getSupportFragmentManager(), "DialogNewProject");
    }
 
-   public void createNewClass(@Nullable File var1) {
-      File var2 = var1;
-      if (var1 == null) {
-         File var3 = this.getCurrentFile();
-         var2 = var1;
-         if (var3 != null) {
-            var2 = var3.getParentFile();
+   public void createNewClass(@Nullable File path) {
+      File mPath = path;
+      if (path == null) {
+         File current = this.getCurrentFile();
+         mPath = path;
+         if (current != null) {
+            mPath = current.getParentFile();
          }
       }
 
-      if (this.mProject != null && var2 != null) {
-         DialogNewClass.newInstance(this.mProject, this.mProject.getPackageName(), var2).show(this.getSupportFragmentManager(), "DialogNewClass");
+      if (this.mProject != null && mPath != null) {
+         DialogNewClass.newInstance(this.mProject, this.mProject.getPackageName(), mPath).show(this.getSupportFragmentManager(), "DialogNewClass");
       } else {
          this.toast("Can not create new class");
       }
 
    }
 
-   public void doOpenFile(File var1) {
-      if (FileUtils.canEdit(var1)) {
-         this.openFile(var1.getPath());
+   public void doOpenFile(File file) {
+      if (FileUtils.canEdit(file)) {
+         this.openFile(file.getPath());
          this.closeDrawers();
       } else {
-         this.openFileByAnotherApp(var1);
+         this.openFileByAnotherApp(file);
       }
 
    }
 
    @Nullable
    protected File getCurrentFile() {
-      EditorDelegate var1 = this.getCurrentEditorDelegate();
-      return var1 != null ? var1.getDocument().getFile() : null;
+      EditorDelegate delegate = this.getCurrentEditorDelegate();
+      return delegate != null ? delegate.getDocument().getFile() : null;
    }
 
    protected int getRootLayoutId() {
@@ -159,29 +156,30 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
       return 2131755016;
    }
 
-   protected void initLeftNavigationView(@NonNull NavigationView var1) {
-      super.initLeftNavigationView(var1);
+   protected void initLeftNavigationView(@NonNull NavigationView view) {
+      super.initLeftNavigationView(view);
       if (this.mProject == null) {
          this.mProject = JavaProjectManager.getLastProject(this);
       }
 
-      FolderStructureFragment var2 = FolderStructureFragment.newInstance(this.mProject);
-      ((ViewGroup)var1.findViewById(2131296487)).removeAllViews();
-      this.getSupportFragmentManager().beginTransaction().replace(2131296487, var2, "FolderStructureFragment").commit();
-      this.mFilePresenter = new ProjectFilePresenter(var2);
+      FolderStructureFragment structure = FolderStructureFragment.newInstance(this.mProject);
+      ((ViewGroup)view.findViewById(2131296487)).removeAllViews();
+      this.getSupportFragmentManager().beginTransaction().replace(2131296487, structure, "FolderStructureFragment").commit();
+      this.mFilePresenter = new ProjectFilePresenter(structure);
    }
 
    protected void onActivityResult(int var1, int var2, Intent var3) {
       super.onActivityResult(var1, var2, var3);
+      File project;
       StringBuilder var10;
       if (var1 != 58) {
          if (var1 == 704 && var2 == -1) {
             AndroidProjectManager var4 = new AndroidProjectManager(this);
-            String var5 = FileExplorerActivity.getFile(var3);
+            String var8 = FileExplorerActivity.getFile(var3);
 
             try {
-               File var8 = new File(var5);
-               this.onProjectCreated(var4.loadProject(var8, true));
+               project = new File(var8);
+               this.onProjectCreated(var4.loadProject(project, true));
             } catch (Exception var7) {
                var7.printStackTrace();
                var10 = new StringBuilder();
@@ -191,42 +189,39 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
             }
          }
       } else if (var2 == -1) {
-         String var9 = FileExplorerActivity.getFile(var3);
-         if (var9 == null) {
+         String var11 = FileExplorerActivity.getFile(var3);
+         if (var11 == null) {
             return;
          }
 
-         JavaProjectManager var11 = new JavaProjectManager(this);
+         JavaProjectManager manager = new JavaProjectManager(this);
 
          try {
-            File var12 = new File(var9);
-            this.onProjectCreated(var11.loadProject(var12, true));
-         } catch (IOException var6) {
-            var6.printStackTrace();
-            var10 = new StringBuilder();
-            var10.append("Can not import project. Error: ");
-            var10.append(var6.getMessage());
-            Toast.makeText(this, var10.toString(), 0).show();
+            project = new File(var11);
+            this.onProjectCreated(manager.loadProject(project, true));
+         } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Cannot import project. Error: " + e.getMessage(), 0).show();
          }
       }
 
    }
 
-   protected void onCreate(@Nullable Bundle var1) {
-      super.onCreate(var1);
+   protected void onCreate(@Nullable Bundle bundle) {
+      super.onCreate(bundle);
       this.setupToolbar();
       this.createProjectIfNeed();
    }
 
-   public void onFileCreated(File var1) {
+   public void onFileCreated(File file) {
       this.mFilePresenter.refresh(this.mProject);
-      this.openFile(var1.getPath());
+      this.openFile(file.getPath());
    }
 
-   public void onFileDeleted(File var1) {
-      Pair var2 = this.mTabManager.getEditorDelegate(var1);
-      if (var2 != null) {
-         this.mTabManager.closeTab((Integer)var2.first);
+   public void onFileDeleted(File file) {
+      Pair pair = this.mTabManager.getEditorDelegate(file);
+      if (pair != null) {
+         this.mTabManager.closeTab((Integer)pair.first);
       }
 
    }
@@ -239,16 +234,12 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
 
    }
 
-   public void onProjectCreated(@NonNull JavaProject var1) {
-      StringBuilder var2 = new StringBuilder();
-      var2.append("onProjectCreated() called with: projectFile = [");
-      var2.append(var1);
-      var2.append("]");
-      Log.d("BaseEditorActivity", var2.toString());
-      this.mProject = var1;
-      JavaProjectManager.saveProject(this, var1);
+   public void onProjectCreated(@NonNull JavaProject project) {
+      Log.d("BaseEditorActivity", "onProjectCreated() called with: projectFile = [" + project + "]");
+      this.mProject = project;
+      JavaProjectManager.saveProject(this, project);
       this.mTabManager.closeAllTab();
-      this.mFilePresenter.show(var1, true);
+      this.mFilePresenter.show(project, true);
       this.mDiagnosticPresenter.hidePanel();
       this.mDiagnosticPresenter.clear();
       this.openDrawer(8388611);
@@ -259,10 +250,10 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
       FileExplorerActivity.startPickPathActivity(this, Environment.getSdkAppDir().getAbsolutePath(), "UTF-8", 704);
    }
 
-   public void openDrawer(int var1) {
+   public void openDrawer(int pos) {
       try {
-         this.mDrawerLayout.openDrawer(var1);
-      } catch (Exception var3) {
+         this.mDrawerLayout.openDrawer(pos);
+      } catch (Exception ignored) {
       }
 
    }
@@ -274,16 +265,16 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
    public void setupToolbar() {
    }
 
-   public void showDialogNew(@Nullable File var1) {
-      DialogSelectType.newInstance(var1, new OnFileTypeSelectListener() {
-         public void onTypeSelected(File var1, String var2) {
+   public void showDialogNew(@Nullable File file) {
+      DialogSelectType.newInstance(file, new OnFileTypeSelectListener() {
+         public void onTypeSelected(File file, String type) {
          }
       }).show(this.getSupportFragmentManager(), "DialogNewAndroidProject");
    }
 
    protected abstract void startAutoCompleteService();
 
-   protected void toast(String var1) {
-      Toast.makeText(this, var1, 0).show();
+   protected void toast(String message) {
+      Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
    }
 }

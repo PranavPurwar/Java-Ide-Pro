@@ -11,7 +11,7 @@ public class JarTask extends Task<JavaProject> {
    }
 
    public boolean doFullTaskAction() throws Exception {
-      (new JarArchive(this.mBuilder.isVerbose())).createJarArchive(this.mProject);
+      new JarArchive(this.mBuilder.isVerbose()).createJarArchive(this.mProject);
       return true;
    }
 

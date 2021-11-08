@@ -259,10 +259,5 @@ public class JsonDatabase implements ITabDatabase {
 
          return item;
       }
-
-      // $FF: synthetic method
-      RecentFileJsonHelper(Object x1) {
-         this();
-      }
    }
 }

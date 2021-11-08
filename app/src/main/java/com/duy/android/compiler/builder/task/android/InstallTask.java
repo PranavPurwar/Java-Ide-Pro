@@ -1,4 +1,25 @@
 package com.duy.android.compiler.builder.task.android;
 
-public class InstallTask {
+import com.duy.android.compiler.builder.IBuilder;
+import com.duy.android.compiler.builder.task.Task;
+import com.duy.android.compiler.project.AndroidAppProject;
+
+import com.duy.ide.javaide.utils.RootUtils;
+
+public class InstallTask extends Task<AndroidAppProject> {
+
+    public InstallTask(IBuilder<? extends AndroidAppProject> builder) {
+        super(builder);
+    }
+
+    @Override
+    public String getTaskName() {
+        return "Install apk";
+    }
+
+    @Override
+    public boolean doFullTaskAction() throws Exception {
+        RootUtils.installApk(context, mProject.getApkSigned());
+        return true;
+    }
 }

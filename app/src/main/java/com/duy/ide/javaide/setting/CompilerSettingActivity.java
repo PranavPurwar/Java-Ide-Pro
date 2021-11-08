@@ -12,8 +12,8 @@ public class CompilerSettingActivity extends BaseActivity {
       this.setContentView(2131427355);
       this.setSupportActionBar((Toolbar)this.findViewById(2131296705));
       this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-      FragmentTransaction transaction = this.getFragmentManager().beginTransaction();
-      transaction.replace(2131296387, new CompilerSettingFragment());
-      transaction.commit();
+      FragmentTransaction trans = this.getFragmentManager().beginTransaction();
+      trans.replace(2131296387, new CompilerSettingFragment());
+      trans.commit();
    }
 }

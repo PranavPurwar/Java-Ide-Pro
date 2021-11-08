@@ -22,12 +22,12 @@ public class AppSetting {
       this.editor = this.sharedPreferences.edit();
    }
 
-   public boolean getBoolean(String var1, boolean var2) {
+   public boolean getBoolean(String key, boolean boo) {
       try {
-         boolean var3 = this.sharedPreferences.getBoolean(var1, var2);
-         return var3;
-      } catch (Exception var4) {
-         return var2;
+         boolean result = this.sharedPreferences.getBoolean(key, boo);
+         return result;
+      } catch (Exception ignored) {
+         return boo;
       }
    }
 
@@ -35,29 +35,24 @@ public class AppSetting {
       return this.getInt(this.context.getString(2131689726), 0);
    }
 
-   public int getInt(String var1, int var2) {
-      int var3;
+   public int getInt(String key, int normal) {
       try {
-         var3 = this.sharedPreferences.getInt(var1, var2);
-         return var3;
-      } catch (Exception var6) {
+         return this.sharedPreferences.getInt(key, normal);
+      } catch (Exception ignored) {
          try {
-            var3 = Integer.parseInt(this.getString(var1));
-            return var3;
-         } catch (Exception var5) {
-            return var2;
+            return Integer.parseInt(this.getString(key));
+         } catch (Exception unused) {
+            return normal;
          }
       }
    }
 
-   public String getString(String var1) {
+   public String getString(String key) {
       try {
-         var1 = this.sharedPreferences.getString(var1, "");
-      } catch (Exception var2) {
-         var1 = "";
+         return this.sharedPreferences.getString(key, "");
+      } catch (Exception ignored) {
+         return "";
       }
-
-      return var1;
    }
 
    public boolean installViaRootAccess() {

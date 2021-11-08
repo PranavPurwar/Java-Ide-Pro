@@ -14,6 +14,7 @@ import com.duy.android.compiler.builder.task.android.MergeManifestTask;
 import com.duy.android.compiler.builder.task.android.PackageApkTask;
 import com.duy.android.compiler.builder.task.android.ProcessAndroidResourceTask;
 import com.duy.android.compiler.builder.task.android.SignApkTask;
+import com.duy.android.compiler.builder.task.android.InstallTask;
 import com.duy.android.compiler.builder.task.java.CompileJavaTask;
 import com.duy.android.compiler.builder.task.java.DexTask;
 import com.duy.android.compiler.project.AndroidAppProject;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
  * {@link CompileAidlTask}
  * {@link CompileJavaTask}
  * {@link PackageApkTask}
+ * {@link InstallTask}
  */
 public class AndroidAppBuilder extends BuilderImpl<AndroidAppProject> {
 
@@ -74,6 +76,8 @@ public class AndroidAppBuilder extends BuilderImpl<AndroidAppProject> {
         tasks.add(new PackageApkTask(this));
 
         tasks.add(new SignApkTask(this, buildType));
+
+        tasks.add(new InstallTask(this));
         return tasks;
     }
 

@@ -79,11 +79,7 @@ public class ExecuteActivity extends BaseActivity {
       } else {
          JCExpression var2 = (new JavaParser()).parse(IOUtils.toString(var1)).getPackageName();
          String var3 = var1.getName().substring(0, var1.getName().indexOf("."));
-         StringBuilder var4 = new StringBuilder();
-         var4.append(var2);
-         var4.append(".");
-         var4.append(var3);
-         return var4.toString();
+         return var2 + "." + var3;
       }
    }
 

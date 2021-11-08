@@ -20,14 +20,9 @@ class Error6Parser extends AbstractAaptOutputParser {
       } else {
          String var6 = var5.group(1);
          if (var2.hasNextLine()) {
-            String var8 = Strings.nullToEmpty(var2.readLine()).trim();
-            var1 = var8;
+            var1 = Strings.nullToEmpty(var2.readLine()).trim();
             if (var2.hasNextLine()) {
-               StringBuilder var7 = new StringBuilder();
-               var7.append(var8);
-               var7.append(" - ");
-               var7.append(Strings.nullToEmpty(var2.readLine()).trim());
-               var1 = var7.toString();
+               var1 = var1 + " - " + Strings.nullToEmpty(var2.readLine()).trim();
                var2.skipNextLine();
             }
          }

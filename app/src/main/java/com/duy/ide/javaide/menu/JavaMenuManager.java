@@ -11,18 +11,19 @@ import java.util.Iterator;
 public class JavaMenuManager {
    private final Context mContext;
 
-   public JavaMenuManager(Context context) {
-      this.mContext = context;
+   public JavaMenuManager(Context var1) {
+      this.mContext = var1;
    }
 
-   private void addToMenu(SubMenu subMenu, int var2, int var3, int[] var4) {
-      subMenu = subMenu.addSubMenu(0, 0, 0, var3);
-      subMenu.getItem().setIcon(MenuManager.makeMenuNormalIcon(this.mContext, var2)).setShowAsAction(2);
+   private void addToMenu(SubMenu var1, int var2, int var3, int[] var4) {
+      var1 = var1.addSubMenu(0, 0, 0, var3);
+      var1.getItem().setIcon(MenuManager.makeMenuNormalIcon(this.mContext, var2)).setShowAsAction(2);
 
       for(var2 = 0; var2 < var4.length / 3; ++var2) {
+         Context var5 = this.mContext;
          var3 = var2 * 3;
-         Drawable drawable = MenuManager.makeMenuNormalIcon(this.mContext, var4[var3 + 2]);
-         subMenu.add(0, var4[var3], 0, var4[var3 + 1]).setIcon(drawable);
+         Drawable var6 = MenuManager.makeMenuNormalIcon(var5, var4[var3 + 2]);
+         var1.add(0, var4[var3], 0, var4[var3 + 1]).setIcon(var6);
       }
 
    }

@@ -55,7 +55,7 @@ public class DexTask extends Task<JavaProject> {
 
             File dexLib = new File(project.getDirBuildDexedLibs(), jarLib.getName().replace(".jar", "-" + md5 + ".dex"));
             if (dexLib.exists()) {
-                mBuilder.stdout("Lib " + jarLib.getPath() + " has been dexed with cached file " + dexLib.getName());
+                mBuilder.stdout("Dexing of library " + jarLib.getPath() + " has been skipped. Using it's previously dexed version \"" + dexLib.getName() + "\" instead to speed up compilation.");
                 continue;
             }
 
@@ -81,7 +81,7 @@ public class DexTask extends Task<JavaProject> {
      * Merge all classed has been build by {@link CompileJavaTask} to a single file .dex
      */
     private boolean dexBuildClasses(@NonNull JavaProject project) throws IOException {
-        mBuilder.stdout("Merge build classes");
+        mBuilder.stdout("Merging build classes");
 
         File buildClasseDir = project.getDirBuildClasses();
         String[] args = new String[]{
@@ -95,7 +95,7 @@ public class DexTask extends Task<JavaProject> {
     }
 
     private boolean dexMerge(@NonNull JavaProject projectFile) throws IOException {
-        mBuilder.stdout("Merge dex files");
+        mBuilder.stdout("Merging dex files");
         File[] dexedLibs = projectFile.getDirBuildDexedLibs().listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
@@ -110,7 +110,7 @@ public class DexTask extends Task<JavaProject> {
                 merged.writeTo(projectFile.getDexFile());
             }
         }
-        mBuilder.stdout("Merge all dexed files completed");
+        mBuilder.stdout("Merged all dexed files");
         return true;
     }
 

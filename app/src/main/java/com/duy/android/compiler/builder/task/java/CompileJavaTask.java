@@ -7,7 +7,6 @@ import com.duy.android.compiler.builder.IBuilder;
 import com.duy.android.compiler.builder.internal.CompileOptions;
 import com.duy.android.compiler.builder.internal.JavaVersion;
 import com.duy.android.compiler.builder.task.Task;
-import com.duy.android.compiler.java.Javac;
 import com.duy.android.compiler.builder.util.Argument;
 import com.duy.android.compiler.project.JavaProject;
 import com.duy.javacompiler.R;
@@ -18,9 +17,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Locale;
-
-import javax.tools.*;
 
 public class CompileJavaTask extends Task<JavaProject> {
 
@@ -74,7 +70,7 @@ public class CompileJavaTask extends Task<JavaProject> {
 
 
     private boolean runEcj() {
-        mBuilder.stdout(TAG + ": Compile java with javac");
+        mBuilder.stdout(TAG + ": Compile java files");
         PrintWriter outWriter = new PrintWriter(mBuilder.getStdout());
         PrintWriter errWriter = new PrintWriter(mBuilder.getStderr());
         org.eclipse.jdt.internal.compiler.batch.Main main =
@@ -83,8 +79,10 @@ public class CompileJavaTask extends Task<JavaProject> {
 
         Argument argument = new Argument();
         argument.add(mBuilder.isVerbose() ? "-verbose" : "-warn:");
-        argument.add("-classpath", mBuilder.getBootClassPath() + ":" + mProject.getClasspath());
-        argument.add("-source", mCompileOptions.getSourceCompatibility().toString()); //host
+        argument.add("-bootclasspath", mBuilder.getBootClassPath());
+        argument.add("-classpath", mProject.getClasspath());
+        argument.add("-sourcepath", mProject.getSourcePath());
+        argument.add("-" + mCompileOptions.getSourceCompatibility().toString()); //host
         argument.add("-target", mCompileOptions.getTargetCompatibility().toString()); //target
         argument.add("-proc:none"); // Disable annotation processors...
         argument.add("-d", mProject.getDirBuildClasses().getAbsolutePath()); // The location of the output folder
@@ -98,8 +96,7 @@ public class CompileJavaTask extends Task<JavaProject> {
 
         System.out.println(TAG + ": Compiler arguments " + argument);
         main.logger.endLoggingSource();
-		int n = Javac.compile(argument.toArray(), errWriter);
-		return n == 0;
+        return main.compile(argument.toArray());
     }
 
     private String[] getAllSourceFiles(JavaProject project) {

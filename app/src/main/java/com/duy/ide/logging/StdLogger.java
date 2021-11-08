@@ -70,8 +70,8 @@ public class StdLogger implements ILogger {
 
       private final int mLevel;
 
-      private Level(int var3) {
-         this.mLevel = var3;
+      private Level(int level) {
+         this.mLevel = level;
       }
    }
 }

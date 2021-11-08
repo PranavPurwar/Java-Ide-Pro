@@ -10,11 +10,10 @@ import android.support.v7.app.AppCompatDelegate;
 
 public class PreferencesUtil {
    private static OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new OnPreferenceChangeListener() {
-      public boolean onPreferenceChange(Preference var1, Object var2) {
-         String var3 = var2.toString();
-         if (var1 instanceof ListPreference) {
-            ListPreference var6 = (ListPreference)var1;
-            int var4 = var6.findIndexOfValue(var3);
+      public boolean onPreferenceChange(Preference pref, Object obj) {
+         if (pref instanceof ListPreference) {
+            ListPreference var6 = (ListPreference)pref;
+            int var4 = var6.findIndexOfValue(obj.toString());
             CharSequence var7;
             if (var4 >= 0) {
                var7 = var6.getEntries()[var4];
@@ -22,13 +21,13 @@ public class PreferencesUtil {
                var7 = null;
             }
 
-            var1.setSummary(var7);
-         } else if (!(var1 instanceof RingtonePreference)) {
-            if (var1 instanceof EditTextPreference) {
-               EditTextPreference var5 = (EditTextPreference)var1;
+            pref.setSummary(var7);
+         } else if (!(pref instanceof RingtonePreference)) {
+            if (pref instanceof EditTextPreference) {
+               EditTextPreference var5 = (EditTextPreference)pref;
                var5.setSummary(var5.getText());
             } else {
-               var1.setSummary(var3);
+               pref.setSummary(obj.toString());
             }
          }
 
@@ -37,10 +36,10 @@ public class PreferencesUtil {
    };
    private AppCompatDelegate mDelegate;
 
-   public static void bindPreferenceSummaryToValue(Preference var0) {
-      if (var0 != null) {
-         var0.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-         sBindPreferenceSummaryToValueListener.onPreferenceChange(var0, PreferenceManager.getDefaultSharedPreferences(var0.getContext()).getString(var0.getKey(), ""));
+   public static void bindPreferenceSummaryToValue(Preference pref) {
+      if (pref != null) {
+         pref.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+         sBindPreferenceSummaryToValueListener.onPreferenceChange(pref, PreferenceManager.getDefaultSharedPreferences(pref.getContext()).getString(pref.getKey(), ""));
       }
    }
 }

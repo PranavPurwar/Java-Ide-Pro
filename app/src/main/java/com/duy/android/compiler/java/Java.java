@@ -98,7 +98,7 @@ public class Java {
                 mainArgs = new String[0];
             }
 
-            //Gat public static void main
+            //Get public static void main
             @SuppressWarnings({"unchecked", "RedundantArrayCreation"})
             Method main = loadedClass.getDeclaredMethod("main", new Class[]{mainArgs.getClass()});
 

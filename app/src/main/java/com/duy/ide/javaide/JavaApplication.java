@@ -16,15 +16,14 @@ public class JavaApplication extends MultiDexApplication {
    private JavaApplication.InterceptorOutputStream systemErr;
    private JavaApplication.InterceptorOutputStream systemOut;
 
-   public void addStdErr(PrintStream err) {
-      this.systemErr.add(err);
+   public void addStdErr(PrintStream stdErr) {
+      this.systemErr.add(stdErr);
    }
 
-   public void addStdOut(PrintStream out) {
-      this.systemOut.add(out);
+   public void addStdOut(PrintStream stdOut) {
+      this.systemOut.add(stdOut);
    }
 
-   @Override
    public void onCreate() {
       super.onCreate();
       this.systemOut = new JavaApplication.InterceptorOutputStream(System.out, this.out);
@@ -35,12 +34,12 @@ public class JavaApplication extends MultiDexApplication {
       IdePreferenceManager.setDefaultValues(this);
    }
 
-   public void removeErrStream(PrintStream err) {
-      this.systemErr.remove(err);
+   public void removeErrStream(PrintStream stdErr) {
+      this.systemErr.remove(stdErr);
    }
 
-   public void removeOutStream(PrintStream out) {
-      this.systemOut.remove(out);
+   public void removeOutStream(PrintStream stdOut) {
+      this.systemOut.remove(stdOut);
    }
 
    private static class InterceptorOutputStream extends PrintStream {
@@ -53,7 +52,7 @@ public class JavaApplication extends MultiDexApplication {
       }
 
       public void add(PrintStream out) {
-         Log.d(TAG, "add() called with: out = [" + out + "]");
+         Log.d("InterceptorOutputStream", "add() called with: out = [" + out + "]");
          this.streams.add(out);
       }
 
@@ -62,7 +61,7 @@ public class JavaApplication extends MultiDexApplication {
       }
 
       public void remove(PrintStream out) {
-         Log.d(TAG, "remove() called with: out = [" + out + "]");
+         Log.d("InterceptorOutputStream", "remove() called with: out = [" + out + "]");
          this.streams.remove(out);
       }
 
@@ -70,14 +69,16 @@ public class JavaApplication extends MultiDexApplication {
          this.streams = streams;
       }
 
-      @Override
-        public void write(@NonNull byte[] buf, int off, int len) {
-            super.write(buf, off, len);
-            if (streams != null) {
-                for (PrintStream printStream : streams) {
-                    printStream.write(buf, off, len);
-                }
+      public void write(@NonNull byte[] buffer, int off, int len) {
+         super.write(buffer, off, len);
+         if (this.streams != null) {
+            Iterator it = this.streams.iterator();
+
+            while(it.hasNext()) {
+               ((PrintStream)it.next()).write(buffer, off, len);
             }
-        }
+         }
+
+      }
    }
 }

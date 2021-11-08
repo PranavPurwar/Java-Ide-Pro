@@ -15,37 +15,37 @@ public class BuildJar extends AsyncTask<JavaProject, Object, File> {
    private BuildJar.CompileListener listener;
    private DiagnosticCollector mDiagnosticCollector;
 
-   public BuildJar(Context var1, BuildJar.CompileListener var2) {
-      this.context = var1;
-      this.listener = var2;
+   public BuildJar(Context context, BuildJar.CompileListener listener) {
+      this.context = context;
+      this.listener = listener;
       this.mDiagnosticCollector = new DiagnosticCollector();
    }
 
-   protected File doInBackground(JavaProject... var1) {
-      JavaProject var2 = var1[0];
-      if (var1[0] == null) {
+   protected File doInBackground(JavaProject... project) {
+      JavaProject mProject = project[0];
+      if (project[0] == null) {
          return null;
       } else {
          try {
-            JavaBuilder var4 = new JavaBuilder(context, var2);
-            if (var4.build(BuildType.DEBUG)) {
-               File var5 = var2.getOutJarArchive();
-               return var5;
+            JavaBuilder builder = new JavaBuilder(context, mProject);
+            if (builder.build(BuildType.DEBUG)) {
+               File out = mProject.getOutJarArchive();
+               return out;
             }
-         } catch (Exception var3) {
-            error = var3;
+         } catch (Exception e) {
+            error = e;
          }
 
          return null;
       }
    }
 
-   protected void onPostExecute(File var1) {
-      super.onPostExecute(var1);
-      if (var1 == null) {
+   protected void onPostExecute(File file) {
+      super.onPostExecute(file);
+      if (file == null) {
          listener.onError(error, mDiagnosticCollector.getDiagnostics());
       } else {
-         listener.onComplete(var1, mDiagnosticCollector.getDiagnostics());
+         listener.onComplete(file, mDiagnosticCollector.getDiagnostics());
       }
 
    }
@@ -56,9 +56,9 @@ public class BuildJar extends AsyncTask<JavaProject, Object, File> {
    }
 
    public interface CompileListener {
-      void onComplete(File jarFile, List<Diagnostic> var2);
+      void onComplete(File jarFile, List<Diagnostic> diagnostic);
 
-      void onError(Exception var1, List<Diagnostic> var2);
+      void onError(Exception e, List<Diagnostic> diagnostic);
 
       void onStart();
    }
