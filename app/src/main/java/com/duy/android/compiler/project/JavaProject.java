@@ -212,7 +212,7 @@ public class JavaProject {
     @NonNull
     public String getClasspath() {
         ArrayList<File> javaLibraries = getJavaLibraries();
-        StringBuilder classpath = new StringBuilder();
+        StringBuilder classpath = new StringBuilder(".");
         for (File javaLibrary : javaLibraries) {
             if (classpath.length() != 0) {
                 classpath.append(File.pathSeparator);

@@ -370,7 +370,7 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 	}
 	
 	protected void startAutoCompleteService() {
-		Log.d("MainActivity", "startAutoCompleteService() called");
+		Log.d(TAG, "startAutoCompleteService() called");
 		if (this.mAutoCompleteProvider == null) {
 			if (this.mProject != null) {
 				new Thread(new Runnable() {

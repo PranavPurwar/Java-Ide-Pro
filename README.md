@@ -12,13 +12,13 @@ Steps for compilation ->
 2. Copy the app/src/main/java folder from this repo to `/data/.../files/java` folder of your project.
 3. Copy the `classpath.jar` file from `app/libs` folder of this repo to `/data/.../files/classpath` folder of your project.
 4. Compile the project.
-5. Use mt manager or apktool to decompile the built classes.dex and java n ide's `classes5.dex` file to smali source.
-6. Replace the java n ide's `classes5.dex`'s classes with the one you just decompiled from built skpro project.
-7. Recompile the dex files of java n ide.
-8. Test.
+5. Use mt manager or apktool to merge the built dex file with the file `base.dex` found in the app/build folder of this repository.
+6. Delete the already present classes5.dex (if present)
+7. Copy the merged file inside the apk
+8. Test It !
 
 #### or
 
 Build the apk file as you do while compiling Sketchware Pro
 
-> I will be uploading a video about it's compilation soon.
+> I will be uploading a video about it's compilation in near future.
