@@ -1,2 +1,0 @@
-- name: Qodana - EAP Linters
-  uses: JetBrains/qodana-action-eap@v1.1.2-eap
