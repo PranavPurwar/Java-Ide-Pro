@@ -4,48 +4,60 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.MenuItem;
 import android.view.SubMenu;
+
+import com.duy.ide.R;
 import com.jecelyin.editor.v2.manager.MenuManager;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class JavaMenuManager {
-   private final Context mContext;
+    private final Context mContext;
 
-   public JavaMenuManager(Context var1) {
-      this.mContext = var1;
-   }
+    public JavaMenuManager(Context context) {
+        mContext = context;
+    }
 
-   private void addToMenu(SubMenu var1, int var2, int var3, int[] var4) {
-      var1 = var1.addSubMenu(0, 0, 0, var3);
-      var1.getItem().setIcon(MenuManager.makeMenuNormalIcon(this.mContext, var2)).setShowAsAction(2);
+    public void createFileMenu(SubMenu menu) {
+        //hide create new file menu
+        menu.removeItem(R.id.action_new_file);
+        menu.removeItem(R.id.action_open);
 
-      for(var2 = 0; var2 < var4.length / 3; ++var2) {
-         Context var5 = this.mContext;
-         var3 = var2 * 3;
-         Drawable var6 = MenuManager.makeMenuNormalIcon(var5, var4[var3 + 2]);
-         var1.add(0, var4[var3], 0, var4[var3 + 1]).setIcon(var6);
-      }
+        ArrayList<MenuItem> oldMenuItems = new ArrayList<>();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            oldMenuItems.add(item);
+        }
+        menu.clear();
 
-   }
+        int[] newMenuIds = new int[]{
+                R.id.action_new_java_project, R.string.new_java_project, R.drawable.ic_create_new_folder_white_24dp,
+                R.id.action_new_android_project, R.string.new_android_project, R.drawable.ic_create_new_folder_white_24dp,
+                R.id.action_new_class, R.string.new_class, R.drawable.ic_create_new_folder_white_24dp,
+                R.id.action_new_file, R.string.new_file, R.drawable.ic_fiber_new_white_24dp,
+        };
+        int[] openMenuIds = new int[]{
+                R.id.action_open_java_project, R.string.open_java_project, R.drawable.ic_folder_open_white_24dp,
+                R.id.action_open_android_project, R.string.open_android_project, R.drawable.ic_folder_open_white_24dp,
+        };
+        addToMenu(menu, R.drawable.ic_create_new_folder_white_24dp, R.string.title_menu_new, newMenuIds);
+        addToMenu(menu, R.drawable.baseline_folder_open_24, R.string.title_menu_open, openMenuIds);
 
-   public void createFileMenu(SubMenu var1) {
-      var1.removeItem(2131296304);
-      var1.removeItem(2131296306);
-      ArrayList var2 = new ArrayList();
+        //restore, make it bottom
+        for (MenuItem item : oldMenuItems) {
+            menu.add(item.getGroupId(), item.getItemId(), item.getOrder(), item.getTitle())
+                    .setIcon(item.getIcon());
+        }
+    }
 
-      for(int var3 = 0; var3 < var1.size(); ++var3) {
-         var2.add(var1.getItem(var3));
-      }
+    private void addToMenu(SubMenu menu, int iconId, int title, int[] child) {
 
-      var1.clear();
-      this.addToMenu(var1, 2131230985, 2131690018, new int[]{2131296305, 2131689800, 2131230985, 2131296302, 2131689795, 2131230985, 2131296303, 2131689796, 2131230985, 2131296304, 2131689797, 2131230996});
-      this.addToMenu(var1, 2131230857, 2131690019, new int[]{2131296308, 2131689818, 2131231001, 2131296307, 2131689815, 2131231001});
-      Iterator var4 = var2.iterator();
-
-      while(var4.hasNext()) {
-         MenuItem var5 = (MenuItem)var4.next();
-         var1.add(var5.getGroupId(), var5.getItemId(), var5.getOrder(), var5.getTitle()).setIcon(var5.getIcon());
-      }
-
-   }
+        SubMenu subMenu = menu.addSubMenu(0, 0, 0, title);
+        subMenu.getItem().setIcon(MenuManager.makeMenuNormalIcon(mContext, iconId))
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        for (int i = 0; i < child.length / 3; i++) {
+            Drawable icon = MenuManager.makeMenuNormalIcon(mContext, child[3 * i + 2]);
+            subMenu.add(0, child[3 * i], 0, child[3 * i + 1])
+                    .setIcon(icon);
+        }
+    }
 }
