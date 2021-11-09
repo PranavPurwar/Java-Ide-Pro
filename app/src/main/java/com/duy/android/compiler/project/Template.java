@@ -10,17 +10,19 @@ public class Template {
                     "\n" +
                     "public class %1$s {\n\n" +
                     "  public static void main(String[] args) {\n" +
-                    "   \n" +
+                    "   \n\tSystem.out.println(\"Hello world\");" +
                     "  }\n" +
                     "}\n";
 
     private static final String INTERFACE_TEMPLATE =
             "\n" +
                     "public interface %1$s {\n" +
+                    "\n\t" +
                     "}\n";
     private static final String ENUM_TEMPLATE =
             "\n" +
                     "public enum %1$s {\n" +
+                    "\n\t" +
                     "}\n";
 
     /**
@@ -32,7 +34,7 @@ public class Template {
     private static final String JAVA_TEMPLATE =
             "%5$s\n" + "\n" +
                     "%1$s%2$s%3$s %4$s {\n" +
-                    "  \n" +
+                    "  \n\t" +
                     "}\n";
 
     @NonNull

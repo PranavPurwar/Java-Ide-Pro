@@ -3,7 +3,7 @@ package com.duy.ide.javaide.run.utils;
 import android.util.Log;
 
 public class IntegerQueue {
-    public static final int QUEUE_SIZE = 2 * 1024; //2MB ram
+    public static final int QUEUE_SIZE = 2 * 1024;
     private static final String TAG = "ByteQueue";
     public int text[];
     public int front;

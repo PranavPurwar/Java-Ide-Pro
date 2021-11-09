@@ -55,7 +55,7 @@ public class SelectProjectFragment extends Fragment {
         try {
             listener = (ProjectClickListener) getActivity();
         } catch (Exception e) {
-            //class cast exception
+            // ignored
         }
     }
 

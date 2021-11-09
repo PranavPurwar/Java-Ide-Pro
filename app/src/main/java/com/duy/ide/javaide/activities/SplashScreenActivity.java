@@ -35,7 +35,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-        // Here, this is the current activity
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         if (!permissionGranted()) {
             requestPermissions();

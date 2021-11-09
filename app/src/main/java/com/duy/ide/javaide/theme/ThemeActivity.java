@@ -49,15 +49,10 @@ public class ThemeActivity extends ThemeSupportActivity
 
     @Override
     public void onEditorThemeSelected(EditorTheme theme) {
-        if (Premium.isPremiumUser(this)) {
-            mPreferences.setEditorTheme(theme.getFileName());
-            String text = getString(R.string.selected_editor_theme, theme.getName());
-            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
-        } else {
-            PremiumDialog premiumDialog = new PremiumDialog(this, mInAppPurchaseHelper);
-            premiumDialog.show();
-        }
+        mPreferences.setEditorTheme(theme.getFileName());
+        String text = getString(R.string.selected_editor_theme, theme.getName());
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+        setResult(RESULT_OK);
     }
 
 }

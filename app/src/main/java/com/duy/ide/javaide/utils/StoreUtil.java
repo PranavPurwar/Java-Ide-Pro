@@ -11,8 +11,6 @@ public class StoreUtil {
     public static void gotoPlayStore(Activity context, String APP_ID) {
         Uri uri = Uri.parse("market://details?id=" + APP_ID);
         Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-        // To count with Play market backstack, After pressing back button,
-        // to taken back to our application, we need to add following flags to intent.
         goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
                 Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         try {
@@ -26,8 +24,6 @@ public class StoreUtil {
     public static void gotoPlayStore(Activity context, String APP_ID, int request) {
         Uri uri = Uri.parse("market://details?id=" + APP_ID);
         Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-        // To count with Play market backstack, After pressing back button,
-        // to taken back to our application, we need to add following flags to intent.
         goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
                 Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         try {
@@ -48,8 +44,6 @@ public class StoreUtil {
     public static void moreApp(Activity mainActivity) {
         Uri uri = Uri.parse("market://search?q=pub:Trần Lê Duy");
         Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-        // To count with Play market backstack, After pressing back button,
-        // to taken back to our application, we need to add following flags to intent.
         goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         try {
             mainActivity.startActivity(goToMarket);
