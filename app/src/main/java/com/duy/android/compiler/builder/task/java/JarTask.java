@@ -6,8 +6,8 @@ import com.duy.android.compiler.java.JarArchive;
 import com.duy.android.compiler.project.JavaProject;
 
 public class JarTask extends Task<JavaProject> {
-   public JarTask(IBuilder<JavaProject> var1) {
-      super(var1);
+   public JarTask(IBuilder<JavaProject> builder) {
+      super(builder);
    }
 
    public boolean doFullTaskAction() throws Exception {

@@ -755,7 +755,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       var2.setCanceledOnTouchOutside(false);
       var2.setCancelable(false);
       var2.show();
-      new SaveAllTask(this, new SaveListener() {
+      (new SaveAllTask(this, new SaveListener() {
          public void onSaveFailed(Exception var1x) {
             var2.dismiss();
             UIUtils.alert(IdeActivity.this, var1x.getMessage());
@@ -765,7 +765,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
             var2.dismiss();
             IdeActivity.this.onSaveComplete(var1);
          }
-      }).execute(new Void[0]);
+      })).execute(new Void[0]);
    }
 
    public void setMenuStatus(@IdRes int var1, int var2) {

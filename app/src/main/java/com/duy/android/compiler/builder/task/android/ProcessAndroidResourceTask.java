@@ -244,7 +244,7 @@ public class ProcessAndroidResourceTask extends Task<AndroidAppProject> {
                 }
                 mBuilder.stderr(s);
                 // TODO: 03-Jun-18 improve it , use com.android.ide.common.blame.parser.aapt.AaptOutputParser
-                if (s.startsWith("ERROR")) {
+                if (s.contains(": ERROR: ") || s.contains(": Error: ") || s.contains(": error: ")) {
                     return false;
                 }
             } catch (Exception e) {

@@ -47,7 +47,7 @@ public class DexTask extends Task<JavaProject> {
     }
 
     private boolean dexLibs(@NonNull JavaProject project) throws Exception {
-        mBuilder.stdout("Dex libs");
+        mBuilder.stdout("Dexing libraries");
         ArrayList<File> javaLibraries = project.getJavaLibraries();
         for (File jarLib : javaLibraries) {
             // compare hash of jar contents to name of dexed version
@@ -65,15 +65,15 @@ public class DexTask extends Task<JavaProject> {
                     "--output=" + dexLib.getAbsolutePath(), //output
                     jarLib.getAbsolutePath() //input
             };
-            mBuilder.stdout("Dexing lib " + jarLib.getPath() + " => " + dexLib.getAbsolutePath());
+            mBuilder.stdout("Dexing library " + jarLib.getPath() + " => " + dexLib.getAbsolutePath());
             int resultCode = com.duy.dx.command.dexer.Main.main(args);
             if (resultCode != 0) {
                 return false;
             }
-            mBuilder.stdout("Dexed lib " + dexLib.getAbsolutePath());
+            mBuilder.stdout("Dexed library " + dexLib.getAbsolutePath());
         }
 
-        mBuilder.stdout("Dex libs completed");
+        mBuilder.stdout("Dex libraries completed");
         return true;
     }
 
