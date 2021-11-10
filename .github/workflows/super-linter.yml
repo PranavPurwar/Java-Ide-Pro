@@ -3,6 +3,7 @@ name: CI for PRs
 on:
   pull_request:
   workflow_dispatch:
+  push:
 
 jobs:
   lint:
