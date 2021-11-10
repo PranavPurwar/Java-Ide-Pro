@@ -547,7 +547,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       } else if (var2 == id.action_goto_line) {
          EditorDelegate var4 = this.getCurrentEditorDelegate();
          if (var4 != null) {
-            (new GotoLineDialog(this, var4)).show();
+            new GotoLineDialog(this, var4).show();
          }
       } else if (var2 == id.action_file_history) {
          RecentFilesManager var5 = new RecentFilesManager(this);
@@ -558,7 +558,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
          });
          var5.show(this);
       } else if (var2 == id.action_highlight) {
-         (new LangListDialog(this)).show();
+         new LangListDialog(this).show();
       } else if (var2 == id.m_menu) {
          this.hideSoftInput();
          this.mDrawerLayout.postDelayed(new Runnable() {
@@ -586,7 +586,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
             this.mPreferences.setReadOnly(var3 ^ true);
             this.doCommandForAllEditor(new Command(CommandEnum.READONLY_MODE));
          } else if (var2 == id.action_encoding) {
-            (new CharsetsDialog(this)).show();
+            new CharsetsDialog(this).show();
          } else if (var2 == id.action_editor_setting) {
             EditorSettingsActivity.open(this, 5);
          } else if (var2 == id.action_share) {
@@ -739,7 +739,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       String var2 = Environment.getExternalStorageDirectory().getAbsolutePath();
       String var3;
       if (var1 != null) {
-         var3 = (new File(var1.getPath())).getParent();
+         var3 = new File(var1.getPath()).getParent();
       } else {
          var3 = var2;
       }
@@ -755,7 +755,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
       var2.setCanceledOnTouchOutside(false);
       var2.setCancelable(false);
       var2.show();
-      (new SaveAllTask(this, new SaveListener() {
+      new SaveAllTask(this, new SaveListener() {
          public void onSaveFailed(Exception var1x) {
             var2.dismiss();
             UIUtils.alert(IdeActivity.this, var1x.getMessage());
@@ -765,7 +765,7 @@ public abstract class IdeActivity extends ThemeSupportActivity implements OnMenu
             var2.dismiss();
             IdeActivity.this.onSaveComplete(var1);
          }
-      })).execute(new Void[0]);
+      }).execute(new Void[0]);
    }
 
    public void setMenuStatus(@IdRes int var1, int var2) {
