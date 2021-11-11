@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.ToHuman;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.ToHuman;
 
 /**
  * A register-based instruction. An instruction is the combination of
@@ -29,16 +29,16 @@ import com.duy.dx .util.ToHuman;
  */
 public abstract class Insn implements ToHuman {
     /** {@code non-null;} opcode */
-    private final Rop opcode;
+    private final com.duy.dx.rop.code.Rop opcode;
 
     /** {@code non-null;} source position */
-    private final SourcePosition position;
+    private final com.duy.dx.rop.code.SourcePosition position;
 
     /** {@code null-ok;} spec for the result of this instruction, if any */
     private final RegisterSpec result;
 
     /** {@code non-null;} specs for all the sources of this instruction */
-    private final RegisterSpecList sources;
+    private final com.duy.dx.rop.code.RegisterSpecList sources;
 
     /**
      * Constructs an instance.
@@ -48,8 +48,8 @@ public abstract class Insn implements ToHuman {
      * @param result {@code null-ok;} spec for the result, if any
      * @param sources {@code non-null;} specs for all the sources
      */
-    public Insn(Rop opcode, SourcePosition position, RegisterSpec result,
-                RegisterSpecList sources) {
+    public Insn(com.duy.dx.rop.code.Rop opcode, com.duy.dx.rop.code.SourcePosition position, RegisterSpec result,
+                com.duy.dx.rop.code.RegisterSpecList sources) {
         if (opcode == null) {
             throw new NullPointerException("opcode == null");
         }
@@ -102,6 +102,7 @@ public abstract class Insn implements ToHuman {
      *
      * @return {@code non-null;} the human string form
      */
+    @Override
     public String toHuman() {
         return toHumanWithInline(getInlineString());
     }
@@ -178,7 +179,7 @@ public abstract class Insn implements ToHuman {
      *
      * @return {@code non-null;} the source specs
      */
-    public final RegisterSpecList getSources() {
+    public final com.duy.dx.rop.code.RegisterSpecList getSources() {
         return sources;
     }
 
@@ -303,7 +304,7 @@ public abstract class Insn implements ToHuman {
      * @return {@code non-null;} the string form
      */
     protected final String toStringWithInline(String extra) {
-        StringBuffer sb = new StringBuffer(80);
+        StringBuilder sb = new StringBuilder(80);
 
         sb.append("Insn{");
         sb.append(position);
@@ -336,7 +337,7 @@ public abstract class Insn implements ToHuman {
      * @return {@code non-null;} the human string form
      */
     protected final String toHumanWithInline(String extra) {
-        StringBuffer sb = new StringBuffer(80);
+        StringBuilder sb = new StringBuilder(80);
 
         sb.append(position);
         sb.append(": ");
@@ -376,25 +377,25 @@ public abstract class Insn implements ToHuman {
      */
     public static interface Visitor {
         /**
-         * Visits a {@link PlainInsn}.
+         * Visits a {@link com.duy.dx.rop.code.PlainInsn}.
          *
          * @param insn {@code non-null;} the instruction to visit
          */
-        public void visitPlainInsn(PlainInsn insn);
+        public void visitPlainInsn(com.duy.dx.rop.code.PlainInsn insn);
 
         /**
-         * Visits a {@link PlainCstInsn}.
+         * Visits a {@link com.duy.dx.rop.code.PlainCstInsn}.
          *
          * @param insn {@code non-null;} the instruction to visit
          */
-        public void visitPlainCstInsn(PlainCstInsn insn);
+        public void visitPlainCstInsn(com.duy.dx.rop.code.PlainCstInsn insn);
 
         /**
-         * Visits a {@link SwitchInsn}.
+         * Visits a {@link com.duy.dx.rop.code.SwitchInsn}.
          *
          * @param insn {@code non-null;} the instruction to visit
          */
-        public void visitSwitchInsn(SwitchInsn insn);
+        public void visitSwitchInsn(com.duy.dx.rop.code.SwitchInsn insn);
 
         /**
          * Visits a {@link ThrowingCstInsn}.
@@ -411,11 +412,18 @@ public abstract class Insn implements ToHuman {
         public void visitThrowingInsn(ThrowingInsn insn);
 
         /**
-         * Visits a {@link FillArrayDataInsn}.
+         * Visits a {@link com.duy.dx.rop.code.FillArrayDataInsn}.
          *
          * @param insn {@code non-null;} the instruction to visit
          */
-        public void visitFillArrayDataInsn(FillArrayDataInsn insn);
+        public void visitFillArrayDataInsn(com.duy.dx.rop.code.FillArrayDataInsn insn);
+
+        /**
+         * Visits a {@link InvokePolymorphicInsn}.
+         *
+         * @param insn {@code non-null;} the instruction to visit
+         */
+        public void visitInvokePolymorphicInsn(InvokePolymorphicInsn insn);
     }
 
     /**
@@ -424,32 +432,44 @@ public abstract class Insn implements ToHuman {
      */
     public static class BaseVisitor implements Visitor {
         /** {@inheritDoc} */
+        @Override
         public void visitPlainInsn(PlainInsn insn) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitPlainCstInsn(PlainCstInsn insn) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitSwitchInsn(SwitchInsn insn) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitThrowingCstInsn(ThrowingCstInsn insn) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitThrowingInsn(ThrowingInsn insn) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitFillArrayDataInsn(FillArrayDataInsn insn) {
+            // This space intentionally left blank.
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void visitInvokePolymorphicInsn(InvokePolymorphicInsn insn) {
             // This space intentionally left blank.
         }
     }

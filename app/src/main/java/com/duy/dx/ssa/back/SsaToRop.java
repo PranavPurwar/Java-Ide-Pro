@@ -1,25 +1,42 @@
-package com.duy.dx .ssa.back;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .rop.code.BasicBlock;
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.InsnList;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .ssa.BasicRegisterMapper;
-import com.duy.dx .ssa.PhiInsn;
-import com.duy.dx .ssa.RegisterMapper;
-import com.duy.dx .ssa.SsaBasicBlock;
-import com.duy.dx .ssa.SsaInsn;
-import com.duy.dx .ssa.SsaMethod;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
+package com.duy.dx.ssa.back;
+
+import com.duy.dx.ssa.BasicRegisterMapper;
+import com.duy.dx.ssa.PhiInsn;
+import com.duy.dx.ssa.RegisterMapper;
+import com.duy.dx.ssa.SsaBasicBlock;
+import com.duy.dx.ssa.SsaInsn;
+import com.duy.dx.ssa.SsaMethod;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
+
+import com.duy.dx.rop.code.BasicBlock;
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.InsnList;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.Rops;
 
 /**
  * Converts a method in SSA form to ROP form.
@@ -48,15 +65,15 @@ public class SsaToRop {
      * attempt to minimize the rop-form register count
      * @return {@code non-null;} rop-form output
      */
-    public static RopMethod convertToRopMethod(SsaMethod ssaMeth,
-            boolean minimizeRegisters) {
+    public static com.duy.dx.rop.code.RopMethod convertToRopMethod(SsaMethod ssaMeth,
+                                                                            boolean minimizeRegisters) {
         return new SsaToRop(ssaMeth, minimizeRegisters).convert();
     }
 
     /**
      * Constructs an instance.
      *
-     * @param ssaMeth {@code non-null;} method to process
+     * @param ssaMethod {@code non-null;} method to process
      * @param minimizeRegisters {@code true} if the converter should
      * attempt to minimize the rop-form register count
      */
@@ -72,7 +89,7 @@ public class SsaToRop {
      *
      * @return {@code non-null;} rop-form output
      */
-    private RopMethod convert() {
+    private com.duy.dx.rop.code.RopMethod convert() {
         if (DEBUG) {
             interference.dumpToStdout();
         }
@@ -104,7 +121,7 @@ public class SsaToRop {
 
         removeEmptyGotos();
 
-        RopMethod ropMethod = new RopMethod(convertBasicBlocks(),
+        com.duy.dx.rop.code.RopMethod ropMethod = new RopMethod(convertBasicBlocks(),
                 ssaMeth.blockIndexToRopLabel(ssaMeth.getEntryBlockIndex()));
         ropMethod = new IdenticalBlockCombiner(ropMethod).process();
 
@@ -123,11 +140,12 @@ public class SsaToRop {
         final ArrayList<SsaBasicBlock> blocks = ssaMeth.getBlocks();
 
         ssaMeth.forEachBlockDepthFirst(false, new SsaBasicBlock.Visitor() {
+            @Override
             public void visitBlock(SsaBasicBlock b, SsaBasicBlock parent) {
                 ArrayList<SsaInsn> insns = b.getInsns();
 
                 if ((insns.size() == 1)
-                        && (insns.get(0).getOpcode() == Rops.GOTO)) {
+                        && (insns.get(0).getOpcode() == com.duy.dx.rop.code.Rops.GOTO)) {
                     BitSet preds = (BitSet) b.getPredecessors().clone();
 
                     for (int i = preds.nextSetBit(0); i >= 0;
@@ -177,9 +195,10 @@ public class SsaToRop {
             this.blocks = blocks;
         }
 
+        @Override
         public void visitPhiInsn(PhiInsn insn) {
             RegisterSpecList sources = insn.getSources();
-            RegisterSpec result = insn.getResult();
+            com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
             int sz = sources.size();
 
             for (int i = 0; i < sz; i++) {
@@ -222,30 +241,32 @@ public class SsaToRop {
     /**
      * @return rop-form basic block list
      */
-    private BasicBlockList convertBasicBlocks() {
+    private com.duy.dx.rop.code.BasicBlockList convertBasicBlocks() {
         ArrayList<SsaBasicBlock> blocks = ssaMeth.getBlocks();
 
         // Exit block may be null.
         SsaBasicBlock exitBlock = ssaMeth.getExitBlock();
 
-        ssaMeth.computeReachability();
-        int ropBlockCount = ssaMeth.getCountReachableBlocks();
+        BitSet reachable = ssaMeth.computeReachability();
+        int ropBlockCount = reachable.cardinality();
 
         // Don't count the exit block, if it exists and is reachable.
-        ropBlockCount -= (exitBlock != null && exitBlock.isReachable()) ? 1 : 0;
+        if (exitBlock != null && reachable.get(exitBlock.getIndex())) {
+            ropBlockCount -= 1;
+        }
 
-        BasicBlockList result = new BasicBlockList(ropBlockCount);
+        com.duy.dx.rop.code.BasicBlockList result = new BasicBlockList(ropBlockCount);
 
         // Convert all the reachable blocks except the exit block.
         int ropBlockIndex = 0;
         for (SsaBasicBlock b : blocks) {
-            if (b.isReachable() && b != exitBlock) {
+            if (reachable.get(b.getIndex()) && b != exitBlock) {
                 result.set(ropBlockIndex++, convertBasicBlock(b));
             }
         }
 
         // The exit block, which is discarded, must do nothing.
-        if (exitBlock != null && exitBlock.getInsns().size() != 0) {
+        if (exitBlock != null && !exitBlock.getInsns().isEmpty()) {
             throw new RuntimeException(
                     "Exit block must have no insns when leaving SSA form");
         }
@@ -263,7 +284,7 @@ public class SsaToRop {
     private void verifyValidExitPredecessor(SsaBasicBlock b) {
         ArrayList<SsaInsn> insns = b.getInsns();
         SsaInsn lastInsn = insns.get(insns.size() - 1);
-        Rop opcode = lastInsn.getOpcode();
+        com.duy.dx.rop.code.Rop opcode = lastInsn.getOpcode();
 
         if (opcode.getBranchingness() != Rop.BRANCH_RETURN
                 && opcode != Rops.THROW) {
@@ -278,7 +299,7 @@ public class SsaToRop {
      * @param block SSA block to process
      * @return {@code non-null;} ROP block
      */
-    private BasicBlock convertBasicBlock(SsaBasicBlock block) {
+    private com.duy.dx.rop.code.BasicBlock convertBasicBlock(SsaBasicBlock block) {
         IntList successorList = block.getRopLabelSuccessorList();
         int primarySuccessorLabel = block.getPrimarySuccessorRopLabel();
 
@@ -303,7 +324,7 @@ public class SsaToRop {
 
         successorList.setImmutable();
 
-        BasicBlock result = new BasicBlock(
+        com.duy.dx.rop.code.BasicBlock result = new BasicBlock(
                 block.getRopLabel(), convertInsns(block.getInsns()),
                 successorList,
                 primarySuccessorLabel);
@@ -317,9 +338,9 @@ public class SsaToRop {
      * @param ssaInsns {@code non-null;} old instructions
      * @return {@code non-null;} immutable instruction list
      */
-    private InsnList convertInsns(ArrayList<SsaInsn> ssaInsns) {
+    private com.duy.dx.rop.code.InsnList convertInsns(ArrayList<SsaInsn> ssaInsns) {
         int insnCount = ssaInsns.size();
-        InsnList result = new InsnList(insnCount);
+        com.duy.dx.rop.code.InsnList result = new InsnList(insnCount);
 
         for (int i = 0; i < insnCount; i++) {
             result.set(i, ssaInsns.get(i).toRopInsn());
@@ -346,6 +367,7 @@ public class SsaToRop {
         }
 
         Arrays.sort(ret, new Comparator<Integer>() {
+            @Override
             public int compare(Integer o1, Integer o2) {
                 return ssaMeth.getUseListForRegister(o2).size()
                         - ssaMeth.getUseListForRegister(o1).size();

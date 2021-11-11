@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.iface;
+package com.duy.dx.cf.iface;
 
-import com.duy.dx .util.ByteArray;
+import com.duy.dx.util.ByteArray;
 
 /**
  * Observer of parsing in action. This is used to supply feedback from
@@ -40,7 +40,7 @@ public interface ParseObserver {
      * @param name {@code non-null;} name of the member
      * @param descriptor {@code non-null;} descriptor of the member
      */
-    public void startParsingMember(ByteArray bytes, int offset, String name,
+    public void startParsingMember(com.duy.dx.util.ByteArray bytes, int offset, String name,
                                    String descriptor);
 
     /**
@@ -53,7 +53,7 @@ public interface ParseObserver {
      * @param descriptor {@code non-null;} descriptor of the member
      * @param member {@code non-null;} the actual member that was parsed
      */
-    public void endParsingMember(ByteArray bytes, int offset, String name,
+    public void endParsingMember(com.duy.dx.util.ByteArray bytes, int offset, String name,
                                  String descriptor, Member member);
 
     /**

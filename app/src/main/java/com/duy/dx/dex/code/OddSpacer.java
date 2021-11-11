@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .io.Opcodes;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.io.Opcodes;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.util.AnnotatedOutput;
 
 /**
  * Pseudo-instruction which either turns into a {@code nop} or
@@ -35,7 +35,7 @@ public final class OddSpacer extends VariableSizeInsn {
      * @param position {@code non-null;} source position
      */
     public OddSpacer(SourcePosition position) {
-        super(position, RegisterSpecList.EMPTY);
+        super(position, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
     }
 
     /** {@inheritDoc} */

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.CstType;
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * Representation of a reference to an item inside a Dalvik file.
@@ -26,7 +26,7 @@ public abstract class IdItem extends IndexedItem {
      * {@code non-null;} the type constant for the defining class of
      * the reference
      */
-    private final CstType type;
+    private final com.duy.dx.rop.cst.CstType type;
 
     /**
      * Constructs an instance.
@@ -34,7 +34,7 @@ public abstract class IdItem extends IndexedItem {
      * @param type {@code non-null;} the type constant for the defining
      * class of the reference
      */
-    public IdItem(CstType type) {
+    public IdItem(com.duy.dx.rop.cst.CstType type) {
         if (type == null) {
             throw new NullPointerException("type == null");
         }

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.type.Type;
 import java.util.HashSet;
 
+import com.duy.dx.rop.type.Type;
+
 /**
- * Interface for the construction of {@link CatchTable} instances.
+ * Interface for the construction of {@link com.duy.dx.dex.code.CatchTable} instances.
  */
 public interface CatchBuilder {
     /**

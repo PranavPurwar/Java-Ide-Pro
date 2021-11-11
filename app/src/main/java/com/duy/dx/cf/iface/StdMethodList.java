@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.iface;
+package com.duy.dx.cf.iface;
 
-import com.duy.dx .util.FixedSizeList;
+import com.duy.dx.util.FixedSizeList;
 
 /**
- * Standard implementation of {@link MethodList}, which directly stores
- * an array of {@link Method} objects and can be made immutable.
+ * Standard implementation of {@link com.duy.dx.cf.iface.MethodList}, which directly stores
+ * an array of {@link com.duy.dx.cf.iface.Method} objects and can be made immutable.
  */
 public final class StdMethodList extends FixedSizeList implements MethodList {
     /**
@@ -33,8 +33,9 @@ public final class StdMethodList extends FixedSizeList implements MethodList {
     }
 
     /** {@inheritDoc} */
-    public Method get(int n) {
-        return (Method) get0(n);
+    @Override
+    public com.duy.dx.cf.iface.Method get(int n) {
+        return (com.duy.dx.cf.iface.Method) get0(n);
     }
 
     /**

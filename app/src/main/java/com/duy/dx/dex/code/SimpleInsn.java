@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
 
 /**
  * Instruction which has no extra info beyond the basics provided for in
@@ -34,14 +34,14 @@ public final class SimpleInsn extends FixedSizeInsn {
      * result register if appropriate (that is, registers may be either
      * ins or outs)
      */
-    public SimpleInsn(Dop opcode, SourcePosition position,
-                      RegisterSpecList registers) {
+    public SimpleInsn(com.duy.dx.dex.code.Dop opcode, SourcePosition position,
+                      com.duy.dx.rop.code.RegisterSpecList registers) {
         super(opcode, position, registers);
     }
 
     /** {@inheritDoc} */
     @Override
-    public DalvInsn withOpcode(Dop opcode) {
+    public com.duy.dx.dex.code.DalvInsn withOpcode(Dop opcode) {
         return new SimpleInsn(opcode, getPosition(), getRegisters());
     }
 

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2011 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.duy.dex;
 
 import com.duy.dex.util.ByteInput;
@@ -13,6 +29,8 @@ public final class EncodedValueReader {
     public static final int ENCODED_LONG = 0x06;
     public static final int ENCODED_FLOAT = 0x10;
     public static final int ENCODED_DOUBLE = 0x11;
+    public static final int ENCODED_METHOD_TYPE = 0x15;
+    public static final int ENCODED_METHOD_HANDLE = 0x16;
     public static final int ENCODED_STRING = 0x17;
     public static final int ENCODED_TYPE = 0x18;
     public static final int ENCODED_FIELD = 0x19;
@@ -26,12 +44,12 @@ public final class EncodedValueReader {
     /** placeholder type if the type is not yet known */
     private static final int MUST_READ = -1;
 
-    protected final ByteInput in;
+    protected final com.duy.dex.util.ByteInput in;
     private int type = MUST_READ;
     private int annotationType;
     private int arg;
 
-    public EncodedValueReader(ByteInput in) {
+    public EncodedValueReader(com.duy.dex.util.ByteInput in) {
         this.in = in;
     }
 
@@ -157,6 +175,18 @@ public final class EncodedValueReader {
         return Double.longBitsToDouble(EncodedValueCodec.readUnsignedLong(in, arg, true));
     }
 
+    public int readMethodType() {
+        checkType(ENCODED_METHOD_TYPE);
+        type = MUST_READ;
+        return EncodedValueCodec.readUnsignedInt(in, arg, false);
+    }
+
+    public int readMethodHandle() {
+        checkType(ENCODED_METHOD_HANDLE);
+        type = MUST_READ;
+        return EncodedValueCodec.readUnsignedInt(in, arg, false);
+    }
+
     public int readString() {
         checkType(ENCODED_STRING);
         type = MUST_READ;
@@ -224,6 +254,12 @@ public final class EncodedValueReader {
             break;
         case ENCODED_DOUBLE:
             readDouble();
+            break;
+        case ENCODED_METHOD_TYPE:
+            readMethodType();
+            break;
+        case ENCODED_METHOD_HANDLE:
+            readMethodHandle();
             break;
         case ENCODED_STRING:
             readString();

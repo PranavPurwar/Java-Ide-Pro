@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .io.Opcodes;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstBaseMethodRef;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.FixedSizeList;
-import com.duy.dx .util.IndentingWriter;
+import com.duy.dx.io.Opcodes;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstBaseMethodRef;
+import com.duy.dx.rop.cst.CstCallSiteRef;
+import com.duy.dx.rop.cst.CstProtoRef;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.FixedSizeList;
+import com.duy.dx.util.IndentingWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -30,7 +33,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 
 /**
- * List of {@link DalvInsn} instances.
+ * List of {@link com.duy.dx.dex.code.DalvInsn} instances.
  */
 public final class DalvInsnList extends FixedSizeList {
 
@@ -52,7 +55,7 @@ public final class DalvInsnList extends FixedSizeList {
      * @return {@code non-null;} an appropriately-constructed instance of this
      * class
      */
-    public static DalvInsnList makeImmutable(ArrayList<DalvInsn> list,
+    public static DalvInsnList makeImmutable(ArrayList<com.duy.dx.dex.code.DalvInsn> list,
             int regCount) {
         int size = list.size();
         DalvInsnList result = new DalvInsnList(size, regCount);
@@ -69,6 +72,8 @@ public final class DalvInsnList extends FixedSizeList {
      * Constructs an instance. All indices initially contain {@code null}.
      *
      * @param size the size of the list
+     * @param regCount count, in register-units, of the number of registers
+     * this code block requires.
      */
     public DalvInsnList(int size, int regCount) {
         super(size);
@@ -83,8 +88,8 @@ public final class DalvInsnList extends FixedSizeList {
      * @param n {@code >= 0, < size();} which index
      * @return {@code non-null;} element at that index
      */
-    public DalvInsn get(int n) {
-        return (DalvInsn) get0(n);
+    public com.duy.dx.dex.code.DalvInsn get(int n) {
+        return (com.duy.dx.dex.code.DalvInsn) get0(n);
     }
 
     /**
@@ -93,7 +98,7 @@ public final class DalvInsnList extends FixedSizeList {
      * @param n {@code >= 0, < size();} which index
      * @param insn {@code non-null;} the instruction to set at {@code n}
      */
-    public void set(int n, DalvInsn insn) {
+    public void set(int n, com.duy.dx.dex.code.DalvInsn insn) {
         set0(n, insn);
     }
 
@@ -111,7 +116,7 @@ public final class DalvInsnList extends FixedSizeList {
             return 0;
         }
 
-        DalvInsn last = get(sz - 1);
+        com.duy.dx.dex.code.DalvInsn last = get(sz - 1);
         return last.getNextAddress();
     }
 
@@ -129,7 +134,7 @@ public final class DalvInsnList extends FixedSizeList {
             boolean verbose = out.isVerbose();
 
             for (int i = 0; i < sz; i++) {
-                DalvInsn insn = (DalvInsn) get0(i);
+                com.duy.dx.dex.code.DalvInsn insn = (com.duy.dx.dex.code.DalvInsn) get0(i);
                 int codeBytes = insn.codeSize() * 2;
                 String s;
 
@@ -149,7 +154,7 @@ public final class DalvInsnList extends FixedSizeList {
         }
 
         for (int i = 0; i < sz; i++) {
-            DalvInsn insn = (DalvInsn) get0(i);
+            com.duy.dx.dex.code.DalvInsn insn = (com.duy.dx.dex.code.DalvInsn) get0(i);
             try {
                 insn.writeTo(out);
             } catch (RuntimeException ex) {
@@ -158,7 +163,7 @@ public final class DalvInsnList extends FixedSizeList {
             }
         }
 
-        // Sanity check of the amount written.
+        // Check the amount written.
         int written = (out.getCursor() - startCursor) / 2;
         if (written != codeSize()) {
             throw new RuntimeException("write length mismatch; expected " +
@@ -188,22 +193,36 @@ public final class DalvInsnList extends FixedSizeList {
         int result = 0;
 
         for (int i = 0; i < sz; i++) {
-            DalvInsn insn = (DalvInsn) get0(i);
+            com.duy.dx.dex.code.DalvInsn insn = (com.duy.dx.dex.code.DalvInsn) get0(i);
+            int count = 0;
 
-            if (!(insn instanceof CstInsn)) {
+            if (insn instanceof com.duy.dx.dex.code.CstInsn) {
+                Constant cst = ((CstInsn) insn).getConstant();
+                if (cst instanceof com.duy.dx.rop.cst.CstBaseMethodRef) {
+                    com.duy.dx.rop.cst.CstBaseMethodRef methodRef = (CstBaseMethodRef) cst;
+                    boolean isStatic =
+                        (insn.getOpcode().getFamily() == com.duy.dx.io.Opcodes.INVOKE_STATIC);
+                    count = methodRef.getParameterWordCount(isStatic);
+                } else if (cst instanceof com.duy.dx.rop.cst.CstCallSiteRef) {
+                    com.duy.dx.rop.cst.CstCallSiteRef invokeDynamicRef = (CstCallSiteRef) cst;
+                    count = invokeDynamicRef.getPrototype().getParameterTypes().getWordCount();
+                }
+            } else if (insn instanceof MultiCstInsn) {
+                if (insn.getOpcode().getFamily() != Opcodes.INVOKE_POLYMORPHIC) {
+                    throw new RuntimeException("Expecting invoke-polymorphic");
+                }
+                MultiCstInsn mci = (MultiCstInsn) insn;
+                // Invoke-polymorphic has two constants: [0] method-ref and
+                // [1] call site prototype. The number of arguments is based
+                // on the call site prototype since these are the arguments
+                // presented. The method-ref is always MethodHandle.invoke(Object[])
+                // or MethodHandle.invokeExact(Object[]).
+                com.duy.dx.rop.cst.CstProtoRef proto = (CstProtoRef) mci.getConstant(1);
+                count = proto.getPrototype().getParameterTypes().getWordCount();
+                count = count + 1; // And one for receiver (method handle).
+            } else {
                 continue;
             }
-
-            Constant cst = ((CstInsn) insn).getConstant();
-
-            if (!(cst instanceof CstBaseMethodRef)) {
-                continue;
-            }
-
-            boolean isStatic =
-                (insn.getOpcode().getFamily() == Opcodes.INVOKE_STATIC);
-            int count =
-                ((CstBaseMethodRef) cst).getParameterWordCount(isStatic);
 
             if (count > result) {
                 result = count;
@@ -222,12 +241,12 @@ public final class DalvInsnList extends FixedSizeList {
      * lines for zero-size instructions and explicit constant pool indices
      */
     public void debugPrint(Writer out, String prefix, boolean verbose) {
-        IndentingWriter iw = new IndentingWriter(out, 0, prefix);
+        com.duy.dx.util.IndentingWriter iw = new IndentingWriter(out, 0, prefix);
         int sz = size();
 
         try {
             for (int i = 0; i < sz; i++) {
-                DalvInsn insn = (DalvInsn) get0(i);
+                com.duy.dx.dex.code.DalvInsn insn = (DalvInsn) get0(i);
                 String s;
 
                 if ((insn.codeSize() != 0) || verbose) {

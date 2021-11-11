@@ -14,35 +14,36 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.Exceptions;
-import com.duy.dx .rop.code.FillArrayDataInsn;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.PlainCstInsn;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.ThrowingCstInsn;
-import com.duy.dx .rop.code.ThrowingInsn;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstLiteralBits;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.cst.TypedConstant;
-import com.duy.dx .rop.cst.Zeroes;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
+
+import com.duy.dx.rop.code.Exceptions;
+import com.duy.dx.rop.code.FillArrayDataInsn;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.PlainCstInsn;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.ThrowingCstInsn;
+import com.duy.dx.rop.code.ThrowingInsn;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstLiteralBits;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.cst.TypedConstant;
+import com.duy.dx.rop.cst.Zeroes;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
 
 /**
  * Simple intraprocedural escape analysis. Finds new arrays that don't escape
@@ -97,18 +98,18 @@ public class EscapeAnalysis {
     }
 
     /** method we're processing */
-    private SsaMethod ssaMeth;
+    private final com.duy.dx.ssa.SsaMethod ssaMeth;
     /** ssaMeth.getRegCount() */
-    private int regCount;
+    private final int regCount;
     /** Lattice values for each object register group */
-    private ArrayList<EscapeSet> latticeValues;
+    private final ArrayList<EscapeSet> latticeValues;
 
     /**
      * Constructs an instance.
      *
      * @param ssaMeth method to process
      */
-    private EscapeAnalysis(SsaMethod ssaMeth) {
+    private EscapeAnalysis(com.duy.dx.ssa.SsaMethod ssaMeth) {
         this.ssaMeth = ssaMeth;
         this.regCount = ssaMeth.getRegCount();
         this.latticeValues = new ArrayList<EscapeSet>();
@@ -121,7 +122,7 @@ public class EscapeAnalysis {
      * @param reg {@code non-null;} register being looked up
      * @return index of the register or size of the lattice if it wasn't found.
      */
-    private int findSetIndex(RegisterSpec reg) {
+    private int findSetIndex(com.duy.dx.rop.code.RegisterSpec reg) {
         int i;
         for (i = 0; i < latticeValues.size(); i++) {
             EscapeSet e = latticeValues.get(i);
@@ -139,9 +140,9 @@ public class EscapeAnalysis {
      * @return {@code non-null;} the instruction that produces the result for
      * the move
      */
-    private SsaInsn getInsnForMove(SsaInsn moveInsn) {
+    private com.duy.dx.ssa.SsaInsn getInsnForMove(com.duy.dx.ssa.SsaInsn moveInsn) {
         int pred = moveInsn.getBlock().getPredecessors().nextSetBit(0);
-        ArrayList<SsaInsn> predInsns = ssaMeth.getBlocks().get(pred).getInsns();
+        ArrayList<com.duy.dx.ssa.SsaInsn> predInsns = ssaMeth.getBlocks().get(pred).getInsns();
         return predInsns.get(predInsns.size()-1);
     }
 
@@ -152,9 +153,9 @@ public class EscapeAnalysis {
      * followed by a move result
      * @return {@code non-null;} the move result for the given instruction
      */
-    private SsaInsn getMoveForInsn(SsaInsn insn) {
+    private com.duy.dx.ssa.SsaInsn getMoveForInsn(com.duy.dx.ssa.SsaInsn insn) {
         int succ = insn.getBlock().getSuccessors().nextSetBit(0);
-        ArrayList<SsaInsn> succInsns = ssaMeth.getBlocks().get(succ).getInsns();
+        ArrayList<com.duy.dx.ssa.SsaInsn> succInsns = ssaMeth.getBlocks().get(succ).getInsns();
         return succInsns.get(0);
     }
 
@@ -214,25 +215,25 @@ public class EscapeAnalysis {
      *
      * @param insn {@code non-null;} instruction to process
      */
-    private void processInsn(SsaInsn insn) {
+    private void processInsn(com.duy.dx.ssa.SsaInsn insn) {
         int op = insn.getOpcode().getOpcode();
-        RegisterSpec result = insn.getResult();
+        com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
         EscapeSet escSet;
 
         // Identify new objects
-        if (op == RegOps.MOVE_RESULT_PSEUDO &&
-                result.getTypeBearer().getBasicType() == Type.BT_OBJECT) {
+        if (op == com.duy.dx.rop.code.RegOps.MOVE_RESULT_PSEUDO &&
+                result.getTypeBearer().getBasicType() == com.duy.dx.rop.type.Type.BT_OBJECT) {
             // Handle objects generated through move_result_pseudo
             escSet = processMoveResultPseudoInsn(insn);
             processRegister(result, escSet);
-        } else if (op == RegOps.MOVE_PARAM &&
-                      result.getTypeBearer().getBasicType() == Type.BT_OBJECT) {
+        } else if (op == com.duy.dx.rop.code.RegOps.MOVE_PARAM &&
+                      result.getTypeBearer().getBasicType() == com.duy.dx.rop.type.Type.BT_OBJECT) {
             // Track method arguments that are objects
             escSet = new EscapeSet(result.getReg(), regCount, EscapeState.NONE);
             latticeValues.add(escSet);
             processRegister(result, escSet);
-        } else if (op == RegOps.MOVE_RESULT &&
-                result.getTypeBearer().getBasicType() == Type.BT_OBJECT) {
+        } else if (op == com.duy.dx.rop.code.RegOps.MOVE_RESULT &&
+                result.getTypeBearer().getBasicType() == com.duy.dx.rop.type.Type.BT_OBJECT) {
             // Track method return values that are objects
             escSet = new EscapeSet(result.getReg(), regCount, EscapeState.NONE);
             latticeValues.add(escSet);
@@ -248,23 +249,23 @@ public class EscapeAnalysis {
      * @return {@code non-null;} an EscapeSet for the object referred to by the
      * move result pseudo instruction
      */
-    private EscapeSet processMoveResultPseudoInsn(SsaInsn insn) {
-        RegisterSpec result = insn.getResult();
-        SsaInsn prevSsaInsn = getInsnForMove(insn);
+    private EscapeSet processMoveResultPseudoInsn(com.duy.dx.ssa.SsaInsn insn) {
+        com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
+        com.duy.dx.ssa.SsaInsn prevSsaInsn = getInsnForMove(insn);
         int prevOpcode = prevSsaInsn.getOpcode().getOpcode();
         EscapeSet escSet;
-        RegisterSpec prevSource;
+        com.duy.dx.rop.code.RegisterSpec prevSource;
 
         switch(prevOpcode) {
            // New instance / Constant
-            case RegOps.NEW_INSTANCE:
-            case RegOps.CONST:
+            case com.duy.dx.rop.code.RegOps.NEW_INSTANCE:
+            case com.duy.dx.rop.code.RegOps.CONST:
                 escSet = new EscapeSet(result.getReg(), regCount,
                                            EscapeState.NONE);
                 break;
             // New array
-            case RegOps.NEW_ARRAY:
-            case RegOps.FILLED_NEW_ARRAY:
+            case com.duy.dx.rop.code.RegOps.NEW_ARRAY:
+            case com.duy.dx.rop.code.RegOps.FILLED_NEW_ARRAY:
                 prevSource = prevSsaInsn.getSources().get(0);
                 if (prevSource.getTypeBearer().isConstant()) {
                     // New fixed array
@@ -278,14 +279,14 @@ public class EscapeAnalysis {
                 }
                 break;
             // Loading a static object
-            case RegOps.GET_STATIC:
+            case com.duy.dx.rop.code.RegOps.GET_STATIC:
                 escSet = new EscapeSet(result.getReg(), regCount,
                                            EscapeState.GLOBAL);
                 break;
             // Type cast / load an object from a field or array
-            case RegOps.CHECK_CAST:
-            case RegOps.GET_FIELD:
-            case RegOps.AGET:
+            case com.duy.dx.rop.code.RegOps.CHECK_CAST:
+            case com.duy.dx.rop.code.RegOps.GET_FIELD:
+            case com.duy.dx.rop.code.RegOps.AGET:
                 prevSource = prevSsaInsn.getSources().get(0);
                 int setIndex = findSetIndex(prevSource);
 
@@ -297,7 +298,7 @@ public class EscapeAnalysis {
                 }
 
                 // Set not found, must be either null or unknown
-                if (prevSource.getType() == Type.KNOWN_NULL) {
+                if (prevSource.getType() == com.duy.dx.rop.type.Type.KNOWN_NULL) {
                     escSet = new EscapeSet(result.getReg(), regCount,
                                                EscapeState.NONE);
                } else {
@@ -320,19 +321,19 @@ public class EscapeAnalysis {
      * @param result {@code non-null;} register where new object is stored
      * @param escSet {@code non-null;} EscapeSet for the new object
      */
-    private void processRegister(RegisterSpec result, EscapeSet escSet) {
-        ArrayList<RegisterSpec> regWorklist = new ArrayList<RegisterSpec>();
+    private void processRegister(com.duy.dx.rop.code.RegisterSpec result, EscapeSet escSet) {
+        ArrayList<com.duy.dx.rop.code.RegisterSpec> regWorklist = new ArrayList<com.duy.dx.rop.code.RegisterSpec>();
         regWorklist.add(result);
 
         // Go through the worklist
         while (!regWorklist.isEmpty()) {
             int listSize = regWorklist.size() - 1;
-            RegisterSpec def = regWorklist.remove(listSize);
-            List<SsaInsn> useList = ssaMeth.getUseListForRegister(def.getReg());
+            com.duy.dx.rop.code.RegisterSpec def = regWorklist.remove(listSize);
+            List<com.duy.dx.ssa.SsaInsn> useList = ssaMeth.getUseListForRegister(def.getReg());
 
             // Handle all the uses of this register
-            for (SsaInsn use : useList) {
-                Rop useOpcode = use.getOpcode();
+            for (com.duy.dx.ssa.SsaInsn use : useList) {
+                com.duy.dx.rop.code.Rop useOpcode = use.getOpcode();
 
                 if (useOpcode == null) {
                     // Handle phis
@@ -355,8 +356,8 @@ public class EscapeAnalysis {
      * @param regWorklist {@code non-null;} worklist of instructions left to
      * process for this object
      */
-    private void processPhiUse(SsaInsn use, EscapeSet escSet,
-                                   ArrayList<RegisterSpec> regWorklist) {
+    private void processPhiUse(com.duy.dx.ssa.SsaInsn use, EscapeSet escSet,
+                               ArrayList<com.duy.dx.rop.code.RegisterSpec> regWorklist) {
         int setIndex = findSetIndex(use.getResult());
         if (setIndex != latticeValues.size()) {
             // Check if result is in a set already
@@ -388,41 +389,41 @@ public class EscapeAnalysis {
      * @param regWorklist {@code non-null;} worklist of instructions left to
      * process for this object
      */
-    private void processUse(RegisterSpec def, SsaInsn use, EscapeSet escSet,
-                                ArrayList<RegisterSpec> regWorklist) {
+    private void processUse(com.duy.dx.rop.code.RegisterSpec def, com.duy.dx.ssa.SsaInsn use, EscapeSet escSet,
+                            ArrayList<com.duy.dx.rop.code.RegisterSpec> regWorklist) {
         int useOpcode = use.getOpcode().getOpcode();
         switch (useOpcode) {
-            case RegOps.MOVE:
+            case com.duy.dx.rop.code.RegOps.MOVE:
                 // Follow uses of the move by adding it to the worklist
                 escSet.regSet.set(use.getResult().getReg());
                 regWorklist.add(use.getResult());
                 break;
-            case RegOps.IF_EQ:
-            case RegOps.IF_NE:
-            case RegOps.CHECK_CAST:
+            case com.duy.dx.rop.code.RegOps.IF_EQ:
+            case com.duy.dx.rop.code.RegOps.IF_NE:
+            case com.duy.dx.rop.code.RegOps.CHECK_CAST:
                 // Compared objects can't be replaced, so promote if necessary
                 if (escSet.escape.compareTo(EscapeState.METHOD) < 0) {
                     escSet.escape = EscapeState.METHOD;
                 }
                 break;
-            case RegOps.APUT:
+            case com.duy.dx.rop.code.RegOps.APUT:
                 // For array puts, check for a constant array index
-                RegisterSpec putIndex = use.getSources().get(2);
+                com.duy.dx.rop.code.RegisterSpec putIndex = use.getSources().get(2);
                 if (!putIndex.getTypeBearer().isConstant()) {
                     // If not constant, array can't be replaced
                     escSet.replaceableArray = false;
                 }
                 // Intentional fallthrough
-            case RegOps.PUT_FIELD:
+            case com.duy.dx.rop.code.RegOps.PUT_FIELD:
                 // Skip non-object puts
-                RegisterSpec putValue = use.getSources().get(0);
-                if (putValue.getTypeBearer().getBasicType() != Type.BT_OBJECT) {
+                com.duy.dx.rop.code.RegisterSpec putValue = use.getSources().get(0);
+                if (putValue.getTypeBearer().getBasicType() != com.duy.dx.rop.type.Type.BT_OBJECT) {
                     break;
                 }
                 escSet.replaceableArray = false;
 
                 // Raise 1st object's escape state to 2nd if 2nd is higher
-                RegisterSpecList sources = use.getSources();
+                com.duy.dx.rop.code.RegisterSpecList sources = use.getSources();
                 if (sources.get(0).getReg() == def.getReg()) {
                     int setIndex = findSetIndex(sources.get(1));
                     if (setIndex != latticeValues.size()) {
@@ -443,25 +444,25 @@ public class EscapeAnalysis {
                     }
                 }
                 break;
-            case RegOps.AGET:
+            case com.duy.dx.rop.code.RegOps.AGET:
                 // For array gets, check for a constant array index
-                RegisterSpec getIndex = use.getSources().get(1);
+                com.duy.dx.rop.code.RegisterSpec getIndex = use.getSources().get(1);
                 if (!getIndex.getTypeBearer().isConstant()) {
                     // If not constant, array can't be replaced
                     escSet.replaceableArray = false;
                 }
                 break;
-            case RegOps.PUT_STATIC:
+            case com.duy.dx.rop.code.RegOps.PUT_STATIC:
                 // Static puts cause an object to escape globally
                 escSet.escape = EscapeState.GLOBAL;
                 break;
-            case RegOps.INVOKE_STATIC:
-            case RegOps.INVOKE_VIRTUAL:
-            case RegOps.INVOKE_SUPER:
-            case RegOps.INVOKE_DIRECT:
-            case RegOps.INVOKE_INTERFACE:
-            case RegOps.RETURN:
-            case RegOps.THROW:
+            case com.duy.dx.rop.code.RegOps.INVOKE_STATIC:
+            case com.duy.dx.rop.code.RegOps.INVOKE_VIRTUAL:
+            case com.duy.dx.rop.code.RegOps.INVOKE_SUPER:
+            case com.duy.dx.rop.code.RegOps.INVOKE_DIRECT:
+            case com.duy.dx.rop.code.RegOps.INVOKE_INTERFACE:
+            case com.duy.dx.rop.code.RegOps.RETURN:
+            case com.duy.dx.rop.code.RegOps.THROW:
                 // These operations cause an object to escape interprocedurally
                 escSet.escape = EscapeState.INTER;
                 break;
@@ -482,15 +483,15 @@ public class EscapeAnalysis {
 
             // Get the instructions for the definition and move of the array
             int e = escSet.regSet.nextSetBit(0);
-            SsaInsn def = ssaMeth.getDefinitionForRegister(e);
-            SsaInsn prev = getInsnForMove(def);
+            com.duy.dx.ssa.SsaInsn def = ssaMeth.getDefinitionForRegister(e);
+            com.duy.dx.ssa.SsaInsn prev = getInsnForMove(def);
 
             // Create a map for the new registers that will be created
-            TypeBearer lengthReg = prev.getSources().get(0).getTypeBearer();
-            int length = ((CstLiteralBits) lengthReg).getIntBits();
-            ArrayList<RegisterSpec> newRegs =
-                new ArrayList<RegisterSpec>(length);
-            HashSet<SsaInsn> deletedInsns = new HashSet<SsaInsn>();
+            com.duy.dx.rop.type.TypeBearer lengthReg = prev.getSources().get(0).getTypeBearer();
+            int length = ((com.duy.dx.rop.cst.CstLiteralBits) lengthReg).getIntBits();
+            ArrayList<com.duy.dx.rop.code.RegisterSpec> newRegs =
+                new ArrayList<com.duy.dx.rop.code.RegisterSpec>(length);
+            HashSet<com.duy.dx.ssa.SsaInsn> deletedInsns = new HashSet<com.duy.dx.ssa.SsaInsn>();
 
             // Replace the definition of the array with registers
             replaceDef(def, prev, length, newRegs);
@@ -500,8 +501,8 @@ public class EscapeAnalysis {
             deletedInsns.add(def);
 
             // Go through all uses of the array
-            List<SsaInsn> useList = ssaMeth.getUseListForRegister(e);
-            for (SsaInsn use : useList) {
+            List<com.duy.dx.ssa.SsaInsn> useList = ssaMeth.getUseListForRegister(e);
+            for (com.duy.dx.ssa.SsaInsn use : useList) {
                 // Replace the use with scalars and then mark it for deletion
                 replaceUse(use, prev, newRegs, deletedInsns);
                 deletedInsns.add(use);
@@ -531,19 +532,19 @@ public class EscapeAnalysis {
      * @param newRegs {@code non-null;} mapping of array indices to new
      * registers to be populated
      */
-    private void replaceDef(SsaInsn def, SsaInsn prev, int length,
-                                ArrayList<RegisterSpec> newRegs) {
+    private void replaceDef(com.duy.dx.ssa.SsaInsn def, com.duy.dx.ssa.SsaInsn prev, int length,
+                            ArrayList<com.duy.dx.rop.code.RegisterSpec> newRegs) {
         Type resultType = def.getResult().getType();
 
         // Create new zeroed out registers for each element in the array
         for (int i = 0; i < length; i++) {
-            Constant newZero = Zeroes.zeroFor(resultType.getComponentType());
-            TypedConstant typedZero = (TypedConstant) newZero;
-            RegisterSpec newReg =
-                RegisterSpec.make(ssaMeth.makeNewSsaReg(), typedZero);
+            com.duy.dx.rop.cst.Constant newZero = Zeroes.zeroFor(resultType.getComponentType());
+            com.duy.dx.rop.cst.TypedConstant typedZero = (TypedConstant) newZero;
+            com.duy.dx.rop.code.RegisterSpec newReg =
+                com.duy.dx.rop.code.RegisterSpec.make(ssaMeth.makeNewSsaReg(), typedZero);
             newRegs.add(newReg);
-            insertPlainInsnBefore(def, RegisterSpecList.EMPTY, newReg,
-                                      RegOps.CONST, newZero);
+            insertPlainInsnBefore(def, com.duy.dx.rop.code.RegisterSpecList.EMPTY, newReg,
+                                      com.duy.dx.rop.code.RegOps.CONST, newZero);
         }
     }
 
@@ -559,28 +560,28 @@ public class EscapeAnalysis {
      * @param deletedInsns {@code non-null;} set of instructions marked for
      * deletion
      */
-    private void replaceUse(SsaInsn use, SsaInsn prev,
-                                ArrayList<RegisterSpec> newRegs,
-                                HashSet<SsaInsn> deletedInsns) {
+    private void replaceUse(com.duy.dx.ssa.SsaInsn use, com.duy.dx.ssa.SsaInsn prev,
+                            ArrayList<com.duy.dx.rop.code.RegisterSpec> newRegs,
+                            HashSet<com.duy.dx.ssa.SsaInsn> deletedInsns) {
         int index;
         int length = newRegs.size();
-        SsaInsn next;
-        RegisterSpecList sources;
-        RegisterSpec source, result;
-        CstLiteralBits indexReg;
+        com.duy.dx.ssa.SsaInsn next;
+        com.duy.dx.rop.code.RegisterSpecList sources;
+        com.duy.dx.rop.code.RegisterSpec source, result;
+        com.duy.dx.rop.cst.CstLiteralBits indexReg;
 
         switch (use.getOpcode().getOpcode()) {
-            case RegOps.AGET:
+            case com.duy.dx.rop.code.RegOps.AGET:
                 // Replace array gets with moves
                 next = getMoveForInsn(use);
                 sources = use.getSources();
-                indexReg = ((CstLiteralBits) sources.get(1).getTypeBearer());
+                indexReg = ((com.duy.dx.rop.cst.CstLiteralBits) sources.get(1).getTypeBearer());
                 index = indexReg.getIntBits();
                 if (index < length) {
                     source = newRegs.get(index);
                     result = source.withReg(next.getResult().getReg());
-                    insertPlainInsnBefore(next, RegisterSpecList.make(source),
-                                              result, RegOps.MOVE, null);
+                    insertPlainInsnBefore(next, com.duy.dx.rop.code.RegisterSpecList.make(source),
+                                              result, com.duy.dx.rop.code.RegOps.MOVE, null);
                 } else {
                     // Throw an exception if the index is out of bounds
                     insertExceptionThrow(next, sources.get(1), deletedInsns);
@@ -588,7 +589,7 @@ public class EscapeAnalysis {
                 }
                 deletedInsns.add(next);
                 break;
-            case RegOps.APUT:
+            case com.duy.dx.rop.code.RegOps.APUT:
                 // Replace array puts with moves
                 sources = use.getSources();
                 indexReg = ((CstLiteralBits) sources.get(2).getTypeBearer());
@@ -596,8 +597,8 @@ public class EscapeAnalysis {
                 if (index < length) {
                     source = sources.get(0);
                     result = source.withReg(newRegs.get(index).getReg());
-                    insertPlainInsnBefore(use, RegisterSpecList.make(source),
-                                              result, RegOps.MOVE, null);
+                    insertPlainInsnBefore(use, com.duy.dx.rop.code.RegisterSpecList.make(source),
+                                              result, com.duy.dx.rop.code.RegOps.MOVE, null);
                     // Update the newReg entry to mark value as unknown now
                     newRegs.set(index, result.withSimpleType());
                 } else {
@@ -605,30 +606,30 @@ public class EscapeAnalysis {
                     insertExceptionThrow(use, sources.get(2), deletedInsns);
                 }
                 break;
-            case RegOps.ARRAY_LENGTH:
+            case com.duy.dx.rop.code.RegOps.ARRAY_LENGTH:
                 // Replace array lengths with const instructions
-                TypeBearer lengthReg = prev.getSources().get(0).getTypeBearer();
+                com.duy.dx.rop.type.TypeBearer lengthReg = prev.getSources().get(0).getTypeBearer();
                 //CstInteger lengthReg = CstInteger.make(length);
                 next = getMoveForInsn(use);
-                insertPlainInsnBefore(next, RegisterSpecList.EMPTY,
-                                          next.getResult(), RegOps.CONST,
-                                          (Constant) lengthReg);
+                insertPlainInsnBefore(next, com.duy.dx.rop.code.RegisterSpecList.EMPTY,
+                                          next.getResult(), com.duy.dx.rop.code.RegOps.CONST,
+                                          (com.duy.dx.rop.cst.Constant) lengthReg);
                 deletedInsns.add(next);
                 break;
-            case RegOps.MARK_LOCAL:
+            case com.duy.dx.rop.code.RegOps.MARK_LOCAL:
                 // Remove mark local instructions
                 break;
-            case RegOps.FILL_ARRAY_DATA:
+            case com.duy.dx.rop.code.RegOps.FILL_ARRAY_DATA:
                 // Create const instructions for each fill value
-                Insn ropUse = use.getOriginalRopInsn();
-                FillArrayDataInsn fill = (FillArrayDataInsn) ropUse;
-                ArrayList<Constant> constList = fill.getInitValues();
+                com.duy.dx.rop.code.Insn ropUse = use.getOriginalRopInsn();
+                com.duy.dx.rop.code.FillArrayDataInsn fill = (FillArrayDataInsn) ropUse;
+                ArrayList<com.duy.dx.rop.cst.Constant> constList = fill.getInitValues();
                 for (int i = 0; i < length; i++) {
-                    RegisterSpec newFill =
-                        RegisterSpec.make(newRegs.get(i).getReg(),
+                    com.duy.dx.rop.code.RegisterSpec newFill =
+                        com.duy.dx.rop.code.RegisterSpec.make(newRegs.get(i).getReg(),
                                               (TypeBearer) constList.get(i));
-                    insertPlainInsnBefore(use, RegisterSpecList.EMPTY, newFill,
-                                              RegOps.CONST, constList.get(i));
+                    insertPlainInsnBefore(use, com.duy.dx.rop.code.RegisterSpecList.EMPTY, newFill,
+                                              com.duy.dx.rop.code.RegOps.CONST, constList.get(i));
                     // Update the newRegs to hold the new const value
                     newRegs.set(i, newFill);
                 }
@@ -643,17 +644,17 @@ public class EscapeAnalysis {
      */
     private void movePropagate() {
         for (int i = 0; i < ssaMeth.getRegCount(); i++) {
-            SsaInsn insn = ssaMeth.getDefinitionForRegister(i);
+            com.duy.dx.ssa.SsaInsn insn = ssaMeth.getDefinitionForRegister(i);
 
             // Look for move instructions only
             if (insn == null || insn.getOpcode() == null ||
-                insn.getOpcode().getOpcode() != RegOps.MOVE) {
+                insn.getOpcode().getOpcode() != com.duy.dx.rop.code.RegOps.MOVE) {
                 continue;
             }
 
-            final ArrayList<SsaInsn>[] useList = ssaMeth.getUseListCopy();
-            final RegisterSpec source = insn.getSources().get(0);
-            final RegisterSpec result = insn.getResult();
+            final ArrayList<com.duy.dx.ssa.SsaInsn>[] useList = ssaMeth.getUseListCopy();
+            final com.duy.dx.rop.code.RegisterSpec source = insn.getSources().get(0);
+            final com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
 
             // Ignore moves that weren't added due to scalar replacement
             if (source.getReg() < regCount && result.getReg() < regCount) {
@@ -661,14 +662,14 @@ public class EscapeAnalysis {
             }
 
             // Create a mapping from source to result
-            RegisterMapper mapper = new RegisterMapper() {
+            com.duy.dx.ssa.RegisterMapper mapper = new RegisterMapper() {
                 @Override
                 public int getNewRegisterCount() {
                     return ssaMeth.getRegCount();
                 }
 
                 @Override
-                public RegisterSpec map(RegisterSpec registerSpec) {
+                public com.duy.dx.rop.code.RegisterSpec map(com.duy.dx.rop.code.RegisterSpec registerSpec) {
                     if (registerSpec.getReg() == result.getReg()) {
                         return source;
                     }
@@ -678,7 +679,7 @@ public class EscapeAnalysis {
             };
 
             // Modify all uses of the move to use the source of the move instead
-            for (SsaInsn use : useList[result.getReg()]) {
+            for (com.duy.dx.ssa.SsaInsn use : useList[result.getReg()]) {
                 use.mapSourceRegisters(mapper);
             }
         }
@@ -688,18 +689,22 @@ public class EscapeAnalysis {
      * Runs escape analysis and scalar replacement of arrays.
      */
     private void run() {
-        ssaMeth.forEachBlockDepthFirstDom(new SsaBasicBlock.Visitor() {
-            public void visitBlock (SsaBasicBlock block,
-                    SsaBasicBlock unused) {
-                block.forEachInsn(new SsaInsn.Visitor() {
+        ssaMeth.forEachBlockDepthFirstDom(new com.duy.dx.ssa.SsaBasicBlock.Visitor() {
+            @Override
+            public void visitBlock (com.duy.dx.ssa.SsaBasicBlock block,
+                                    com.duy.dx.ssa.SsaBasicBlock unused) {
+                block.forEachInsn(new com.duy.dx.ssa.SsaInsn.Visitor() {
+                    @Override
                     public void visitMoveInsn(NormalSsaInsn insn) {
                         // do nothing
                     }
 
+                    @Override
                     public void visitPhiInsn(PhiInsn insn) {
                         // do nothing
                     }
 
+                    @Override
                     public void visitNonMoveInsn(NormalSsaInsn insn) {
                         processInsn(insn);
                     }
@@ -731,40 +736,40 @@ public class EscapeAnalysis {
      * @param deletedInsns {@code non-null;} set of instructions marked for
      * deletion
      */
-    private void insertExceptionThrow(SsaInsn insn, RegisterSpec index,
-                                          HashSet<SsaInsn> deletedInsns) {
+    private void insertExceptionThrow(com.duy.dx.ssa.SsaInsn insn, com.duy.dx.rop.code.RegisterSpec index,
+                                      HashSet<com.duy.dx.ssa.SsaInsn> deletedInsns) {
         // Create a new ArrayIndexOutOfBoundsException
-        CstType exception =
+        com.duy.dx.rop.cst.CstType exception =
             new CstType(Exceptions.TYPE_ArrayIndexOutOfBoundsException);
-        insertThrowingInsnBefore(insn, RegisterSpecList.EMPTY, null,
-                                     RegOps.NEW_INSTANCE, exception);
+        insertThrowingInsnBefore(insn, com.duy.dx.rop.code.RegisterSpecList.EMPTY, null,
+                                     com.duy.dx.rop.code.RegOps.NEW_INSTANCE, exception);
 
         // Add a successor block with a move result pseudo for the exception
-        SsaBasicBlock currBlock = insn.getBlock();
-        SsaBasicBlock newBlock =
+        com.duy.dx.ssa.SsaBasicBlock currBlock = insn.getBlock();
+        com.duy.dx.ssa.SsaBasicBlock newBlock =
             currBlock.insertNewSuccessor(currBlock.getPrimarySuccessor());
-        SsaInsn newInsn = newBlock.getInsns().get(0);
-        RegisterSpec newReg =
-            RegisterSpec.make(ssaMeth.makeNewSsaReg(), exception);
-        insertPlainInsnBefore(newInsn, RegisterSpecList.EMPTY, newReg,
-                                  RegOps.MOVE_RESULT_PSEUDO, null);
+        com.duy.dx.ssa.SsaInsn newInsn = newBlock.getInsns().get(0);
+        com.duy.dx.rop.code.RegisterSpec newReg =
+            com.duy.dx.rop.code.RegisterSpec.make(ssaMeth.makeNewSsaReg(), exception);
+        insertPlainInsnBefore(newInsn, com.duy.dx.rop.code.RegisterSpecList.EMPTY, newReg,
+                                  com.duy.dx.rop.code.RegOps.MOVE_RESULT_PSEUDO, null);
 
         // Add another successor block to initialize the exception
-        SsaBasicBlock newBlock2 =
+        com.duy.dx.ssa.SsaBasicBlock newBlock2 =
             newBlock.insertNewSuccessor(newBlock.getPrimarySuccessor());
-        SsaInsn newInsn2 = newBlock2.getInsns().get(0);
-        CstNat newNat = new CstNat(new CstString("<init>"), new CstString("(I)V"));
-        CstMethodRef newRef = new CstMethodRef(exception, newNat);
-        insertThrowingInsnBefore(newInsn2, RegisterSpecList.make(newReg, index),
-                                     null, RegOps.INVOKE_DIRECT, newRef);
+        com.duy.dx.ssa.SsaInsn newInsn2 = newBlock2.getInsns().get(0);
+        com.duy.dx.rop.cst.CstNat newNat = new CstNat(new com.duy.dx.rop.cst.CstString("<init>"), new CstString("(I)V"));
+        com.duy.dx.rop.cst.CstMethodRef newRef = new CstMethodRef(exception, newNat);
+        insertThrowingInsnBefore(newInsn2, com.duy.dx.rop.code.RegisterSpecList.make(newReg, index),
+                                     null, com.duy.dx.rop.code.RegOps.INVOKE_DIRECT, newRef);
         deletedInsns.add(newInsn2);
 
         // Add another successor block to throw the new exception
         SsaBasicBlock newBlock3 =
             newBlock2.insertNewSuccessor(newBlock2.getPrimarySuccessor());
-        SsaInsn newInsn3 = newBlock3.getInsns().get(0);
-        insertThrowingInsnBefore(newInsn3, RegisterSpecList.make(newReg), null,
-                                     RegOps.THROW, null);
+        com.duy.dx.ssa.SsaInsn newInsn3 = newBlock3.getInsns().get(0);
+        insertThrowingInsnBefore(newInsn3, com.duy.dx.rop.code.RegisterSpecList.make(newReg), null,
+                                     com.duy.dx.rop.code.RegOps.THROW, null);
         newBlock3.replaceSuccessor(newBlock3.getPrimarySuccessorIndex(),
                                        ssaMeth.getExitBlock().getIndex());
         deletedInsns.add(newInsn3);
@@ -780,19 +785,19 @@ public class EscapeAnalysis {
      * @param newOpcode opcode of new instruction
      * @param cst {@code null-ok;} constant for new instruction, if any
      */
-    private void insertPlainInsnBefore(SsaInsn insn,
-        RegisterSpecList newSources, RegisterSpec newResult, int newOpcode,
-        Constant cst) {
+    private void insertPlainInsnBefore(com.duy.dx.ssa.SsaInsn insn,
+                                       com.duy.dx.rop.code.RegisterSpecList newSources, com.duy.dx.rop.code.RegisterSpec newResult, int newOpcode,
+                                       com.duy.dx.rop.cst.Constant cst) {
 
-        Insn originalRopInsn = insn.getOriginalRopInsn();
-        Rop newRop;
+        com.duy.dx.rop.code.Insn originalRopInsn = insn.getOriginalRopInsn();
+        com.duy.dx.rop.code.Rop newRop;
         if (newOpcode == RegOps.MOVE_RESULT_PSEUDO) {
-            newRop = Rops.opMoveResultPseudo(newResult.getType());
+            newRop = com.duy.dx.rop.code.Rops.opMoveResultPseudo(newResult.getType());
         } else {
-            newRop = Rops.ropFor(newOpcode, newResult, newSources, cst);
+            newRop = com.duy.dx.rop.code.Rops.ropFor(newOpcode, newResult, newSources, cst);
         }
 
-        Insn newRopInsn;
+        com.duy.dx.rop.code.Insn newRopInsn;
         if (cst == null) {
             newRopInsn = new PlainInsn(newRop,
                     originalRopInsn.getPosition(), newResult, newSources);
@@ -802,7 +807,7 @@ public class EscapeAnalysis {
         }
 
         NormalSsaInsn newInsn = new NormalSsaInsn(newRopInsn, insn.getBlock());
-        List<SsaInsn> insns = insn.getBlock().getInsns();
+        List<com.duy.dx.ssa.SsaInsn> insns = insn.getBlock().getInsns();
 
         insns.add(insns.lastIndexOf(insn), newInsn);
         ssaMeth.onInsnAdded(newInsn);
@@ -818,16 +823,16 @@ public class EscapeAnalysis {
      * @param newOpcode opcode of new instruction
      * @param cst {@code null-ok;} constant for new instruction, if any
      */
-    private void insertThrowingInsnBefore(SsaInsn insn,
-        RegisterSpecList newSources, RegisterSpec newResult, int newOpcode,
-        Constant cst) {
+    private void insertThrowingInsnBefore(com.duy.dx.ssa.SsaInsn insn,
+                                          RegisterSpecList newSources, RegisterSpec newResult, int newOpcode,
+                                          Constant cst) {
 
-        Insn origRopInsn = insn.getOriginalRopInsn();
+        com.duy.dx.rop.code.Insn origRopInsn = insn.getOriginalRopInsn();
         Rop newRop = Rops.ropFor(newOpcode, newResult, newSources, cst);
         Insn newRopInsn;
         if (cst == null) {
             newRopInsn = new ThrowingInsn(newRop,
-                origRopInsn.getPosition(), newSources, StdTypeList.EMPTY);
+                origRopInsn.getPosition(), newSources, com.duy.dx.rop.type.StdTypeList.EMPTY);
         } else {
             newRopInsn = new ThrowingCstInsn(newRop,
                 origRopInsn.getPosition(), newSources, StdTypeList.EMPTY, cst);

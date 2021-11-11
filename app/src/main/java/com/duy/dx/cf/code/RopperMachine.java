@@ -14,58 +14,62 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .cf.iface.Method;
-import com.duy.dx .cf.iface.MethodList;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.code.FillArrayDataInsn;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.PlainCstInsn;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.code.SwitchInsn;
-import com.duy.dx .rop.code.ThrowingCstInsn;
-import com.duy.dx .rop.code.ThrowingInsn;
-import com.duy.dx .rop.code.TranslationAdvice;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstFieldRef;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.IntList;
+import com.duy.dx.cf.iface.Method;
+import com.duy.dx.cf.iface.MethodList;
+
 import java.util.ArrayList;
 
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.code.FillArrayDataInsn;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.InvokePolymorphicInsn;
+import com.duy.dx.rop.code.PlainCstInsn;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.code.SwitchInsn;
+import com.duy.dx.rop.code.ThrowingCstInsn;
+import com.duy.dx.rop.code.ThrowingInsn;
+import com.duy.dx.rop.code.TranslationAdvice;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstCallSiteRef;
+import com.duy.dx.rop.cst.CstFieldRef;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.IntList;
+
 /**
- * Machine implementation for use by {@link Ropper}.
+ * Machine implementation for use by {@link com.duy.dx.cf.code.Ropper}.
  */
 /*package*/ final class RopperMachine extends ValueAwareMachine {
     /** {@code non-null;} array reflection class */
-    private static final CstType ARRAY_REFLECT_TYPE =
-        new CstType(Type.internClassName("java/lang/reflect/Array"));
+    private static final com.duy.dx.rop.cst.CstType ARRAY_REFLECT_TYPE =
+        new com.duy.dx.rop.cst.CstType(com.duy.dx.rop.type.Type.internClassName("java/lang/reflect/Array"));
 
     /**
      * {@code non-null;} method constant for use in converting
      * {@code multianewarray} instructions
      */
-    private static final CstMethodRef MULTIANEWARRAY_METHOD =
-        new CstMethodRef(ARRAY_REFLECT_TYPE,
-                         new CstNat(new CstString("newInstance"),
+    private static final com.duy.dx.rop.cst.CstMethodRef MULTIANEWARRAY_METHOD =
+        new com.duy.dx.rop.cst.CstMethodRef(ARRAY_REFLECT_TYPE,
+                         new CstNat(new com.duy.dx.rop.cst.CstString("newInstance"),
                                     new CstString("(Ljava/lang/Class;[I)" +
                                                 "Ljava/lang/Object;")));
 
-    /** {@code non-null;} {@link Ropper} controlling this instance */
-    private final Ropper ropper;
+    /** {@code non-null;} {@link com.duy.dx.cf.code.Ropper} controlling this instance */
+    private final com.duy.dx.cf.code.Ropper ropper;
 
     /** {@code non-null;} method being converted */
     private final ConcreteMethod method;
@@ -74,16 +78,16 @@ import java.util.ArrayList;
     private final MethodList methods;
 
     /** {@code non-null;} translation advice */
-    private final TranslationAdvice advice;
+    private final com.duy.dx.rop.code.TranslationAdvice advice;
 
     /** max locals of the method */
     private final int maxLocals;
 
     /** {@code non-null;} instructions for the rop basic block in-progress */
-    private final ArrayList<Insn> insns;
+    private final ArrayList<com.duy.dx.rop.code.Insn> insns;
 
     /** {@code non-null;} catches for the block currently being processed */
-    private TypeList catches;
+    private com.duy.dx.rop.type.TypeList catches;
 
     /** whether the catches have been used in an instruction */
     private boolean catchesUsed;
@@ -114,13 +118,13 @@ import java.util.ArrayList;
      * {@code null-ok;} the appropriate {@code return} op or {@code null}
      * if it is not yet known
      */
-    private Rop returnOp;
+    private com.duy.dx.rop.code.Rop returnOp;
 
     /**
      * {@code null-ok;} the source position for the return block or {@code null}
      * if it is not yet known
      */
-    private SourcePosition returnPosition;
+    private com.duy.dx.rop.code.SourcePosition returnPosition;
 
     /**
      * Constructs an instance.
@@ -132,7 +136,7 @@ import java.util.ArrayList;
      *     that defines {@code method}.
      */
     public RopperMachine(Ropper ropper, ConcreteMethod method,
-            TranslationAdvice advice, MethodList methods) {
+                         TranslationAdvice advice, MethodList methods) {
         super(method.getEffectiveDescriptor());
 
         if (methods == null) {
@@ -152,7 +156,7 @@ import java.util.ArrayList;
         this.methods = methods;
         this.advice = advice;
         this.maxLocals = method.getMaxLocals();
-        this.insns = new ArrayList<Insn>(25);
+        this.insns = new ArrayList<com.duy.dx.rop.code.Insn>(25);
         this.catches = null;
         this.catchesUsed = false;
         this.returns = false;
@@ -169,7 +173,7 @@ import java.util.ArrayList;
      *
      * @return {@code non-null;} the instructions array
      */
-    public ArrayList<Insn> getInsns() {
+    public ArrayList<com.duy.dx.rop.code.Insn> getInsns() {
         return insns;
     }
 
@@ -178,7 +182,7 @@ import java.util.ArrayList;
      *
      * @return {@code null-ok;} the return opcode
      */
-    public Rop getReturnOp() {
+    public com.duy.dx.rop.code.Rop getReturnOp() {
         return returnOp;
     }
 
@@ -187,7 +191,7 @@ import java.util.ArrayList;
      *
      * @return {@code null-ok;} the return position
      */
-    public SourcePosition getReturnPosition() {
+    public com.duy.dx.rop.code.SourcePosition getReturnPosition() {
         return returnPosition;
     }
 
@@ -197,7 +201,7 @@ import java.util.ArrayList;
      * been used, reset whether the block contains a
      * {@code return}, and reset {@link #primarySuccessorIndex}.
      */
-    public void startBlock(TypeList catches) {
+    public void startBlock(com.duy.dx.rop.type.TypeList catches) {
         this.catches = catches;
 
         insns.clear();
@@ -298,21 +302,21 @@ import java.util.ArrayList;
         int stackPointer = maxLocals + frame.getStack().size();
 
         // The sources have to be retrieved before super.run() gets called.
-        RegisterSpecList sources = getSources(opcode, stackPointer);
+        com.duy.dx.rop.code.RegisterSpecList sources = getSources(opcode, stackPointer);
         int sourceCount = sources.size();
 
         super.run(frame, offset, opcode);
 
-        SourcePosition pos = method.makeSourcePosistion(offset);
-        RegisterSpec localTarget = getLocalTarget(opcode == ByteOps.ISTORE);
+        com.duy.dx.rop.code.SourcePosition pos = method.makeSourcePosistion(offset);
+        com.duy.dx.rop.code.RegisterSpec localTarget = getLocalTarget(opcode == com.duy.dx.cf.code.ByteOps.ISTORE);
         int destCount = resultCount();
-        RegisterSpec dest;
+        com.duy.dx.rop.code.RegisterSpec dest;
 
         if (destCount == 0) {
             dest = null;
             switch (opcode) {
-                case ByteOps.POP:
-                case ByteOps.POP2: {
+                case com.duy.dx.cf.code.ByteOps.POP:
+                case com.duy.dx.cf.code.ByteOps.POP2: {
                     // These simply don't appear in the rop form.
                     return;
                 }
@@ -320,7 +324,7 @@ import java.util.ArrayList;
         } else if (localTarget != null) {
             dest = localTarget;
         } else if (destCount == 1) {
-            dest = RegisterSpec.make(stackPointer, result(0));
+            dest = com.duy.dx.rop.code.RegisterSpec.make(stackPointer, result(0));
         } else {
             /*
              * This clause only ever applies to the stack manipulation
@@ -342,22 +346,22 @@ import java.util.ArrayList;
              * in the end.
              */
             int scratchAt = ropper.getFirstTempStackReg();
-            RegisterSpec[] scratchRegs = new RegisterSpec[sourceCount];
+            com.duy.dx.rop.code.RegisterSpec[] scratchRegs = new com.duy.dx.rop.code.RegisterSpec[sourceCount];
 
             for (int i = 0; i < sourceCount; i++) {
-                RegisterSpec src = sources.get(i);
-                TypeBearer type = src.getTypeBearer();
-                RegisterSpec scratch = src.withReg(scratchAt);
-                insns.add(new PlainInsn(Rops.opMove(type), pos, scratch, src));
+                com.duy.dx.rop.code.RegisterSpec src = sources.get(i);
+                com.duy.dx.rop.type.TypeBearer type = src.getTypeBearer();
+                com.duy.dx.rop.code.RegisterSpec scratch = src.withReg(scratchAt);
+                insns.add(new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMove(type), pos, scratch, src));
                 scratchRegs[i] = scratch;
                 scratchAt += src.getCategory();
             }
 
             for (int pattern = getAuxInt(); pattern != 0; pattern >>= 4) {
                 int which = (pattern & 0x0f) - 1;
-                RegisterSpec scratch = scratchRegs[which];
-                TypeBearer type = scratch.getTypeBearer();
-                insns.add(new PlainInsn(Rops.opMove(type), pos,
+                com.duy.dx.rop.code.RegisterSpec scratch = scratchRegs[which];
+                com.duy.dx.rop.type.TypeBearer type = scratch.getTypeBearer();
+                insns.add(new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMove(type), pos,
                                         scratch.withReg(stackPointer),
                                         scratch));
                 stackPointer += type.getType().getCategory();
@@ -365,13 +369,13 @@ import java.util.ArrayList;
             return;
         }
 
-        TypeBearer destType = (dest != null) ? dest : Type.VOID;
-        Constant cst = getAuxCst();
+        com.duy.dx.rop.type.TypeBearer destType = (dest != null) ? dest : com.duy.dx.rop.type.Type.VOID;
+        com.duy.dx.rop.cst.Constant cst = getAuxCst();
         int ropOpcode;
-        Rop rop;
-        Insn insn;
+        com.duy.dx.rop.code.Rop rop;
+        com.duy.dx.rop.code.Insn insn;
 
-        if (opcode == ByteOps.MULTIANEWARRAY) {
+        if (opcode == com.duy.dx.cf.code.ByteOps.MULTIANEWARRAY) {
             blockCanThrow = true;
 
             // Add the extra instructions for handling multianewarray.
@@ -382,16 +386,16 @@ import java.util.ArrayList;
              * Add an array constructor for the int[] containing all the
              * dimensions.
              */
-            RegisterSpec dimsReg =
-                RegisterSpec.make(dest.getNextReg(), Type.INT_ARRAY);
-            rop = Rops.opFilledNewArray(Type.INT_ARRAY, sourceCount);
-            insn = new ThrowingCstInsn(rop, pos, sources, catches,
-                    CstType.INT_ARRAY);
+            com.duy.dx.rop.code.RegisterSpec dimsReg =
+                com.duy.dx.rop.code.RegisterSpec.make(dest.getNextReg(), com.duy.dx.rop.type.Type.INT_ARRAY);
+            rop = com.duy.dx.rop.code.Rops.opFilledNewArray(com.duy.dx.rop.type.Type.INT_ARRAY, sourceCount);
+            insn = new com.duy.dx.rop.code.ThrowingCstInsn(rop, pos, sources, catches,
+                    com.duy.dx.rop.cst.CstType.INT_ARRAY);
             insns.add(insn);
 
             // Add a move-result for the new-filled-array
-            rop = Rops.opMoveResult(Type.INT_ARRAY);
-            insn = new PlainInsn(rop, pos, dimsReg, RegisterSpecList.EMPTY);
+            rop = com.duy.dx.rop.code.Rops.opMoveResult(com.duy.dx.rop.type.Type.INT_ARRAY);
+            insn = new com.duy.dx.rop.code.PlainInsn(rop, pos, dimsReg, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
             insns.add(insn);
 
             /*
@@ -405,13 +409,13 @@ import java.util.ArrayList;
              * so as to pass the right component class to the standard
              * Java library array constructor.
              */
-            Type componentType = ((CstType) cst).getClassType();
+            com.duy.dx.rop.type.Type componentType = ((com.duy.dx.rop.cst.CstType) cst).getClassType();
             for (int i = 0; i < sourceCount; i++) {
                 componentType = componentType.getComponentType();
             }
 
-            RegisterSpec classReg =
-                RegisterSpec.make(dest.getReg(), Type.CLASS);
+            com.duy.dx.rop.code.RegisterSpec classReg =
+                com.duy.dx.rop.code.RegisterSpec.make(dest.getReg(), com.duy.dx.rop.type.Type.CLASS);
 
             if (componentType.isPrimitive()) {
                 /*
@@ -419,26 +423,26 @@ import java.util.ArrayList;
                  * to Integer), so we have to fetch the corresponding
                  * TYPE class.
                  */
-                CstFieldRef typeField =
+                com.duy.dx.rop.cst.CstFieldRef typeField =
                     CstFieldRef.forPrimitiveType(componentType);
-                insn = new ThrowingCstInsn(Rops.GET_STATIC_OBJECT, pos,
-                                           RegisterSpecList.EMPTY,
+                insn = new com.duy.dx.rop.code.ThrowingCstInsn(com.duy.dx.rop.code.Rops.GET_STATIC_OBJECT, pos,
+                                           com.duy.dx.rop.code.RegisterSpecList.EMPTY,
                                            catches, typeField);
             } else {
                 /*
                  * The component type is an object type, so just make a
                  * normal class reference.
                  */
-                insn = new ThrowingCstInsn(Rops.CONST_OBJECT, pos,
-                                           RegisterSpecList.EMPTY, catches,
-                                           new CstType(componentType));
+                insn = new com.duy.dx.rop.code.ThrowingCstInsn(com.duy.dx.rop.code.Rops.CONST_OBJECT, pos,
+                                           com.duy.dx.rop.code.RegisterSpecList.EMPTY, catches,
+                                           new com.duy.dx.rop.cst.CstType(componentType));
             }
 
             insns.add(insn);
 
             // Add a move-result-pseudo for the get-static or const
-            rop = Rops.opMoveResultPseudo(classReg.getType());
-            insn = new PlainInsn(rop, pos, classReg, RegisterSpecList.EMPTY);
+            rop = com.duy.dx.rop.code.Rops.opMoveResultPseudo(classReg.getType());
+            insn = new com.duy.dx.rop.code.PlainInsn(rop, pos, classReg, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
             insns.add(insn);
 
             /*
@@ -449,19 +453,19 @@ import java.util.ArrayList;
              * type for the original instruction.
              */
 
-            RegisterSpec objectReg =
-                RegisterSpec.make(dest.getReg(), Type.OBJECT);
+            com.duy.dx.rop.code.RegisterSpec objectReg =
+                com.duy.dx.rop.code.RegisterSpec.make(dest.getReg(), com.duy.dx.rop.type.Type.OBJECT);
 
-            insn = new ThrowingCstInsn(
-                    Rops.opInvokeStatic(MULTIANEWARRAY_METHOD.getPrototype()),
-                    pos, RegisterSpecList.make(classReg, dimsReg),
+            insn = new com.duy.dx.rop.code.ThrowingCstInsn(
+                    com.duy.dx.rop.code.Rops.opInvokeStatic(MULTIANEWARRAY_METHOD.getPrototype()),
+                    pos, com.duy.dx.rop.code.RegisterSpecList.make(classReg, dimsReg),
                     catches, MULTIANEWARRAY_METHOD);
             insns.add(insn);
 
             // Add a move-result.
-            rop = Rops.opMoveResult(MULTIANEWARRAY_METHOD.getPrototype()
+            rop = com.duy.dx.rop.code.Rops.opMoveResult(MULTIANEWARRAY_METHOD.getPrototype()
                     .getReturnType());
-            insn = new PlainInsn(rop, pos, objectReg, RegisterSpecList.EMPTY);
+            insn = new com.duy.dx.rop.code.PlainInsn(rop, pos, objectReg, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
             insns.add(insn);
 
             /*
@@ -469,13 +473,13 @@ import java.util.ArrayList;
              * add an appropriate cast.
              */
 
-            opcode = ByteOps.CHECKCAST;
-            sources = RegisterSpecList.make(objectReg);
-        } else if (opcode == ByteOps.JSR) {
+            opcode = com.duy.dx.cf.code.ByteOps.CHECKCAST;
+            sources = com.duy.dx.rop.code.RegisterSpecList.make(objectReg);
+        } else if (opcode == com.duy.dx.cf.code.ByteOps.JSR) {
             // JSR has no Rop instruction
             hasJsr = true;
             return;
-        } else if (opcode == ByteOps.RET) {
+        } else if (opcode == com.duy.dx.cf.code.ByteOps.RET) {
             try {
                 returnAddress = (ReturnAddress)arg(0);
             } catch (ClassCastException ex) {
@@ -487,9 +491,9 @@ import java.util.ArrayList;
         }
 
         ropOpcode = jopToRopOpcode(opcode, cst);
-        rop = Rops.ropFor(ropOpcode, destType, sources, cst);
+        rop = com.duy.dx.rop.code.Rops.ropFor(ropOpcode, destType, sources, cst);
 
-        Insn moveResult = null;
+        com.duy.dx.rop.code.Insn moveResult = null;
         if (dest != null && rop.isCallLike()) {
             /*
              * We're going to want to have a move-result in the next
@@ -497,9 +501,14 @@ import java.util.ArrayList;
              */
             extraBlockCount++;
 
-            moveResult = new PlainInsn(
-                    Rops.opMoveResult(((CstMethodRef) cst).getPrototype()
-                    .getReturnType()), pos, dest, RegisterSpecList.EMPTY);
+            Type returnType;
+            if (rop.getOpcode() == com.duy.dx.rop.code.RegOps.INVOKE_CUSTOM) {
+                returnType = ((CstCallSiteRef) cst).getReturnType();
+            } else {
+                returnType = ((com.duy.dx.rop.cst.CstMethodRef) cst).getPrototype().getReturnType();
+            }
+            moveResult = new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMoveResult(returnType),
+                                       pos, dest, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
 
             dest = null;
         } else if (dest != null && rop.canThrow()) {
@@ -509,13 +518,13 @@ import java.util.ArrayList;
              */
             extraBlockCount++;
 
-            moveResult = new PlainInsn(
-                    Rops.opMoveResultPseudo(dest.getTypeBearer()),
-                    pos, dest, RegisterSpecList.EMPTY);
+            moveResult = new com.duy.dx.rop.code.PlainInsn(
+                    com.duy.dx.rop.code.Rops.opMoveResultPseudo(dest.getTypeBearer()),
+                    pos, dest, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
 
             dest = null;
         }
-        if (ropOpcode == RegOps.NEW_ARRAY) {
+        if (ropOpcode == com.duy.dx.rop.code.RegOps.NEW_ARRAY) {
             /*
              * In the original bytecode, this was either a primitive
              * array constructor "newarray" or an object array
@@ -530,8 +539,8 @@ import java.util.ArrayList;
              */
             cst = CstType.intern(rop.getResult());
         } else if ((cst == null) && (sourceCount == 2)) {
-            TypeBearer firstType = sources.get(0).getTypeBearer();
-            TypeBearer lastType = sources.get(1).getTypeBearer();
+            com.duy.dx.rop.type.TypeBearer firstType = sources.get(0).getTypeBearer();
+            com.duy.dx.rop.type.TypeBearer lastType = sources.get(1).getTypeBearer();
 
             if ((lastType.isConstant() || firstType.isConstant()) &&
                  advice.hasConstantOperation(rop, sources.get(0),
@@ -544,13 +553,13 @@ import java.util.ArrayList;
                      * so pull it out of the sources and just use it as a
                      * constant here.
                      */
-                    cst = (Constant) lastType;
+                    cst = (com.duy.dx.rop.cst.Constant) lastType;
                     sources = sources.withoutLast();
 
                     // For subtraction, change to addition and invert constant
-                    if (rop.getOpcode() == RegOps.SUB) {
-                        ropOpcode = RegOps.ADD;
-                        CstInteger cstInt = (CstInteger) lastType;
+                    if (rop.getOpcode() == com.duy.dx.rop.code.RegOps.SUB) {
+                        ropOpcode = com.duy.dx.rop.code.RegOps.ADD;
+                        com.duy.dx.rop.cst.CstInteger cstInt = (com.duy.dx.rop.cst.CstInteger) lastType;
                         cst = CstInteger.make(-cstInt.getValue());
                     }
                 } else {
@@ -560,16 +569,16 @@ import java.util.ArrayList;
                      * so pull it out of the sources and just use it as a
                      * constant here.
                      */
-                    cst = (Constant) firstType;
+                    cst = (com.duy.dx.rop.cst.Constant) firstType;
                     sources = sources.withoutFirst();
                 }
 
-                rop = Rops.ropFor(ropOpcode, destType, sources, cst);
+                rop = com.duy.dx.rop.code.Rops.ropFor(ropOpcode, destType, sources, cst);
             }
         }
 
         SwitchList cases = getAuxCases();
-        ArrayList<Constant> initValues = getInitValues();
+        ArrayList<com.duy.dx.rop.cst.Constant> initValues = getInitValues();
         boolean canThrow = rop.canThrow();
 
         blockCanThrow |= canThrow;
@@ -577,37 +586,40 @@ import java.util.ArrayList;
         if (cases != null) {
             if (cases.size() == 0) {
                 // It's a default-only switch statement. It can happen!
-                insn = new PlainInsn(Rops.GOTO, pos, null,
-                                     RegisterSpecList.EMPTY);
+                insn = new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.GOTO, pos, null,
+                                     com.duy.dx.rop.code.RegisterSpecList.EMPTY);
                 primarySuccessorIndex = 0;
             } else {
                 IntList values = cases.getValues();
                 insn = new SwitchInsn(rop, pos, dest, sources, values);
                 primarySuccessorIndex = values.size();
             }
-        } else if (ropOpcode == RegOps.RETURN) {
+        } else if (ropOpcode == com.duy.dx.rop.code.RegOps.RETURN) {
             /*
              * Returns get turned into the combination of a move (if
              * non-void and if the return doesn't already mention
              * register 0) and a goto (to the return block).
              */
             if (sources.size() != 0) {
-                RegisterSpec source = sources.get(0);
+                com.duy.dx.rop.code.RegisterSpec source = sources.get(0);
                 TypeBearer type = source.getTypeBearer();
                 if (source.getReg() != 0) {
-                    insns.add(new PlainInsn(Rops.opMove(type), pos,
-                                            RegisterSpec.make(0, type),
+                    insns.add(new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMove(type), pos,
+                                            com.duy.dx.rop.code.RegisterSpec.make(0, type),
                                             source));
                 }
             }
-            insn = new PlainInsn(Rops.GOTO, pos, null, RegisterSpecList.EMPTY);
+            insn = new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.GOTO, pos, null, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
             primarySuccessorIndex = 0;
             updateReturnOp(rop, pos);
             returns = true;
         } else if (cst != null) {
             if (canThrow) {
-                insn =
-                    new ThrowingCstInsn(rop, pos, sources, catches, cst);
+                if (rop.getOpcode() == com.duy.dx.rop.code.RegOps.INVOKE_POLYMORPHIC) {
+                    insn = makeInvokePolymorphicInsn(rop, pos, sources, catches, cst);
+                } else {
+                    insn = new ThrowingCstInsn(rop, pos, sources, catches, cst);
+                }
                 catchesUsed = true;
                 primarySuccessorIndex = catches.size();
             } else {
@@ -616,7 +628,7 @@ import java.util.ArrayList;
         } else if (canThrow) {
             insn = new ThrowingInsn(rop, pos, sources, catches);
             catchesUsed = true;
-            if (opcode == ByteOps.ATHROW) {
+            if (opcode == com.duy.dx.cf.code.ByteOps.ATHROW) {
                 /*
                  * The op athrow is the only one where it's possible
                  * to have non-empty successors and yet not have a
@@ -647,7 +659,7 @@ import java.util.ArrayList;
         if (initValues != null) {
             extraBlockCount++;
             insn = new FillArrayDataInsn(Rops.FILL_ARRAY_DATA, pos,
-                    RegisterSpecList.make(moveResult.getResult()), initValues,
+                    com.duy.dx.rop.code.RegisterSpecList.make(moveResult.getResult()), initValues,
                     cst);
             insns.add(insn);
         }
@@ -662,32 +674,32 @@ import java.util.ArrayList;
      * instruction's arguments have been popped
      * @return {@code non-null;} the sources
      */
-    private RegisterSpecList getSources(int opcode, int stackPointer) {
+    private com.duy.dx.rop.code.RegisterSpecList getSources(int opcode, int stackPointer) {
         int count = argCount();
 
         if (count == 0) {
             // We get an easy out if there aren't any sources.
-            return RegisterSpecList.EMPTY;
+            return com.duy.dx.rop.code.RegisterSpecList.EMPTY;
         }
 
         int localIndex = getLocalIndex();
-        RegisterSpecList sources;
+        com.duy.dx.rop.code.RegisterSpecList sources;
 
         if (localIndex >= 0) {
             // The instruction is operating on a local variable.
-            sources = new RegisterSpecList(1);
-            sources.set(0, RegisterSpec.make(localIndex, arg(0)));
+            sources = new com.duy.dx.rop.code.RegisterSpecList(1);
+            sources.set(0, com.duy.dx.rop.code.RegisterSpec.make(localIndex, arg(0)));
         } else {
-            sources = new RegisterSpecList(count);
+            sources = new com.duy.dx.rop.code.RegisterSpecList(count);
             int regAt = stackPointer;
             for (int i = 0; i < count; i++) {
-                RegisterSpec spec = RegisterSpec.make(regAt, arg(i));
+                com.duy.dx.rop.code.RegisterSpec spec = com.duy.dx.rop.code.RegisterSpec.make(regAt, arg(i));
                 sources.set(i, spec);
                 regAt += spec.getCategory();
             }
 
             switch (opcode) {
-                case ByteOps.IASTORE: {
+                case com.duy.dx.cf.code.ByteOps.IASTORE: {
                     /*
                      * The Java argument order for array stores is
                      * (array, index, value), but the rop argument
@@ -698,15 +710,15 @@ import java.util.ArrayList;
                     if (count != 3) {
                         throw new RuntimeException("shouldn't happen");
                     }
-                    RegisterSpec array = sources.get(0);
-                    RegisterSpec index = sources.get(1);
-                    RegisterSpec value = sources.get(2);
+                    com.duy.dx.rop.code.RegisterSpec array = sources.get(0);
+                    com.duy.dx.rop.code.RegisterSpec index = sources.get(1);
+                    com.duy.dx.rop.code.RegisterSpec value = sources.get(2);
                     sources.set(0, value);
                     sources.set(1, array);
                     sources.set(2, index);
                     break;
                 }
-                case ByteOps.PUTFIELD: {
+                case com.duy.dx.cf.code.ByteOps.PUTFIELD: {
                     /*
                      * Similar to above: The Java argument order for
                      * putfield is (object, value), but the rop
@@ -715,7 +727,7 @@ import java.util.ArrayList;
                     if (count != 2) {
                         throw new RuntimeException("shouldn't happen");
                     }
-                    RegisterSpec obj = sources.get(0);
+                    com.duy.dx.rop.code.RegisterSpec obj = sources.get(0);
                     RegisterSpec value = sources.get(1);
                     sources.set(0, value);
                     sources.set(1, obj);
@@ -734,7 +746,7 @@ import java.util.ArrayList;
      * @param op {@code non-null;} the opcode to use
      * @param pos {@code non-null;} the position to use
      */
-    private void updateReturnOp(Rop op, SourcePosition pos) {
+    private void updateReturnOp(com.duy.dx.rop.code.Rop op, com.duy.dx.rop.code.SourcePosition pos) {
         if (op == null) {
             throw new NullPointerException("op == null");
         }
@@ -762,165 +774,165 @@ import java.util.ArrayList;
     /**
      * Gets the register opcode for the given Java opcode.
      *
-     * @param jop {@code >= 0;} the Java opcode
+     * @param jop {@code jop >= 0;} the Java opcode
      * @param cst {@code null-ok;} the constant argument, if any
      * @return {@code >= 0;} the corresponding register opcode
      */
-    private int jopToRopOpcode(int jop, Constant cst) {
+    private int jopToRopOpcode(int jop, com.duy.dx.rop.cst.Constant cst) {
         switch (jop) {
-            case ByteOps.POP:
-            case ByteOps.POP2:
-            case ByteOps.DUP:
-            case ByteOps.DUP_X1:
-            case ByteOps.DUP_X2:
-            case ByteOps.DUP2:
-            case ByteOps.DUP2_X1:
-            case ByteOps.DUP2_X2:
-            case ByteOps.SWAP:
-            case ByteOps.JSR:
-            case ByteOps.RET:
-            case ByteOps.MULTIANEWARRAY: {
+            case com.duy.dx.cf.code.ByteOps.POP:
+            case com.duy.dx.cf.code.ByteOps.POP2:
+            case com.duy.dx.cf.code.ByteOps.DUP:
+            case com.duy.dx.cf.code.ByteOps.DUP_X1:
+            case com.duy.dx.cf.code.ByteOps.DUP_X2:
+            case com.duy.dx.cf.code.ByteOps.DUP2:
+            case com.duy.dx.cf.code.ByteOps.DUP2_X1:
+            case com.duy.dx.cf.code.ByteOps.DUP2_X2:
+            case com.duy.dx.cf.code.ByteOps.SWAP:
+            case com.duy.dx.cf.code.ByteOps.JSR:
+            case com.duy.dx.cf.code.ByteOps.RET:
+            case com.duy.dx.cf.code.ByteOps.MULTIANEWARRAY: {
                 // These need to be taken care of specially.
                 break;
             }
-            case ByteOps.NOP: {
-                return RegOps.NOP;
+            case com.duy.dx.cf.code.ByteOps.NOP: {
+                return com.duy.dx.rop.code.RegOps.NOP;
             }
-            case ByteOps.LDC:
-            case ByteOps.LDC2_W: {
-                return RegOps.CONST;
+            case com.duy.dx.cf.code.ByteOps.LDC:
+            case com.duy.dx.cf.code.ByteOps.LDC2_W: {
+                return com.duy.dx.rop.code.RegOps.CONST;
             }
-            case ByteOps.ILOAD:
-            case ByteOps.ISTORE: {
-                return RegOps.MOVE;
+            case com.duy.dx.cf.code.ByteOps.ILOAD:
+            case com.duy.dx.cf.code.ByteOps.ISTORE: {
+                return com.duy.dx.rop.code.RegOps.MOVE;
             }
-            case ByteOps.IALOAD: {
-                return RegOps.AGET;
+            case com.duy.dx.cf.code.ByteOps.IALOAD: {
+                return com.duy.dx.rop.code.RegOps.AGET;
             }
-            case ByteOps.IASTORE: {
-                return RegOps.APUT;
+            case com.duy.dx.cf.code.ByteOps.IASTORE: {
+                return com.duy.dx.rop.code.RegOps.APUT;
             }
-            case ByteOps.IADD:
-            case ByteOps.IINC: {
-                return RegOps.ADD;
+            case com.duy.dx.cf.code.ByteOps.IADD:
+            case com.duy.dx.cf.code.ByteOps.IINC: {
+                return com.duy.dx.rop.code.RegOps.ADD;
             }
-            case ByteOps.ISUB: {
-                return RegOps.SUB;
+            case com.duy.dx.cf.code.ByteOps.ISUB: {
+                return com.duy.dx.rop.code.RegOps.SUB;
             }
-            case ByteOps.IMUL: {
-                return RegOps.MUL;
+            case com.duy.dx.cf.code.ByteOps.IMUL: {
+                return com.duy.dx.rop.code.RegOps.MUL;
             }
-            case ByteOps.IDIV: {
-                return RegOps.DIV;
+            case com.duy.dx.cf.code.ByteOps.IDIV: {
+                return com.duy.dx.rop.code.RegOps.DIV;
             }
-            case ByteOps.IREM: {
-                return RegOps.REM;
+            case com.duy.dx.cf.code.ByteOps.IREM: {
+                return com.duy.dx.rop.code.RegOps.REM;
             }
-            case ByteOps.INEG: {
-                return RegOps.NEG;
+            case com.duy.dx.cf.code.ByteOps.INEG: {
+                return com.duy.dx.rop.code.RegOps.NEG;
             }
-            case ByteOps.ISHL: {
-                return RegOps.SHL;
+            case com.duy.dx.cf.code.ByteOps.ISHL: {
+                return com.duy.dx.rop.code.RegOps.SHL;
             }
-            case ByteOps.ISHR: {
-                return RegOps.SHR;
+            case com.duy.dx.cf.code.ByteOps.ISHR: {
+                return com.duy.dx.rop.code.RegOps.SHR;
             }
-            case ByteOps.IUSHR: {
-                return RegOps.USHR;
+            case com.duy.dx.cf.code.ByteOps.IUSHR: {
+                return com.duy.dx.rop.code.RegOps.USHR;
             }
-            case ByteOps.IAND: {
-                return RegOps.AND;
+            case com.duy.dx.cf.code.ByteOps.IAND: {
+                return com.duy.dx.rop.code.RegOps.AND;
             }
-            case ByteOps.IOR: {
-                return RegOps.OR;
+            case com.duy.dx.cf.code.ByteOps.IOR: {
+                return com.duy.dx.rop.code.RegOps.OR;
             }
-            case ByteOps.IXOR: {
-                return RegOps.XOR;
+            case com.duy.dx.cf.code.ByteOps.IXOR: {
+                return com.duy.dx.rop.code.RegOps.XOR;
             }
-            case ByteOps.I2L:
-            case ByteOps.I2F:
-            case ByteOps.I2D:
-            case ByteOps.L2I:
-            case ByteOps.L2F:
-            case ByteOps.L2D:
-            case ByteOps.F2I:
-            case ByteOps.F2L:
-            case ByteOps.F2D:
-            case ByteOps.D2I:
-            case ByteOps.D2L:
-            case ByteOps.D2F: {
-                return RegOps.CONV;
+            case com.duy.dx.cf.code.ByteOps.I2L:
+            case com.duy.dx.cf.code.ByteOps.I2F:
+            case com.duy.dx.cf.code.ByteOps.I2D:
+            case com.duy.dx.cf.code.ByteOps.L2I:
+            case com.duy.dx.cf.code.ByteOps.L2F:
+            case com.duy.dx.cf.code.ByteOps.L2D:
+            case com.duy.dx.cf.code.ByteOps.F2I:
+            case com.duy.dx.cf.code.ByteOps.F2L:
+            case com.duy.dx.cf.code.ByteOps.F2D:
+            case com.duy.dx.cf.code.ByteOps.D2I:
+            case com.duy.dx.cf.code.ByteOps.D2L:
+            case com.duy.dx.cf.code.ByteOps.D2F: {
+                return com.duy.dx.rop.code.RegOps.CONV;
             }
-            case ByteOps.I2B: {
-                return RegOps.TO_BYTE;
+            case com.duy.dx.cf.code.ByteOps.I2B: {
+                return com.duy.dx.rop.code.RegOps.TO_BYTE;
             }
-            case ByteOps.I2C: {
-                return RegOps.TO_CHAR;
+            case com.duy.dx.cf.code.ByteOps.I2C: {
+                return com.duy.dx.rop.code.RegOps.TO_CHAR;
             }
-            case ByteOps.I2S: {
-                return RegOps.TO_SHORT;
+            case com.duy.dx.cf.code.ByteOps.I2S: {
+                return com.duy.dx.rop.code.RegOps.TO_SHORT;
             }
-            case ByteOps.LCMP:
-            case ByteOps.FCMPL:
-            case ByteOps.DCMPL: {
-                return RegOps.CMPL;
+            case com.duy.dx.cf.code.ByteOps.LCMP:
+            case com.duy.dx.cf.code.ByteOps.FCMPL:
+            case com.duy.dx.cf.code.ByteOps.DCMPL: {
+                return com.duy.dx.rop.code.RegOps.CMPL;
             }
-            case ByteOps.FCMPG:
-            case ByteOps.DCMPG: {
-                return RegOps.CMPG;
+            case com.duy.dx.cf.code.ByteOps.FCMPG:
+            case com.duy.dx.cf.code.ByteOps.DCMPG: {
+                return com.duy.dx.rop.code.RegOps.CMPG;
             }
-            case ByteOps.IFEQ:
-            case ByteOps.IF_ICMPEQ:
-            case ByteOps.IF_ACMPEQ:
-            case ByteOps.IFNULL: {
-                return RegOps.IF_EQ;
+            case com.duy.dx.cf.code.ByteOps.IFEQ:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPEQ:
+            case com.duy.dx.cf.code.ByteOps.IF_ACMPEQ:
+            case com.duy.dx.cf.code.ByteOps.IFNULL: {
+                return com.duy.dx.rop.code.RegOps.IF_EQ;
             }
-            case ByteOps.IFNE:
-            case ByteOps.IF_ICMPNE:
-            case ByteOps.IF_ACMPNE:
-            case ByteOps.IFNONNULL: {
-                return RegOps.IF_NE;
+            case com.duy.dx.cf.code.ByteOps.IFNE:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPNE:
+            case com.duy.dx.cf.code.ByteOps.IF_ACMPNE:
+            case com.duy.dx.cf.code.ByteOps.IFNONNULL: {
+                return com.duy.dx.rop.code.RegOps.IF_NE;
             }
-            case ByteOps.IFLT:
-            case ByteOps.IF_ICMPLT: {
-                return RegOps.IF_LT;
+            case com.duy.dx.cf.code.ByteOps.IFLT:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPLT: {
+                return com.duy.dx.rop.code.RegOps.IF_LT;
             }
-            case ByteOps.IFGE:
-            case ByteOps.IF_ICMPGE: {
-                return RegOps.IF_GE;
+            case com.duy.dx.cf.code.ByteOps.IFGE:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPGE: {
+                return com.duy.dx.rop.code.RegOps.IF_GE;
             }
-            case ByteOps.IFGT:
-            case ByteOps.IF_ICMPGT: {
-                return RegOps.IF_GT;
+            case com.duy.dx.cf.code.ByteOps.IFGT:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPGT: {
+                return com.duy.dx.rop.code.RegOps.IF_GT;
             }
-            case ByteOps.IFLE:
-            case ByteOps.IF_ICMPLE: {
-                return RegOps.IF_LE;
+            case com.duy.dx.cf.code.ByteOps.IFLE:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPLE: {
+                return com.duy.dx.rop.code.RegOps.IF_LE;
             }
-            case ByteOps.GOTO: {
-                return RegOps.GOTO;
+            case com.duy.dx.cf.code.ByteOps.GOTO: {
+                return com.duy.dx.rop.code.RegOps.GOTO;
             }
-            case ByteOps.LOOKUPSWITCH: {
-                return RegOps.SWITCH;
+            case com.duy.dx.cf.code.ByteOps.LOOKUPSWITCH: {
+                return com.duy.dx.rop.code.RegOps.SWITCH;
             }
-            case ByteOps.IRETURN:
-            case ByteOps.RETURN: {
-                return RegOps.RETURN;
+            case com.duy.dx.cf.code.ByteOps.IRETURN:
+            case com.duy.dx.cf.code.ByteOps.RETURN: {
+                return com.duy.dx.rop.code.RegOps.RETURN;
             }
-            case ByteOps.GETSTATIC: {
-                return RegOps.GET_STATIC;
+            case com.duy.dx.cf.code.ByteOps.GETSTATIC: {
+                return com.duy.dx.rop.code.RegOps.GET_STATIC;
             }
-            case ByteOps.PUTSTATIC: {
-                return RegOps.PUT_STATIC;
+            case com.duy.dx.cf.code.ByteOps.PUTSTATIC: {
+                return com.duy.dx.rop.code.RegOps.PUT_STATIC;
             }
-            case ByteOps.GETFIELD: {
-                return RegOps.GET_FIELD;
+            case com.duy.dx.cf.code.ByteOps.GETFIELD: {
+                return com.duy.dx.rop.code.RegOps.GET_FIELD;
             }
-            case ByteOps.PUTFIELD: {
-                return RegOps.PUT_FIELD;
+            case com.duy.dx.cf.code.ByteOps.PUTFIELD: {
+                return com.duy.dx.rop.code.RegOps.PUT_FIELD;
             }
-            case ByteOps.INVOKEVIRTUAL: {
-                CstMethodRef ref = (CstMethodRef) cst;
+            case com.duy.dx.cf.code.ByteOps.INVOKEVIRTUAL: {
+                com.duy.dx.rop.cst.CstMethodRef ref = (com.duy.dx.rop.cst.CstMethodRef) cst;
                 // The java bytecode specification does not explicitly disallow
                 // invokevirtual calls to any instance method, though it
                 // specifies that instance methods and private methods "should" be
@@ -945,54 +957,66 @@ import java.util.ArrayList;
                         final Method m = methods.get(i);
                         if (AccessFlags.isPrivate(m.getAccessFlags()) &&
                                 ref.getNat().equals(m.getNat())) {
-                            return RegOps.INVOKE_DIRECT;
+                            return com.duy.dx.rop.code.RegOps.INVOKE_DIRECT;
                         }
                     }
                 }
-                return RegOps.INVOKE_VIRTUAL;
+                // If the method reference is a signature polymorphic method
+                // substitute invoke-polymorphic for invoke-virtual. This only
+                // affects MethodHandle.invoke and MethodHandle.invokeExact.
+                if (ref.isSignaturePolymorphic()) {
+                    return com.duy.dx.rop.code.RegOps.INVOKE_POLYMORPHIC;
+                }
+                return com.duy.dx.rop.code.RegOps.INVOKE_VIRTUAL;
             }
-            case ByteOps.INVOKESPECIAL: {
+            case com.duy.dx.cf.code.ByteOps.INVOKESPECIAL: {
                 /*
                  * Determine whether the opcode should be
                  * INVOKE_DIRECT or INVOKE_SUPER. See vmspec-2 section 6
                  * on "invokespecial" as well as section 4.8.2 (7th
                  * bullet point) for the gory details.
                  */
-                CstMethodRef ref = (CstMethodRef) cst;
+                /* TODO: Consider checking that invoke-special target
+                 * method is private, or constructor since otherwise ART
+                 * verifier will reject it.
+                 */
+                com.duy.dx.rop.cst.CstMethodRef ref = (com.duy.dx.rop.cst.CstMethodRef) cst;
                 if (ref.isInstanceInit() ||
-                    (ref.getDefiningClass().equals(method.getDefiningClass())) ||
-                    !method.getAccSuper()) {
-                    return RegOps.INVOKE_DIRECT;
+                    (ref.getDefiningClass().equals(method.getDefiningClass()))) {
+                    return com.duy.dx.rop.code.RegOps.INVOKE_DIRECT;
                 }
-                return RegOps.INVOKE_SUPER;
+                return com.duy.dx.rop.code.RegOps.INVOKE_SUPER;
             }
-            case ByteOps.INVOKESTATIC: {
-                return RegOps.INVOKE_STATIC;
+            case com.duy.dx.cf.code.ByteOps.INVOKESTATIC: {
+                return com.duy.dx.rop.code.RegOps.INVOKE_STATIC;
             }
-            case ByteOps.INVOKEINTERFACE: {
-                return RegOps.INVOKE_INTERFACE;
+            case com.duy.dx.cf.code.ByteOps.INVOKEINTERFACE: {
+                return com.duy.dx.rop.code.RegOps.INVOKE_INTERFACE;
             }
-            case ByteOps.NEW: {
-                return RegOps.NEW_INSTANCE;
+            case com.duy.dx.cf.code.ByteOps.INVOKEDYNAMIC: {
+                return com.duy.dx.rop.code.RegOps.INVOKE_CUSTOM;
             }
-            case ByteOps.NEWARRAY:
-            case ByteOps.ANEWARRAY: {
-                return RegOps.NEW_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEW: {
+                return com.duy.dx.rop.code.RegOps.NEW_INSTANCE;
             }
-            case ByteOps.ARRAYLENGTH: {
-                return RegOps.ARRAY_LENGTH;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY:
+            case com.duy.dx.cf.code.ByteOps.ANEWARRAY: {
+                return com.duy.dx.rop.code.RegOps.NEW_ARRAY;
             }
-            case ByteOps.ATHROW: {
-                return RegOps.THROW;
+            case com.duy.dx.cf.code.ByteOps.ARRAYLENGTH: {
+                return com.duy.dx.rop.code.RegOps.ARRAY_LENGTH;
             }
-            case ByteOps.CHECKCAST: {
-                return RegOps.CHECK_CAST;
+            case com.duy.dx.cf.code.ByteOps.ATHROW: {
+                return com.duy.dx.rop.code.RegOps.THROW;
             }
-            case ByteOps.INSTANCEOF: {
-                return RegOps.INSTANCE_OF;
+            case com.duy.dx.cf.code.ByteOps.CHECKCAST: {
+                return com.duy.dx.rop.code.RegOps.CHECK_CAST;
             }
-            case ByteOps.MONITORENTER: {
-                return RegOps.MONITOR_ENTER;
+            case com.duy.dx.cf.code.ByteOps.INSTANCEOF: {
+                return com.duy.dx.rop.code.RegOps.INSTANCE_OF;
+            }
+            case com.duy.dx.cf.code.ByteOps.MONITORENTER: {
+                return com.duy.dx.rop.code.RegOps.MONITOR_ENTER;
             }
             case ByteOps.MONITOREXIT: {
                 return RegOps.MONITOR_EXIT;
@@ -1000,5 +1024,11 @@ import java.util.ArrayList;
         }
 
         throw new RuntimeException("shouldn't happen");
+    }
+
+    private Insn makeInvokePolymorphicInsn(Rop rop, SourcePosition pos, RegisterSpecList sources,
+                                           TypeList catches, Constant cst) {
+        com.duy.dx.rop.cst.CstMethodRef cstMethodRef = (CstMethodRef) cst;
+        return new InvokePolymorphicInsn(rop, pos, sources, catches, cstMethodRef);
     }
 }

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .io.instructions;
+package com.duy.dx.io.instructions;
 
-import com.duy.dx .io.IndexType;
+import com.duy.dx.io.IndexType;
 
 /**
  * A decoded Dalvik instruction which has register range arguments (an
  * "A" start register and a register count).
  */
-public final class RegisterRangeDecodedInstruction extends DecodedInstruction {
+public final class RegisterRangeDecodedInstruction extends com.duy.dx.io.instructions.DecodedInstruction {
     /** register argument "A" */
     private final int a;
 
@@ -33,25 +33,28 @@ public final class RegisterRangeDecodedInstruction extends DecodedInstruction {
      * Constructs an instance.
      */
     public RegisterRangeDecodedInstruction(InstructionCodec format, int opcode,
-            int index, IndexType indexType, int target, long literal,
-            int a, int registerCount) {
+                                           int index, IndexType indexType, int target, long literal,
+                                           int a, int registerCount) {
         super(format, opcode, index, indexType, target, literal);
 
         this.a = a;
         this.registerCount = registerCount;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getRegisterCount() {
         return registerCount;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getA() {
         return a;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public DecodedInstruction withIndex(int newIndex) {
         return new RegisterRangeDecodedInstruction(
                 getFormat(), getOpcode(), newIndex, getIndexType(),

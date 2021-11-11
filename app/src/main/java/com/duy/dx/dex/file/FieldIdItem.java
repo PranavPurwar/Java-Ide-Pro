@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.CstFieldRef;
+import com.duy.dx.rop.cst.CstFieldRef;
 
 /**
  * Representation of a field reference inside a Dalvik file.
@@ -27,7 +27,7 @@ public final class FieldIdItem extends MemberIdItem {
      *
      * @param field {@code non-null;} the constant for the field
      */
-    public FieldIdItem(CstFieldRef field) {
+    public FieldIdItem(com.duy.dx.rop.cst.CstFieldRef field) {
         super(field);
     }
 
@@ -42,7 +42,7 @@ public final class FieldIdItem extends MemberIdItem {
     public void addContents(DexFile file) {
         super.addContents(file);
 
-        TypeIdsSection typeIds = file.getTypeIds();
+        com.duy.dx.dex.file.TypeIdsSection typeIds = file.getTypeIds();
         typeIds.intern(getFieldRef().getType());
     }
 
@@ -51,7 +51,7 @@ public final class FieldIdItem extends MemberIdItem {
      *
      * @return {@code non-null;} the constant
      */
-    public CstFieldRef getFieldRef() {
+    public com.duy.dx.rop.cst.CstFieldRef getFieldRef() {
         return (CstFieldRef) getRef();
     }
 

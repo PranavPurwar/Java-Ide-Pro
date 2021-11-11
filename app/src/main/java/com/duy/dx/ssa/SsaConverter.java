@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .util.IntIterator;
+import com.duy.dx.util.IntIterator;
 import java.util.ArrayList;
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RopMethod;
 
 /**
  * Converts ROP methods to SSA Methods
@@ -39,17 +40,17 @@ public class SsaConverter {
      * pointer argument
      * @return output in SSA form
      */
-    public static SsaMethod convertToSsaMethod(RopMethod rmeth,
-            int paramWidth, boolean isStatic) {
-        SsaMethod result
-            = SsaMethod.newFromRopMethod(rmeth, paramWidth, isStatic);
+    public static com.duy.dx.ssa.SsaMethod convertToSsaMethod(com.duy.dx.rop.code.RopMethod rmeth,
+                                                                       int paramWidth, boolean isStatic) {
+        com.duy.dx.ssa.SsaMethod result
+            = com.duy.dx.ssa.SsaMethod.newFromRopMethod(rmeth, paramWidth, isStatic);
 
         edgeSplit(result);
 
         LocalVariableInfo localInfo = LocalVariableExtractor.extract(result);
 
         placePhiFunctions(result, localInfo, 0);
-        new SsaRenamer(result).run();
+        new com.duy.dx.ssa.SsaRenamer(result).run();
 
         /*
          * The exit block, added here, is not considered for edge splitting
@@ -67,7 +68,7 @@ public class SsaConverter {
      * @param ssaMeth input
      * @param threshold registers below this number are unchanged
      */
-    public static void updateSsaMethod(SsaMethod ssaMeth, int threshold) {
+    public static void updateSsaMethod(com.duy.dx.ssa.SsaMethod ssaMeth, int threshold) {
         LocalVariableInfo localInfo = LocalVariableExtractor.extract(ssaMeth);
         placePhiFunctions(ssaMeth, localInfo, threshold);
         new SsaRenamer(ssaMeth, threshold).run();
@@ -82,11 +83,11 @@ public class SsaConverter {
      * pointer argument
      * @return an SSA represention with only the edge-splitter run
      */
-    public static SsaMethod testEdgeSplit (RopMethod rmeth, int paramWidth,
-            boolean isStatic) {
-        SsaMethod result;
+    public static com.duy.dx.ssa.SsaMethod testEdgeSplit (com.duy.dx.rop.code.RopMethod rmeth, int paramWidth,
+                                                                   boolean isStatic) {
+        com.duy.dx.ssa.SsaMethod result;
 
-        result = SsaMethod.newFromRopMethod(rmeth, paramWidth, isStatic);
+        result = com.duy.dx.ssa.SsaMethod.newFromRopMethod(rmeth, paramWidth, isStatic);
 
         edgeSplit(result);
         return result;
@@ -102,11 +103,11 @@ public class SsaConverter {
      * pointer argument
      * @return an SSA represention with only the edge-splitter run
      */
-    public static SsaMethod testPhiPlacement (RopMethod rmeth, int paramWidth,
-            boolean isStatic) {
-        SsaMethod result;
+    public static com.duy.dx.ssa.SsaMethod testPhiPlacement (RopMethod rmeth, int paramWidth,
+                                                                      boolean isStatic) {
+        com.duy.dx.ssa.SsaMethod result;
 
-        result = SsaMethod.newFromRopMethod(rmeth, paramWidth, isStatic);
+        result = com.duy.dx.ssa.SsaMethod.newFromRopMethod(rmeth, paramWidth, isStatic);
 
         edgeSplit(result);
 
@@ -130,7 +131,7 @@ public class SsaConverter {
      *
      * @param result method to process
      */
-    private static void edgeSplit(SsaMethod result) {
+    private static void edgeSplit(com.duy.dx.ssa.SsaMethod result) {
         edgeSplitPredecessors(result);
         edgeSplitMoveExceptionsAndResults(result);
         edgeSplitSuccessors(result);
@@ -142,15 +143,15 @@ public class SsaConverter {
      *
      * @param result {@code non-null;} method to process
      */
-    private static void edgeSplitPredecessors(SsaMethod result) {
-        ArrayList<SsaBasicBlock> blocks = result.getBlocks();
+    private static void edgeSplitPredecessors(com.duy.dx.ssa.SsaMethod result) {
+        ArrayList<com.duy.dx.ssa.SsaBasicBlock> blocks = result.getBlocks();
 
         /*
          * New blocks are added to the end of the block list during
          * this iteration.
          */
         for (int i = blocks.size() - 1; i >= 0; i-- ) {
-            SsaBasicBlock block = blocks.get(i);
+            com.duy.dx.ssa.SsaBasicBlock block = blocks.get(i);
             if (nodeNeedsUniquePredecessor(block)) {
                 block.insertNewPredecessor();
             }
@@ -162,7 +163,7 @@ public class SsaConverter {
      * @return {@code true} if this node needs to have a unique
      * predecessor created for it
      */
-    private static boolean nodeNeedsUniquePredecessor(SsaBasicBlock block) {
+    private static boolean nodeNeedsUniquePredecessor(com.duy.dx.ssa.SsaBasicBlock block) {
         /*
          * Any block with that has both multiple successors and multiple
          * predecessors needs a new predecessor node.
@@ -183,15 +184,15 @@ public class SsaConverter {
      *
      * @param ssaMeth method to process
      */
-    private static void edgeSplitMoveExceptionsAndResults(SsaMethod ssaMeth) {
-        ArrayList<SsaBasicBlock> blocks = ssaMeth.getBlocks();
+    private static void edgeSplitMoveExceptionsAndResults(com.duy.dx.ssa.SsaMethod ssaMeth) {
+        ArrayList<com.duy.dx.ssa.SsaBasicBlock> blocks = ssaMeth.getBlocks();
 
         /*
          * New blocks are added to the end of the block list during
          * this iteration.
          */
         for (int i = blocks.size() - 1; i >= 0; i-- ) {
-            SsaBasicBlock block = blocks.get(i);
+            com.duy.dx.ssa.SsaBasicBlock block = blocks.get(i);
 
             /*
              * Any block that starts with a move-exception and has more than
@@ -205,8 +206,8 @@ public class SsaConverter {
                 BitSet preds = (BitSet)block.getPredecessors().clone();
                 for (int j = preds.nextSetBit(0); j >= 0;
                      j = preds.nextSetBit(j + 1)) {
-                    SsaBasicBlock predecessor = blocks.get(j);
-                    SsaBasicBlock zNode
+                    com.duy.dx.ssa.SsaBasicBlock predecessor = blocks.get(j);
+                    com.duy.dx.ssa.SsaBasicBlock zNode
                         = predecessor.insertNewSuccessor(block);
 
                     /*
@@ -228,22 +229,22 @@ public class SsaConverter {
      *
      * @param result {@code non-null;} method to process
      */
-    private static void edgeSplitSuccessors(SsaMethod result) {
-        ArrayList<SsaBasicBlock> blocks = result.getBlocks();
+    private static void edgeSplitSuccessors(com.duy.dx.ssa.SsaMethod result) {
+        ArrayList<com.duy.dx.ssa.SsaBasicBlock> blocks = result.getBlocks();
 
         /*
          * New blocks are added to the end of the block list during
          * this iteration.
          */
         for (int i = blocks.size() - 1; i >= 0; i-- ) {
-            SsaBasicBlock block = blocks.get(i);
+            com.duy.dx.ssa.SsaBasicBlock block = blocks.get(i);
 
             // Successors list is modified in loop below.
             BitSet successors = (BitSet)block.getSuccessors().clone();
             for (int j = successors.nextSetBit(0);
                  j >= 0; j = successors.nextSetBit(j+1)) {
 
-                SsaBasicBlock succ = blocks.get(j);
+                com.duy.dx.ssa.SsaBasicBlock succ = blocks.get(j);
 
                 if (needsNewSuccessor(block, succ)) {
                     block.insertNewSuccessor(succ);
@@ -254,18 +255,31 @@ public class SsaConverter {
 
     /**
      * Returns {@code true} if block and successor need a Z-node
-     * between them. Presently, this is {@code true} if the final
-     * instruction has any sources or results and the current
+     * between them. Presently, this is {@code true} if either:
+     * <p><ul>
+     * <li> there is a critical edge between block and successor.
+     * <li> the final instruction has any sources or results and the current
      * successor block has more than one predecessor.
+     * </ul></p>
      *
      * @param block predecessor node
      * @param succ successor node
      * @return {@code true} if a Z node is needed
      */
-    private static boolean needsNewSuccessor(SsaBasicBlock block,
-            SsaBasicBlock succ) {
-        ArrayList<SsaInsn> insns = block.getInsns();
-        SsaInsn lastInsn = insns.get(insns.size() - 1);
+    private static boolean needsNewSuccessor(com.duy.dx.ssa.SsaBasicBlock block,
+                                             com.duy.dx.ssa.SsaBasicBlock succ) {
+        ArrayList<com.duy.dx.ssa.SsaInsn> insns = block.getInsns();
+        com.duy.dx.ssa.SsaInsn lastInsn = insns.get(insns.size() - 1);
+
+        // This is to address b/69128828 where the moves associated
+        // with a phi were being propagated along a critical
+        // edge. Consequently, the move instruction inserted was
+        // positioned before the first instruction in the predecessor
+        // block. The generated bytecode was rejected by the ART
+        // verifier.
+        if (block.getSuccessors().cardinality() > 1 && succ.getPredecessors().cardinality() > 1) {
+            return true;
+        }
 
         return ((lastInsn.getResult() != null)
                     || (lastInsn.getSources().size() > 0))
@@ -284,8 +298,8 @@ public class SsaConverter {
      * @param threshold registers below this number are ignored
      */
     private static void placePhiFunctions (SsaMethod ssaMeth,
-            LocalVariableInfo localInfo, int threshold) {
-        ArrayList<SsaBasicBlock> ssaBlocks;
+                                           LocalVariableInfo localInfo, int threshold) {
+        ArrayList<com.duy.dx.ssa.SsaBasicBlock> ssaBlocks;
         int regCount;
         int blockCount;
 
@@ -293,7 +307,7 @@ public class SsaConverter {
         blockCount = ssaBlocks.size();
         regCount = ssaMeth.getRegCount() - threshold;
 
-        DomFront df = new DomFront(ssaMeth);
+        com.duy.dx.ssa.DomFront df = new com.duy.dx.ssa.DomFront(ssaMeth);
         DomFront.DomInfo[] domInfos = df.run();
 
         // Bit set of registers vs block index "definition sites"
@@ -315,7 +329,7 @@ public class SsaConverter {
             SsaBasicBlock b = ssaBlocks.get(bi);
 
             for (SsaInsn insn : b.getInsns()) {
-                RegisterSpec rs = insn.getResult();
+                com.duy.dx.rop.code.RegisterSpec rs = insn.getResult();
 
                 if (rs != null && rs.getReg() - threshold >= 0) {
                     defsites[rs.getReg() - threshold].set(bi);

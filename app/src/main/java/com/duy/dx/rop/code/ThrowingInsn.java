@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
 
 /**
  * Instruction which possibly throws. The {@code successors} list in the
@@ -26,7 +26,7 @@ import com.duy.dx .rop.type.TypeList;
  * no-exception case appended as the final target.
  */
 public final class ThrowingInsn
-        extends Insn {
+        extends com.duy.dx.rop.code.Insn {
     /** {@code non-null;} list of exceptions caught */
     private final TypeList catches;
 
@@ -38,7 +38,7 @@ public final class ThrowingInsn
      * @return {@code non-null;} the string form
      */
     public static String toCatchString(TypeList catches) {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         sb.append("catch");
 
@@ -59,13 +59,13 @@ public final class ThrowingInsn
      * @param sources {@code non-null;} specs for all the sources
      * @param catches {@code non-null;} list of exceptions caught
      */
-    public ThrowingInsn(Rop opcode, SourcePosition position,
-                        RegisterSpecList sources,
+    public ThrowingInsn(com.duy.dx.rop.code.Rop opcode, SourcePosition position,
+                        com.duy.dx.rop.code.RegisterSpecList sources,
                         TypeList catches) {
         super(opcode, position, null, sources);
 
         if (opcode.getBranchingness() != Rop.BRANCH_THROW) {
-            throw new IllegalArgumentException("bogus branchingness");
+            throw new IllegalArgumentException("opcode with invalid branchingness: " + opcode.getBranchingness());
         }
 
         if (catches == null) {
@@ -95,14 +95,14 @@ public final class ThrowingInsn
 
     /** {@inheritDoc} */
     @Override
-    public Insn withAddedCatch(Type type) {
+    public com.duy.dx.rop.code.Insn withAddedCatch(Type type) {
         return new ThrowingInsn(getOpcode(), getPosition(),
                                 getSources(), catches.withAddedType(type));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Insn withRegisterOffset(int delta) {
+    public com.duy.dx.rop.code.Insn withRegisterOffset(int delta) {
         return new ThrowingInsn(getOpcode(), getPosition(),
                                 getSources().withOffset(delta),
                                 catches);
@@ -111,7 +111,7 @@ public final class ThrowingInsn
     /** {@inheritDoc} */
     @Override
     public Insn withNewRegisters(RegisterSpec result,
-            RegisterSpecList sources) {
+                                 RegisterSpecList sources) {
 
         return new ThrowingInsn(getOpcode(), getPosition(),
                                 sources,

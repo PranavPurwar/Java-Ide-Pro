@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.type.Prototype;
-import com.duy.dx .rop.type.Type;
 import java.util.ArrayList;
+
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.type.Prototype;
+import com.duy.dx.rop.type.Type;
 
 /**
  * Interface for machines capable of executing bytecode by acting
@@ -36,7 +37,7 @@ public interface Machine {
      *
      * @return {@code non-null;} the method prototype
      */
-    public Prototype getPrototype();
+    public com.duy.dx.rop.type.Prototype getPrototype();
 
     /**
      * Clears the regular and auxiliary arguments area.
@@ -74,7 +75,7 @@ public interface Machine {
      * @param frame {@code non-null;} frame to operate on
      * @param type {@code non-null;} type of the argument
      */
-    public void popArgs(Frame frame, Type type);
+    public void popArgs(Frame frame, com.duy.dx.rop.type.Type type);
 
     /**
      * Pops values from the stack of the indicated types (popped in
@@ -87,7 +88,7 @@ public interface Machine {
      * @param type1 {@code non-null;} type of the first argument
      * @param type2 {@code non-null;} type of the second argument
      */
-    public void popArgs(Frame frame, Type type1, Type type2);
+    public void popArgs(Frame frame, com.duy.dx.rop.type.Type type1, com.duy.dx.rop.type.Type type2);
 
     /**
      * Pops values from the stack of the indicated types (popped in
@@ -101,7 +102,7 @@ public interface Machine {
      * @param type2 {@code non-null;} type of the second argument
      * @param type3 {@code non-null;} type of the third argument
      */
-    public void popArgs(Frame frame, Type type1, Type type2, Type type3);
+    public void popArgs(Frame frame, com.duy.dx.rop.type.Type type1, com.duy.dx.rop.type.Type type2, com.duy.dx.rop.type.Type type3);
 
     /**
      * Loads the local variable with the given index as the sole argument in
@@ -130,7 +131,7 @@ public interface Machine {
      *
      * @param type {@code non-null;} the salient type of the upcoming operation
      */
-    public void auxType(Type type);
+    public void auxType(com.duy.dx.rop.type.Type type);
 
     /**
      * Indicates that there is an auxiliary (inline, not stack)
@@ -163,7 +164,7 @@ public interface Machine {
      * @param cst {@code non-null;} the constant containing / referencing
      * the value
      */
-    public void auxCstArg(Constant cst);
+    public void auxCstArg(com.duy.dx.rop.cst.Constant cst);
 
     /**
      * Indicates that there is an auxiliary (inline, not stack) argument

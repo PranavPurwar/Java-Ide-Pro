@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .io.instructions;
+package com.duy.dx.io.instructions;
 
 /**
  * A decoded Dalvik instruction which contains the payload for
  * a {@code packed-switch} instruction.
  */
 public final class SparseSwitchPayloadDecodedInstruction
-        extends DecodedInstruction {
+        extends com.duy.dx.io.instructions.DecodedInstruction {
     /** array of key values */
     private final int[] keys;
 
@@ -35,7 +35,7 @@ public final class SparseSwitchPayloadDecodedInstruction
      * Constructs an instance.
      */
     public SparseSwitchPayloadDecodedInstruction(InstructionCodec format,
-            int opcode, int[] keys, int[] targets) {
+                                                 int opcode, int[] keys, int[] targets) {
         super(format, opcode, 0, null, 0, 0L);
 
         if (keys.length != targets.length) {
@@ -46,7 +46,8 @@ public final class SparseSwitchPayloadDecodedInstruction
         this.targets = targets;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getRegisterCount() {
         return 0;
     }
@@ -59,7 +60,8 @@ public final class SparseSwitchPayloadDecodedInstruction
         return targets;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public DecodedInstruction withIndex(int newIndex) {
         throw new UnsupportedOperationException("no index in instruction");
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -25,7 +25,7 @@ import java.util.HashSet;
  * Lengauer-Tarjan method.
  *
  * See A Fast Algorithm for Finding Dominators in a Flowgraph
- * T. Lengauer & R. Tarjan, ACM TOPLAS July 1979, pgs 121-141.
+ * T. Lengauer &amp; R. Tarjan, ACM TOPLAS July 1979, pgs 121-141.
  *
  * This implementation runs in time O(n log n).  The time bound
  * could be changed to O(n * ack(n)) with a small change to the link and eval,
@@ -45,18 +45,18 @@ public final class Dominators {
     private final boolean postdom;
 
     /* {@code non-null;} method being processed */
-    private final SsaMethod meth;
+    private final com.duy.dx.ssa.SsaMethod meth;
 
     /* Method's basic blocks. */
-    private final ArrayList<SsaBasicBlock> blocks;
+    private final ArrayList<com.duy.dx.ssa.SsaBasicBlock> blocks;
 
     /** indexed by basic block index */
     private final DFSInfo[] info;
 
-    private final ArrayList<SsaBasicBlock> vertex;
+    private final ArrayList<com.duy.dx.ssa.SsaBasicBlock> vertex;
 
     /** {@code non-null;} the raw dominator info */
-    private final DomFront.DomInfo domInfos[];
+    private final com.duy.dx.ssa.DomFront.DomInfo domInfos[];
 
     /**
      * Constructs an instance.
@@ -65,14 +65,14 @@ public final class Dominators {
      * @param domInfos {@code non-null;} the raw dominator info
      * @param postdom true for postdom information, false for normal dom info
      */
-    private Dominators(SsaMethod meth, DomFront.DomInfo[] domInfos,
-            boolean postdom) {
+    private Dominators(com.duy.dx.ssa.SsaMethod meth, com.duy.dx.ssa.DomFront.DomInfo[] domInfos,
+                       boolean postdom) {
         this.meth = meth;
         this.domInfos = domInfos;
         this.postdom = postdom;
         this.blocks = meth.getBlocks();
         this.info = new DFSInfo[blocks.size() + 2];
-        this.vertex = new ArrayList<SsaBasicBlock>();
+        this.vertex = new ArrayList<com.duy.dx.ssa.SsaBasicBlock>();
     }
 
     /**
@@ -84,14 +84,14 @@ public final class Dominators {
      * @param postdom true for postdom information, false for normal dom info
      */
     public static Dominators make(SsaMethod meth, DomFront.DomInfo[] domInfos,
-            boolean postdom) {
+                                  boolean postdom) {
         Dominators result = new Dominators(meth, domInfos, postdom);
 
         result.run();
         return result;
     }
 
-    private BitSet getSuccs(SsaBasicBlock block) {
+    private BitSet getSuccs(com.duy.dx.ssa.SsaBasicBlock block) {
         if (postdom) {
             return block.getPredecessors();
         } else {
@@ -99,7 +99,7 @@ public final class Dominators {
         }
     }
 
-    private BitSet getPreds(SsaBasicBlock block) {
+    private BitSet getPreds(com.duy.dx.ssa.SsaBasicBlock block) {
         if (postdom) {
             return block.getSuccessors();
         } else {
@@ -112,20 +112,20 @@ public final class Dominators {
      *
      * @param in Basic block whose DFS info we are path compressing.
      */
-    private void compress(SsaBasicBlock in) {
+    private void compress(com.duy.dx.ssa.SsaBasicBlock in) {
         DFSInfo bbInfo = info[in.getIndex()];
         DFSInfo ancestorbbInfo = info[bbInfo.ancestor.getIndex()];
 
         if (ancestorbbInfo.ancestor != null) {
-            ArrayList<SsaBasicBlock> worklist = new ArrayList<SsaBasicBlock>();
-            HashSet<SsaBasicBlock> visited = new HashSet<SsaBasicBlock>();
+            ArrayList<com.duy.dx.ssa.SsaBasicBlock> worklist = new ArrayList<com.duy.dx.ssa.SsaBasicBlock>();
+            HashSet<com.duy.dx.ssa.SsaBasicBlock> visited = new HashSet<com.duy.dx.ssa.SsaBasicBlock>();
             worklist.add(in);
 
             while (!worklist.isEmpty()) {
                 int wsize = worklist.size();
-                SsaBasicBlock v = worklist.get(wsize - 1);
+                com.duy.dx.ssa.SsaBasicBlock v = worklist.get(wsize - 1);
                 DFSInfo vbbInfo = info[v.getIndex()];
-                SsaBasicBlock vAncestor = vbbInfo.ancestor;
+                com.duy.dx.ssa.SsaBasicBlock vAncestor = vbbInfo.ancestor;
                 DFSInfo vabbInfo = info[vAncestor.getIndex()];
 
                 // Make sure we process our ancestor before ourselves.
@@ -139,8 +139,8 @@ public final class Dominators {
                 if (vabbInfo.ancestor == null) {
                     continue;
                 }
-                SsaBasicBlock vAncestorRep = vabbInfo.rep;
-                SsaBasicBlock vRep = vbbInfo.rep;
+                com.duy.dx.ssa.SsaBasicBlock vAncestorRep = vabbInfo.rep;
+                com.duy.dx.ssa.SsaBasicBlock vRep = vbbInfo.rep;
                 if (info[vAncestorRep.getIndex()].semidom
                         < info[vRep.getIndex()].semidom) {
                     vbbInfo.rep = vAncestorRep;
@@ -150,7 +150,7 @@ public final class Dominators {
         }
     }
 
-    private SsaBasicBlock eval(SsaBasicBlock v) {
+    private com.duy.dx.ssa.SsaBasicBlock eval(com.duy.dx.ssa.SsaBasicBlock v) {
         DFSInfo bbInfo = info[v.getIndex()];
 
         if (bbInfo.ancestor == null) {
@@ -168,7 +168,7 @@ public final class Dominators {
      * @param meth {@code non-null;} method to analyze
      */
     private void run() {
-        SsaBasicBlock root = postdom
+        com.duy.dx.ssa.SsaBasicBlock root = postdom
                 ? meth.getExitBlock() : meth.getEntryBlock();
 
         if (root != null) {
@@ -189,14 +189,14 @@ public final class Dominators {
 
         // Now calculate semidominators.
         for (int i = dfsMax; i >= 2; --i) {
-            SsaBasicBlock w = vertex.get(i);
+            com.duy.dx.ssa.SsaBasicBlock w = vertex.get(i);
             DFSInfo wInfo = info[w.getIndex()];
 
             BitSet preds = getPreds(w);
             for (int j = preds.nextSetBit(0);
                  j >= 0;
                  j = preds.nextSetBit(j + 1)) {
-                SsaBasicBlock predBlock = blocks.get(j);
+                com.duy.dx.ssa.SsaBasicBlock predBlock = blocks.get(j);
                 DFSInfo predInfo = info[predBlock.getIndex()];
 
                 /*
@@ -220,13 +220,13 @@ public final class Dominators {
             wInfo.ancestor = wInfo.parent;
 
             // Implicity define idom for each vertex.
-            ArrayList<SsaBasicBlock> wParentBucket;
+            ArrayList<com.duy.dx.ssa.SsaBasicBlock> wParentBucket;
             wParentBucket = info[wInfo.parent.getIndex()].bucket;
 
             while (!wParentBucket.isEmpty()) {
                 int lastItem = wParentBucket.size() - 1;
-                SsaBasicBlock last = wParentBucket.remove(lastItem);
-                SsaBasicBlock U = eval(last);
+                com.duy.dx.ssa.SsaBasicBlock last = wParentBucket.remove(lastItem);
+                com.duy.dx.ssa.SsaBasicBlock U = eval(last);
                 if (info[U.getIndex()].semidom
                         < info[last.getIndex()].semidom) {
                     domInfos[last.getIndex()].idom = U.getIndex();
@@ -238,7 +238,7 @@ public final class Dominators {
 
         // Now explicitly define the immediate dominator of each vertex
         for (int i =  2; i <= dfsMax; ++i) {
-            SsaBasicBlock w = vertex.get(i);
+            com.duy.dx.ssa.SsaBasicBlock w = vertex.get(i);
             if (domInfos[w.getIndex()].idom
                     != vertex.get(info[w.getIndex()].semidom).getIndex()) {
                 domInfos[w.getIndex()].idom
@@ -252,10 +252,11 @@ public final class Dominators {
      * from the entry block or the exit block). Records the traversal order
      * in the {@code info}list.
      */
-    private class DfsWalker implements SsaBasicBlock.Visitor {
+    private class DfsWalker implements com.duy.dx.ssa.SsaBasicBlock.Visitor {
         private int dfsNum = 0;
 
-        public void visitBlock(SsaBasicBlock v, SsaBasicBlock parent) {
+        @Override
+        public void visitBlock(com.duy.dx.ssa.SsaBasicBlock v, com.duy.dx.ssa.SsaBasicBlock parent) {
             DFSInfo bbInfo = new DFSInfo();
             bbInfo.semidom = ++dfsNum;
             bbInfo.rep = v;
@@ -267,16 +268,16 @@ public final class Dominators {
 
     private static final class DFSInfo {
         public int semidom;
-        public SsaBasicBlock parent;
+        public com.duy.dx.ssa.SsaBasicBlock parent;
 
         /**
          * rep(resentative) is known as "label" in the paper. It is the node
          * that our block's DFS info has been unioned to.
          */
-        public SsaBasicBlock rep;
+        public com.duy.dx.ssa.SsaBasicBlock rep;
 
-        public SsaBasicBlock ancestor;
-        public ArrayList<SsaBasicBlock> bucket;
+        public com.duy.dx.ssa.SsaBasicBlock ancestor;
+        public ArrayList<com.duy.dx.ssa.SsaBasicBlock> bucket;
 
         public DFSInfo() {
             bucket = new ArrayList<SsaBasicBlock>();

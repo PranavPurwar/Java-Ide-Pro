@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .io.Opcodes;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
+import com.duy.dx.io.Opcodes;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
 
 /**
  * Pseudo-instruction which holds switch data. The switch data is
@@ -33,16 +33,16 @@ public final class SwitchData extends VariableSizeInsn {
      * {@code non-null;} address representing the instruction that uses this
      * instance
      */
-    private final CodeAddress user;
+    private final com.duy.dx.dex.code.CodeAddress user;
 
     /** {@code non-null;} sorted list of switch cases (keys) */
-    private final IntList cases;
+    private final com.duy.dx.util.IntList cases;
 
     /**
      * {@code non-null;} corresponding list of code addresses; the branch
      * target for each case
      */
-    private final CodeAddress[] targets;
+    private final com.duy.dx.dex.code.CodeAddress[] targets;
 
     /** whether the output table will be packed (vs. sparse) */
     private final boolean packed;
@@ -58,9 +58,9 @@ public final class SwitchData extends VariableSizeInsn {
      * @param targets {@code non-null;} corresponding list of code addresses; the
      * branch target for each case
      */
-    public SwitchData(SourcePosition position, CodeAddress user,
-                      IntList cases, CodeAddress[] targets) {
-        super(position, RegisterSpecList.EMPTY);
+    public SwitchData(SourcePosition position, com.duy.dx.dex.code.CodeAddress user,
+                      com.duy.dx.util.IntList cases, CodeAddress[] targets) {
+        super(position, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
 
         if (user == null) {
             throw new NullPointerException("user == null");
@@ -109,7 +109,7 @@ public final class SwitchData extends VariableSizeInsn {
             int lastCase = (sz == 0) ? 0 : cases.get(sz - 1);
             int outSz = lastCase - firstCase + 1;
 
-            out.writeShort(Opcodes.PACKED_SWITCH_PAYLOAD);
+            out.writeShort(com.duy.dx.io.Opcodes.PACKED_SWITCH_PAYLOAD);
             out.writeShort(outSz);
             out.writeInt(firstCase);
 
@@ -161,7 +161,7 @@ public final class SwitchData extends VariableSizeInsn {
     /** {@inheritDoc} */
     @Override
     protected String argString() {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         int sz = targets.length;
         for (int i = 0; i < sz; i++) {
@@ -178,12 +178,12 @@ public final class SwitchData extends VariableSizeInsn {
     @Override
     protected String listingString0(boolean noteIndices) {
         int baseAddress = user.getAddress();
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
         int sz = targets.length;
 
         sb.append(packed ? "packed" : "sparse");
         sb.append("-switch-payload // for switch @ ");
-        sb.append(Hex.u2(baseAddress));
+        sb.append(com.duy.dx.util.Hex.u2(baseAddress));
 
         for (int i = 0; i < sz; i++) {
             int absTarget = targets[i].getAddress();
@@ -191,7 +191,7 @@ public final class SwitchData extends VariableSizeInsn {
             sb.append("\n  ");
             sb.append(cases.get(i));
             sb.append(": ");
-            sb.append(Hex.u4(absTarget));
+            sb.append(com.duy.dx.util.Hex.u4(absTarget));
             sb.append(" // ");
             sb.append(Hex.s4(relTarget));
         }
@@ -207,7 +207,7 @@ public final class SwitchData extends VariableSizeInsn {
      * @return {@code >= -1;} the packed table size or {@code -1} if the
      * cases couldn't possibly be represented as a packed table
      */
-    private static long packedCodeSize(IntList cases) {
+    private static long packedCodeSize(com.duy.dx.util.IntList cases) {
         int sz = cases.size();
         long low = cases.get(0);
         long high = cases.get(sz - 1);
@@ -223,7 +223,7 @@ public final class SwitchData extends VariableSizeInsn {
      * @param cases {@code non-null;} sorted list of cases
      * @return {@code > 0;} the sparse table size
      */
-    private static long sparseCodeSize(IntList cases) {
+    private static long sparseCodeSize(com.duy.dx.util.IntList cases) {
         int sz = cases.size();
 
         return (sz * 4L) + 2;

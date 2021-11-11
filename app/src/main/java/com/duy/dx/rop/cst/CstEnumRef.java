@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.cst;
+package com.duy.dx.rop.cst;
 
-import com.duy.dx .rop.type.Type;
+import com.duy.dx.rop.type.Type;
 
 /**
  * Constant type to represent a reference to a particular constant
@@ -24,7 +24,7 @@ import com.duy.dx .rop.type.Type;
  */
 public final class CstEnumRef extends CstMemberRef {
     /** {@code null-ok;} the corresponding field ref, lazily initialized */
-    private CstFieldRef fieldRef;
+    private com.duy.dx.rop.cst.CstFieldRef fieldRef;
 
     /**
      * Constructs an instance.
@@ -49,16 +49,17 @@ public final class CstEnumRef extends CstMemberRef {
      *
      * <b>Note:</b> This returns the enumerated type.
      */
+    @Override
     public Type getType() {
         return getDefiningClass().getClassType();
     }
 
     /**
-     * Get a {@link CstFieldRef} that corresponds with this instance.
+     * Get a {@link com.duy.dx.rop.cst.CstFieldRef} that corresponds with this instance.
      *
      * @return {@code non-null;} the corresponding field reference
      */
-    public CstFieldRef getFieldRef() {
+    public com.duy.dx.rop.cst.CstFieldRef getFieldRef() {
         if (fieldRef == null) {
             fieldRef = new CstFieldRef(getDefiningClass(), getNat());
         }

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dex.DexException;
 import com.duy.dex.DexFormat;
 import com.duy.dex.DexIndexOverflowException;
-import com.duy.dx .command.dexer.Main;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 import java.util.Collection;
 import java.util.TreeMap;
@@ -34,9 +32,9 @@ import java.util.TreeMap;
  */
 public final class TypeIdsSection extends UniformItemSection {
     /**
-     * {@code non-null;} map from types to {@link TypeIdItem} instances
+     * {@code non-null;} map from types to {@link com.duy.dx.dex.file.TypeIdItem} instances
      */
-    private final TreeMap<Type, TypeIdItem> typeIds;
+    private final TreeMap<com.duy.dx.rop.type.Type, com.duy.dx.dex.file.TypeIdItem> typeIds;
 
     /**
      * Constructs an instance. The file offset is initially unknown.
@@ -46,7 +44,7 @@ public final class TypeIdsSection extends UniformItemSection {
     public TypeIdsSection(DexFile file) {
         super("type_ids", file, 4);
 
-        typeIds = new TreeMap<Type, TypeIdItem>();
+        typeIds = new TreeMap<com.duy.dx.rop.type.Type, com.duy.dx.dex.file.TypeIdItem>();
     }
 
     /** {@inheritDoc} */
@@ -57,14 +55,14 @@ public final class TypeIdsSection extends UniformItemSection {
 
     /** {@inheritDoc} */
     @Override
-    public IndexedItem get(Constant cst) {
+    public com.duy.dx.dex.file.IndexedItem get(Constant cst) {
         if (cst == null) {
             throw new NullPointerException("cst == null");
         }
 
         throwIfNotPrepared();
 
-        Type type = ((CstType) cst).getClassType();
+        com.duy.dx.rop.type.Type type = ((com.duy.dx.rop.cst.CstType) cst).getClassType();
         IndexedItem result = typeIds.get(type);
 
         if (result == null) {
@@ -86,13 +84,15 @@ public final class TypeIdsSection extends UniformItemSection {
         int offset = (sz == 0) ? 0 : getFileOffset();
 
         if (sz > DexFormat.MAX_TYPE_IDX + 1) {
-            throw new DexIndexOverflowException("Too many type references: " + sz +
-                    "; max is " + (DexFormat.MAX_TYPE_IDX + 1) + ".\n" +
-                    Main.getTooManyIdsErrorMessage());
+            throw new DexIndexOverflowException(
+                    String.format("Too many type identifiers to fit in one dex file: %1$d; max is %2$d.%n"
+                                    + "You may try using multi-dex. If multi-dex is enabled then the list of "
+                                    + "classes for the main dex list is too large.",
+                            items().size(), DexFormat.MAX_MEMBER_IDX + 1));
         }
 
         if (out.annotates()) {
-            out.annotate(4, "type_ids_size:   " + Hex.u4(sz));
+            out.annotate(4, "type_ids_size:   " + com.duy.dx.util.Hex.u4(sz));
             out.annotate(4, "type_ids_off:    " + Hex.u4(offset));
         }
 
@@ -106,17 +106,17 @@ public final class TypeIdsSection extends UniformItemSection {
      * @param type {@code non-null;} the type to intern
      * @return {@code non-null;} the interned reference
      */
-    public synchronized TypeIdItem intern(Type type) {
+    public synchronized com.duy.dx.dex.file.TypeIdItem intern(com.duy.dx.rop.type.Type type) {
         if (type == null) {
             throw new NullPointerException("type == null");
         }
 
         throwIfPrepared();
 
-        TypeIdItem result = typeIds.get(type);
+        com.duy.dx.dex.file.TypeIdItem result = typeIds.get(type);
 
         if (result == null) {
-            result = new TypeIdItem(new CstType(type));
+            result = new com.duy.dx.dex.file.TypeIdItem(new com.duy.dx.rop.cst.CstType(type));
             typeIds.put(type, result);
         }
 
@@ -129,18 +129,18 @@ public final class TypeIdsSection extends UniformItemSection {
      * @param type {@code non-null;} the type to intern
      * @return {@code non-null;} the interned reference
      */
-    public synchronized TypeIdItem intern(CstType type) {
+    public synchronized com.duy.dx.dex.file.TypeIdItem intern(com.duy.dx.rop.cst.CstType type) {
         if (type == null) {
             throw new NullPointerException("type == null");
         }
 
         throwIfPrepared();
 
-        Type typePerSe = type.getClassType();
-        TypeIdItem result = typeIds.get(typePerSe);
+        com.duy.dx.rop.type.Type typePerSe = type.getClassType();
+        com.duy.dx.dex.file.TypeIdItem result = typeIds.get(typePerSe);
 
         if (result == null) {
-            result = new TypeIdItem(type);
+            result = new com.duy.dx.dex.file.TypeIdItem(type);
             typeIds.put(typePerSe, result);
         }
 
@@ -161,7 +161,7 @@ public final class TypeIdsSection extends UniformItemSection {
 
         throwIfNotPrepared();
 
-        TypeIdItem item = typeIds.get(type);
+        com.duy.dx.dex.file.TypeIdItem item = typeIds.get(type);
 
         if (item == null) {
             throw new IllegalArgumentException("not found: " + type);

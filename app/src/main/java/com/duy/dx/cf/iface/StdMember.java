@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.iface;
+package com.duy.dx.cf.iface;
 
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * Standard implementation of {@link Member}, which directly stores
@@ -26,16 +26,16 @@ import com.duy.dx .rop.cst.CstType;
  */
 public abstract class StdMember implements Member {
     /** {@code non-null;} the defining class */
-    private final CstType definingClass;
+    private final com.duy.dx.rop.cst.CstType definingClass;
 
     /** access flags */
     private final int accessFlags;
 
     /** {@code non-null;} member name and type */
-    private final CstNat nat;
+    private final com.duy.dx.rop.cst.CstNat nat;
 
     /** {@code non-null;} list of associated attributes */
-    private final AttributeList attributes;
+    private final com.duy.dx.cf.iface.AttributeList attributes;
 
     /**
      * Constructs an instance.
@@ -45,8 +45,8 @@ public abstract class StdMember implements Member {
      * @param nat {@code non-null;} member name and type (descriptor)
      * @param attributes {@code non-null;} list of associated attributes
      */
-    public StdMember(CstType definingClass, int accessFlags, CstNat nat,
-                     AttributeList attributes) {
+    public StdMember(com.duy.dx.rop.cst.CstType definingClass, int accessFlags, com.duy.dx.rop.cst.CstNat nat,
+                     com.duy.dx.cf.iface.AttributeList attributes) {
         if (definingClass == null) {
             throw new NullPointerException("definingClass == null");
         }
@@ -68,7 +68,7 @@ public abstract class StdMember implements Member {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         sb.append(getClass().getName());
         sb.append('{');
@@ -79,31 +79,37 @@ public abstract class StdMember implements Member {
     }
 
     /** {@inheritDoc} */
+    @Override
     public final CstType getDefiningClass() {
         return definingClass;
     }
 
     /** {@inheritDoc} */
+    @Override
     public final int getAccessFlags() {
         return accessFlags;
     }
 
     /** {@inheritDoc} */
+    @Override
     public final CstNat getNat() {
         return nat;
     }
 
     /** {@inheritDoc} */
-    public final CstString getName() {
+    @Override
+    public final com.duy.dx.rop.cst.CstString getName() {
         return nat.getName();
     }
 
     /** {@inheritDoc} */
+    @Override
     public final CstString getDescriptor() {
         return nat.getDescriptor();
     }
 
     /** {@inheritDoc} */
+    @Override
     public final AttributeList getAttributes() {
         return attributes;
     }

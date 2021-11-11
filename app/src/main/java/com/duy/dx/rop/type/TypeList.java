@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.type;
+package com.duy.dx.rop.type;
 
 /**
- * List of {@link Type} instances (or of things that contain types).
+ * List of {@link com.duy.dx.rop.type.Type} instances (or of things that contain types).
  */
 public interface TypeList {
     /**
@@ -46,7 +46,7 @@ public interface TypeList {
      * @param n {@code >= 0, < size();} which element
      * @return {@code non-null;} the indicated element
      */
-    public Type getType(int n);
+    public com.duy.dx.rop.type.Type getType(int n);
 
     /**
      * Gets the number of 32-bit words required to hold instances of

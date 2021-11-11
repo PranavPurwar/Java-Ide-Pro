@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.rop.cst.Constant;
 
 /**
  * Instruction which contains an explicit reference to a constant
@@ -37,12 +37,12 @@ public final class PlainCstInsn
      * @param cst {@code non-null;} the constant
      */
     public PlainCstInsn(Rop opcode, SourcePosition position,
-                        RegisterSpec result, RegisterSpecList sources,
+                        RegisterSpec result, com.duy.dx.rop.code.RegisterSpecList sources,
                         Constant cst) {
         super(opcode, position, result, sources, cst);
 
         if (opcode.getBranchingness() != Rop.BRANCH_NONE) {
-            throw new IllegalArgumentException("bogus branchingness");
+            throw new IllegalArgumentException("opcode with invalid branchingness: " + opcode.getBranchingness());
         }
     }
 

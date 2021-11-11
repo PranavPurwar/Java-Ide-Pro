@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .rop.type.TypeList;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstInteger;
 
 /**
  * Plain instruction, which has no embedded data and which cannot possibly
@@ -38,13 +38,13 @@ public final class PlainInsn
      * @param sources {@code non-null;} specs for all the sources
      */
     public PlainInsn(Rop opcode, SourcePosition position,
-                     RegisterSpec result, RegisterSpecList sources) {
+                     RegisterSpec result, com.duy.dx.rop.code.RegisterSpecList sources) {
         super(opcode, position, result, sources);
 
         switch (opcode.getBranchingness()) {
             case Rop.BRANCH_SWITCH:
             case Rop.BRANCH_THROW: {
-                throw new IllegalArgumentException("bogus branchingness");
+                throw new IllegalArgumentException("opcode with invalid branchingness: " + opcode.getBranchingness());
             }
         }
 
@@ -65,7 +65,7 @@ public final class PlainInsn
      */
     public PlainInsn(Rop opcode, SourcePosition position, RegisterSpec result,
                      RegisterSpec source) {
-        this(opcode, position, result, RegisterSpecList.make(source));
+        this(opcode, position, result, com.duy.dx.rop.code.RegisterSpecList.make(source));
     }
 
     /** {@inheritDoc} */
@@ -97,7 +97,7 @@ public final class PlainInsn
     /** {@inheritDoc} */
     @Override
     public Insn withSourceLiteral() {
-        RegisterSpecList sources = getSources();
+        com.duy.dx.rop.code.RegisterSpecList sources = getSources();
         int szSources = sources.size();
 
         if (szSources == 0) {
@@ -110,27 +110,27 @@ public final class PlainInsn
             // Check for reverse subtraction, where first source is constant
             TypeBearer firstType = sources.get(0).getTypeBearer();
             if (szSources == 2 && firstType.isConstant()) {
-                Constant cst = (Constant) firstType;
-                RegisterSpecList newSources = sources.withoutFirst();
+                com.duy.dx.rop.cst.Constant cst = (com.duy.dx.rop.cst.Constant) firstType;
+                com.duy.dx.rop.code.RegisterSpecList newSources = sources.withoutFirst();
                 Rop newRop = Rops.ropFor(getOpcode().getOpcode(), getResult(),
                                              newSources, cst);
-                return new PlainCstInsn(newRop, getPosition(), getResult(),
+                return new com.duy.dx.rop.code.PlainCstInsn(newRop, getPosition(), getResult(),
                                             newSources, cst);
             }
             return this;
         } else {
 
-            Constant cst = (Constant) lastType;
+            com.duy.dx.rop.cst.Constant cst = (Constant) lastType;
 
-            RegisterSpecList newSources = sources.withoutLast();
+            com.duy.dx.rop.code.RegisterSpecList newSources = sources.withoutLast();
 
             Rop newRop;
             try {
                 // Check for constant subtraction and flip it to be addition
                 int opcode = getOpcode().getOpcode();
-                if (opcode == RegOps.SUB && cst instanceof CstInteger) {
+                if (opcode == RegOps.SUB && cst instanceof com.duy.dx.rop.cst.CstInteger) {
                     opcode = RegOps.ADD;
-                    cst = CstInteger.make(-((CstInteger)cst).getValue());
+                    cst = com.duy.dx.rop.cst.CstInteger.make(-((CstInteger)cst).getValue());
                 }
                 newRop = Rops.ropFor(opcode, getResult(), newSources, cst);
             } catch (IllegalArgumentException ex) {

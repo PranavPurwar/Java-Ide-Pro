@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.MutabilityControl;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.MutabilityControl;
 
 /**
  * Representation of a Java method execution stack.
  *
  * <p><b>Note:</b> For the most part, the documentation for this class
- * ignores the distinction between {@link Type} and {@link
- * TypeBearer}.</p>
+ * ignores the distinction between {@link com.duy.dx.rop.type.Type} and {@link
+ * com.duy.dx.rop.type.TypeBearer}.</p>
  */
 public final class ExecutionStack extends MutabilityControl {
     /** {@code non-null;} array of stack contents */
-    private final TypeBearer[] stack;
+    private final com.duy.dx.rop.type.TypeBearer[] stack;
 
     /**
      * {@code non-null;} array specifying whether stack contents have entries
@@ -52,7 +52,7 @@ public final class ExecutionStack extends MutabilityControl {
      */
     public ExecutionStack(int maxStack) {
         super(maxStack != 0);
-        stack = new TypeBearer[maxStack];
+        stack = new com.duy.dx.rop.type.TypeBearer[maxStack];
         local = new boolean[maxStack];
         stackPtr = 0;
     }
@@ -95,7 +95,7 @@ public final class ExecutionStack extends MutabilityControl {
      *
      * @param type {@code non-null;} type to replace
      */
-    public void makeInitialized(Type type) {
+    public void makeInitialized(com.duy.dx.rop.type.Type type) {
         if (stackPtr == 0) {
             // We have to check for this before checking for immutability.
             return;
@@ -103,7 +103,7 @@ public final class ExecutionStack extends MutabilityControl {
 
         throwIfImmutable();
 
-        Type initializedType = type.getInitializedType();
+        com.duy.dx.rop.type.Type initializedType = type.getInitializedType();
 
         for (int i = 0; i < stackPtr; i++) {
             if (stack[i] == type) {
@@ -151,7 +151,7 @@ public final class ExecutionStack extends MutabilityControl {
      * @throws SimException thrown if there is insufficient room on the
      * stack for the value
      */
-    public void push(TypeBearer type) {
+    public void push(com.duy.dx.rop.type.TypeBearer type) {
         throwIfImmutable();
 
         int category;
@@ -197,7 +197,7 @@ public final class ExecutionStack extends MutabilityControl {
      * @return {@code null-ok;} the type of value stored at that element
      * @throws SimException thrown if {@code n >= size()}
      */
-    public TypeBearer peek(int n) {
+    public com.duy.dx.rop.type.TypeBearer peek(int n) {
         if (n < 0) {
             throw new IllegalArgumentException("n < 0");
         }
@@ -247,10 +247,10 @@ public final class ExecutionStack extends MutabilityControl {
      * @return {@code non-null;} the type formerly on the top of the stack
      * @throws SimException thrown if the stack is empty
      */
-    public TypeBearer pop() {
+    public com.duy.dx.rop.type.TypeBearer pop() {
         throwIfImmutable();
 
-        TypeBearer result = peek(0);
+        com.duy.dx.rop.type.TypeBearer result = peek(0);
 
         stack[stackPtr - 1] = null;
         local[stackPtr - 1] = false;
@@ -271,7 +271,7 @@ public final class ExecutionStack extends MutabilityControl {
      * @throws SimException thrown if {@code n >= size()} or
      * the action is otherwise prohibited
      */
-    public void change(int n, TypeBearer type) {
+    public void change(int n, com.duy.dx.rop.type.TypeBearer type) {
         throwIfImmutable();
 
         try {
@@ -282,7 +282,7 @@ public final class ExecutionStack extends MutabilityControl {
         }
 
         int idx = stackPtr - n - 1;
-        TypeBearer orig = stack[idx];
+        com.duy.dx.rop.type.TypeBearer orig = stack[idx];
 
         if ((orig == null) ||
             (orig.getType().getCategory() != type.getType().getCategory())) {
@@ -323,7 +323,7 @@ public final class ExecutionStack extends MutabilityControl {
      * @param type {@code null-ok;} the stack element
      * @return {@code non-null;} the string form
      */
-    private static String stackElementString(TypeBearer type) {
+    private static String stackElementString(com.duy.dx.rop.type.TypeBearer type) {
         if (type == null) {
             return "<invalid>";
         }

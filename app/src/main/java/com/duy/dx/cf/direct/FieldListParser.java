@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.iface.AttributeList;
-import com.duy.dx .cf.iface.Member;
-import com.duy.dx .cf.iface.StdField;
-import com.duy.dx .cf.iface.StdFieldList;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstType;
+import com.duy.dx.cf.iface.AttributeList;
+import com.duy.dx.cf.iface.Member;
+import com.duy.dx.cf.iface.StdField;
+import com.duy.dx.cf.iface.StdFieldList;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * Parser for lists of fields in a class file.
  */
-final /*package*/ class FieldListParser extends MemberListParser {
+final /*package*/ class FieldListParser extends com.duy.dx.cf.direct.MemberListParser {
     /** {@code non-null;} list in progress */
-    private final StdFieldList fields;
+    private final com.duy.dx.cf.iface.StdFieldList fields;
 
     /**
      * Constructs an instance.
@@ -40,9 +40,9 @@ final /*package*/ class FieldListParser extends MemberListParser {
      * @param attributeFactory {@code non-null;} attribute factory to use
      */
     public FieldListParser(DirectClassFile cf, CstType definer, int offset,
-            AttributeFactory attributeFactory) {
+                           AttributeFactory attributeFactory) {
         super(cf, definer, offset, attributeFactory);
-        fields = new StdFieldList(getCount());
+        fields = new com.duy.dx.cf.iface.StdFieldList(getCount());
     }
 
     /**
@@ -77,7 +77,7 @@ final /*package*/ class FieldListParser extends MemberListParser {
     @Override
     protected Member set(int n, int accessFlags, CstNat nat,
                          AttributeList attributes) {
-        StdField field =
+        com.duy.dx.cf.iface.StdField field =
             new StdField(getDefiner(), accessFlags, nat, attributes);
 
         fields.set(n, field);

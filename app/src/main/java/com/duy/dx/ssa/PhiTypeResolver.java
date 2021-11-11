@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .cf.code.Merger;
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
+import com.duy.dx.cf.code.Merger;
+
 import java.util.BitSet;
 import java.util.List;
+
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
 
 /**
  * Resolves the result types of phi instructions. When phi instructions
@@ -42,7 +44,7 @@ import java.util.List;
  */
 public class PhiTypeResolver {
 
-    SsaMethod ssaMeth;
+    com.duy.dx.ssa.SsaMethod ssaMeth;
     /** indexed by register; all registers still defined by unresolved phis */
     private final BitSet worklist;
 
@@ -50,7 +52,7 @@ public class PhiTypeResolver {
      * Resolves all phi types in the method
      * @param ssaMeth method to process
      */
-    public static void process (SsaMethod ssaMeth) {
+    public static void process (com.duy.dx.ssa.SsaMethod ssaMeth) {
         new PhiTypeResolver(ssaMeth).run();
     }
 
@@ -67,10 +69,10 @@ public class PhiTypeResolver {
         int regCount = ssaMeth.getRegCount();
 
         for (int reg = 0; reg < regCount; reg++) {
-            SsaInsn definsn = ssaMeth.getDefinitionForRegister(reg);
+            com.duy.dx.ssa.SsaInsn definsn = ssaMeth.getDefinitionForRegister(reg);
 
             if (definsn != null
-                    && (definsn.getResult().getBasicType() == Type.BT_VOID)) {
+                    && (definsn.getResult().getBasicType() == com.duy.dx.rop.type.Type.BT_VOID)) {
                 worklist.set(reg);
             }
         }
@@ -91,12 +93,12 @@ public class PhiTypeResolver {
                  * that use this.
                  */
 
-                List<SsaInsn> useList = ssaMeth.getUseListForRegister(reg);
+                List<com.duy.dx.ssa.SsaInsn> useList = ssaMeth.getUseListForRegister(reg);
 
                 int sz = useList.size();
                 for (int i = 0; i < sz; i++ ) {
                     SsaInsn useInsn = useList.get(i);
-                    RegisterSpec resultReg = useInsn.getResult();
+                    com.duy.dx.rop.code.RegisterSpec resultReg = useInsn.getResult();
                     if (resultReg != null && useInsn instanceof PhiInsn) {
                         worklist.set(resultReg.getReg());
                     }
@@ -112,7 +114,7 @@ public class PhiTypeResolver {
      * @param b
      * @return true if equal
      */
-    private static boolean equalsHandlesNulls(LocalItem a, LocalItem b) {
+    private static boolean equalsHandlesNulls(com.duy.dx.rop.code.LocalItem a, com.duy.dx.rop.code.LocalItem b) {
         return (a == b) || ((a != null) && a.equals(b));
     }
 
@@ -129,14 +131,14 @@ public class PhiTypeResolver {
         RegisterSpecList sources = insn.getSources();
 
         // Start by finding the first non-void operand
-        RegisterSpec first = null;
+        com.duy.dx.rop.code.RegisterSpec first = null;
         int firstIndex = -1;
 
         int szSources = sources.size();
         for (int i = 0 ; i <szSources ; i++) {
-            RegisterSpec rs = sources.get(i);
+            com.duy.dx.rop.code.RegisterSpec rs = sources.get(i);
 
-            if (rs.getBasicType() != Type.BT_VOID) {
+            if (rs.getBasicType() != com.duy.dx.rop.type.Type.BT_VOID) {
                 first = rs;
                 firstIndex = i;
             }
@@ -147,15 +149,15 @@ public class PhiTypeResolver {
             return false;
         }
 
-        LocalItem firstLocal = first.getLocalItem();
-        TypeBearer mergedType = first.getType();
+        com.duy.dx.rop.code.LocalItem firstLocal = first.getLocalItem();
+        com.duy.dx.rop.type.TypeBearer mergedType = first.getType();
         boolean sameLocals = true;
         for (int i = 0 ; i < szSources ; i++) {
             if (i == firstIndex) {
                 continue;
             }
 
-            RegisterSpec rs = sources.get(i);
+            com.duy.dx.rop.code.RegisterSpec rs = sources.get(i);
 
             // Just skip void (unresolved phi results) for now
             if (rs.getBasicType() == Type.BT_VOID){

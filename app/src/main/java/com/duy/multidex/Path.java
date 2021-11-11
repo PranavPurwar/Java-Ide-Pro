@@ -1,7 +1,23 @@
+/*
+ * Copyright (C) 2014 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.duy.multidex;
 
-import com.duy.dx .cf.direct.DirectClassFile;
-import com.duy.dx .cf.direct.StdAttributeFactory;
+import com.duy.dx.cf.direct.DirectClassFile;
+import com.duy.dx.cf.direct.StdAttributeFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,9 +35,9 @@ class Path {
     static ClassPathElement getClassPathElement(File file)
             throws ZipException, IOException {
         if (file.isDirectory()) {
-            return new FolderPathElement(file);
+            return new com.duy.multidex.FolderPathElement(file);
         } else if (file.isFile()) {
-            return new ArchivePathElement(new ZipFile(file));
+            return new com.duy.multidex.ArchivePathElement(new ZipFile(file));
         } else if (file.exists()) {
             throw new IOException("\"" + file.getPath() +
                     "\" is not a directory neither a zip file");

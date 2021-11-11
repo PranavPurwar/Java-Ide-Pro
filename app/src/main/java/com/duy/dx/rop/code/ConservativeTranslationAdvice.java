@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
 /**
  * Implementation of {@link TranslationAdvice} which conservatively answers
@@ -34,18 +34,21 @@ public final class ConservativeTranslationAdvice
     }
 
     /** {@inheritDoc} */
-    public boolean hasConstantOperation(Rop opcode,
-            RegisterSpec sourceA, RegisterSpec sourceB) {
+    @Override
+    public boolean hasConstantOperation(com.duy.dx.rop.code.Rop opcode,
+                                        RegisterSpec sourceA, RegisterSpec sourceB) {
         return false;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean requiresSourcesInOrder(Rop opcode,
-            RegisterSpecList sources) {
+                                          RegisterSpecList sources) {
         return false;
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getMaxOptimalRegisterCount() {
         return Integer.MAX_VALUE;
     }

@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.cst.ConstantPool;
-import com.duy.dx .util.ByteArray;
+import com.duy.dx.rop.cst.ConstantPool;
+import com.duy.dx.util.ByteArray;
 
 /**
  * Raw attribute, for holding onto attributes that are unrecognized.
  */
 public final class RawAttribute extends BaseAttribute {
     /** {@code non-null;} attribute data */
-    private final ByteArray data;
+    private final com.duy.dx.util.ByteArray data;
 
     /**
      * {@code null-ok;} constant pool to use for resolution of cpis in {@link
      * #data}
      */
-    private final ConstantPool pool;
+    private final com.duy.dx.rop.cst.ConstantPool pool;
 
     /**
      * Constructs an instance.
@@ -39,7 +39,7 @@ public final class RawAttribute extends BaseAttribute {
      * @param data {@code non-null;} attribute data
      * @param pool {@code null-ok;} constant pool to use for cpi resolution
      */
-    public RawAttribute(String name, ByteArray data, ConstantPool pool) {
+    public RawAttribute(String name, com.duy.dx.util.ByteArray data, com.duy.dx.rop.cst.ConstantPool pool) {
         super(name);
 
         if (data == null) {
@@ -51,7 +51,7 @@ public final class RawAttribute extends BaseAttribute {
     }
 
     /**
-     * Constructs an instance from a sub-array of a {@link ByteArray}.
+     * Constructs an instance from a sub-array of a {@link com.duy.dx.util.ByteArray}.
      *
      * @param name {@code non-null;} attribute name
      * @param data {@code non-null;} array containing the attribute data
@@ -59,8 +59,8 @@ public final class RawAttribute extends BaseAttribute {
      * @param length length of the attribute data, in bytes
      * @param pool {@code null-ok;} constant pool to use for cpi resolution
      */
-    public RawAttribute(String name, ByteArray data, int offset,
-                        int length, ConstantPool pool) {
+    public RawAttribute(String name, com.duy.dx.util.ByteArray data, int offset,
+                        int length, com.duy.dx.rop.cst.ConstantPool pool) {
         this(name, data.slice(offset, offset + length), pool);
     }
 
@@ -74,6 +74,7 @@ public final class RawAttribute extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         return data.size() + 6;
     }

@@ -14,32 +14,34 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .dex.code.LocalList;
-import com.duy.dx .dex.code.PositionList;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_ADVANCE_LINE;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_ADVANCE_PC;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_END_LOCAL;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_END_SEQUENCE;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_FIRST_SPECIAL;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_LINE_BASE;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_LINE_RANGE;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_RESTART_LOCAL;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_SET_PROLOGUE_END;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_START_LOCAL;
-import static com.duy.dx .dex.file.DebugInfoConstants.DBG_START_LOCAL_EXTENDED;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Prototype;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.ByteArrayAnnotatedOutput;
+import com.duy.dx.dex.code.LocalList;
+import com.duy.dx.dex.code.PositionList;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Prototype;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.ByteArrayAnnotatedOutput;
+
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_ADVANCE_LINE;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_ADVANCE_PC;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_END_LOCAL;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_END_SEQUENCE;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_FIRST_SPECIAL;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_LINE_BASE;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_LINE_RANGE;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_RESTART_LOCAL;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_SET_PROLOGUE_END;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_START_LOCAL;
+import static com.duy.dx.dex.file.DebugInfoConstants.DBG_START_LOCAL_EXTENDED;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -64,12 +66,12 @@ public final class DebugInfoEncoder {
     private static final boolean DEBUG = false;
 
     /** {@code null-ok;} positions (line numbers) to encode */
-    private final PositionList positions;
+    private final com.duy.dx.dex.code.PositionList positions;
 
     /** {@code null-ok;} local variables to encode */
-    private final LocalList locals;
+    private final com.duy.dx.dex.code.LocalList locals;
 
-    private final ByteArrayAnnotatedOutput output;
+    private final com.duy.dx.util.ByteArrayAnnotatedOutput output;
     private final DexFile file;
     private final int codeSize;
     private final int regSize;
@@ -87,7 +89,7 @@ public final class DebugInfoEncoder {
      * if non-null: the output to write annotations to. No normal
      * output is written to this.
      */
-    private AnnotatedOutput annotateTo;
+    private com.duy.dx.util.AnnotatedOutput annotateTo;
 
     /** if non-null: another possible output for annotations */
     private PrintWriter debugPrint;
@@ -99,7 +101,7 @@ public final class DebugInfoEncoder {
     private boolean shouldConsume;
 
     /** indexed by register; last local alive in register */
-    private final LocalList.Entry[] lastEntryForReg;
+    private final com.duy.dx.dex.code.LocalList.Entry[] lastEntryForReg;
 
     /**
      * Creates an instance.
@@ -113,9 +115,9 @@ public final class DebugInfoEncoder {
      * @param isStatic
      * @param ref
      */
-    public DebugInfoEncoder(PositionList positions, LocalList locals,
-            DexFile file, int codeSize, int regSize,
-            boolean isStatic, CstMethodRef ref) {
+    public DebugInfoEncoder(com.duy.dx.dex.code.PositionList positions, com.duy.dx.dex.code.LocalList locals,
+                            DexFile file, int codeSize, int regSize,
+                            boolean isStatic, CstMethodRef ref) {
         this.positions = positions;
         this.locals = locals;
         this.file = file;
@@ -125,7 +127,7 @@ public final class DebugInfoEncoder {
         this.regSize = regSize;
 
         output = new ByteArrayAnnotatedOutput();
-        lastEntryForReg = new LocalList.Entry[regSize];
+        lastEntryForReg = new com.duy.dx.dex.code.LocalList.Entry[regSize];
     }
 
     /**
@@ -187,7 +189,7 @@ public final class DebugInfoEncoder {
      * @return {@code non-null;} encoded output
      */
     public byte[] convertAndAnnotate(String prefix, PrintWriter debugPrint,
-            AnnotatedOutput out, boolean consume) {
+                                     AnnotatedOutput out, boolean consume) {
         this.prefix = prefix;
         this.debugPrint = debugPrint;
         annotateTo = out;
@@ -199,8 +201,8 @@ public final class DebugInfoEncoder {
     }
 
     private byte[] convert0() throws IOException {
-        ArrayList<PositionList.Entry> sortedPositions = buildSortedPositions();
-        ArrayList<LocalList.Entry> methodArgs = extractMethodArguments();
+        ArrayList<com.duy.dx.dex.code.PositionList.Entry> sortedPositions = buildSortedPositions();
+        ArrayList<com.duy.dx.dex.code.LocalList.Entry> methodArgs = extractMethodArguments();
 
         emitHeader(sortedPositions, methodArgs);
 
@@ -291,9 +293,9 @@ public final class DebugInfoEncoder {
 
         while ((curLocalIdx < sz)
                 && (locals.get(curLocalIdx).getAddress() == address)) {
-            LocalList.Entry entry = locals.get(curLocalIdx++);
+            com.duy.dx.dex.code.LocalList.Entry entry = locals.get(curLocalIdx++);
             int reg = entry.getRegister();
-            LocalList.Entry prevEntry = lastEntryForReg[reg];
+            com.duy.dx.dex.code.LocalList.Entry prevEntry = lastEntryForReg[reg];
 
             if (entry == prevEntry) {
                 /*
@@ -336,7 +338,7 @@ public final class DebugInfoEncoder {
                  * also stop emitting local ends for those cases.
                  */
                 if (entry.getDisposition()
-                        != LocalList.Disposition.END_REPLACED) {
+                        != com.duy.dx.dex.code.LocalList.Disposition.END_REPLACED) {
                     emitLocalEnd(entry);
                 }
             }
@@ -354,7 +356,7 @@ public final class DebugInfoEncoder {
      * @throws IOException
      */
     private int emitPositionsAtAddress(int curPositionIdx,
-            ArrayList<PositionList.Entry> sortedPositions)
+            ArrayList<com.duy.dx.dex.code.PositionList.Entry> sortedPositions)
             throws IOException {
         int positionsSz = sortedPositions.size();
         while ((curPositionIdx < positionsSz)
@@ -374,14 +376,14 @@ public final class DebugInfoEncoder {
      * in left-to-right order omitting "this"
      * @throws IOException
      */
-    private void emitHeader(ArrayList<PositionList.Entry> sortedPositions,
-            ArrayList<LocalList.Entry> methodArgs) throws IOException {
+    private void emitHeader(ArrayList<com.duy.dx.dex.code.PositionList.Entry> sortedPositions,
+            ArrayList<com.duy.dx.dex.code.LocalList.Entry> methodArgs) throws IOException {
         boolean annotate = (annotateTo != null) || (debugPrint != null);
         int mark = output.getCursor();
 
         // Start by initializing the line number register.
         if (sortedPositions.size() > 0) {
-            PositionList.Entry entry = sortedPositions.get(0);
+            com.duy.dx.dex.code.PositionList.Entry entry = sortedPositions.get(0);
             line = entry.getPosition().getLine();
         }
         output.writeUleb128(line);
@@ -400,7 +402,7 @@ public final class DebugInfoEncoder {
          * entry for the 'this' pointer.
          */
         if (!isStatic) {
-            for (LocalList.Entry arg : methodArgs) {
+            for (com.duy.dx.dex.code.LocalList.Entry arg : methodArgs) {
                 if (curParam == arg.getRegister()) {
                     lastEntryForReg[curParam] = arg;
                     break;
@@ -424,11 +426,11 @@ public final class DebugInfoEncoder {
          */
         for (int i = 0; i < szParamTypes; i++) {
             Type pt = paramTypes.get(i);
-            LocalList.Entry found = null;
+            com.duy.dx.dex.code.LocalList.Entry found = null;
 
             mark = output.getCursor();
 
-            for (LocalList.Entry arg : methodArgs) {
+            for (com.duy.dx.dex.code.LocalList.Entry arg : methodArgs) {
                 if (curParam == arg.getRegister()) {
                     found = arg;
 
@@ -462,7 +464,7 @@ public final class DebugInfoEncoder {
                                 ? "<unnamed>" : found.getName().toHuman();
                 annotate(output.getCursor() - mark,
                         "parameter " + parameterName + " "
-                                + RegisterSpec.PREFIX + curParam);
+                                + com.duy.dx.rop.code.RegisterSpec.PREFIX + curParam);
             }
 
             curParam += pt.getCategory();
@@ -473,12 +475,12 @@ public final class DebugInfoEncoder {
          * a LOCAL_RESTART_EXTENDED
          */
 
-        for (LocalList.Entry arg : lastEntryForReg) {
+        for (com.duy.dx.dex.code.LocalList.Entry arg : lastEntryForReg) {
             if (arg == null) {
                 continue;
             }
 
-            CstString signature = arg.getSignature();
+            com.duy.dx.rop.cst.CstString signature = arg.getSignature();
 
             if (signature != null) {
                 emitLocalStartExtended(arg);
@@ -491,20 +493,22 @@ public final class DebugInfoEncoder {
      *
      * @return A sorted positions list
      */
-    private ArrayList<PositionList.Entry> buildSortedPositions() {
+    private ArrayList<com.duy.dx.dex.code.PositionList.Entry> buildSortedPositions() {
         int sz = (positions == null) ? 0 : positions.size();
-        ArrayList<PositionList.Entry> result = new ArrayList(sz);
+        ArrayList<com.duy.dx.dex.code.PositionList.Entry> result = new ArrayList(sz);
 
         for (int i = 0; i < sz; i++) {
             result.add(positions.get(i));
         }
 
         // Sort ascending by address.
-        Collections.sort (result, new Comparator<PositionList.Entry>() {
-            public int compare (PositionList.Entry a, PositionList.Entry b) {
+        Collections.sort (result, new Comparator<com.duy.dx.dex.code.PositionList.Entry>() {
+            @Override
+            public int compare (com.duy.dx.dex.code.PositionList.Entry a, com.duy.dx.dex.code.PositionList.Entry b) {
                 return a.getAddress() - b.getAddress();
             }
 
+            @Override
             public boolean equals (Object obj) {
                return obj == this;
             }
@@ -532,15 +536,15 @@ public final class DebugInfoEncoder {
      * @return list of non-{@code this} method argument locals,
      * sorted by ascending register
      */
-    private ArrayList<LocalList.Entry> extractMethodArguments() {
-        ArrayList<LocalList.Entry> result
+    private ArrayList<com.duy.dx.dex.code.LocalList.Entry> extractMethodArguments() {
+        ArrayList<com.duy.dx.dex.code.LocalList.Entry> result
                 = new ArrayList(desc.getParameterTypes().size());
         int argBase = getParamBase();
         BitSet seen = new BitSet(regSize - argBase);
         int sz = locals.size();
 
         for (int i = 0; i < sz; i++) {
-            LocalList.Entry e = locals.get(i);
+            com.duy.dx.dex.code.LocalList.Entry e = locals.get(i);
             int reg = e.getRegister();
 
             if (reg < argBase) {
@@ -557,11 +561,13 @@ public final class DebugInfoEncoder {
         }
 
         // Sort by ascending register.
-        Collections.sort(result, new Comparator<LocalList.Entry>() {
-            public int compare(LocalList.Entry a, LocalList.Entry b) {
+        Collections.sort(result, new Comparator<com.duy.dx.dex.code.LocalList.Entry>() {
+            @Override
+            public int compare(com.duy.dx.dex.code.LocalList.Entry a, com.duy.dx.dex.code.LocalList.Entry b) {
                 return a.getRegister() - b.getRegister();
             }
 
+            @Override
             public boolean equals(Object obj) {
                return obj == this;
             }
@@ -577,14 +583,14 @@ public final class DebugInfoEncoder {
      * @param e {@code non-null;} entry
      * @return {@code non-null;} annotation string
      */
-    private String entryAnnotationString(LocalList.Entry e) {
+    private String entryAnnotationString(com.duy.dx.dex.code.LocalList.Entry e) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(RegisterSpec.PREFIX);
         sb.append(e.getRegister());
         sb.append(' ');
 
-        CstString name = e.getName();
+        com.duy.dx.rop.cst.CstString name = e.getName();
         if (name == null) {
             sb.append("null");
         } else {
@@ -592,14 +598,14 @@ public final class DebugInfoEncoder {
         }
         sb.append(' ');
 
-        CstType type = e.getType();
+        com.duy.dx.rop.cst.CstType type = e.getType();
         if (type == null) {
             sb.append("null");
         } else {
             sb.append(type.toHuman());
         }
 
-        CstString signature = e.getSignature();
+        com.duy.dx.rop.cst.CstString signature = e.getSignature();
 
         if (signature != null) {
             sb.append(' ');
@@ -610,13 +616,13 @@ public final class DebugInfoEncoder {
     }
 
     /**
-     * Emits a {@link DebugInfoConstants#DBG_RESTART_LOCAL DBG_RESTART_LOCAL}
+     * Emits a {@link com.duy.dx.dex.file.DebugInfoConstants#DBG_RESTART_LOCAL DBG_RESTART_LOCAL}
      * sequence.
      *
      * @param entry entry associated with this restart
      * @throws IOException
      */
-    private void emitLocalRestart(LocalList.Entry entry)
+    private void emitLocalRestart(com.duy.dx.dex.code.LocalList.Entry entry)
             throws IOException {
 
         int mark = output.getCursor();
@@ -680,14 +686,14 @@ public final class DebugInfoEncoder {
     }
 
     /**
-     * Emits a {@link DebugInfoConstants#DBG_START_LOCAL DBG_START_LOCAL} or
-     * {@link DebugInfoConstants#DBG_START_LOCAL_EXTENDED
+     * Emits a {@link com.duy.dx.dex.file.DebugInfoConstants#DBG_START_LOCAL DBG_START_LOCAL} or
+     * {@link com.duy.dx.dex.file.DebugInfoConstants#DBG_START_LOCAL_EXTENDED
      * DBG_START_LOCAL_EXTENDED} sequence.
      *
      * @param entry entry to emit
      * @throws IOException
      */
-    private void emitLocalStart(LocalList.Entry entry)
+    private void emitLocalStart(com.duy.dx.dex.code.LocalList.Entry entry)
         throws IOException {
 
         if (entry.getSignature() != null) {
@@ -715,13 +721,13 @@ public final class DebugInfoEncoder {
     }
 
     /**
-     * Emits a {@link DebugInfoConstants#DBG_START_LOCAL_EXTENDED
+     * Emits a {@link com.duy.dx.dex.file.DebugInfoConstants#DBG_START_LOCAL_EXTENDED
      * DBG_START_LOCAL_EXTENDED} sequence.
      *
      * @param entry entry to emit
      * @throws IOException
      */
-    private void emitLocalStartExtended(LocalList.Entry entry)
+    private void emitLocalStartExtended(com.duy.dx.dex.code.LocalList.Entry entry)
         throws IOException {
 
         int mark = output.getCursor();
@@ -745,7 +751,7 @@ public final class DebugInfoEncoder {
     }
 
     /**
-     * Emits a {@link DebugInfoConstants#DBG_END_LOCAL DBG_END_LOCAL} sequence.
+     * Emits a {@link com.duy.dx.dex.file.DebugInfoConstants#DBG_END_LOCAL DBG_END_LOCAL} sequence.
      *
      * @param entry {@code entry non-null;} entry associated with end.
      * @throws IOException
@@ -849,7 +855,7 @@ public final class DebugInfoEncoder {
     }
 
     /**
-     * Emits an {@link DebugInfoConstants#DBG_ADVANCE_LINE DBG_ADVANCE_LINE}
+     * Emits an {@link com.duy.dx.dex.file.DebugInfoConstants#DBG_ADVANCE_LINE DBG_ADVANCE_LINE}
      * sequence.
      *
      * @param deltaLines amount to change line number register by
@@ -873,7 +879,7 @@ public final class DebugInfoEncoder {
     }
 
     /**
-     * Emits an  {@link DebugInfoConstants#DBG_ADVANCE_PC DBG_ADVANCE_PC}
+     * Emits an  {@link com.duy.dx.dex.file.DebugInfoConstants#DBG_ADVANCE_PC DBG_ADVANCE_PC}
      * sequence.
      *
      * @param deltaAddress {@code >= 0;} amount to change program counter by

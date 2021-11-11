@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.util.AnnotatedOutput;
 
 /**
  * Combination instruction which turns into a variable number of
@@ -30,7 +30,7 @@ import com.duy.dx .util.AnnotatedOutput;
  */
 public final class HighRegisterPrefix extends VariableSizeInsn {
     /** {@code null-ok;} cached instructions, if constructed */
-    private SimpleInsn[] insns;
+    private com.duy.dx.dex.code.SimpleInsn[] insns;
 
     /**
      * Constructs an instance. The output address of this instance is initially
@@ -39,8 +39,8 @@ public final class HighRegisterPrefix extends VariableSizeInsn {
      * @param position {@code non-null;} source position
      * @param registers {@code non-null;} source registers
      */
-    public HighRegisterPrefix(SourcePosition position,
-                              RegisterSpecList registers) {
+    public HighRegisterPrefix(com.duy.dx.rop.code.SourcePosition position,
+                              com.duy.dx.rop.code.RegisterSpecList registers) {
         super(position, registers);
 
         if (registers.size() == 0) {
@@ -57,7 +57,7 @@ public final class HighRegisterPrefix extends VariableSizeInsn {
 
         calculateInsnsIfNecessary();
 
-        for (SimpleInsn insn : insns) {
+        for (com.duy.dx.dex.code.SimpleInsn insn : insns) {
             result += insn.codeSize();
         }
 
@@ -69,7 +69,7 @@ public final class HighRegisterPrefix extends VariableSizeInsn {
     public void writeTo(AnnotatedOutput out) {
         calculateInsnsIfNecessary();
 
-        for (SimpleInsn insn : insns) {
+        for (com.duy.dx.dex.code.SimpleInsn insn : insns) {
             insn.writeTo(out);
         }
     }
@@ -83,13 +83,13 @@ public final class HighRegisterPrefix extends VariableSizeInsn {
             return;
         }
 
-        RegisterSpecList registers = getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList registers = getRegisters();
         int sz = registers.size();
 
-        insns = new SimpleInsn[sz];
+        insns = new com.duy.dx.dex.code.SimpleInsn[sz];
 
         for (int i = 0, outAt = 0; i < sz; i++) {
-          RegisterSpec src = registers.get(i);
+          com.duy.dx.rop.code.RegisterSpec src = registers.get(i);
           insns[i] = moveInsnFor(src, outAt);
           outAt += src.getCategory();
         }
@@ -97,7 +97,7 @@ public final class HighRegisterPrefix extends VariableSizeInsn {
 
     /** {@inheritDoc} */
     @Override
-    public DalvInsn withRegisters(RegisterSpecList registers) {
+    public com.duy.dx.dex.code.DalvInsn withRegisters(com.duy.dx.rop.code.RegisterSpecList registers) {
         return new HighRegisterPrefix(getPosition(), registers);
     }
 
@@ -112,11 +112,11 @@ public final class HighRegisterPrefix extends VariableSizeInsn {
     protected String listingString0(boolean noteIndices) {
         RegisterSpecList registers = getRegisters();
         int sz = registers.size();
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         for (int i = 0, outAt = 0; i < sz; i++) {
-            RegisterSpec src = registers.get(i);
-            SimpleInsn insn = moveInsnFor(src, outAt);
+            com.duy.dx.rop.code.RegisterSpec src = registers.get(i);
+            com.duy.dx.dex.code.SimpleInsn insn = moveInsnFor(src, outAt);
 
             if (i != 0) {
                 sb.append('\n');
@@ -138,7 +138,7 @@ public final class HighRegisterPrefix extends VariableSizeInsn {
      * @param destIndex {@code >= 0;} the destination register index
      * @return {@code non-null;} the appropriate move instruction
      */
-    private static SimpleInsn moveInsnFor(RegisterSpec src, int destIndex) {
+    private static SimpleInsn moveInsnFor(com.duy.dx.rop.code.RegisterSpec src, int destIndex) {
         return DalvInsn.makeMove(SourcePosition.NO_INFO,
                 RegisterSpec.make(destIndex, src.getType()),
                 src);

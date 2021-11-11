@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.SizeOf;
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .rop.annotation.AnnotationsList;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstArray;
-import com.duy.dx .rop.cst.CstFieldRef;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.Writers;
-
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.rop.annotation.AnnotationsList;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstArray;
+import com.duy.dx.rop.cst.CstFieldRef;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.Writers;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public final class ClassDefItem extends IndexedItem {
      * {@code null-ok;} item wrapper for the static values, initialized
      * in {@link #addContents}
      */
-    private EncodedArrayItem staticValuesItem;
+    private com.duy.dx.dex.file.EncodedArrayItem staticValuesItem;
 
     /** {@code non-null;} annotations directory */
     private AnnotationsDirectoryItem annotationsDirectory;
@@ -125,8 +124,8 @@ public final class ClassDefItem extends IndexedItem {
 
     /** {@inheritDoc} */
     @Override
-    public void addContents(DexFile file) {
-        TypeIdsSection typeIds = file.getTypeIds();
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
+        com.duy.dx.dex.file.TypeIdsSection typeIds = file.getTypeIds();
         MixedItemSection byteData = file.getByteData();
         MixedItemSection wordData = file.getWordData();
         MixedItemSection typeLists = file.getTypeLists();
@@ -168,13 +167,13 @@ public final class ClassDefItem extends IndexedItem {
 
     /** {@inheritDoc} */
     @Override
-    public void writeTo(DexFile file, AnnotatedOutput out) {
+    public void writeTo(com.duy.dx.dex.file.DexFile file, AnnotatedOutput out) {
         boolean annotates = out.annotates();
         TypeIdsSection typeIds = file.getTypeIds();
         int classIdx = typeIds.indexOf(thisClass);
         int superIdx = (superclass == null) ? -1 :
             typeIds.indexOf(superclass);
-        int interOff = OffsettedItem.getAbsoluteOffsetOr0(interfaces);
+        int interOff = com.duy.dx.dex.file.OffsettedItem.getAbsoluteOffsetOr0(interfaces);
         int annoOff = annotationsDirectory.isEmpty() ? 0 :
             annotationsDirectory.getAbsoluteOffset();
         int sourceFileIdx = (sourceFile == null) ? -1 :
@@ -274,7 +273,7 @@ public final class ClassDefItem extends IndexedItem {
      * @param field {@code non-null;} the field to add
      * @param value {@code null-ok;} initial value for the field, if any
      */
-    public void addStaticField(EncodedField field, Constant value) {
+    public void addStaticField(com.duy.dx.dex.file.EncodedField field, Constant value) {
         classData.addStaticField(field, value);
     }
 
@@ -292,7 +291,7 @@ public final class ClassDefItem extends IndexedItem {
      *
      * @param method {@code non-null;} the method to add
      */
-    public void addDirectMethod(EncodedMethod method) {
+    public void addDirectMethod(com.duy.dx.dex.file.EncodedMethod method) {
         classData.addDirectMethod(method);
     }
 
@@ -301,7 +300,7 @@ public final class ClassDefItem extends IndexedItem {
      *
      * @param method {@code non-null;} the method to add
      */
-    public void addVirtualMethod(EncodedMethod method) {
+    public void addVirtualMethod(com.duy.dx.dex.file.EncodedMethod method) {
         classData.addVirtualMethod(method);
     }
 
@@ -324,7 +323,7 @@ public final class ClassDefItem extends IndexedItem {
      * @param annotations {@code non-null;} annotations to set for this class
      * @param dexFile {@code non-null;} dex output
      */
-    public void setClassAnnotations(Annotations annotations, DexFile dexFile) {
+    public void setClassAnnotations(Annotations annotations, com.duy.dx.dex.file.DexFile dexFile) {
         annotationsDirectory.setClassAnnotations(annotations, dexFile);
     }
 
@@ -336,7 +335,7 @@ public final class ClassDefItem extends IndexedItem {
      * @param dexFile {@code non-null;} dex output
      */
     public void addFieldAnnotations(CstFieldRef field,
-            Annotations annotations, DexFile dexFile) {
+            Annotations annotations, com.duy.dx.dex.file.DexFile dexFile) {
         annotationsDirectory.addFieldAnnotations(field, annotations, dexFile);
     }
 
@@ -348,7 +347,7 @@ public final class ClassDefItem extends IndexedItem {
      * @param dexFile {@code non-null;} dex output
      */
     public void addMethodAnnotations(CstMethodRef method,
-            Annotations annotations, DexFile dexFile) {
+            Annotations annotations, com.duy.dx.dex.file.DexFile dexFile) {
         annotationsDirectory.addMethodAnnotations(method, annotations, dexFile);
     }
 

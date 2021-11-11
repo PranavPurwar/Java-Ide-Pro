@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.RegisterSpecSet;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .ssa.RegisterMapper;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.RegisterSpecSet;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.ssa.RegisterMapper;
 
 /**
  * Pseudo-instruction which is used to hold a snapshot of the
@@ -29,7 +29,7 @@ import com.duy.dx .ssa.RegisterMapper;
  */
 public final class LocalSnapshot extends ZeroSizeInsn {
     /** {@code non-null;} local state associated with this instance */
-    private final RegisterSpecSet locals;
+    private final com.duy.dx.rop.code.RegisterSpecSet locals;
 
     /**
      * Constructs an instance. The output address of this instance is initially
@@ -38,7 +38,7 @@ public final class LocalSnapshot extends ZeroSizeInsn {
      * @param position {@code non-null;} source position
      * @param locals {@code non-null;} associated local variable state
      */
-    public LocalSnapshot(SourcePosition position, RegisterSpecSet locals) {
+    public LocalSnapshot(SourcePosition position, com.duy.dx.rop.code.RegisterSpecSet locals) {
         super(position);
 
         if (locals == null) {
@@ -50,13 +50,13 @@ public final class LocalSnapshot extends ZeroSizeInsn {
 
     /** {@inheritDoc} */
     @Override
-    public DalvInsn withRegisterOffset(int delta) {
+    public com.duy.dx.dex.code.DalvInsn withRegisterOffset(int delta) {
         return new LocalSnapshot(getPosition(), locals.withOffset(delta));
     }
 
     /** {@inheritDoc} */
     @Override
-    public DalvInsn withRegisters(RegisterSpecList registers) {
+    public com.duy.dx.dex.code.DalvInsn withRegisters(RegisterSpecList registers) {
         return new LocalSnapshot(getPosition(), locals);
     }
 
@@ -80,7 +80,7 @@ public final class LocalSnapshot extends ZeroSizeInsn {
     protected String listingString0(boolean noteIndices) {
         int sz = locals.size();
         int max = locals.getMaxSize();
-        StringBuffer sb = new StringBuffer(100 + sz * 40);
+        StringBuilder sb = new StringBuilder(100 + sz * 40);
 
         sb.append("local-snapshot");
 

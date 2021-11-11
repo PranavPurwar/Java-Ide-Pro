@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.cst;
+package com.duy.dx.rop.cst;
 
-import com.duy.dx .rop.type.Type;
+import com.duy.dx.rop.type.Type;
 
 /**
  * Constants of type {@code CONSTANT_NameAndType_info}.
  */
-public final class CstNat extends Constant {
+public final class CstNat extends com.duy.dx.rop.cst.Constant {
     /**
      * {@code non-null;} the instance for name {@code TYPE} and descriptor
      * {@code java.lang.Class}, which is useful when dealing with
      * wrapped primitives
      */
     public static final CstNat PRIMITIVE_TYPE_NAT =
-        new CstNat(new CstString("TYPE"),
-                   new CstString("Ljava/lang/Class;"));
+        new CstNat(new com.duy.dx.rop.cst.CstString("TYPE"),
+                   new com.duy.dx.rop.cst.CstString("Ljava/lang/Class;"));
 
     /** {@code non-null;} the name */
-    private final CstString name;
+    private final com.duy.dx.rop.cst.CstString name;
 
     /** {@code non-null;} the descriptor (type) */
-    private final CstString descriptor;
+    private final com.duy.dx.rop.cst.CstString descriptor;
 
     /**
      * Constructs an instance.
@@ -43,7 +43,7 @@ public final class CstNat extends Constant {
      * @param name {@code non-null;} the name
      * @param descriptor {@code non-null;} the descriptor
      */
-    public CstNat(CstString name, CstString descriptor) {
+    public CstNat(com.duy.dx.rop.cst.CstString name, com.duy.dx.rop.cst.CstString descriptor) {
         if (name == null) {
             throw new NullPointerException("name == null");
         }
@@ -110,7 +110,7 @@ public final class CstNat extends Constant {
      *
      * @return {@code non-null;} the name
      */
-    public CstString getName() {
+    public com.duy.dx.rop.cst.CstString getName() {
         return name;
     }
 
@@ -129,6 +129,7 @@ public final class CstNat extends Constant {
      *
      * @return {@code non-null;} the human form
      */
+    @Override
     public String toHuman() {
         return name.toHuman() + ':' + descriptor.toHuman();
     }

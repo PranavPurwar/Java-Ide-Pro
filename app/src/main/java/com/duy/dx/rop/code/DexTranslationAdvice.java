@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.type.Type;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.cst.CstInteger;
 
 /**
  * Implementation of {@link TranslationAdvice} which represents what
@@ -54,25 +54,26 @@ public final class DexTranslationAdvice
     }
 
     /** {@inheritDoc} */
-    public boolean hasConstantOperation(Rop opcode,
-            RegisterSpec sourceA, RegisterSpec sourceB) {
+    @Override
+    public boolean hasConstantOperation(com.duy.dx.rop.code.Rop opcode,
+                                        RegisterSpec sourceA, RegisterSpec sourceB) {
         if (sourceA.getType() != Type.INT) {
             return false;
         }
 
         // Return false if second source isn't a constant
-        if (! (sourceB.getTypeBearer() instanceof CstInteger)) {
+        if (! (sourceB.getTypeBearer() instanceof com.duy.dx.rop.cst.CstInteger)) {
             // Except for rsub-int (reverse sub) where first source is constant
-            if (sourceA.getTypeBearer() instanceof CstInteger &&
+            if (sourceA.getTypeBearer() instanceof com.duy.dx.rop.cst.CstInteger &&
                     opcode.getOpcode() == RegOps.SUB) {
-                CstInteger cst = (CstInteger) sourceA.getTypeBearer();
+                com.duy.dx.rop.cst.CstInteger cst = (com.duy.dx.rop.cst.CstInteger) sourceA.getTypeBearer();
                 return cst.fitsIn16Bits();
             } else {
                 return false;
             }
         }
 
-        CstInteger cst = (CstInteger) sourceB.getTypeBearer();
+        com.duy.dx.rop.cst.CstInteger cst = (com.duy.dx.rop.cst.CstInteger) sourceB.getTypeBearer();
 
         switch (opcode.getOpcode()) {
             // These have 8 and 16 bit cst representations
@@ -91,7 +92,7 @@ public final class DexTranslationAdvice
                 return cst.fitsIn8Bits();
             // No sub-const insn, so check if equivalent add-const fits
             case RegOps.SUB:
-                CstInteger cst2 = CstInteger.make(-cst.getValue());
+                com.duy.dx.rop.cst.CstInteger cst2 = CstInteger.make(-cst.getValue());
                 return cst2.fitsIn16Bits();
             default:
                 return false;
@@ -99,8 +100,9 @@ public final class DexTranslationAdvice
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean requiresSourcesInOrder(Rop opcode,
-            RegisterSpecList sources) {
+                                          com.duy.dx.rop.code.RegisterSpecList sources) {
 
         return !disableSourcesInOrder && opcode.isCallLike()
                 && totalRopWidth(sources) >= MIN_INVOKE_IN_ORDER;
@@ -124,6 +126,7 @@ public final class DexTranslationAdvice
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getMaxOptimalRegisterCount() {
         return 16;
     }

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .ssa.RegisterMapper;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.ssa.RegisterMapper;
 
 /**
  * Pseudo-instruction which is used to introduce a new local variable. That
@@ -32,7 +32,7 @@ public final class LocalStart extends ZeroSizeInsn {
      * {@code non-null;} register spec representing the local variable introduced
      * by this instance
      */
-    private final RegisterSpec local;
+    private final com.duy.dx.rop.code.RegisterSpec local;
 
     /**
      * Returns the local variable listing string for a single register spec.
@@ -40,7 +40,7 @@ public final class LocalStart extends ZeroSizeInsn {
      * @param spec {@code non-null;} the spec to convert
      * @return {@code non-null;} the string form
      */
-    public static String localString(RegisterSpec spec) {
+    public static String localString(com.duy.dx.rop.code.RegisterSpec spec) {
         return spec.regString() + ' ' + spec.getLocalItem().toString() + ": " +
             spec.getTypeBearer().toHuman();
     }
@@ -53,7 +53,7 @@ public final class LocalStart extends ZeroSizeInsn {
      * @param local {@code non-null;} register spec representing the local
      * variable introduced by this instance
      */
-    public LocalStart(SourcePosition position, RegisterSpec local) {
+    public LocalStart(SourcePosition position, com.duy.dx.rop.code.RegisterSpec local) {
         super(position);
 
         if (local == null) {
@@ -65,13 +65,13 @@ public final class LocalStart extends ZeroSizeInsn {
 
     /** {@inheritDoc} */
     @Override
-    public DalvInsn withRegisterOffset(int delta) {
+    public com.duy.dx.dex.code.DalvInsn withRegisterOffset(int delta) {
         return new LocalStart(getPosition(), local.withOffset(delta));
     }
 
     /** {@inheritDoc} */
     @Override
-    public DalvInsn withRegisters(RegisterSpecList registers) {
+    public com.duy.dx.dex.code.DalvInsn withRegisters(RegisterSpecList registers) {
         return new LocalStart(getPosition(), local);
     }
 

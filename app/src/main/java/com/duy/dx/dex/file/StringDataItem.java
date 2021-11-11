@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.Leb128;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
  * Representation of string data for a particular string, in a Dalvik file.
  */
-public final class StringDataItem extends OffsettedItem {
+public final class StringDataItem extends com.duy.dx.dex.file.OffsettedItem {
     /** {@code non-null;} the string value */
     private final CstString value;
 
@@ -62,7 +62,7 @@ public final class StringDataItem extends OffsettedItem {
 
     /** {@inheritDoc} */
     @Override
-    public void addContents(DexFile file) {
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
         // Nothing to do here.
     }
 

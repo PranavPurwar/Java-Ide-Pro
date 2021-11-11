@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.type.Prototype;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
 import java.util.Collection;
 import java.util.TreeMap;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstProtoRef;
+import com.duy.dx.rop.type.Prototype;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Proto (method prototype) identifiers list section of a
@@ -31,7 +33,7 @@ public final class ProtoIdsSection extends UniformItemSection {
     /**
      * {@code non-null;} map from method prototypes to {@link ProtoIdItem} instances
      */
-    private final TreeMap<Prototype, ProtoIdItem> protoIds;
+    private final TreeMap<com.duy.dx.rop.type.Prototype, ProtoIdItem> protoIds;
 
     /**
      * Constructs an instance. The file offset is initially unknown.
@@ -41,7 +43,7 @@ public final class ProtoIdsSection extends UniformItemSection {
     public ProtoIdsSection(DexFile file) {
         super("proto_ids", file, 4);
 
-        protoIds = new TreeMap<Prototype, ProtoIdItem>();
+        protoIds = new TreeMap<com.duy.dx.rop.type.Prototype, ProtoIdItem>();
     }
 
     /** {@inheritDoc} */
@@ -52,8 +54,23 @@ public final class ProtoIdsSection extends UniformItemSection {
 
     /** {@inheritDoc} */
     @Override
-    public IndexedItem get(Constant cst) {
-        throw new UnsupportedOperationException("unsupported");
+    public com.duy.dx.dex.file.IndexedItem get(Constant cst) {
+        if (cst == null) {
+            throw new NullPointerException("cst == null");
+        }
+
+        if (!(cst instanceof com.duy.dx.rop.cst.CstProtoRef)) {
+            throw new IllegalArgumentException("cst not instance of CstProtoRef");
+        }
+
+        throwIfNotPrepared();
+        com.duy.dx.rop.cst.CstProtoRef protoRef = (CstProtoRef) cst;
+        IndexedItem result = protoIds.get(protoRef.getPrototype());
+        if (result == null) {
+            throw new IllegalArgumentException("not found");
+        }
+
+        return result;
     }
 
     /**
@@ -72,7 +89,7 @@ public final class ProtoIdsSection extends UniformItemSection {
         }
 
         if (out.annotates()) {
-            out.annotate(4, "proto_ids_size:  " + Hex.u4(sz));
+            out.annotate(4, "proto_ids_size:  " + com.duy.dx.util.Hex.u4(sz));
             out.annotate(4, "proto_ids_off:   " + Hex.u4(offset));
         }
 
@@ -86,7 +103,7 @@ public final class ProtoIdsSection extends UniformItemSection {
      * @param prototype {@code non-null;} the prototype to intern
      * @return {@code non-null;} the interned reference
      */
-    public synchronized ProtoIdItem intern(Prototype prototype) {
+    public synchronized ProtoIdItem intern(com.duy.dx.rop.type.Prototype prototype) {
         if (prototype == null) {
             throw new NullPointerException("prototype == null");
         }

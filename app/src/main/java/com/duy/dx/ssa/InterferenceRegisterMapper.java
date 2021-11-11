@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .ssa.back.InterferenceGraph;
-import com.duy.dx .util.BitIntSet;
-import com.duy.dx .util.IntSet;
+import com.duy.dx.util.BitIntSet;
+import com.duy.dx.util.IntSet;
 import java.util.ArrayList;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.ssa.back.InterferenceGraph;
 
 /**
  * A register mapper that keeps track of the accumulated interference
@@ -43,7 +44,7 @@ public class InterferenceRegisterMapper extends BasicRegisterMapper {
     private final ArrayList<BitIntSet> newRegInterference;
 
     /** the interference graph for the old namespace */
-    private final InterferenceGraph oldRegInterference;
+    private final com.duy.dx.ssa.back.InterferenceGraph oldRegInterference;
 
     /**
      * Constructs an instance
@@ -51,7 +52,7 @@ public class InterferenceRegisterMapper extends BasicRegisterMapper {
      * @param countOldRegisters number of registers in old namespace
      */
     public InterferenceRegisterMapper(InterferenceGraph oldRegInterference,
-            int countOldRegisters) {
+                                      int countOldRegisters) {
         super(countOldRegisters);
 
         newRegInterference = new ArrayList<BitIntSet>();
@@ -104,7 +105,7 @@ public class InterferenceRegisterMapper extends BasicRegisterMapper {
      * @param newReg new namespace register
      * @return true if oldReg will interfere with newReg
      */
-    public boolean interferes(RegisterSpec oldSpec, int newReg) {
+    public boolean interferes(com.duy.dx.rop.code.RegisterSpec oldSpec, int newReg) {
         return interferes(oldSpec.getReg(), newReg, oldSpec.getCategory());
     }
 
@@ -139,7 +140,7 @@ public class InterferenceRegisterMapper extends BasicRegisterMapper {
      * to the new-namespace register + category
      */
     public boolean areAnyPinned(RegisterSpecList oldSpecs,
-            int newReg, int targetCategory) {
+                                int newReg, int targetCategory) {
         int sz = oldSpecs.size();
 
         for (int i = 0; i < sz; i++) {

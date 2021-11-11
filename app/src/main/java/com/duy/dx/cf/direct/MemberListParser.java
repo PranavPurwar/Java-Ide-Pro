@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.iface.AttributeList;
-import com.duy.dx .cf.iface.Member;
-import com.duy.dx .cf.iface.ParseException;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .cf.iface.StdAttributeList;
-import com.duy.dx .rop.cst.ConstantPool;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
+import com.duy.dx.cf.iface.AttributeList;
+import com.duy.dx.cf.iface.Member;
+import com.duy.dx.cf.iface.ParseException;
+import com.duy.dx.cf.iface.ParseObserver;
+import com.duy.dx.cf.iface.StdAttributeList;
+import com.duy.dx.rop.cst.ConstantPool;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
  * Parser for lists of class file members (that is, fields and methods).
@@ -36,7 +36,7 @@ abstract /*package*/ class MemberListParser {
     private final DirectClassFile cf;
 
     /** {@code non-null;} class being defined */
-    private final CstType definer;
+    private final com.duy.dx.rop.cst.CstType definer;
 
     /** offset in the byte array of the classfile to the start of the list */
     private final int offset;
@@ -49,7 +49,7 @@ abstract /*package*/ class MemberListParser {
     private int endOffset;
 
     /** {@code null-ok;} parse observer, if any */
-    private ParseObserver observer;
+    private com.duy.dx.cf.iface.ParseObserver observer;
 
     /**
      * Constructs an instance.
@@ -59,7 +59,7 @@ abstract /*package*/ class MemberListParser {
      * @param offset offset in {@code bytes} to the start of the list
      * @param attributeFactory {@code non-null;} attribute factory to use
      */
-    public MemberListParser(DirectClassFile cf, CstType definer,
+    public MemberListParser(DirectClassFile cf, com.duy.dx.rop.cst.CstType definer,
             int offset, AttributeFactory attributeFactory) {
         if (cf == null) {
             throw new NullPointerException("cf == null");
@@ -115,7 +115,7 @@ abstract /*package*/ class MemberListParser {
      * @return the count
      */
     protected final int getCount() {
-        ByteArray bytes = cf.getBytes();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
         return bytes.getUnsignedShort(offset);
     }
 
@@ -163,8 +163,8 @@ abstract /*package*/ class MemberListParser {
      * @param attributes list of parsed attributes
      * @return {@code non-null;} the constructed member
      */
-    protected abstract Member set(int n, int accessFlags, CstNat nat,
-            AttributeList attributes);
+    protected abstract com.duy.dx.cf.iface.Member set(int n, int accessFlags, com.duy.dx.rop.cst.CstNat nat,
+                                                               AttributeList attributes);
 
     /**
      * Does the actual parsing.
@@ -187,8 +187,8 @@ abstract /*package*/ class MemberListParser {
                 int accessFlags = bytes.getUnsignedShort(at);
                 int nameIdx = bytes.getUnsignedShort(at + 2);
                 int descIdx = bytes.getUnsignedShort(at + 4);
-                CstString name = (CstString) pool.get(nameIdx);
-                CstString desc = (CstString) pool.get(descIdx);
+                com.duy.dx.rop.cst.CstString name = (com.duy.dx.rop.cst.CstString) pool.get(nameIdx);
+                com.duy.dx.rop.cst.CstString desc = (CstString) pool.get(descIdx);
 
                 if (observer != null) {
                     observer.startParsingMember(bytes, at, name.getString(),
@@ -213,7 +213,7 @@ abstract /*package*/ class MemberListParser {
                 at = parser.getEndOffset();
                 StdAttributeList attributes = parser.getList();
                 attributes.setImmutable();
-                CstNat nat = new CstNat(name, desc);
+                com.duy.dx.rop.cst.CstNat nat = new CstNat(name, desc);
                 Member member = set(i, accessFlags, nat, attributes);
 
                 if (observer != null) {
@@ -223,12 +223,12 @@ abstract /*package*/ class MemberListParser {
                     observer.endParsingMember(bytes, at, name.getString(),
                                               desc.getString(), member);
                 }
-            } catch (ParseException ex) {
+            } catch (com.duy.dx.cf.iface.ParseException ex) {
                 ex.addContext("...while parsing " + humanName() + "s[" + i +
                               "]");
                 throw ex;
             } catch (RuntimeException ex) {
-                ParseException pe = new ParseException(ex);
+                com.duy.dx.cf.iface.ParseException pe = new ParseException(ex);
                 pe.addContext("...while parsing " + humanName() + "s[" + i +
                               "]");
                 throw pe;

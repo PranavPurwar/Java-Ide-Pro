@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.TranslationAdvice;
-import com.duy.dx .ssa.back.LivenessAnalyzer;
-import com.duy.dx .ssa.back.SsaToRop;
 import java.util.EnumSet;
+
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.TranslationAdvice;
+import com.duy.dx.ssa.back.LivenessAnalyzer;
+import com.duy.dx.ssa.back.SsaToRop;
 
 /**
  * Runs a method through the SSA form conversion, any optimization algorithms,
@@ -29,7 +30,7 @@ import java.util.EnumSet;
 public class Optimizer {
     private static boolean preserveLocals = true;
 
-    private static TranslationAdvice advice;
+    private static com.duy.dx.rop.code.TranslationAdvice advice;
 
     /** optional optimizer steps */
     public enum OptionalStep {
@@ -48,7 +49,7 @@ public class Optimizer {
     /**
      * @return {@code non-null;} translation advice
      */
-    public static TranslationAdvice getAdvice() {
+    public static com.duy.dx.rop.code.TranslationAdvice getAdvice() {
         return advice;
     }
 
@@ -65,9 +66,9 @@ public class Optimizer {
      * @param inAdvice {@code non-null;} translation advice
      * @return optimized method
      */
-    public static RopMethod optimize(RopMethod rmeth, int paramWidth,
-            boolean isStatic, boolean inPreserveLocals,
-            TranslationAdvice inAdvice) {
+    public static com.duy.dx.rop.code.RopMethod optimize(com.duy.dx.rop.code.RopMethod rmeth, int paramWidth,
+                                                                  boolean isStatic, boolean inPreserveLocals,
+                                                                  com.duy.dx.rop.code.TranslationAdvice inAdvice) {
 
         return optimize(rmeth, paramWidth, isStatic, inPreserveLocals, inAdvice,
                 EnumSet.allOf(OptionalStep.class));
@@ -87,10 +88,10 @@ public class Optimizer {
      * @param steps set of optional optimization steps to run
      * @return optimized method
      */
-    public static RopMethod optimize(RopMethod rmeth, int paramWidth,
-            boolean isStatic, boolean inPreserveLocals,
-            TranslationAdvice inAdvice, EnumSet<OptionalStep> steps) {
-        SsaMethod ssaMeth = null;
+    public static com.duy.dx.rop.code.RopMethod optimize(com.duy.dx.rop.code.RopMethod rmeth, int paramWidth,
+                                                                  boolean isStatic, boolean inPreserveLocals,
+                                                                  com.duy.dx.rop.code.TranslationAdvice inAdvice, EnumSet<OptionalStep> steps) {
+        com.duy.dx.ssa.SsaMethod ssaMeth = null;
 
         preserveLocals = inPreserveLocals;
         advice = inAdvice;
@@ -98,7 +99,7 @@ public class Optimizer {
         ssaMeth = SsaConverter.convertToSsaMethod(rmeth, paramWidth, isStatic);
         runSsaFormSteps(ssaMeth, steps);
 
-        RopMethod resultMeth = SsaToRop.convertToRopMethod(ssaMeth, false);
+        com.duy.dx.rop.code.RopMethod resultMeth = com.duy.dx.ssa.back.SsaToRop.convertToRopMethod(ssaMeth, false);
 
         if (resultMeth.getBlocks().getRegCount()
                 > advice.getMaxOptimalRegisterCount()) {
@@ -124,11 +125,11 @@ public class Optimizer {
      * @param steps set of optional optimization steps to run
      * @return optimized method
      */
-    private static RopMethod optimizeMinimizeRegisters(RopMethod rmeth,
-            int paramWidth, boolean isStatic,
-            EnumSet<OptionalStep> steps) {
-        SsaMethod ssaMeth;
-        RopMethod resultMeth;
+    private static com.duy.dx.rop.code.RopMethod optimizeMinimizeRegisters(com.duy.dx.rop.code.RopMethod rmeth,
+                                                                                    int paramWidth, boolean isStatic,
+                                                                                    EnumSet<OptionalStep> steps) {
+        com.duy.dx.ssa.SsaMethod ssaMeth;
+        com.duy.dx.rop.code.RopMethod resultMeth;
 
         ssaMeth = SsaConverter.convertToSsaMethod(
                 rmeth, paramWidth, isStatic);
@@ -147,8 +148,8 @@ public class Optimizer {
         return resultMeth;
     }
 
-    private static void runSsaFormSteps(SsaMethod ssaMeth,
-            EnumSet<OptionalStep> steps) {
+    private static void runSsaFormSteps(com.duy.dx.ssa.SsaMethod ssaMeth,
+                                        EnumSet<OptionalStep> steps) {
         boolean needsDeadCodeRemover = true;
 
         if (steps.contains(OptionalStep.MOVE_PARAM_COMBINER)) {
@@ -191,9 +192,9 @@ public class Optimizer {
         PhiTypeResolver.process(ssaMeth);
     }
 
-    public static SsaMethod debugEdgeSplit(RopMethod rmeth, int paramWidth,
-            boolean isStatic, boolean inPreserveLocals,
-            TranslationAdvice inAdvice) {
+    public static com.duy.dx.ssa.SsaMethod debugEdgeSplit(com.duy.dx.rop.code.RopMethod rmeth, int paramWidth,
+                                                                   boolean isStatic, boolean inPreserveLocals,
+                                                                   com.duy.dx.rop.code.TranslationAdvice inAdvice) {
 
         preserveLocals = inPreserveLocals;
         advice = inAdvice;
@@ -201,9 +202,9 @@ public class Optimizer {
         return SsaConverter.testEdgeSplit(rmeth, paramWidth, isStatic);
     }
 
-    public static SsaMethod debugPhiPlacement(RopMethod rmeth, int paramWidth,
-            boolean isStatic, boolean inPreserveLocals,
-            TranslationAdvice inAdvice) {
+    public static com.duy.dx.ssa.SsaMethod debugPhiPlacement(com.duy.dx.rop.code.RopMethod rmeth, int paramWidth,
+                                                                      boolean isStatic, boolean inPreserveLocals,
+                                                                      com.duy.dx.rop.code.TranslationAdvice inAdvice) {
 
         preserveLocals = inPreserveLocals;
         advice = inAdvice;
@@ -211,9 +212,9 @@ public class Optimizer {
         return SsaConverter.testPhiPlacement(rmeth, paramWidth, isStatic);
     }
 
-    public static SsaMethod debugRenaming(RopMethod rmeth, int paramWidth,
-            boolean isStatic, boolean inPreserveLocals,
-            TranslationAdvice inAdvice) {
+    public static com.duy.dx.ssa.SsaMethod debugRenaming(com.duy.dx.rop.code.RopMethod rmeth, int paramWidth,
+                                                                  boolean isStatic, boolean inPreserveLocals,
+                                                                  com.duy.dx.rop.code.TranslationAdvice inAdvice) {
 
         preserveLocals = inPreserveLocals;
         advice = inAdvice;
@@ -221,11 +222,11 @@ public class Optimizer {
         return SsaConverter.convertToSsaMethod(rmeth, paramWidth, isStatic);
     }
 
-    public static SsaMethod debugDeadCodeRemover(RopMethod rmeth,
-            int paramWidth, boolean isStatic, boolean inPreserveLocals,
-            TranslationAdvice inAdvice) {
+    public static com.duy.dx.ssa.SsaMethod debugDeadCodeRemover(com.duy.dx.rop.code.RopMethod rmeth,
+                                                                         int paramWidth, boolean isStatic, boolean inPreserveLocals,
+                                                                         com.duy.dx.rop.code.TranslationAdvice inAdvice) {
 
-        SsaMethod ssaMeth;
+        com.duy.dx.ssa.SsaMethod ssaMeth;
 
         preserveLocals = inPreserveLocals;
         advice = inAdvice;
@@ -236,9 +237,9 @@ public class Optimizer {
         return ssaMeth;
     }
 
-    public static SsaMethod debugNoRegisterAllocation(RopMethod rmeth,
-            int paramWidth, boolean isStatic, boolean inPreserveLocals,
-            TranslationAdvice inAdvice, EnumSet<OptionalStep> steps) {
+    public static com.duy.dx.ssa.SsaMethod debugNoRegisterAllocation(RopMethod rmeth,
+                                                                              int paramWidth, boolean isStatic, boolean inPreserveLocals,
+                                                                              TranslationAdvice inAdvice, EnumSet<OptionalStep> steps) {
 
         SsaMethod ssaMeth;
 

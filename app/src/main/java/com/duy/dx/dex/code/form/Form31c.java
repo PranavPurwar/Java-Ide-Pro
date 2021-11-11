@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code.form;
+package com.duy.dx.dex.code.form;
 
-import com.duy.dx .dex.code.CstInsn;
-import com.duy.dx .dex.code.DalvInsn;
-import com.duy.dx .dex.code.InsnFormat;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstFieldRef;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.dex.code.CstInsn;
+import com.duy.dx.dex.code.DalvInsn;
+import com.duy.dx.dex.code.InsnFormat;
+import com.duy.dx.util.AnnotatedOutput;
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstFieldRef;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * Instruction format {@code 31c}. See the instruction format spec
@@ -47,15 +48,15 @@ public final class Form31c extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public String insnArgString(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
-        return regs.get(0).regString() + ", " + cstString(insn);
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
+        return regs.get(0).regString() + ", " + insn.cstString();
     }
 
     /** {@inheritDoc} */
     @Override
     public String insnCommentString(DalvInsn insn, boolean noteIndices) {
         if (noteIndices) {
-            return cstComment(insn);
+            return insn.cstComment();
         } else {
             return "";
         }
@@ -74,7 +75,7 @@ public final class Form31c extends InsnFormat {
             return false;
         }
 
-        RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
         RegisterSpec reg;
 
         switch (regs.size()) {
@@ -113,7 +114,7 @@ public final class Form31c extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public BitSet compatibleRegs(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
         int sz = regs.size();
         BitSet bits = new BitSet(sz);
         boolean compat = unsignedFitsInByte(regs.get(0).getReg());

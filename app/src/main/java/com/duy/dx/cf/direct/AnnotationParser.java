@@ -14,35 +14,36 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.iface.ParseException;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .rop.annotation.Annotation;
-import com.duy.dx .rop.annotation.AnnotationVisibility;
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .rop.annotation.AnnotationsList;
-import com.duy.dx .rop.annotation.NameValuePair;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.ConstantPool;
-import com.duy.dx .rop.cst.CstAnnotation;
-import com.duy.dx .rop.cst.CstArray;
-import com.duy.dx .rop.cst.CstBoolean;
-import com.duy.dx .rop.cst.CstByte;
-import com.duy.dx .rop.cst.CstChar;
-import com.duy.dx .rop.cst.CstDouble;
-import com.duy.dx .rop.cst.CstEnumRef;
-import com.duy.dx .rop.cst.CstFloat;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstLong;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstShort;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
 import java.io.IOException;
+
+import com.duy.dx.cf.iface.ParseException;
+import com.duy.dx.cf.iface.ParseObserver;
+import com.duy.dx.rop.annotation.Annotation;
+import com.duy.dx.rop.annotation.AnnotationVisibility;
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.rop.annotation.AnnotationsList;
+import com.duy.dx.rop.annotation.NameValuePair;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.ConstantPool;
+import com.duy.dx.rop.cst.CstAnnotation;
+import com.duy.dx.rop.cst.CstArray;
+import com.duy.dx.rop.cst.CstBoolean;
+import com.duy.dx.rop.cst.CstByte;
+import com.duy.dx.rop.cst.CstChar;
+import com.duy.dx.rop.cst.CstDouble;
+import com.duy.dx.rop.cst.CstEnumRef;
+import com.duy.dx.rop.cst.CstFloat;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstLong;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstShort;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
  * Parser for annotations.
@@ -55,10 +56,10 @@ public final class AnnotationParser {
     private final ConstantPool pool;
 
     /** {@code non-null;} bytes of the attribute data */
-    private final ByteArray bytes;
+    private final com.duy.dx.util.ByteArray bytes;
 
     /** {@code null-ok;} parse observer, if any */
-    private final ParseObserver observer;
+    private final com.duy.dx.cf.iface.ParseObserver observer;
 
     /** {@code non-null;} input stream to parse from */
     private final ByteArray.MyDataInputStream input;
@@ -96,14 +97,14 @@ public final class AnnotationParser {
      *
      * @return {@code non-null;} the parsed constant value
      */
-    public Constant parseValueAttribute() {
-        Constant result;
+    public com.duy.dx.rop.cst.Constant parseValueAttribute() {
+        com.duy.dx.rop.cst.Constant result;
 
         try {
             result = parseValue();
 
             if (input.available() != 0) {
-                throw new ParseException("extra data in attribute");
+                throw new com.duy.dx.cf.iface.ParseException("extra data in attribute");
             }
         } catch (IOException ex) {
             // ByteArray.MyDataInputStream should never throw.
@@ -119,15 +120,15 @@ public final class AnnotationParser {
      * @param visibility {@code non-null;} visibility of the parsed annotations
      * @return {@code non-null;} the parsed list of lists of annotations
      */
-    public AnnotationsList parseParameterAttribute(
-            AnnotationVisibility visibility) {
-        AnnotationsList result;
+    public com.duy.dx.rop.annotation.AnnotationsList parseParameterAttribute(
+            com.duy.dx.rop.annotation.AnnotationVisibility visibility) {
+        com.duy.dx.rop.annotation.AnnotationsList result;
 
         try {
             result = parseAnnotationsList(visibility);
 
             if (input.available() != 0) {
-                throw new ParseException("extra data in attribute");
+                throw new com.duy.dx.cf.iface.ParseException("extra data in attribute");
             }
         } catch (IOException ex) {
             // ByteArray.MyDataInputStream should never throw.
@@ -144,15 +145,15 @@ public final class AnnotationParser {
      * @return {@code non-null;} the list of annotations read from the attribute
      * data
      */
-    public Annotations parseAnnotationAttribute(
-            AnnotationVisibility visibility) {
-        Annotations result;
+    public com.duy.dx.rop.annotation.Annotations parseAnnotationAttribute(
+            com.duy.dx.rop.annotation.AnnotationVisibility visibility) {
+        com.duy.dx.rop.annotation.Annotations result;
 
         try {
             result = parseAnnotations(visibility);
 
             if (input.available() != 0) {
-                throw new ParseException("extra data in attribute");
+                throw new com.duy.dx.cf.iface.ParseException("extra data in attribute");
             }
         } catch (IOException ex) {
             // ByteArray.MyDataInputStream should never throw.
@@ -169,15 +170,15 @@ public final class AnnotationParser {
      * @return {@code non-null;} the list of annotation lists read from the attribute
      * data
      */
-    private AnnotationsList parseAnnotationsList(
-            AnnotationVisibility visibility) throws IOException {
+    private com.duy.dx.rop.annotation.AnnotationsList parseAnnotationsList(
+            com.duy.dx.rop.annotation.AnnotationVisibility visibility) throws IOException {
         int count = input.readUnsignedByte();
 
         if (observer != null) {
-            parsed(1, "num_parameters: " + Hex.u1(count));
+            parsed(1, "num_parameters: " + com.duy.dx.util.Hex.u1(count));
         }
 
-        AnnotationsList outerList = new AnnotationsList(count);
+        com.duy.dx.rop.annotation.AnnotationsList outerList = new AnnotationsList(count);
 
         for (int i = 0; i < count; i++) {
             if (observer != null) {
@@ -185,7 +186,7 @@ public final class AnnotationParser {
                 changeIndent(1);
             }
 
-            Annotations annotations = parseAnnotations(visibility);
+            com.duy.dx.rop.annotation.Annotations annotations = parseAnnotations(visibility);
             outerList.set(i, annotations);
 
             if (observer != null) {
@@ -204,15 +205,15 @@ public final class AnnotationParser {
      * @return {@code non-null;} the list of annotations read from the attribute
      * data
      */
-    private Annotations parseAnnotations(AnnotationVisibility visibility)
+    private com.duy.dx.rop.annotation.Annotations parseAnnotations(com.duy.dx.rop.annotation.AnnotationVisibility visibility)
             throws IOException {
         int count = input.readUnsignedShort();
 
         if (observer != null) {
-            parsed(2, "num_annotations: " + Hex.u2(count));
+            parsed(2, "num_annotations: " + com.duy.dx.util.Hex.u2(count));
         }
 
-        Annotations annotations = new Annotations();
+        com.duy.dx.rop.annotation.Annotations annotations = new Annotations();
 
         for (int i = 0; i < count; i++) {
             if (observer != null) {
@@ -220,7 +221,7 @@ public final class AnnotationParser {
                 changeIndent(1);
             }
 
-            Annotation annotation = parseAnnotation(visibility);
+            com.duy.dx.rop.annotation.Annotation annotation = parseAnnotation(visibility);
             annotations.add(annotation);
 
             if (observer != null) {
@@ -238,21 +239,21 @@ public final class AnnotationParser {
      * @param visibility {@code non-null;} visibility of the parsed annotation
      * @return {@code non-null;} the parsed annotation
      */
-    private Annotation parseAnnotation(AnnotationVisibility visibility)
+    private com.duy.dx.rop.annotation.Annotation parseAnnotation(com.duy.dx.rop.annotation.AnnotationVisibility visibility)
             throws IOException {
         requireLength(4);
 
         int typeIndex = input.readUnsignedShort();
         int numElements = input.readUnsignedShort();
-        CstString typeString = (CstString) pool.get(typeIndex);
-        CstType type = new CstType(Type.intern(typeString.getString()));
+        com.duy.dx.rop.cst.CstString typeString = (com.duy.dx.rop.cst.CstString) pool.get(typeIndex);
+        com.duy.dx.rop.cst.CstType type = new com.duy.dx.rop.cst.CstType(com.duy.dx.rop.type.Type.intern(typeString.getString()));
 
         if (observer != null) {
             parsed(2, "type: " + type.toHuman());
             parsed(2, "num_elements: " + numElements);
         }
 
-        Annotation annotation = new Annotation(type, visibility);
+        com.duy.dx.rop.annotation.Annotation annotation = new com.duy.dx.rop.annotation.Annotation(type, visibility);
 
         for (int i = 0; i < numElements; i++) {
             if (observer != null) {
@@ -260,7 +261,7 @@ public final class AnnotationParser {
                 changeIndent(1);
             }
 
-            NameValuePair element = parseElement();
+            com.duy.dx.rop.annotation.NameValuePair element = parseElement();
             annotation.add(element);
 
             if (observer != null) {
@@ -273,15 +274,15 @@ public final class AnnotationParser {
     }
 
     /**
-     * Parses a {@link NameValuePair}.
+     * Parses a {@link com.duy.dx.rop.annotation.NameValuePair}.
      *
      * @return {@code non-null;} the parsed element
      */
-    private NameValuePair parseElement() throws IOException {
+    private com.duy.dx.rop.annotation.NameValuePair parseElement() throws IOException {
         requireLength(5);
 
         int elementNameIndex = input.readUnsignedShort();
-        CstString elementName = (CstString) pool.get(elementNameIndex);
+        com.duy.dx.rop.cst.CstString elementName = (com.duy.dx.rop.cst.CstString) pool.get(elementNameIndex);
 
         if (observer != null) {
             parsed(2, "element_name: " + elementName.toHuman());
@@ -289,7 +290,7 @@ public final class AnnotationParser {
             changeIndent(1);
         }
 
-        Constant value = parseValue();
+        com.duy.dx.rop.cst.Constant value = parseValue();
 
         if (observer != null) {
             changeIndent(-1);
@@ -303,52 +304,52 @@ public final class AnnotationParser {
      *
      * @return {@code non-null;} the parsed value
      */
-    private Constant parseValue() throws IOException {
+    private com.duy.dx.rop.cst.Constant parseValue() throws IOException {
         int tag = input.readUnsignedByte();
 
         if (observer != null) {
-            CstString humanTag = new CstString(Character.toString((char) tag));
+            com.duy.dx.rop.cst.CstString humanTag = new com.duy.dx.rop.cst.CstString(Character.toString((char) tag));
             parsed(1, "tag: " + humanTag.toQuoted());
         }
 
         switch (tag) {
             case 'B': {
-                CstInteger value = (CstInteger) parseConstant();
+                com.duy.dx.rop.cst.CstInteger value = (com.duy.dx.rop.cst.CstInteger) parseConstant();
                 return CstByte.make(value.getValue());
             }
             case 'C': {
-                CstInteger value = (CstInteger) parseConstant();
+                com.duy.dx.rop.cst.CstInteger value = (com.duy.dx.rop.cst.CstInteger) parseConstant();
                 int intValue = value.getValue();
                 return CstChar.make(value.getValue());
             }
             case 'D': {
-                CstDouble value = (CstDouble) parseConstant();
+                com.duy.dx.rop.cst.CstDouble value = (CstDouble) parseConstant();
                 return value;
             }
             case 'F': {
-                CstFloat value = (CstFloat) parseConstant();
+                com.duy.dx.rop.cst.CstFloat value = (CstFloat) parseConstant();
                 return value;
             }
             case 'I': {
-                CstInteger value = (CstInteger) parseConstant();
+                com.duy.dx.rop.cst.CstInteger value = (com.duy.dx.rop.cst.CstInteger) parseConstant();
                 return value;
             }
             case 'J': {
-                CstLong value = (CstLong) parseConstant();
+                com.duy.dx.rop.cst.CstLong value = (CstLong) parseConstant();
                 return value;
             }
             case 'S': {
-                CstInteger value = (CstInteger) parseConstant();
+                com.duy.dx.rop.cst.CstInteger value = (com.duy.dx.rop.cst.CstInteger) parseConstant();
                 return CstShort.make(value.getValue());
             }
             case 'Z': {
-                CstInteger value = (CstInteger) parseConstant();
+                com.duy.dx.rop.cst.CstInteger value = (CstInteger) parseConstant();
                 return CstBoolean.make(value.getValue());
             }
             case 'c': {
                 int classInfoIndex = input.readUnsignedShort();
-                CstString value = (CstString) pool.get(classInfoIndex);
-                Type type = Type.internReturnType(value.getString());
+                com.duy.dx.rop.cst.CstString value = (com.duy.dx.rop.cst.CstString) pool.get(classInfoIndex);
+                com.duy.dx.rop.type.Type type = Type.internReturnType(value.getString());
 
                 if (observer != null) {
                     parsed(2, "class_info: " + type.toHuman());
@@ -364,8 +365,8 @@ public final class AnnotationParser {
 
                 int typeNameIndex = input.readUnsignedShort();
                 int constNameIndex = input.readUnsignedShort();
-                CstString typeName = (CstString) pool.get(typeNameIndex);
-                CstString constName = (CstString) pool.get(constNameIndex);
+                com.duy.dx.rop.cst.CstString typeName = (com.duy.dx.rop.cst.CstString) pool.get(typeNameIndex);
+                com.duy.dx.rop.cst.CstString constName = (com.duy.dx.rop.cst.CstString) pool.get(constNameIndex);
 
                 if (observer != null) {
                     parsed(2, "type_name: " + typeName.toHuman());
@@ -383,7 +384,7 @@ public final class AnnotationParser {
                 requireLength(2);
 
                 int numValues = input.readUnsignedShort();
-                CstArray.List list = new CstArray.List(numValues);
+                com.duy.dx.rop.cst.CstArray.List list = new com.duy.dx.rop.cst.CstArray.List(numValues);
 
                 if (observer != null) {
                     parsed(2, "num_values: " + numValues);
@@ -407,7 +408,7 @@ public final class AnnotationParser {
                 return new CstArray(list);
             }
             default: {
-                throw new ParseException("unknown annotation tag: " +
+                throw new com.duy.dx.cf.iface.ParseException("unknown annotation tag: " +
                         Hex.u1(tag));
             }
         }
@@ -419,12 +420,12 @@ public final class AnnotationParser {
      *
      * @return {@code non-null;} the parsed value
      */
-    private Constant parseConstant() throws IOException {
+    private com.duy.dx.rop.cst.Constant parseConstant() throws IOException {
         int constValueIndex = input.readUnsignedShort();
-        Constant value = (Constant) pool.get(constValueIndex);
+        com.duy.dx.rop.cst.Constant value = (Constant) pool.get(constValueIndex);
 
         if (observer != null) {
-            String human = (value instanceof CstString)
+            String human = (value instanceof com.duy.dx.rop.cst.CstString)
                 ? ((CstString) value).toQuoted()
                 : value.toHuman();
             parsed(2, "constant_value: " + human);

@@ -14,50 +14,56 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.cst;
+package com.duy.dx.cf.cst;
 
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_Class;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_Double;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_Fieldref;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_Float;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_Integer;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_InterfaceMethodref;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_Long;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_Methodref;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_NameAndType;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_String;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_Utf8;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_MethodHandle;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_MethodType;
-import static com.duy.dx .cf.cst.ConstantTags.CONSTANT_InvokeDynamic;
-import com.duy.dx .cf.iface.ParseException;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstDouble;
-import com.duy.dx .rop.cst.CstFieldRef;
-import com.duy.dx .rop.cst.CstFloat;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstInterfaceMethodRef;
-import com.duy.dx .rop.cst.CstLong;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.cst.StdConstantPool;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_Class;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_Double;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_Fieldref;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_Float;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_Integer;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_InterfaceMethodref;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_InvokeDynamic;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_Long;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_MethodHandle;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_MethodType;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_Methodref;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_NameAndType;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_String;
+import static com.duy.dx.cf.cst.ConstantTags.CONSTANT_Utf8;
+
+import com.duy.dx.cf.iface.ParseException;
+import com.duy.dx.cf.iface.ParseObserver;
+
 import java.util.BitSet;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstDouble;
+import com.duy.dx.rop.cst.CstFieldRef;
+import com.duy.dx.rop.cst.CstFloat;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstInterfaceMethodRef;
+import com.duy.dx.rop.cst.CstInvokeDynamic;
+import com.duy.dx.rop.cst.CstLong;
+import com.duy.dx.rop.cst.CstMethodHandle;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstProtoRef;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.cst.StdConstantPool;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
  * Parser for a constant pool embedded in a class file.
  */
 public final class ConstantPoolParser {
     /** {@code non-null;} the bytes of the constant pool */
-    private final ByteArray bytes;
+    private final com.duy.dx.util.ByteArray bytes;
 
     /** {@code non-null;} actual parsed constant pool contents */
-    private final StdConstantPool pool;
+    private final com.duy.dx.rop.cst.StdConstantPool pool;
 
     /** {@code non-null;} byte offsets to each cst */
     private final int[] offsets;
@@ -77,11 +83,11 @@ public final class ConstantPoolParser {
      *
      * @param bytes {@code non-null;} the bytes of the file
      */
-    public ConstantPoolParser(ByteArray bytes) {
+    public ConstantPoolParser(com.duy.dx.util.ByteArray bytes) {
         int size = bytes.getUnsignedShort(8); // constant_pool_count
 
         this.bytes = bytes;
-        this.pool = new StdConstantPool(size);
+        this.pool = new com.duy.dx.rop.cst.StdConstantPool(size);
         this.offsets = new int[size];
         this.endOffset = -1;
     }
@@ -133,7 +139,7 @@ public final class ConstantPoolParser {
 
         if (observer != null) {
             observer.parsed(bytes, 8, 2,
-                            "constant_pool_count: " + Hex.u2(offsets.length));
+                            "constant_pool_count: " + com.duy.dx.util.Hex.u2(offsets.length));
             observer.parsed(bytes, 10, 0, "\nconstant_pool:");
             observer.changeIndent(1);
         }
@@ -153,7 +159,7 @@ public final class ConstantPoolParser {
 
         if (observer != null) {
             for (int i = 1; i < offsets.length; i++) {
-                Constant cst = pool.getOrNull(i);
+                com.duy.dx.rop.cst.Constant cst = pool.getOrNull(i);
                 if (cst == null) {
                     continue;
                 }
@@ -167,8 +173,8 @@ public final class ConstantPoolParser {
                     }
                 }
                 String human = wasUtf8.get(i)
-                        ? Hex.u2(i) + ": utf8{\"" + cst.toHuman() + "\"}"
-                        : Hex.u2(i) + ": " + cst.toString();
+                        ? com.duy.dx.util.Hex.u2(i) + ": utf8{\"" + cst.toHuman() + "\"}"
+                        : com.duy.dx.util.Hex.u2(i) + ": " + cst.toString();
                 observer.parsed(bytes, offset, nextOffset - offset, human);
             }
 
@@ -217,20 +223,26 @@ public final class ConstantPoolParser {
                         break;
                     }
                     case CONSTANT_MethodHandle: {
-                        throw new ParseException("MethodHandle not supported");
+                        lastCategory = 1;
+                        at += 4;
+                        break;
                     }
                     case CONSTANT_MethodType: {
-                        throw new ParseException("MethodType not supported");
+                        lastCategory = 1;
+                        at += 3;
+                        break;
                     }
                     case CONSTANT_InvokeDynamic: {
-                        throw new ParseException("InvokeDynamic not supported");
+                        lastCategory = 1;
+                        at += 5;
+                        break;
                     }
                     default: {
-                        throw new ParseException("unknown tag byte: " + Hex.u1(tag));
+                        throw new ParseException("unknown tag byte: " + com.duy.dx.util.Hex.u1(tag));
                     }
                 }
             } catch (ParseException ex) {
-                ex.addContext("...while preparsing cst " + Hex.u2(i) + " at offset " + Hex.u4(at));
+                ex.addContext("...while preparsing cst " + com.duy.dx.util.Hex.u2(i) + " at offset " + com.duy.dx.util.Hex.u4(at));
                 throw ex;
             }
         }
@@ -247,8 +259,8 @@ public final class ConstantPoolParser {
      * @param idx which constant
      * @return {@code non-null;} the parsed constant
      */
-    private Constant parse0(int idx, BitSet wasUtf8) {
-        Constant cst = pool.getOrNull(idx);
+    private com.duy.dx.rop.cst.Constant parse0(int idx, BitSet wasUtf8) {
+        com.duy.dx.rop.cst.Constant cst = pool.getOrNull(idx);
         if (cst != null) {
             return cst;
         }
@@ -285,8 +297,8 @@ public final class ConstantPoolParser {
                 }
                 case CONSTANT_Class: {
                     int nameIndex = bytes.getUnsignedShort(at + 1);
-                    CstString name = (CstString) parse0(nameIndex, wasUtf8);
-                    cst = new CstType(Type.internClassName(name.getString()));
+                    com.duy.dx.rop.cst.CstString name = (com.duy.dx.rop.cst.CstString) parse0(nameIndex, wasUtf8);
+                    cst = new com.duy.dx.rop.cst.CstType(Type.internClassName(name.getString()));
                     break;
                 }
                 case CONSTANT_String: {
@@ -296,56 +308,96 @@ public final class ConstantPoolParser {
                 }
                 case CONSTANT_Fieldref: {
                     int classIndex = bytes.getUnsignedShort(at + 1);
-                    CstType type = (CstType) parse0(classIndex, wasUtf8);
+                    com.duy.dx.rop.cst.CstType type = (com.duy.dx.rop.cst.CstType) parse0(classIndex, wasUtf8);
                     int natIndex = bytes.getUnsignedShort(at + 3);
-                    CstNat nat = (CstNat) parse0(natIndex, wasUtf8);
-                    cst = new CstFieldRef(type, nat);
+                    com.duy.dx.rop.cst.CstNat nat = (com.duy.dx.rop.cst.CstNat) parse0(natIndex, wasUtf8);
+                    cst = new com.duy.dx.rop.cst.CstFieldRef(type, nat);
                     break;
                 }
                 case CONSTANT_Methodref: {
                     int classIndex = bytes.getUnsignedShort(at + 1);
-                    CstType type = (CstType) parse0(classIndex, wasUtf8);
+                    com.duy.dx.rop.cst.CstType type = (com.duy.dx.rop.cst.CstType) parse0(classIndex, wasUtf8);
                     int natIndex = bytes.getUnsignedShort(at + 3);
-                    CstNat nat = (CstNat) parse0(natIndex, wasUtf8);
-                    cst = new CstMethodRef(type, nat);
+                    com.duy.dx.rop.cst.CstNat nat = (com.duy.dx.rop.cst.CstNat) parse0(natIndex, wasUtf8);
+                    cst = new com.duy.dx.rop.cst.CstMethodRef(type, nat);
                     break;
                 }
                 case CONSTANT_InterfaceMethodref: {
                     int classIndex = bytes.getUnsignedShort(at + 1);
-                    CstType type = (CstType) parse0(classIndex, wasUtf8);
+                    com.duy.dx.rop.cst.CstType type = (CstType) parse0(classIndex, wasUtf8);
                     int natIndex = bytes.getUnsignedShort(at + 3);
-                    CstNat nat = (CstNat) parse0(natIndex, wasUtf8);
-                    cst = new CstInterfaceMethodRef(type, nat);
+                    com.duy.dx.rop.cst.CstNat nat = (com.duy.dx.rop.cst.CstNat) parse0(natIndex, wasUtf8);
+                    cst = new com.duy.dx.rop.cst.CstInterfaceMethodRef(type, nat);
                     break;
                 }
                 case CONSTANT_NameAndType: {
                     int nameIndex = bytes.getUnsignedShort(at + 1);
-                    CstString name = (CstString) parse0(nameIndex, wasUtf8);
+                    com.duy.dx.rop.cst.CstString name = (com.duy.dx.rop.cst.CstString) parse0(nameIndex, wasUtf8);
                     int descriptorIndex = bytes.getUnsignedShort(at + 3);
-                    CstString descriptor = (CstString) parse0(descriptorIndex, wasUtf8);
-                    cst = new CstNat(name, descriptor);
+                    com.duy.dx.rop.cst.CstString descriptor = (com.duy.dx.rop.cst.CstString) parse0(descriptorIndex, wasUtf8);
+                    cst = new com.duy.dx.rop.cst.CstNat(name, descriptor);
                     break;
                 }
                 case CONSTANT_MethodHandle: {
-                    throw new ParseException("MethodHandle not supported");
+                    final int kind = bytes.getUnsignedByte(at + 1);
+                    final int constantIndex = bytes.getUnsignedShort(at + 2);
+                    final Constant ref;
+                    switch (kind) {
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_getField:
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_getStatic:
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_putField:
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_putStatic:
+                            ref = (CstFieldRef) parse0(constantIndex, wasUtf8);
+                            break;
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_invokeVirtual:
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_newInvokeSpecial:
+                            ref = (com.duy.dx.rop.cst.CstMethodRef) parse0(constantIndex, wasUtf8);
+                            break;
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_invokeStatic:
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_invokeSpecial:
+                            ref = parse0(constantIndex, wasUtf8);
+                            if (!(ref instanceof CstMethodRef
+                                || ref instanceof com.duy.dx.rop.cst.CstInterfaceMethodRef)) {
+                              throw new ParseException(
+                                  "Unsupported ref constant type for MethodHandle "
+                                  + ref.getClass());
+                            }
+                            break;
+                        case com.duy.dx.cf.cst.MethodHandleKind.REF_invokeInterface:
+                            ref = (CstInterfaceMethodRef) parse0(constantIndex, wasUtf8);
+                            break;
+                        default:
+                            throw new ParseException("Unsupported MethodHandle kind: " + kind);
+                    }
+
+                    final int methodHandleType = getMethodHandleTypeForKind(kind);
+                    cst = com.duy.dx.rop.cst.CstMethodHandle.make(methodHandleType, ref);
+                    break;
                 }
                 case CONSTANT_MethodType: {
-                    throw new ParseException("MethodType not supported");
+                    int descriptorIndex = bytes.getUnsignedShort(at + 1);
+                    com.duy.dx.rop.cst.CstString descriptor = (com.duy.dx.rop.cst.CstString) parse0(descriptorIndex, wasUtf8);
+                    cst = CstProtoRef.make(descriptor);
+                    break;
                 }
                 case CONSTANT_InvokeDynamic: {
-                    throw new ParseException("InvokeDynamic not supported");
+                    int bootstrapMethodIndex = bytes.getUnsignedShort(at + 1);
+                    int natIndex = bytes.getUnsignedShort(at + 3);
+                    com.duy.dx.rop.cst.CstNat nat = (CstNat) parse0(natIndex, wasUtf8);
+                    cst = CstInvokeDynamic.make(bootstrapMethodIndex, nat);
+                    break;
                 }
                 default: {
-                    throw new ParseException("unknown tag byte: " + Hex.u1(tag));
+                    throw new ParseException("unknown tag byte: " + com.duy.dx.util.Hex.u1(tag));
                 }
             }
         } catch (ParseException ex) {
-            ex.addContext("...while parsing cst " + Hex.u2(idx) +
-                          " at offset " + Hex.u4(at));
+            ex.addContext("...while parsing cst " + com.duy.dx.util.Hex.u2(idx) +
+                          " at offset " + com.duy.dx.util.Hex.u4(at));
             throw ex;
         } catch (RuntimeException ex) {
             ParseException pe = new ParseException(ex);
-            pe.addContext("...while parsing cst " + Hex.u2(idx) +
+            pe.addContext("...while parsing cst " + com.duy.dx.util.Hex.u2(idx) +
                           " at offset " + Hex.u4(at));
             throw pe;
         }
@@ -360,7 +412,7 @@ public final class ConstantPoolParser {
      * @param at offset to the start of the constant (where the tag byte is)
      * @return {@code non-null;} the parsed value
      */
-    private CstString parseUtf8(int at) {
+    private com.duy.dx.rop.cst.CstString parseUtf8(int at) {
         int length = bytes.getUnsignedShort(at + 1);
 
         at += 3; // Skip to the data.
@@ -373,5 +425,29 @@ public final class ConstantPoolParser {
             // Translate the exception
             throw new ParseException(ex);
         }
+    }
+
+    private static int getMethodHandleTypeForKind(int kind) {
+        switch (kind) {
+            case com.duy.dx.cf.cst.MethodHandleKind.REF_getField:
+                return com.duy.dx.rop.cst.CstMethodHandle.METHOD_HANDLE_TYPE_INSTANCE_GET;
+            case com.duy.dx.cf.cst.MethodHandleKind.REF_getStatic:
+                return com.duy.dx.rop.cst.CstMethodHandle.METHOD_HANDLE_TYPE_STATIC_GET;
+            case com.duy.dx.cf.cst.MethodHandleKind.REF_putField:
+                return com.duy.dx.rop.cst.CstMethodHandle.METHOD_HANDLE_TYPE_INSTANCE_PUT;
+            case com.duy.dx.cf.cst.MethodHandleKind.REF_putStatic:
+                return com.duy.dx.rop.cst.CstMethodHandle.METHOD_HANDLE_TYPE_STATIC_PUT;
+            case com.duy.dx.cf.cst.MethodHandleKind.REF_invokeVirtual:
+                return com.duy.dx.rop.cst.CstMethodHandle.METHOD_HANDLE_TYPE_INVOKE_INSTANCE;
+            case com.duy.dx.cf.cst.MethodHandleKind.REF_invokeStatic:
+                return com.duy.dx.rop.cst.CstMethodHandle.METHOD_HANDLE_TYPE_INVOKE_STATIC;
+            case com.duy.dx.cf.cst.MethodHandleKind.REF_invokeSpecial:
+                return com.duy.dx.rop.cst.CstMethodHandle.METHOD_HANDLE_TYPE_INVOKE_DIRECT;
+            case com.duy.dx.cf.cst.MethodHandleKind.REF_newInvokeSpecial:
+                return com.duy.dx.rop.cst.CstMethodHandle.METHOD_HANDLE_TYPE_INVOKE_CONSTRUCTOR;
+            case MethodHandleKind.REF_invokeInterface:
+                return CstMethodHandle.METHOD_HANDLE_TYPE_INVOKE_INTERFACE;
+        }
+        throw new IllegalArgumentException("invalid kind: " + kind);
     }
 }

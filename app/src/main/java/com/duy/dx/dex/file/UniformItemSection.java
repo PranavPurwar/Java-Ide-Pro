@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .util.AnnotatedOutput;
 import java.util.Collection;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.util.AnnotatedOutput;
 
 /**
  * A section of a {@code .dex} file which consists of a sequence of
@@ -54,15 +55,15 @@ public abstract class UniformItemSection extends Section {
     }
 
     /**
-     * Gets the item corresponding to the given {@link Constant}. This
+     * Gets the item corresponding to the given {@link com.duy.dx.rop.cst.Constant}. This
      * will throw an exception if the constant is not found, including
      * if this instance isn't the sort that maps constants to {@link
-     * IndexedItem} instances.
+     * com.duy.dx.dex.file.IndexedItem} instances.
      *
      * @param cst {@code non-null;} constant to look for
      * @return {@code non-null;} the corresponding item found in this instance
      */
-    public abstract IndexedItem get(Constant cst);
+    public abstract com.duy.dx.dex.file.IndexedItem get(Constant cst);
 
     /** {@inheritDoc} */
     @Override
@@ -95,7 +96,7 @@ public abstract class UniformItemSection extends Section {
          * Since all items must be the same size, we can use the size
          * of the one we're given to calculate its offset.
          */
-        IndexedItem ii = (IndexedItem) item;
+        com.duy.dx.dex.file.IndexedItem ii = (IndexedItem) item;
         int relativeOffset = ii.getIndex() * ii.writeSize();
 
         return getAbsoluteOffset(relativeOffset);

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.annotation;
+package com.duy.dx.rop.annotation;
 
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .util.MutabilityControl;
+import com.duy.dx.util.MutabilityControl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.TreeMap;
+
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * List of {@link Annotation} instances.
@@ -36,7 +37,7 @@ public final class Annotations extends MutabilityControl
     }
 
     /** {@code non-null;} map from types to annotations */
-    private final TreeMap<CstType, Annotation> annotations;
+    private final TreeMap<com.duy.dx.rop.cst.CstType, Annotation> annotations;
 
     /**
      * Constructs an immutable instance which is the combination of the
@@ -83,7 +84,7 @@ public final class Annotations extends MutabilityControl
      * Constructs an empty instance.
      */
     public Annotations() {
-        annotations = new TreeMap<CstType, Annotation>();
+        annotations = new TreeMap<com.duy.dx.rop.cst.CstType, Annotation>();
     }
 
     /** {@inheritDoc} */
@@ -105,6 +106,7 @@ public final class Annotations extends MutabilityControl
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(Annotations other) {
         Iterator<Annotation> thisIter = annotations.values().iterator();
         Iterator<Annotation> otherIter = other.annotations.values().iterator();
@@ -129,6 +131,7 @@ public final class Annotations extends MutabilityControl
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;

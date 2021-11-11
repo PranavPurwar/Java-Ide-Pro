@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
 
 /**
  * Pseudo-instruction base class for variable-sized instructions.
  */
-public abstract class VariableSizeInsn extends DalvInsn {
+public abstract class VariableSizeInsn extends com.duy.dx.dex.code.DalvInsn {
     /**
      * Constructs an instance. The output address of this instance is initially
      * unknown ({@code -1}).
@@ -37,7 +37,7 @@ public abstract class VariableSizeInsn extends DalvInsn {
 
     /** {@inheritDoc} */
     @Override
-    public final DalvInsn withOpcode(Dop opcode) {
+    public final com.duy.dx.dex.code.DalvInsn withOpcode(Dop opcode) {
         throw new RuntimeException("unsupported");
     }
 

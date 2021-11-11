@@ -1,31 +1,48 @@
-package com.duy.dx .command.dump;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .cf.code.BasicBlocker;
-import com.duy.dx .cf.code.ByteBlock;
-import com.duy.dx .cf.code.ByteBlockList;
-import com.duy.dx .cf.code.ByteCatchList;
-import com.duy.dx .cf.code.BytecodeArray;
-import com.duy.dx .cf.code.ConcreteMethod;
-import com.duy.dx .cf.code.Ropper;
-import com.duy.dx .cf.direct.CodeObserver;
-import com.duy.dx .cf.direct.DirectClassFile;
-import com.duy.dx .cf.direct.StdAttributeFactory;
-import com.duy.dx .cf.iface.Member;
-import com.duy.dx .cf.iface.Method;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.code.BasicBlock;
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.DexTranslationAdvice;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.InsnList;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.TranslationAdvice;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .ssa.Optimizer;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
+package com.duy.dx.command.dump;
+
+import com.duy.dx.cf.code.BasicBlocker;
+import com.duy.dx.cf.code.ByteBlock;
+import com.duy.dx.cf.code.ByteBlockList;
+import com.duy.dx.cf.code.ByteCatchList;
+import com.duy.dx.cf.code.BytecodeArray;
+import com.duy.dx.cf.code.ConcreteMethod;
+import com.duy.dx.cf.code.Ropper;
+import com.duy.dx.cf.direct.CodeObserver;
+import com.duy.dx.cf.direct.DirectClassFile;
+import com.duy.dx.cf.direct.StdAttributeFactory;
+import com.duy.dx.cf.iface.Member;
+import com.duy.dx.cf.iface.Method;
+import com.duy.dx.ssa.Optimizer;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
 import java.io.PrintStream;
+
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.code.BasicBlock;
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.DexTranslationAdvice;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.InsnList;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.TranslationAdvice;
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * Utility to dump basic block info from methods in a human-friendly form.
@@ -33,7 +50,7 @@ import java.io.PrintStream;
 public class BlockDumper
         extends BaseDumper {
     /** whether or not to registerize (make rop blocks) */
-    private boolean rop;
+    private final boolean rop;
 
     /**
      * {@code null-ok;} the class file object being constructed;
@@ -48,7 +65,7 @@ public class BlockDumper
     private boolean first;
 
     /** whether or not to run the ssa optimziations */
-    private boolean optimize;
+    private final boolean optimize;
 
     /**
      * Dumps the given array, interpreting it as a class file and dumping
@@ -143,9 +160,6 @@ public class BlockDumper
             return;
         }
 
-        // Reset the dump cursor to the start of the method.
-        setAt(bytes, offset);
-
         suppressDump = false;
 
         if (first) {
@@ -170,8 +184,8 @@ public class BlockDumper
             return;
         }
 
-        if ((member.getAccessFlags() & (AccessFlags.ACC_ABSTRACT |
-                AccessFlags.ACC_NATIVE)) != 0) {
+        if ((member.getAccessFlags() & (com.duy.dx.rop.code.AccessFlags.ACC_ABSTRACT |
+                com.duy.dx.rop.code.AccessFlags.ACC_NATIVE)) != 0) {
             return;
         }
 
@@ -196,9 +210,6 @@ public class BlockDumper
         ByteBlockList list = BasicBlocker.identifyBlocks(meth);
         int sz = list.size();
         CodeObserver codeObserver = new CodeObserver(bytes, BlockDumper.this);
-
-        // Reset the dump cursor to the start of the bytecode.
-        setAt(bytes, 0);
 
         suppressDump = false;
 
@@ -239,7 +250,7 @@ public class BlockDumper
             int csz = catches.size();
             for (int j = 0; j < csz; j++) {
                 ByteCatchList.Item one = catches.get(j);
-                CstType exceptionClass = one.getExceptionClass();
+                com.duy.dx.rop.cst.CstType exceptionClass = one.getExceptionClass();
                 parsed(bytes, end, 0,
                        "catch " +
                        ((exceptionClass == CstType.OBJECT) ? "<any>" :
@@ -269,8 +280,8 @@ public class BlockDumper
         TranslationAdvice advice = DexTranslationAdvice.THE_ONE;
         BytecodeArray code = meth.getCode();
         ByteArray bytes = code.getBytes();
-        RopMethod rmeth = Ropper.convert(meth, advice, classFile.getMethods());
-        StringBuffer sb = new StringBuffer(2000);
+        RopMethod rmeth = Ropper.convert(meth, advice, classFile.getMethods(), dexOptions);
+        StringBuilder sb = new StringBuilder(2000);
 
         if (optimize) {
             boolean isStatic = AccessFlags.isStatic(meth.getAccessFlags());
@@ -328,7 +339,6 @@ public class BlockDumper
         }
 
         suppressDump = false;
-        setAt(bytes, 0);
         parsed(bytes, 0, bytes.size(), sb.toString());
         suppressDump = true;
     }

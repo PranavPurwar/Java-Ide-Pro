@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.cst.CstString;
+import com.duy.dx.rop.cst.CstString;
 
 /**
  * Attribute class for standards-track {@code Signature} attributes.
@@ -26,14 +26,14 @@ public final class AttSignature extends BaseAttribute {
     public static final String ATTRIBUTE_NAME = "Signature";
 
     /** {@code non-null;} the signature string */
-    private final CstString signature;
+    private final com.duy.dx.rop.cst.CstString signature;
 
     /**
      * Constructs an instance.
      *
      * @param signature {@code non-null;} the signature string
      */
-    public AttSignature(CstString signature) {
+    public AttSignature(com.duy.dx.rop.cst.CstString signature) {
         super(ATTRIBUTE_NAME);
 
         if (signature == null) {
@@ -44,6 +44,7 @@ public final class AttSignature extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         return 8;
     }

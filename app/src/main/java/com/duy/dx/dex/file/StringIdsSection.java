@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
 import java.util.Collection;
 import java.util.TreeMap;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Strings list section of a {@code .dex} file.
@@ -33,7 +34,7 @@ public final class StringIdsSection
      * {@code non-null;} map from string constants to {@link
      * StringIdItem} instances
      */
-    private final TreeMap<CstString, StringIdItem> strings;
+    private final TreeMap<com.duy.dx.rop.cst.CstString, StringIdItem> strings;
 
     /**
      * Constructs an instance. The file offset is initially unknown.
@@ -43,7 +44,7 @@ public final class StringIdsSection
     public StringIdsSection(DexFile file) {
         super("string_ids", file, 4);
 
-        strings = new TreeMap<CstString, StringIdItem>();
+        strings = new TreeMap<com.duy.dx.rop.cst.CstString, StringIdItem>();
     }
 
     /** {@inheritDoc} */
@@ -61,7 +62,7 @@ public final class StringIdsSection
 
         throwIfNotPrepared();
 
-        IndexedItem result = strings.get((CstString) cst);
+        IndexedItem result = strings.get((com.duy.dx.rop.cst.CstString) cst);
 
         if (result == null) {
             throw new IllegalArgumentException("not found");
@@ -82,7 +83,7 @@ public final class StringIdsSection
         int offset = (sz == 0) ? 0 : getFileOffset();
 
         if (out.annotates()) {
-            out.annotate(4, "string_ids_size: " + Hex.u4(sz));
+            out.annotate(4, "string_ids_size: " + com.duy.dx.util.Hex.u4(sz));
             out.annotate(4, "string_ids_off:  " + Hex.u4(offset));
         }
 
@@ -98,7 +99,7 @@ public final class StringIdsSection
      * @return {@code non-null;} the interned string
      */
     public StringIdItem intern(String string) {
-        return intern(new StringIdItem(new CstString(string)));
+        return intern(new StringIdItem(new com.duy.dx.rop.cst.CstString(string)));
     }
 
     /**
@@ -107,7 +108,7 @@ public final class StringIdsSection
      * @param string {@code non-null;} the string to intern, as a constant
      * @return {@code non-null;} the interned string
      */
-    public StringIdItem intern(CstString string) {
+    public StringIdItem intern(com.duy.dx.rop.cst.CstString string) {
         return intern(new StringIdItem(string));
     }
 
@@ -124,7 +125,7 @@ public final class StringIdsSection
 
         throwIfPrepared();
 
-        CstString value = string.getValue();
+        com.duy.dx.rop.cst.CstString value = string.getValue();
         StringIdItem already = strings.get(value);
 
         if (already != null) {

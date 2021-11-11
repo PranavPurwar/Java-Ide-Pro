@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .io.OpcodeInfo;
-import com.duy.dx .io.Opcodes;
+import com.duy.dx.io.OpcodeInfo;
+import com.duy.dx.io.Opcodes;
 
 /**
  * Representation of an opcode.
@@ -59,15 +59,15 @@ public final class Dop {
      */
     public Dop(int opcode, int family, int nextOpcode, InsnFormat format,
             boolean hasResult) {
-        if (!Opcodes.isValidShape(opcode)) {
+        if (!com.duy.dx.io.Opcodes.isValidShape(opcode)) {
             throw new IllegalArgumentException("bogus opcode");
         }
 
-        if (!Opcodes.isValidShape(family)) {
+        if (!com.duy.dx.io.Opcodes.isValidShape(family)) {
             throw new IllegalArgumentException("bogus family");
         }
 
-        if (!Opcodes.isValidShape(nextOpcode)) {
+        if (!com.duy.dx.io.Opcodes.isValidShape(nextOpcode)) {
             throw new IllegalArgumentException("bogus nextOpcode");
         }
 
@@ -154,17 +154,17 @@ public final class Dop {
      */
     public Dop getOppositeTest() {
         switch (opcode) {
-            case Opcodes.IF_EQ:  return Dops.IF_NE;
-            case Opcodes.IF_NE:  return Dops.IF_EQ;
-            case Opcodes.IF_LT:  return Dops.IF_GE;
-            case Opcodes.IF_GE:  return Dops.IF_LT;
-            case Opcodes.IF_GT:  return Dops.IF_LE;
-            case Opcodes.IF_LE:  return Dops.IF_GT;
-            case Opcodes.IF_EQZ: return Dops.IF_NEZ;
-            case Opcodes.IF_NEZ: return Dops.IF_EQZ;
-            case Opcodes.IF_LTZ: return Dops.IF_GEZ;
-            case Opcodes.IF_GEZ: return Dops.IF_LTZ;
-            case Opcodes.IF_GTZ: return Dops.IF_LEZ;
+            case com.duy.dx.io.Opcodes.IF_EQ:  return Dops.IF_NE;
+            case com.duy.dx.io.Opcodes.IF_NE:  return Dops.IF_EQ;
+            case com.duy.dx.io.Opcodes.IF_LT:  return Dops.IF_GE;
+            case com.duy.dx.io.Opcodes.IF_GE:  return Dops.IF_LT;
+            case com.duy.dx.io.Opcodes.IF_GT:  return Dops.IF_LE;
+            case com.duy.dx.io.Opcodes.IF_LE:  return Dops.IF_GT;
+            case com.duy.dx.io.Opcodes.IF_EQZ: return Dops.IF_NEZ;
+            case com.duy.dx.io.Opcodes.IF_NEZ: return Dops.IF_EQZ;
+            case com.duy.dx.io.Opcodes.IF_LTZ: return Dops.IF_GEZ;
+            case com.duy.dx.io.Opcodes.IF_GEZ: return Dops.IF_LTZ;
+            case com.duy.dx.io.Opcodes.IF_GTZ: return Dops.IF_LEZ;
             case Opcodes.IF_LEZ: return Dops.IF_GTZ;
         }
 

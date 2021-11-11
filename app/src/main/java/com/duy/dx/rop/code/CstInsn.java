@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.cst.Constant;
+import com.duy.dx.rop.cst.Constant;
 
 /**
  * Instruction which contains an explicit reference to a constant.
@@ -24,7 +24,7 @@ import com.duy.dx .rop.cst.Constant;
 public abstract class CstInsn
         extends Insn {
     /** {@code non-null;} the constant */
-    private final Constant cst;
+    private final com.duy.dx.rop.cst.Constant cst;
 
     /**
      * Constructs an instance.
@@ -36,7 +36,7 @@ public abstract class CstInsn
      * @param cst {@code non-null;} constant
      */
     public CstInsn(Rop opcode, SourcePosition position, RegisterSpec result,
-                   RegisterSpecList sources, Constant cst) {
+                   RegisterSpecList sources, com.duy.dx.rop.cst.Constant cst) {
         super(opcode, position, result, sources);
 
         if (cst == null) {

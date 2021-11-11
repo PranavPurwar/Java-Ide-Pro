@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .dex.DexOptions;
 import java.util.ArrayList;
 
+import com.duy.dx.dex.DexOptions;
+
 /**
- * Destination for {@link DalvInsn} instances being output. This class
+ * Destination for {@link com.duy.dx.dex.code.DalvInsn} instances being output. This class
  * receives and collects instructions in two pieces &mdash; a primary
  * list and a suffix (generally consisting of adjunct data referred to
  * by the primary list, such as switch case tables) &mdash; which it
@@ -32,13 +33,13 @@ public final class OutputCollector {
      * {@code non-null;} the associated finisher (which holds the instruction
      * list in-progress)
      */
-    private final OutputFinisher finisher;
+    private final com.duy.dx.dex.code.OutputFinisher finisher;
 
     /**
      * {@code null-ok;} suffix for the output, or {@code null} if the suffix
      * has been appended to the main output (by {@link #appendSuffixToOutput})
      */
-    private ArrayList<DalvInsn> suffix;
+    private ArrayList<com.duy.dx.dex.code.DalvInsn> suffix;
 
     /**
      * Constructs an instance.
@@ -51,9 +52,9 @@ public final class OutputCollector {
      * @param paramSize size, in register units, of all the parameters for this method
      */
     public OutputCollector(DexOptions dexOptions, int initialCapacity, int suffixInitialCapacity,
-            int regCount, int paramSize) {
-        this.finisher = new OutputFinisher(dexOptions, initialCapacity, regCount, paramSize);
-        this.suffix = new ArrayList<DalvInsn>(suffixInitialCapacity);
+                           int regCount, int paramSize) {
+        this.finisher = new com.duy.dx.dex.code.OutputFinisher(dexOptions, initialCapacity, regCount, paramSize);
+        this.suffix = new ArrayList<com.duy.dx.dex.code.DalvInsn>(suffixInitialCapacity);
     }
 
     /**
@@ -61,8 +62,20 @@ public final class OutputCollector {
      *
      * @param insn {@code non-null;} the instruction to add
      */
-    public void add(DalvInsn insn) {
+    public void add(com.duy.dx.dex.code.DalvInsn insn) {
         finisher.add(insn);
+    }
+
+    public com.duy.dx.dex.code.DalvInsn get(int at) {
+        if (at >= finisher.size() || at < 0) {
+            return null;
+        } else {
+            return finisher.get(at);
+        }
+    }
+
+    public int size() {
+        return finisher.size();
     }
 
     /**
@@ -90,7 +103,7 @@ public final class OutputCollector {
 
     /**
      * Gets the results of all the calls on this instance, in the form of
-     * an {@link OutputFinisher}.
+     * an {@link com.duy.dx.dex.code.OutputFinisher}.
      *
      * @return {@code non-null;} the output finisher
      * @throws UnsupportedOperationException if this method has

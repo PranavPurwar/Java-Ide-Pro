@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.CstBaseMethodRef;
+import com.duy.dx.rop.cst.CstBaseMethodRef;
 
 /**
  * Representation of a method reference inside a Dalvik file.
@@ -39,10 +39,10 @@ public final class MethodIdItem extends MemberIdItem {
 
     /** {@inheritDoc} */
     @Override
-    public void addContents(DexFile file) {
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
         super.addContents(file);
 
-        ProtoIdsSection protoIds = file.getProtoIds();
+        com.duy.dx.dex.file.ProtoIdsSection protoIds = file.getProtoIds();
         protoIds.intern(getMethodRef().getPrototype());
     }
 

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.annotation.Annotation;
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.annotation.Annotation;
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Set of annotations, where no annotation type appears more than once.
  */
-public final class AnnotationSetItem extends OffsettedItem {
+public final class AnnotationSetItem extends com.duy.dx.dex.file.OffsettedItem {
     /** the required alignment for instances of this class */
     private static final int ALIGNMENT = 4;
 
@@ -32,14 +32,14 @@ public final class AnnotationSetItem extends OffsettedItem {
     private static final int ENTRY_WRITE_SIZE = 4;
 
     /** {@code non-null;} the set of annotations */
-    private final Annotations annotations;
+    private final com.duy.dx.rop.annotation.Annotations annotations;
 
     /**
      * {@code non-null;} set of annotations as individual items in an array.
      * <b>Note:</b> The contents have to get sorted by type id before
      * writing.
      */
-    private final AnnotationItem[] items;
+    private final com.duy.dx.dex.file.AnnotationItem[] items;
 
     /**
      * Constructs an instance.
@@ -47,15 +47,15 @@ public final class AnnotationSetItem extends OffsettedItem {
      * @param annotations {@code non-null;} set of annotations
      * @param dexFile {@code non-null;} dex output
      */
-    public AnnotationSetItem(Annotations annotations, DexFile dexFile) {
+    public AnnotationSetItem(com.duy.dx.rop.annotation.Annotations annotations, DexFile dexFile) {
         super(ALIGNMENT, writeSize(annotations));
 
         this.annotations = annotations;
-        this.items = new AnnotationItem[annotations.size()];
+        this.items = new com.duy.dx.dex.file.AnnotationItem[annotations.size()];
 
         int at = 0;
         for (Annotation a : annotations.getAnnotations()) {
-            items[at] = new AnnotationItem(a, dexFile);
+            items[at] = new com.duy.dx.dex.file.AnnotationItem(a, dexFile);
             at++;
         }
     }
@@ -66,7 +66,7 @@ public final class AnnotationSetItem extends OffsettedItem {
      * @param annotations {@code non-null;} the set
      * @return {@code > 0;} the write size
      */
-    private static int writeSize(Annotations annotations) {
+    private static int writeSize(com.duy.dx.rop.annotation.Annotations annotations) {
         // This includes an int size at the start of the list.
 
         try {
@@ -113,6 +113,7 @@ public final class AnnotationSetItem extends OffsettedItem {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addContents(DexFile file) {
         MixedItemSection byteData = file.getByteData();
         int size = items.length;
@@ -126,7 +127,7 @@ public final class AnnotationSetItem extends OffsettedItem {
     @Override
     protected void place0(Section addedTo, int offset) {
         // Sort the array to be in type id index order.
-        AnnotationItem.sortByTypeIdIndex(items);
+        com.duy.dx.dex.file.AnnotationItem.sortByTypeIdIndex(items);
     }
 
     /** {@inheritDoc} */
@@ -137,7 +138,7 @@ public final class AnnotationSetItem extends OffsettedItem {
 
         if (annotates) {
             out.annotate(0, offsetString() + " annotation set");
-            out.annotate(4, "  size: " + Hex.u4(size));
+            out.annotate(4, "  size: " + com.duy.dx.util.Hex.u4(size));
         }
 
         out.writeInt(size);

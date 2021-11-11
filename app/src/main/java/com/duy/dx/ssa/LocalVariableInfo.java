@@ -14,39 +14,41 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecSet;
-import com.duy.dx .util.MutabilityControl;
+import com.duy.dx.util.MutabilityControl;
 import java.util.HashMap;
 import java.util.List;
 
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecSet;
+import com.duy.dx.rop.type.TypeBearer;
+
 /**
  * Container for local variable information for a particular {@link
- * com.duy.dx .ssa.SsaMethod}.
- * Stolen from {@link com.duy.dx .rop.code.LocalVariableInfo}.
+ * com.duy.dx.ssa.SsaMethod}.
+ * Stolen from {@link com.duy.dx.rop.code.LocalVariableInfo}.
  */
 public class LocalVariableInfo         extends MutabilityControl {
     /** {@code >= 0;} the register count for the method */
     private final int regCount;
 
     /**
-     * {@code non-null;} {@link com.duy.dx .rop.code.RegisterSpecSet} to use when indicating a block
+     * {@code non-null;} {@link com.duy.dx.rop.code.RegisterSpecSet} to use when indicating a block
      * that has no locals; it is empty and immutable but has an appropriate
      * max size for the method
      */
-    private final RegisterSpecSet emptySet;
+    private final com.duy.dx.rop.code.RegisterSpecSet emptySet;
 
     /**
      * {@code non-null;} array consisting of register sets representing the
      * sets of variables already assigned upon entry to each block,
      * where array indices correspond to block indices
      */
-    private final RegisterSpecSet[] blockStarts;
+    private final com.duy.dx.rop.code.RegisterSpecSet[] blockStarts;
 
     /** {@code non-null;} map from instructions to the variable each assigns */
-    private final HashMap<SsaInsn, RegisterSpec> insnAssignments;
+    private final HashMap<com.duy.dx.ssa.SsaInsn, com.duy.dx.rop.code.RegisterSpec> insnAssignments;
 
     /**
      * Constructs an instance.
@@ -58,13 +60,13 @@ public class LocalVariableInfo         extends MutabilityControl {
             throw new NullPointerException("method == null");
         }
 
-        List<SsaBasicBlock> blocks = method.getBlocks();
+        List<com.duy.dx.ssa.SsaBasicBlock> blocks = method.getBlocks();
 
         this.regCount = method.getRegCount();
-        this.emptySet = new RegisterSpecSet(regCount);
-        this.blockStarts = new RegisterSpecSet[blocks.size()];
+        this.emptySet = new com.duy.dx.rop.code.RegisterSpecSet(regCount);
+        this.blockStarts = new com.duy.dx.rop.code.RegisterSpecSet[blocks.size()];
         this.insnAssignments =
-            new HashMap<SsaInsn, RegisterSpec>(/*hint here*/);
+            new HashMap<com.duy.dx.ssa.SsaInsn, com.duy.dx.rop.code.RegisterSpec>(/*hint here*/);
 
         emptySet.setImmutable();
     }
@@ -76,7 +78,7 @@ public class LocalVariableInfo         extends MutabilityControl {
      * @param index {@code >= 0;} the block index
      * @param specs {@code non-null;} the register set to associate with the block
      */
-    public void setStarts(int index, RegisterSpecSet specs) {
+    public void setStarts(int index, com.duy.dx.rop.code.RegisterSpecSet specs) {
         throwIfImmutable();
 
         if (specs == null) {
@@ -105,8 +107,8 @@ public class LocalVariableInfo         extends MutabilityControl {
      * to the associated set (including storing one for the first time) or
      * {@code false} if there was no change
      */
-    public boolean mergeStarts(int index, RegisterSpecSet specs) {
-        RegisterSpecSet start = getStarts0(index);
+    public boolean mergeStarts(int index, com.duy.dx.rop.code.RegisterSpecSet specs) {
+        com.duy.dx.rop.code.RegisterSpecSet start = getStarts0(index);
         boolean changed = false;
 
         if (start == null) {
@@ -114,7 +116,7 @@ public class LocalVariableInfo         extends MutabilityControl {
             return true;
         }
 
-        RegisterSpecSet newStart = start.mutableCopy();
+        com.duy.dx.rop.code.RegisterSpecSet newStart = start.mutableCopy();
         newStart.intersect(specs, true);
 
         if (start.equals(newStart)) {
@@ -135,8 +137,8 @@ public class LocalVariableInfo         extends MutabilityControl {
      * @param index {@code >= 0;} the block index
      * @return {@code non-null;} the associated register set
      */
-    public RegisterSpecSet getStarts(int index) {
-        RegisterSpecSet result = getStarts0(index);
+    public com.duy.dx.rop.code.RegisterSpecSet getStarts(int index) {
+        com.duy.dx.rop.code.RegisterSpecSet result = getStarts0(index);
 
         return (result != null) ? result : emptySet;
     }
@@ -149,24 +151,24 @@ public class LocalVariableInfo         extends MutabilityControl {
      * @param block {@code non-null;} the block in question
      * @return {@code non-null;} the associated register set
      */
-    public RegisterSpecSet getStarts(SsaBasicBlock block) {
+    public com.duy.dx.rop.code.RegisterSpecSet getStarts(SsaBasicBlock block) {
         return getStarts(block.getIndex());
     }
 
     /**
      * Gets a mutable copy of the register set associated with the
      * start of the block with the given index. This returns a
-     * newly-allocated empty {@link RegisterSpecSet} of appropriate
+     * newly-allocated empty {@link com.duy.dx.rop.code.RegisterSpecSet} of appropriate
      * max size if there is not yet any set associated with the block.
      *
      * @param index {@code >= 0;} the block index
      * @return {@code non-null;} the associated register set
      */
-    public RegisterSpecSet mutableCopyOfStarts(int index) {
-        RegisterSpecSet result = getStarts0(index);
+    public com.duy.dx.rop.code.RegisterSpecSet mutableCopyOfStarts(int index) {
+        com.duy.dx.rop.code.RegisterSpecSet result = getStarts0(index);
 
         return (result != null) ?
-            result.mutableCopy() : new RegisterSpecSet(regCount);
+            result.mutableCopy() : new com.duy.dx.rop.code.RegisterSpecSet(regCount);
     }
 
     /**
@@ -178,12 +180,12 @@ public class LocalVariableInfo         extends MutabilityControl {
      * the result, it still needs to be passed in explicitly to this
      * method, since the spec that is stored here should always have a
      * simple type and the one in the instruction can be an arbitrary
-     * {@link com.duy.dx .rop.type.TypeBearer} (such as a constant value).
+     * {@link TypeBearer} (such as a constant value).
      *
      * @param insn {@code non-null;} the instruction in question
      * @param spec {@code non-null;} the associated register spec
      */
-    public void addAssignment(SsaInsn insn, RegisterSpec spec) {
+    public void addAssignment(com.duy.dx.ssa.SsaInsn insn, com.duy.dx.rop.code.RegisterSpec spec) {
         throwIfImmutable();
 
         if (insn == null) {

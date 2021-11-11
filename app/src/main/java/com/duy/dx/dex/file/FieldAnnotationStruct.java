@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .rop.cst.CstFieldRef;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.ToHuman;
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.rop.cst.CstFieldRef;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.ToHuman;
 
 /**
  * Association of a field and its annotations.
@@ -28,10 +28,10 @@ import com.duy.dx .util.ToHuman;
 public final class FieldAnnotationStruct
         implements ToHuman, Comparable<FieldAnnotationStruct> {
     /** {@code non-null;} the field in question */
-    private final CstFieldRef field;
+    private final com.duy.dx.rop.cst.CstFieldRef field;
 
     /** {@code non-null;} the associated annotations */
-    private AnnotationSetItem annotations;
+    private com.duy.dx.dex.file.AnnotationSetItem annotations;
 
     /**
      * Constructs an instance.
@@ -39,8 +39,8 @@ public final class FieldAnnotationStruct
      * @param field {@code non-null;} the field in question
      * @param annotations {@code non-null;} the associated annotations
      */
-    public FieldAnnotationStruct(CstFieldRef field,
-            AnnotationSetItem annotations) {
+    public FieldAnnotationStruct(com.duy.dx.rop.cst.CstFieldRef field,
+                                 AnnotationSetItem annotations) {
         if (field == null) {
             throw new NullPointerException("field == null");
         }
@@ -54,11 +54,13 @@ public final class FieldAnnotationStruct
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return field.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (! (other instanceof FieldAnnotationStruct)) {
             return false;
@@ -68,6 +70,7 @@ public final class FieldAnnotationStruct
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(FieldAnnotationStruct other) {
         return field.compareTo(other.field);
     }
@@ -88,7 +91,7 @@ public final class FieldAnnotationStruct
 
         if (out.annotates()) {
             out.annotate(0, "    " + field.toHuman());
-            out.annotate(4, "      field_idx:       " + Hex.u4(fieldIdx));
+            out.annotate(4, "      field_idx:       " + com.duy.dx.util.Hex.u4(fieldIdx));
             out.annotate(4, "      annotations_off: " +
                     Hex.u4(annotationsOff));
         }
@@ -98,6 +101,7 @@ public final class FieldAnnotationStruct
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         return field.toHuman() + ": " + annotations;
     }

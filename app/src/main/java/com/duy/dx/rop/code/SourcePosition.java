@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .util.Hex;
+import com.duy.dx.util.Hex;
+import com.duy.dx.rop.cst.CstString;
 
 /**
  * Information about a source position for code, which includes both a
@@ -29,7 +29,7 @@ public final class SourcePosition {
         new SourcePosition(null, -1, -1);
 
     /** {@code null-ok;} name of the file of origin or {@code null} if unknown */
-    private final CstString sourceFile;
+    private final com.duy.dx.rop.cst.CstString sourceFile;
 
     /**
      * {@code >= -1;} the bytecode address, or {@code -1} if that
@@ -53,7 +53,7 @@ public final class SourcePosition {
      * @param line {@code >= -1;} original line number or {@code -1} if
      * unknown
      */
-    public SourcePosition(CstString sourceFile, int address, int line) {
+    public SourcePosition(com.duy.dx.rop.cst.CstString sourceFile, int address, int line) {
         if (address < -1) {
             throw new IllegalArgumentException("address < -1");
         }
@@ -70,7 +70,7 @@ public final class SourcePosition {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(50);
+        StringBuilder sb = new StringBuilder(50);
 
         if (sourceFile != null) {
             sb.append(sourceFile.toHuman());

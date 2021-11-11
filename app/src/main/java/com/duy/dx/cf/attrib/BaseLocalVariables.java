@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .cf.code.LocalVariableList;
-import com.duy.dx .util.MutabilityException;
+import com.duy.dx.cf.code.LocalVariableList;
+import com.duy.dx.util.MutabilityException;
 
 /**
  * Base attribute class for standard {@code LocalVariableTable}
@@ -25,7 +25,7 @@ import com.duy.dx .util.MutabilityException;
  */
 public abstract class BaseLocalVariables extends BaseAttribute {
     /** {@code non-null;} list of local variable entries */
-    private final LocalVariableList localVariables;
+    private final com.duy.dx.cf.code.LocalVariableList localVariables;
 
     /**
      * Constructs an instance.
@@ -34,7 +34,7 @@ public abstract class BaseLocalVariables extends BaseAttribute {
      * @param localVariables {@code non-null;} list of local variable entries
      */
     public BaseLocalVariables(String name,
-            LocalVariableList localVariables) {
+            com.duy.dx.cf.code.LocalVariableList localVariables) {
         super(name);
 
         try {
@@ -50,6 +50,7 @@ public abstract class BaseLocalVariables extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public final int byteLength() {
         return 8 + localVariables.size() * 10;
     }

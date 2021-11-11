@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Prototype;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.cst.CstCallSiteRef;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Prototype;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.util.Hex;
 
 /**
  * {@link Machine} which keeps track of known values but does not do
@@ -38,97 +39,98 @@ public class ValueAwareMachine extends BaseMachine {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void run(Frame frame, int offset, int opcode) {
         switch (opcode) {
-            case ByteOps.NOP:
-            case ByteOps.IASTORE:
-            case ByteOps.POP:
-            case ByteOps.POP2:
-            case ByteOps.IFEQ:
-            case ByteOps.IFNE:
-            case ByteOps.IFLT:
-            case ByteOps.IFGE:
-            case ByteOps.IFGT:
-            case ByteOps.IFLE:
-            case ByteOps.IF_ICMPEQ:
-            case ByteOps.IF_ICMPNE:
-            case ByteOps.IF_ICMPLT:
-            case ByteOps.IF_ICMPGE:
-            case ByteOps.IF_ICMPGT:
-            case ByteOps.IF_ICMPLE:
-            case ByteOps.IF_ACMPEQ:
-            case ByteOps.IF_ACMPNE:
-            case ByteOps.GOTO:
-            case ByteOps.RET:
-            case ByteOps.LOOKUPSWITCH:
-            case ByteOps.IRETURN:
-            case ByteOps.RETURN:
-            case ByteOps.PUTSTATIC:
-            case ByteOps.PUTFIELD:
-            case ByteOps.ATHROW:
-            case ByteOps.MONITORENTER:
-            case ByteOps.MONITOREXIT:
-            case ByteOps.IFNULL:
-            case ByteOps.IFNONNULL: {
+            case com.duy.dx.cf.code.ByteOps.NOP:
+            case com.duy.dx.cf.code.ByteOps.IASTORE:
+            case com.duy.dx.cf.code.ByteOps.POP:
+            case com.duy.dx.cf.code.ByteOps.POP2:
+            case com.duy.dx.cf.code.ByteOps.IFEQ:
+            case com.duy.dx.cf.code.ByteOps.IFNE:
+            case com.duy.dx.cf.code.ByteOps.IFLT:
+            case com.duy.dx.cf.code.ByteOps.IFGE:
+            case com.duy.dx.cf.code.ByteOps.IFGT:
+            case com.duy.dx.cf.code.ByteOps.IFLE:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPEQ:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPNE:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPLT:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPGE:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPGT:
+            case com.duy.dx.cf.code.ByteOps.IF_ICMPLE:
+            case com.duy.dx.cf.code.ByteOps.IF_ACMPEQ:
+            case com.duy.dx.cf.code.ByteOps.IF_ACMPNE:
+            case com.duy.dx.cf.code.ByteOps.GOTO:
+            case com.duy.dx.cf.code.ByteOps.RET:
+            case com.duy.dx.cf.code.ByteOps.LOOKUPSWITCH:
+            case com.duy.dx.cf.code.ByteOps.IRETURN:
+            case com.duy.dx.cf.code.ByteOps.RETURN:
+            case com.duy.dx.cf.code.ByteOps.PUTSTATIC:
+            case com.duy.dx.cf.code.ByteOps.PUTFIELD:
+            case com.duy.dx.cf.code.ByteOps.ATHROW:
+            case com.duy.dx.cf.code.ByteOps.MONITORENTER:
+            case com.duy.dx.cf.code.ByteOps.MONITOREXIT:
+            case com.duy.dx.cf.code.ByteOps.IFNULL:
+            case com.duy.dx.cf.code.ByteOps.IFNONNULL: {
                 // Nothing to do for these ops in this class.
                 clearResult();
                 break;
             }
-            case ByteOps.LDC:
-            case ByteOps.LDC2_W: {
-                setResult((TypeBearer) getAuxCst());
+            case com.duy.dx.cf.code.ByteOps.LDC:
+            case com.duy.dx.cf.code.ByteOps.LDC2_W: {
+                setResult((com.duy.dx.rop.type.TypeBearer) getAuxCst());
                 break;
             }
-            case ByteOps.ILOAD:
-            case ByteOps.ISTORE: {
+            case com.duy.dx.cf.code.ByteOps.ILOAD:
+            case com.duy.dx.cf.code.ByteOps.ISTORE: {
                 setResult(arg(0));
                 break;
             }
-            case ByteOps.IALOAD:
-            case ByteOps.IADD:
-            case ByteOps.ISUB:
-            case ByteOps.IMUL:
-            case ByteOps.IDIV:
-            case ByteOps.IREM:
-            case ByteOps.INEG:
-            case ByteOps.ISHL:
-            case ByteOps.ISHR:
-            case ByteOps.IUSHR:
-            case ByteOps.IAND:
-            case ByteOps.IOR:
-            case ByteOps.IXOR:
-            case ByteOps.IINC:
-            case ByteOps.I2L:
-            case ByteOps.I2F:
-            case ByteOps.I2D:
-            case ByteOps.L2I:
-            case ByteOps.L2F:
-            case ByteOps.L2D:
-            case ByteOps.F2I:
-            case ByteOps.F2L:
-            case ByteOps.F2D:
-            case ByteOps.D2I:
-            case ByteOps.D2L:
-            case ByteOps.D2F:
-            case ByteOps.I2B:
-            case ByteOps.I2C:
-            case ByteOps.I2S:
-            case ByteOps.LCMP:
-            case ByteOps.FCMPL:
-            case ByteOps.FCMPG:
-            case ByteOps.DCMPL:
-            case ByteOps.DCMPG:
-            case ByteOps.ARRAYLENGTH: {
+            case com.duy.dx.cf.code.ByteOps.IALOAD:
+            case com.duy.dx.cf.code.ByteOps.IADD:
+            case com.duy.dx.cf.code.ByteOps.ISUB:
+            case com.duy.dx.cf.code.ByteOps.IMUL:
+            case com.duy.dx.cf.code.ByteOps.IDIV:
+            case com.duy.dx.cf.code.ByteOps.IREM:
+            case com.duy.dx.cf.code.ByteOps.INEG:
+            case com.duy.dx.cf.code.ByteOps.ISHL:
+            case com.duy.dx.cf.code.ByteOps.ISHR:
+            case com.duy.dx.cf.code.ByteOps.IUSHR:
+            case com.duy.dx.cf.code.ByteOps.IAND:
+            case com.duy.dx.cf.code.ByteOps.IOR:
+            case com.duy.dx.cf.code.ByteOps.IXOR:
+            case com.duy.dx.cf.code.ByteOps.IINC:
+            case com.duy.dx.cf.code.ByteOps.I2L:
+            case com.duy.dx.cf.code.ByteOps.I2F:
+            case com.duy.dx.cf.code.ByteOps.I2D:
+            case com.duy.dx.cf.code.ByteOps.L2I:
+            case com.duy.dx.cf.code.ByteOps.L2F:
+            case com.duy.dx.cf.code.ByteOps.L2D:
+            case com.duy.dx.cf.code.ByteOps.F2I:
+            case com.duy.dx.cf.code.ByteOps.F2L:
+            case com.duy.dx.cf.code.ByteOps.F2D:
+            case com.duy.dx.cf.code.ByteOps.D2I:
+            case com.duy.dx.cf.code.ByteOps.D2L:
+            case com.duy.dx.cf.code.ByteOps.D2F:
+            case com.duy.dx.cf.code.ByteOps.I2B:
+            case com.duy.dx.cf.code.ByteOps.I2C:
+            case com.duy.dx.cf.code.ByteOps.I2S:
+            case com.duy.dx.cf.code.ByteOps.LCMP:
+            case com.duy.dx.cf.code.ByteOps.FCMPL:
+            case com.duy.dx.cf.code.ByteOps.FCMPG:
+            case com.duy.dx.cf.code.ByteOps.DCMPL:
+            case com.duy.dx.cf.code.ByteOps.DCMPG:
+            case com.duy.dx.cf.code.ByteOps.ARRAYLENGTH: {
                 setResult(getAuxType());
                 break;
             }
-            case ByteOps.DUP:
-            case ByteOps.DUP_X1:
-            case ByteOps.DUP_X2:
-            case ByteOps.DUP2:
-            case ByteOps.DUP2_X1:
-            case ByteOps.DUP2_X2:
-            case ByteOps.SWAP: {
+            case com.duy.dx.cf.code.ByteOps.DUP:
+            case com.duy.dx.cf.code.ByteOps.DUP_X1:
+            case com.duy.dx.cf.code.ByteOps.DUP_X2:
+            case com.duy.dx.cf.code.ByteOps.DUP2:
+            case com.duy.dx.cf.code.ByteOps.DUP2_X1:
+            case com.duy.dx.cf.code.ByteOps.DUP2_X2:
+            case com.duy.dx.cf.code.ByteOps.SWAP: {
                 clearResult();
                 for (int pattern = getAuxInt(); pattern != 0; pattern >>= 4) {
                     int which = (pattern & 0x0f) - 1;
@@ -137,50 +139,59 @@ public class ValueAwareMachine extends BaseMachine {
                 break;
             }
 
-            case ByteOps.JSR: {
+            case com.duy.dx.cf.code.ByteOps.JSR: {
                 setResult(new ReturnAddress(getAuxTarget()));
                 break;
             }
-            case ByteOps.GETSTATIC:
-            case ByteOps.GETFIELD:
-            case ByteOps.INVOKEVIRTUAL:
-            case ByteOps.INVOKESTATIC:
-            case ByteOps.INVOKEINTERFACE: {
-                Type type = ((TypeBearer) getAuxCst()).getType();
-                if (type == Type.VOID) {
+            case com.duy.dx.cf.code.ByteOps.GETSTATIC:
+            case com.duy.dx.cf.code.ByteOps.GETFIELD:
+            case com.duy.dx.cf.code.ByteOps.INVOKEVIRTUAL:
+            case com.duy.dx.cf.code.ByteOps.INVOKESTATIC:
+            case com.duy.dx.cf.code.ByteOps.INVOKEINTERFACE: {
+                com.duy.dx.rop.type.Type type = ((com.duy.dx.rop.type.TypeBearer) getAuxCst()).getType();
+                if (type == com.duy.dx.rop.type.Type.VOID) {
                     clearResult();
                 } else {
                     setResult(type);
                 }
                 break;
             }
-            case ByteOps.INVOKESPECIAL: {
-                Type thisType = arg(0).getType();
+            case com.duy.dx.cf.code.ByteOps.INVOKESPECIAL: {
+                com.duy.dx.rop.type.Type thisType = arg(0).getType();
                 if (thisType.isUninitialized()) {
                     frame.makeInitialized(thisType);
                 }
-                Type type = ((TypeBearer) getAuxCst()).getType();
-                if (type == Type.VOID) {
+                com.duy.dx.rop.type.Type type = ((TypeBearer) getAuxCst()).getType();
+                if (type == com.duy.dx.rop.type.Type.VOID) {
                     clearResult();
                 } else {
                     setResult(type);
                 }
                 break;
             }
-            case ByteOps.NEW: {
-                Type type = ((CstType) getAuxCst()).getClassType();
+            case com.duy.dx.cf.code.ByteOps.INVOKEDYNAMIC: {
+                com.duy.dx.rop.type.Type type = ((CstCallSiteRef) getAuxCst()).getReturnType();
+                if (type == com.duy.dx.rop.type.Type.VOID) {
+                    clearResult();
+                } else {
+                    setResult(type);
+                }
+                break;
+            }
+            case com.duy.dx.cf.code.ByteOps.NEW: {
+                com.duy.dx.rop.type.Type type = ((com.duy.dx.rop.cst.CstType) getAuxCst()).getClassType();
                 setResult(type.asUninitialized(offset));
                 break;
             }
-            case ByteOps.NEWARRAY:
-            case ByteOps.CHECKCAST:
-            case ByteOps.MULTIANEWARRAY: {
-                Type type = ((CstType) getAuxCst()).getClassType();
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY:
+            case com.duy.dx.cf.code.ByteOps.CHECKCAST:
+            case com.duy.dx.cf.code.ByteOps.MULTIANEWARRAY: {
+                com.duy.dx.rop.type.Type type = ((com.duy.dx.rop.cst.CstType) getAuxCst()).getClassType();
                 setResult(type);
                 break;
             }
-            case ByteOps.ANEWARRAY: {
-                Type type = ((CstType) getAuxCst()).getClassType();
+            case com.duy.dx.cf.code.ByteOps.ANEWARRAY: {
+                com.duy.dx.rop.type.Type type = ((CstType) getAuxCst()).getClassType();
                 setResult(type.getArrayType());
                 break;
             }

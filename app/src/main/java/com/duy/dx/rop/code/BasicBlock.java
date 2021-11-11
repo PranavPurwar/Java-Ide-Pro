@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
-import com.duy.dx .util.LabeledItem;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
+import com.duy.dx.util.LabeledItem;
 
 /**
  * Basic block of register-based instructions.
@@ -29,7 +29,7 @@ public final class BasicBlock implements LabeledItem {
     private final int label;
 
     /** {@code non-null;} list of instructions in this block */
-    private final InsnList insns;
+    private final com.duy.dx.rop.code.InsnList insns;
 
     /**
      * {@code non-null;} full list of successors that this block may
@@ -56,7 +56,7 @@ public final class BasicBlock implements LabeledItem {
      * successors (that is, it exits the function/method or is an
      * unconditional throw)
      */
-    public BasicBlock(int label, InsnList insns, IntList successors,
+    public BasicBlock(int label, com.duy.dx.rop.code.InsnList insns, IntList successors,
                       int primarySuccessor) {
         if (label < 0) {
             throw new IllegalArgumentException("label < 0");
@@ -76,14 +76,14 @@ public final class BasicBlock implements LabeledItem {
         }
 
         for (int i = sz - 2; i >= 0; i--) {
-            Rop one = insns.get(i).getOpcode();
-            if (one.getBranchingness() != Rop.BRANCH_NONE) {
+            com.duy.dx.rop.code.Rop one = insns.get(i).getOpcode();
+            if (one.getBranchingness() != com.duy.dx.rop.code.Rop.BRANCH_NONE) {
                 throw new IllegalArgumentException("insns[" + i + "] is a " +
                                                    "branch or can throw");
             }
         }
 
-        Insn lastInsn = insns.get(sz - 1);
+        com.duy.dx.rop.code.Insn lastInsn = insns.get(sz - 1);
         if (lastInsn.getOpcode().getBranchingness() == Rop.BRANCH_NONE) {
             throw new IllegalArgumentException("insns does not end with " +
                                                "a branch or throwing " +
@@ -139,6 +139,7 @@ public final class BasicBlock implements LabeledItem {
      *
      * @return {@code >= 0;} the label
      */
+    @Override
     public int getLabel() {
         return label;
     }
@@ -197,7 +198,7 @@ public final class BasicBlock implements LabeledItem {
      *
      * @return {@code non-null;} the first instruction
      */
-    public Insn getFirstInsn() {
+    public com.duy.dx.rop.code.Insn getFirstInsn() {
         return insns.get(0);
     }
 
@@ -207,7 +208,7 @@ public final class BasicBlock implements LabeledItem {
      *
      * @return {@code non-null;} the last instruction
      */
-    public Insn getLastInsn() {
+    public com.duy.dx.rop.code.Insn getLastInsn() {
         return insns.getLast();
     }
 
@@ -232,7 +233,7 @@ public final class BasicBlock implements LabeledItem {
      * exception handlers
      */
     public boolean hasExceptionHandlers() {
-        Insn lastInsn = insns.getLast();
+        com.duy.dx.rop.code.Insn lastInsn = insns.getLast();
         return lastInsn.getCatches().size() != 0;
     }
 
@@ -264,6 +265,7 @@ public final class BasicBlock implements LabeledItem {
                               successors, primarySuccessor);
     }
 
+    @Override
     public String toString() {
         return '{' + Hex.u2(label) + '}';
     }

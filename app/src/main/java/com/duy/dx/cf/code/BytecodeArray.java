@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .cf.iface.ParseException;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.ConstantPool;
-import com.duy.dx .rop.cst.CstDouble;
-import com.duy.dx .rop.cst.CstFloat;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstKnownNull;
-import com.duy.dx .rop.cst.CstLiteralBits;
-import com.duy.dx .rop.cst.CstLong;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.Bits;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
 import java.util.ArrayList;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.ConstantPool;
+import com.duy.dx.rop.cst.CstDouble;
+import com.duy.dx.rop.cst.CstFloat;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstInvokeDynamic;
+import com.duy.dx.rop.cst.CstKnownNull;
+import com.duy.dx.rop.cst.CstLiteralBits;
+import com.duy.dx.rop.cst.CstLong;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.Bits;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
  * Bytecode array, which is part of a standard {@code Code} attribute.
@@ -40,13 +41,13 @@ public final class BytecodeArray {
     public static final Visitor EMPTY_VISITOR = new BaseVisitor();
 
     /** {@code non-null;} underlying bytes */
-    private final ByteArray bytes;
+    private final com.duy.dx.util.ByteArray bytes;
 
     /**
      * {@code non-null;} constant pool to use when resolving constant
      * pool indices
      */
-    private final ConstantPool pool;
+    private final com.duy.dx.rop.cst.ConstantPool pool;
 
     /**
      * Constructs an instance.
@@ -55,7 +56,7 @@ public final class BytecodeArray {
      * @param pool {@code non-null;} constant pool to use when
      * resolving constant pool indices
      */
-    public BytecodeArray(ByteArray bytes, ConstantPool pool) {
+    public BytecodeArray(com.duy.dx.util.ByteArray bytes, ConstantPool pool) {
         if (bytes == null) {
             throw new NullPointerException("bytes == null");
         }
@@ -120,16 +121,16 @@ public final class BytecodeArray {
      * Finds the offset to each instruction in the bytecode array. The
      * result is a bit set with the offset of each opcode-per-se flipped on.
      *
-     * @see Bits
+     * @see com.duy.dx.util.Bits
      * @return {@code non-null;} appropriately constructed bit set
      */
     public int[] getInstructionOffsets() {
         int sz = bytes.size();
-        int[] result = Bits.makeBitSet(sz);
+        int[] result = com.duy.dx.util.Bits.makeBitSet(sz);
         int at = 0;
 
         while (at < sz) {
-            Bits.set(result, at, true);
+            com.duy.dx.util.Bits.set(result, at, true);
             int length = parseInstruction(at, null);
             at += length;
         }
@@ -154,7 +155,7 @@ public final class BytecodeArray {
         }
 
         for (;;) {
-            int offset = Bits.findFirst(workSet, 0);
+            int offset = com.duy.dx.util.Bits.findFirst(workSet, 0);
             if (offset < 0) {
                 break;
             }
@@ -221,580 +222,584 @@ public final class BytecodeArray {
 
         try {
             int opcode = bytes.getUnsignedByte(offset);
-            int info = ByteOps.opInfo(opcode);
-            int fmt = info & ByteOps.FMT_MASK;
+            int info = com.duy.dx.cf.code.ByteOps.opInfo(opcode);
+            int fmt = info & com.duy.dx.cf.code.ByteOps.FMT_MASK;
 
             switch (opcode) {
-                case ByteOps.NOP: {
-                    visitor.visitNoArgs(opcode, offset, 1, Type.VOID);
+                case com.duy.dx.cf.code.ByteOps.NOP: {
+                    visitor.visitNoArgs(opcode, offset, 1, com.duy.dx.rop.type.Type.VOID);
                     return 1;
                 }
-                case ByteOps.ACONST_NULL: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
+                case com.duy.dx.cf.code.ByteOps.ACONST_NULL: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
                                           CstKnownNull.THE_ONE, 0);
                     return 1;
                 }
-                case ByteOps.ICONST_M1: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstInteger.VALUE_M1, -1);
+                case com.duy.dx.cf.code.ByteOps.ICONST_M1: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstInteger.VALUE_M1, -1);
                     return 1;
                 }
-                case ByteOps.ICONST_0: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstInteger.VALUE_0, 0);
+                case com.duy.dx.cf.code.ByteOps.ICONST_0: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstInteger.VALUE_0, 0);
                     return 1;
                 }
-                case ByteOps.ICONST_1: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstInteger.VALUE_1, 1);
+                case com.duy.dx.cf.code.ByteOps.ICONST_1: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstInteger.VALUE_1, 1);
                     return 1;
                 }
-                case ByteOps.ICONST_2: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstInteger.VALUE_2, 2);
+                case com.duy.dx.cf.code.ByteOps.ICONST_2: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstInteger.VALUE_2, 2);
                     return 1;
                 }
-                case ByteOps.ICONST_3: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstInteger.VALUE_3, 3);
+                case com.duy.dx.cf.code.ByteOps.ICONST_3: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstInteger.VALUE_3, 3);
                     return 1;
                 }
-                case ByteOps.ICONST_4: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstInteger.VALUE_4, 4);
+                case com.duy.dx.cf.code.ByteOps.ICONST_4: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstInteger.VALUE_4, 4);
                     return 1;
                 }
-                case ByteOps.ICONST_5:  {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstInteger.VALUE_5, 5);
+                case com.duy.dx.cf.code.ByteOps.ICONST_5:  {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstInteger.VALUE_5, 5);
                     return 1;
                 }
-                case ByteOps.LCONST_0: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstLong.VALUE_0, 0);
+                case com.duy.dx.cf.code.ByteOps.LCONST_0: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstLong.VALUE_0, 0);
                     return 1;
                 }
-                case ByteOps.LCONST_1: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
+                case com.duy.dx.cf.code.ByteOps.LCONST_1: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
                                           CstLong.VALUE_1, 0);
                     return 1;
                 }
-                case ByteOps.FCONST_0: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstFloat.VALUE_0, 0);
+                case com.duy.dx.cf.code.ByteOps.FCONST_0: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstFloat.VALUE_0, 0);
                     return 1;
                 }
-                case ByteOps.FCONST_1: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstFloat.VALUE_1, 0);
+                case com.duy.dx.cf.code.ByteOps.FCONST_1: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstFloat.VALUE_1, 0);
                     return 1;
                 }
-                case ByteOps.FCONST_2:  {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
+                case com.duy.dx.cf.code.ByteOps.FCONST_2:  {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
                                           CstFloat.VALUE_2, 0);
                     return 1;
                 }
-                case ByteOps.DCONST_0: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
-                                          CstDouble.VALUE_0, 0);
+                case com.duy.dx.cf.code.ByteOps.DCONST_0: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
+                                          com.duy.dx.rop.cst.CstDouble.VALUE_0, 0);
                     return 1;
                 }
-                case ByteOps.DCONST_1: {
-                    visitor.visitConstant(ByteOps.LDC, offset, 1,
+                case com.duy.dx.cf.code.ByteOps.DCONST_1: {
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 1,
                                           CstDouble.VALUE_1, 0);
                     return 1;
                 }
-                case ByteOps.BIPUSH: {
+                case com.duy.dx.cf.code.ByteOps.BIPUSH: {
                     int value = bytes.getByte(offset + 1);
-                    visitor.visitConstant(ByteOps.LDC, offset, 2,
-                                          CstInteger.make(value), value);
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 2,
+                                          com.duy.dx.rop.cst.CstInteger.make(value), value);
                     return 2;
                 }
-                case ByteOps.SIPUSH: {
+                case com.duy.dx.cf.code.ByteOps.SIPUSH: {
                     int value = bytes.getShort(offset + 1);
-                    visitor.visitConstant(ByteOps.LDC, offset, 3,
-                                          CstInteger.make(value), value);
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 3,
+                                          com.duy.dx.rop.cst.CstInteger.make(value), value);
                     return 3;
                 }
-                case ByteOps.LDC: {
+                case com.duy.dx.cf.code.ByteOps.LDC: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    Constant cst = pool.get(idx);
-                    int value = (cst instanceof CstInteger) ?
-                        ((CstInteger) cst).getValue() : 0;
-                    visitor.visitConstant(ByteOps.LDC, offset, 2, cst, value);
+                    com.duy.dx.rop.cst.Constant cst = pool.get(idx);
+                    int value = (cst instanceof com.duy.dx.rop.cst.CstInteger) ?
+                        ((com.duy.dx.rop.cst.CstInteger) cst).getValue() : 0;
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 2, cst, value);
                     return 2;
                 }
-                case ByteOps.LDC_W: {
+                case com.duy.dx.cf.code.ByteOps.LDC_W: {
                     int idx = bytes.getUnsignedShort(offset + 1);
-                    Constant cst = pool.get(idx);
-                    int value = (cst instanceof CstInteger) ?
-                        ((CstInteger) cst).getValue() : 0;
-                    visitor.visitConstant(ByteOps.LDC, offset, 3, cst, value);
+                    com.duy.dx.rop.cst.Constant cst = pool.get(idx);
+                    int value = (cst instanceof com.duy.dx.rop.cst.CstInteger) ?
+                        ((com.duy.dx.rop.cst.CstInteger) cst).getValue() : 0;
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC, offset, 3, cst, value);
                     return 3;
                 }
-                case ByteOps.LDC2_W: {
+                case com.duy.dx.cf.code.ByteOps.LDC2_W: {
                     int idx = bytes.getUnsignedShort(offset + 1);
-                    Constant cst = pool.get(idx);
-                    visitor.visitConstant(ByteOps.LDC2_W, offset, 3, cst, 0);
+                    com.duy.dx.rop.cst.Constant cst = pool.get(idx);
+                    visitor.visitConstant(com.duy.dx.cf.code.ByteOps.LDC2_W, offset, 3, cst, 0);
                     return 3;
                 }
-                case ByteOps.ILOAD: {
+                case com.duy.dx.cf.code.ByteOps.ILOAD: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 2, idx,
-                                       Type.INT, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.INT, 0);
                     return 2;
                 }
-                case ByteOps.LLOAD: {
+                case com.duy.dx.cf.code.ByteOps.LLOAD: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 2, idx,
-                                       Type.LONG, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.LONG, 0);
                     return 2;
                 }
-                case ByteOps.FLOAD: {
+                case com.duy.dx.cf.code.ByteOps.FLOAD: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 2, idx,
-                                       Type.FLOAT, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.FLOAT, 0);
                     return 2;
                 }
-                case ByteOps.DLOAD: {
+                case com.duy.dx.cf.code.ByteOps.DLOAD: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 2, idx,
-                                       Type.DOUBLE, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.DOUBLE, 0);
                     return 2;
                 }
-                case ByteOps.ALOAD: {
+                case com.duy.dx.cf.code.ByteOps.ALOAD: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 2, idx,
-                                       Type.OBJECT, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.OBJECT, 0);
                     return 2;
                 }
-                case ByteOps.ILOAD_0:
-                case ByteOps.ILOAD_1:
-                case ByteOps.ILOAD_2:
-                case ByteOps.ILOAD_3: {
-                    int idx = opcode - ByteOps.ILOAD_0;
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 1, idx,
-                                       Type.INT, 0);
+                case com.duy.dx.cf.code.ByteOps.ILOAD_0:
+                case com.duy.dx.cf.code.ByteOps.ILOAD_1:
+                case com.duy.dx.cf.code.ByteOps.ILOAD_2:
+                case com.duy.dx.cf.code.ByteOps.ILOAD_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.ILOAD_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.INT, 0);
                     return 1;
                 }
-                case ByteOps.LLOAD_0:
-                case ByteOps.LLOAD_1:
-                case ByteOps.LLOAD_2:
-                case ByteOps.LLOAD_3: {
-                    int idx = opcode - ByteOps.LLOAD_0;
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 1, idx,
-                                       Type.LONG, 0);
+                case com.duy.dx.cf.code.ByteOps.LLOAD_0:
+                case com.duy.dx.cf.code.ByteOps.LLOAD_1:
+                case com.duy.dx.cf.code.ByteOps.LLOAD_2:
+                case com.duy.dx.cf.code.ByteOps.LLOAD_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.LLOAD_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.LONG, 0);
                     return 1;
                 }
-                case ByteOps.FLOAD_0:
-                case ByteOps.FLOAD_1:
-                case ByteOps.FLOAD_2:
-                case ByteOps.FLOAD_3: {
-                    int idx = opcode - ByteOps.FLOAD_0;
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 1, idx,
-                                       Type.FLOAT, 0);
+                case com.duy.dx.cf.code.ByteOps.FLOAD_0:
+                case com.duy.dx.cf.code.ByteOps.FLOAD_1:
+                case com.duy.dx.cf.code.ByteOps.FLOAD_2:
+                case com.duy.dx.cf.code.ByteOps.FLOAD_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.FLOAD_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.FLOAT, 0);
                     return 1;
                 }
-                case ByteOps.DLOAD_0:
-                case ByteOps.DLOAD_1:
-                case ByteOps.DLOAD_2:
-                case ByteOps.DLOAD_3: {
-                    int idx = opcode - ByteOps.DLOAD_0;
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 1, idx,
-                                       Type.DOUBLE, 0);
+                case com.duy.dx.cf.code.ByteOps.DLOAD_0:
+                case com.duy.dx.cf.code.ByteOps.DLOAD_1:
+                case com.duy.dx.cf.code.ByteOps.DLOAD_2:
+                case com.duy.dx.cf.code.ByteOps.DLOAD_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.DLOAD_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.DOUBLE, 0);
                     return 1;
                 }
-                case ByteOps.ALOAD_0:
-                case ByteOps.ALOAD_1:
-                case ByteOps.ALOAD_2:
-                case ByteOps.ALOAD_3: {
-                    int idx = opcode - ByteOps.ALOAD_0;
-                    visitor.visitLocal(ByteOps.ILOAD, offset, 1, idx,
-                                       Type.OBJECT, 0);
+                case com.duy.dx.cf.code.ByteOps.ALOAD_0:
+                case com.duy.dx.cf.code.ByteOps.ALOAD_1:
+                case com.duy.dx.cf.code.ByteOps.ALOAD_2:
+                case com.duy.dx.cf.code.ByteOps.ALOAD_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.ALOAD_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.OBJECT, 0);
                     return 1;
                 }
-                case ByteOps.IALOAD: {
-                    visitor.visitNoArgs(ByteOps.IALOAD, offset, 1, Type.INT);
+                case com.duy.dx.cf.code.ByteOps.IALOAD: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IALOAD, offset, 1, com.duy.dx.rop.type.Type.INT);
                     return 1;
                 }
-                case ByteOps.LALOAD: {
-                    visitor.visitNoArgs(ByteOps.IALOAD, offset, 1, Type.LONG);
+                case com.duy.dx.cf.code.ByteOps.LALOAD: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IALOAD, offset, 1, com.duy.dx.rop.type.Type.LONG);
                     return 1;
                 }
-                case ByteOps.FALOAD: {
-                    visitor.visitNoArgs(ByteOps.IALOAD, offset, 1,
-                                        Type.FLOAT);
+                case com.duy.dx.cf.code.ByteOps.FALOAD: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IALOAD, offset, 1,
+                                        com.duy.dx.rop.type.Type.FLOAT);
                     return 1;
                 }
-                case ByteOps.DALOAD: {
-                    visitor.visitNoArgs(ByteOps.IALOAD, offset, 1,
-                                        Type.DOUBLE);
+                case com.duy.dx.cf.code.ByteOps.DALOAD: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IALOAD, offset, 1,
+                                        com.duy.dx.rop.type.Type.DOUBLE);
                     return 1;
                 }
-                case ByteOps.AALOAD: {
-                    visitor.visitNoArgs(ByteOps.IALOAD, offset, 1,
-                                        Type.OBJECT);
+                case com.duy.dx.cf.code.ByteOps.AALOAD: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IALOAD, offset, 1,
+                                        com.duy.dx.rop.type.Type.OBJECT);
                     return 1;
                 }
-                case ByteOps.BALOAD: {
+                case com.duy.dx.cf.code.ByteOps.BALOAD: {
                     /*
                      * Note: This is a load from either a byte[] or a
                      * boolean[].
                      */
-                    visitor.visitNoArgs(ByteOps.IALOAD, offset, 1, Type.BYTE);
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IALOAD, offset, 1, com.duy.dx.rop.type.Type.BYTE);
                     return 1;
                 }
-                case ByteOps.CALOAD: {
-                    visitor.visitNoArgs(ByteOps.IALOAD, offset, 1, Type.CHAR);
+                case com.duy.dx.cf.code.ByteOps.CALOAD: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IALOAD, offset, 1, com.duy.dx.rop.type.Type.CHAR);
                     return 1;
                 }
-                case ByteOps.SALOAD: {
-                    visitor.visitNoArgs(ByteOps.IALOAD, offset, 1,
-                                        Type.SHORT);
+                case com.duy.dx.cf.code.ByteOps.SALOAD: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IALOAD, offset, 1,
+                                        com.duy.dx.rop.type.Type.SHORT);
                     return 1;
                 }
-                case ByteOps.ISTORE: {
+                case com.duy.dx.cf.code.ByteOps.ISTORE: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 2, idx,
-                                       Type.INT, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.INT, 0);
                     return 2;
                 }
-                case ByteOps.LSTORE: {
+                case com.duy.dx.cf.code.ByteOps.LSTORE: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 2, idx,
-                                       Type.LONG, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.LONG, 0);
                     return 2;
                 }
-                case ByteOps.FSTORE: {
+                case com.duy.dx.cf.code.ByteOps.FSTORE: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 2, idx,
-                                       Type.FLOAT, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.FLOAT, 0);
                     return 2;
                 }
-                case ByteOps.DSTORE: {
+                case com.duy.dx.cf.code.ByteOps.DSTORE: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 2, idx,
-                                       Type.DOUBLE, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.DOUBLE, 0);
                     return 2;
                 }
-                case ByteOps.ASTORE: {
+                case com.duy.dx.cf.code.ByteOps.ASTORE: {
                     int idx = bytes.getUnsignedByte(offset + 1);
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 2, idx,
-                                       Type.OBJECT, 0);
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 2, idx,
+                                       com.duy.dx.rop.type.Type.OBJECT, 0);
                     return 2;
                 }
-                case ByteOps.ISTORE_0:
-                case ByteOps.ISTORE_1:
-                case ByteOps.ISTORE_2:
-                case ByteOps.ISTORE_3: {
-                    int idx = opcode - ByteOps.ISTORE_0;
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 1, idx,
-                                       Type.INT, 0);
+                case com.duy.dx.cf.code.ByteOps.ISTORE_0:
+                case com.duy.dx.cf.code.ByteOps.ISTORE_1:
+                case com.duy.dx.cf.code.ByteOps.ISTORE_2:
+                case com.duy.dx.cf.code.ByteOps.ISTORE_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.ISTORE_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.INT, 0);
                     return 1;
                 }
-                case ByteOps.LSTORE_0:
-                case ByteOps.LSTORE_1:
-                case ByteOps.LSTORE_2:
-                case ByteOps.LSTORE_3: {
-                    int idx = opcode - ByteOps.LSTORE_0;
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 1, idx,
-                                       Type.LONG, 0);
+                case com.duy.dx.cf.code.ByteOps.LSTORE_0:
+                case com.duy.dx.cf.code.ByteOps.LSTORE_1:
+                case com.duy.dx.cf.code.ByteOps.LSTORE_2:
+                case com.duy.dx.cf.code.ByteOps.LSTORE_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.LSTORE_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.LONG, 0);
                     return 1;
                 }
-                case ByteOps.FSTORE_0:
-                case ByteOps.FSTORE_1:
-                case ByteOps.FSTORE_2:
-                case ByteOps.FSTORE_3: {
-                    int idx = opcode - ByteOps.FSTORE_0;
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 1, idx,
-                                       Type.FLOAT, 0);
+                case com.duy.dx.cf.code.ByteOps.FSTORE_0:
+                case com.duy.dx.cf.code.ByteOps.FSTORE_1:
+                case com.duy.dx.cf.code.ByteOps.FSTORE_2:
+                case com.duy.dx.cf.code.ByteOps.FSTORE_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.FSTORE_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.FLOAT, 0);
                     return 1;
                 }
-                case ByteOps.DSTORE_0:
-                case ByteOps.DSTORE_1:
-                case ByteOps.DSTORE_2:
-                case ByteOps.DSTORE_3: {
-                    int idx = opcode - ByteOps.DSTORE_0;
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 1, idx,
-                                       Type.DOUBLE, 0);
+                case com.duy.dx.cf.code.ByteOps.DSTORE_0:
+                case com.duy.dx.cf.code.ByteOps.DSTORE_1:
+                case com.duy.dx.cf.code.ByteOps.DSTORE_2:
+                case com.duy.dx.cf.code.ByteOps.DSTORE_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.DSTORE_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.DOUBLE, 0);
                     return 1;
                 }
-                case ByteOps.ASTORE_0:
-                case ByteOps.ASTORE_1:
-                case ByteOps.ASTORE_2:
-                case ByteOps.ASTORE_3: {
-                    int idx = opcode - ByteOps.ASTORE_0;
-                    visitor.visitLocal(ByteOps.ISTORE, offset, 1, idx,
-                                       Type.OBJECT, 0);
+                case com.duy.dx.cf.code.ByteOps.ASTORE_0:
+                case com.duy.dx.cf.code.ByteOps.ASTORE_1:
+                case com.duy.dx.cf.code.ByteOps.ASTORE_2:
+                case com.duy.dx.cf.code.ByteOps.ASTORE_3: {
+                    int idx = opcode - com.duy.dx.cf.code.ByteOps.ASTORE_0;
+                    visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 1, idx,
+                                       com.duy.dx.rop.type.Type.OBJECT, 0);
                     return 1;
                 }
-                case ByteOps.IASTORE: {
-                    visitor.visitNoArgs(ByteOps.IASTORE, offset, 1, Type.INT);
+                case com.duy.dx.cf.code.ByteOps.IASTORE: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IASTORE, offset, 1, com.duy.dx.rop.type.Type.INT);
                     return 1;
                 }
-                case ByteOps.LASTORE: {
-                    visitor.visitNoArgs(ByteOps.IASTORE, offset, 1,
-                                        Type.LONG);
+                case com.duy.dx.cf.code.ByteOps.LASTORE: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IASTORE, offset, 1,
+                                        com.duy.dx.rop.type.Type.LONG);
                     return 1;
                 }
-                case ByteOps.FASTORE: {
-                    visitor.visitNoArgs(ByteOps.IASTORE, offset, 1,
-                                        Type.FLOAT);
+                case com.duy.dx.cf.code.ByteOps.FASTORE: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IASTORE, offset, 1,
+                                        com.duy.dx.rop.type.Type.FLOAT);
                     return 1;
                 }
-                case ByteOps.DASTORE: {
-                    visitor.visitNoArgs(ByteOps.IASTORE, offset, 1,
-                                        Type.DOUBLE);
+                case com.duy.dx.cf.code.ByteOps.DASTORE: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IASTORE, offset, 1,
+                                        com.duy.dx.rop.type.Type.DOUBLE);
                     return 1;
                 }
-                case ByteOps.AASTORE: {
-                    visitor.visitNoArgs(ByteOps.IASTORE, offset, 1,
-                                        Type.OBJECT);
+                case com.duy.dx.cf.code.ByteOps.AASTORE: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IASTORE, offset, 1,
+                                        com.duy.dx.rop.type.Type.OBJECT);
                     return 1;
                 }
-                case ByteOps.BASTORE: {
+                case com.duy.dx.cf.code.ByteOps.BASTORE: {
                     /*
                      * Note: This is a load from either a byte[] or a
                      * boolean[].
                      */
-                    visitor.visitNoArgs(ByteOps.IASTORE, offset, 1,
-                                        Type.BYTE);
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IASTORE, offset, 1,
+                                        com.duy.dx.rop.type.Type.BYTE);
                     return 1;
                 }
-                case ByteOps.CASTORE: {
-                    visitor.visitNoArgs(ByteOps.IASTORE, offset, 1,
-                                        Type.CHAR);
+                case com.duy.dx.cf.code.ByteOps.CASTORE: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IASTORE, offset, 1,
+                                        com.duy.dx.rop.type.Type.CHAR);
                     return 1;
                 }
-                case ByteOps.SASTORE: {
-                    visitor.visitNoArgs(ByteOps.IASTORE, offset, 1,
-                                        Type.SHORT);
+                case com.duy.dx.cf.code.ByteOps.SASTORE: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IASTORE, offset, 1,
+                                        com.duy.dx.rop.type.Type.SHORT);
                     return 1;
                 }
-                case ByteOps.POP:
-                case ByteOps.POP2:
-                case ByteOps.DUP:
-                case ByteOps.DUP_X1:
-                case ByteOps.DUP_X2:
-                case ByteOps.DUP2:
-                case ByteOps.DUP2_X1:
-                case ByteOps.DUP2_X2:
-                case ByteOps.SWAP: {
-                    visitor.visitNoArgs(opcode, offset, 1, Type.VOID);
+                case com.duy.dx.cf.code.ByteOps.POP:
+                case com.duy.dx.cf.code.ByteOps.POP2:
+                case com.duy.dx.cf.code.ByteOps.DUP:
+                case com.duy.dx.cf.code.ByteOps.DUP_X1:
+                case com.duy.dx.cf.code.ByteOps.DUP_X2:
+                case com.duy.dx.cf.code.ByteOps.DUP2:
+                case com.duy.dx.cf.code.ByteOps.DUP2_X1:
+                case com.duy.dx.cf.code.ByteOps.DUP2_X2:
+                case com.duy.dx.cf.code.ByteOps.SWAP: {
+                    visitor.visitNoArgs(opcode, offset, 1, com.duy.dx.rop.type.Type.VOID);
                     return 1;
                 }
-                case ByteOps.IADD:
-                case ByteOps.ISUB:
-                case ByteOps.IMUL:
-                case ByteOps.IDIV:
-                case ByteOps.IREM:
-                case ByteOps.INEG:
-                case ByteOps.ISHL:
-                case ByteOps.ISHR:
-                case ByteOps.IUSHR:
-                case ByteOps.IAND:
-                case ByteOps.IOR:
-                case ByteOps.IXOR: {
-                    visitor.visitNoArgs(opcode, offset, 1, Type.INT);
+                case com.duy.dx.cf.code.ByteOps.IADD:
+                case com.duy.dx.cf.code.ByteOps.ISUB:
+                case com.duy.dx.cf.code.ByteOps.IMUL:
+                case com.duy.dx.cf.code.ByteOps.IDIV:
+                case com.duy.dx.cf.code.ByteOps.IREM:
+                case com.duy.dx.cf.code.ByteOps.INEG:
+                case com.duy.dx.cf.code.ByteOps.ISHL:
+                case com.duy.dx.cf.code.ByteOps.ISHR:
+                case com.duy.dx.cf.code.ByteOps.IUSHR:
+                case com.duy.dx.cf.code.ByteOps.IAND:
+                case com.duy.dx.cf.code.ByteOps.IOR:
+                case com.duy.dx.cf.code.ByteOps.IXOR: {
+                    visitor.visitNoArgs(opcode, offset, 1, com.duy.dx.rop.type.Type.INT);
                     return 1;
                 }
-                case ByteOps.LADD:
-                case ByteOps.LSUB:
-                case ByteOps.LMUL:
-                case ByteOps.LDIV:
-                case ByteOps.LREM:
-                case ByteOps.LNEG:
-                case ByteOps.LSHL:
-                case ByteOps.LSHR:
-                case ByteOps.LUSHR:
-                case ByteOps.LAND:
-                case ByteOps.LOR:
-                case ByteOps.LXOR: {
+                case com.duy.dx.cf.code.ByteOps.LADD:
+                case com.duy.dx.cf.code.ByteOps.LSUB:
+                case com.duy.dx.cf.code.ByteOps.LMUL:
+                case com.duy.dx.cf.code.ByteOps.LDIV:
+                case com.duy.dx.cf.code.ByteOps.LREM:
+                case com.duy.dx.cf.code.ByteOps.LNEG:
+                case com.duy.dx.cf.code.ByteOps.LSHL:
+                case com.duy.dx.cf.code.ByteOps.LSHR:
+                case com.duy.dx.cf.code.ByteOps.LUSHR:
+                case com.duy.dx.cf.code.ByteOps.LAND:
+                case com.duy.dx.cf.code.ByteOps.LOR:
+                case com.duy.dx.cf.code.ByteOps.LXOR: {
                     /*
                      * It's "opcode - 1" because, conveniently enough, all
                      * these long ops are one past the int variants.
                      */
-                    visitor.visitNoArgs(opcode - 1, offset, 1, Type.LONG);
+                    visitor.visitNoArgs(opcode - 1, offset, 1, com.duy.dx.rop.type.Type.LONG);
                     return 1;
                 }
-                case ByteOps.FADD:
-                case ByteOps.FSUB:
-                case ByteOps.FMUL:
-                case ByteOps.FDIV:
-                case ByteOps.FREM:
-                case ByteOps.FNEG: {
+                case com.duy.dx.cf.code.ByteOps.FADD:
+                case com.duy.dx.cf.code.ByteOps.FSUB:
+                case com.duy.dx.cf.code.ByteOps.FMUL:
+                case com.duy.dx.cf.code.ByteOps.FDIV:
+                case com.duy.dx.cf.code.ByteOps.FREM:
+                case com.duy.dx.cf.code.ByteOps.FNEG: {
                     /*
                      * It's "opcode - 2" because, conveniently enough, all
                      * these float ops are two past the int variants.
                      */
-                    visitor.visitNoArgs(opcode - 2, offset, 1, Type.FLOAT);
+                    visitor.visitNoArgs(opcode - 2, offset, 1, com.duy.dx.rop.type.Type.FLOAT);
                     return 1;
                 }
-                case ByteOps.DADD:
-                case ByteOps.DSUB:
-                case ByteOps.DMUL:
-                case ByteOps.DDIV:
-                case ByteOps.DREM:
-                case ByteOps.DNEG: {
+                case com.duy.dx.cf.code.ByteOps.DADD:
+                case com.duy.dx.cf.code.ByteOps.DSUB:
+                case com.duy.dx.cf.code.ByteOps.DMUL:
+                case com.duy.dx.cf.code.ByteOps.DDIV:
+                case com.duy.dx.cf.code.ByteOps.DREM:
+                case com.duy.dx.cf.code.ByteOps.DNEG: {
                     /*
                      * It's "opcode - 3" because, conveniently enough, all
                      * these double ops are three past the int variants.
                      */
-                    visitor.visitNoArgs(opcode - 3, offset, 1, Type.DOUBLE);
+                    visitor.visitNoArgs(opcode - 3, offset, 1, com.duy.dx.rop.type.Type.DOUBLE);
                     return 1;
                 }
-                case ByteOps.IINC: {
+                case com.duy.dx.cf.code.ByteOps.IINC: {
                     int idx = bytes.getUnsignedByte(offset + 1);
                     int value = bytes.getByte(offset + 2);
                     visitor.visitLocal(opcode, offset, 3, idx,
-                                       Type.INT, value);
+                                       com.duy.dx.rop.type.Type.INT, value);
                     return 3;
                 }
-                case ByteOps.I2L:
-                case ByteOps.F2L:
-                case ByteOps.D2L: {
-                    visitor.visitNoArgs(opcode, offset, 1, Type.LONG);
+                case com.duy.dx.cf.code.ByteOps.I2L:
+                case com.duy.dx.cf.code.ByteOps.F2L:
+                case com.duy.dx.cf.code.ByteOps.D2L: {
+                    visitor.visitNoArgs(opcode, offset, 1, com.duy.dx.rop.type.Type.LONG);
                     return 1;
                 }
-                case ByteOps.I2F:
-                case ByteOps.L2F:
-                case ByteOps.D2F: {
-                    visitor.visitNoArgs(opcode, offset, 1, Type.FLOAT);
+                case com.duy.dx.cf.code.ByteOps.I2F:
+                case com.duy.dx.cf.code.ByteOps.L2F:
+                case com.duy.dx.cf.code.ByteOps.D2F: {
+                    visitor.visitNoArgs(opcode, offset, 1, com.duy.dx.rop.type.Type.FLOAT);
                     return 1;
                 }
-                case ByteOps.I2D:
-                case ByteOps.L2D:
-                case ByteOps.F2D: {
-                    visitor.visitNoArgs(opcode, offset, 1, Type.DOUBLE);
+                case com.duy.dx.cf.code.ByteOps.I2D:
+                case com.duy.dx.cf.code.ByteOps.L2D:
+                case com.duy.dx.cf.code.ByteOps.F2D: {
+                    visitor.visitNoArgs(opcode, offset, 1, com.duy.dx.rop.type.Type.DOUBLE);
                     return 1;
                 }
-                case ByteOps.L2I:
-                case ByteOps.F2I:
-                case ByteOps.D2I:
-                case ByteOps.I2B:
-                case ByteOps.I2C:
-                case ByteOps.I2S:
-                case ByteOps.LCMP:
-                case ByteOps.FCMPL:
-                case ByteOps.FCMPG:
-                case ByteOps.DCMPL:
-                case ByteOps.DCMPG:
-                case ByteOps.ARRAYLENGTH: {
-                    visitor.visitNoArgs(opcode, offset, 1, Type.INT);
+                case com.duy.dx.cf.code.ByteOps.L2I:
+                case com.duy.dx.cf.code.ByteOps.F2I:
+                case com.duy.dx.cf.code.ByteOps.D2I:
+                case com.duy.dx.cf.code.ByteOps.I2B:
+                case com.duy.dx.cf.code.ByteOps.I2C:
+                case com.duy.dx.cf.code.ByteOps.I2S:
+                case com.duy.dx.cf.code.ByteOps.LCMP:
+                case com.duy.dx.cf.code.ByteOps.FCMPL:
+                case com.duy.dx.cf.code.ByteOps.FCMPG:
+                case com.duy.dx.cf.code.ByteOps.DCMPL:
+                case com.duy.dx.cf.code.ByteOps.DCMPG:
+                case com.duy.dx.cf.code.ByteOps.ARRAYLENGTH: {
+                    visitor.visitNoArgs(opcode, offset, 1, com.duy.dx.rop.type.Type.INT);
                     return 1;
                 }
-                case ByteOps.IFEQ:
-                case ByteOps.IFNE:
-                case ByteOps.IFLT:
-                case ByteOps.IFGE:
-                case ByteOps.IFGT:
-                case ByteOps.IFLE:
-                case ByteOps.IF_ICMPEQ:
-                case ByteOps.IF_ICMPNE:
-                case ByteOps.IF_ICMPLT:
-                case ByteOps.IF_ICMPGE:
-                case ByteOps.IF_ICMPGT:
-                case ByteOps.IF_ICMPLE:
-                case ByteOps.IF_ACMPEQ:
-                case ByteOps.IF_ACMPNE:
-                case ByteOps.GOTO:
-                case ByteOps.JSR:
-                case ByteOps.IFNULL:
-                case ByteOps.IFNONNULL: {
+                case com.duy.dx.cf.code.ByteOps.IFEQ:
+                case com.duy.dx.cf.code.ByteOps.IFNE:
+                case com.duy.dx.cf.code.ByteOps.IFLT:
+                case com.duy.dx.cf.code.ByteOps.IFGE:
+                case com.duy.dx.cf.code.ByteOps.IFGT:
+                case com.duy.dx.cf.code.ByteOps.IFLE:
+                case com.duy.dx.cf.code.ByteOps.IF_ICMPEQ:
+                case com.duy.dx.cf.code.ByteOps.IF_ICMPNE:
+                case com.duy.dx.cf.code.ByteOps.IF_ICMPLT:
+                case com.duy.dx.cf.code.ByteOps.IF_ICMPGE:
+                case com.duy.dx.cf.code.ByteOps.IF_ICMPGT:
+                case com.duy.dx.cf.code.ByteOps.IF_ICMPLE:
+                case com.duy.dx.cf.code.ByteOps.IF_ACMPEQ:
+                case com.duy.dx.cf.code.ByteOps.IF_ACMPNE:
+                case com.duy.dx.cf.code.ByteOps.GOTO:
+                case com.duy.dx.cf.code.ByteOps.JSR:
+                case com.duy.dx.cf.code.ByteOps.IFNULL:
+                case com.duy.dx.cf.code.ByteOps.IFNONNULL: {
                     int target = offset + bytes.getShort(offset + 1);
                     visitor.visitBranch(opcode, offset, 3, target);
                     return 3;
                 }
-                case ByteOps.RET: {
+                case com.duy.dx.cf.code.ByteOps.RET: {
                     int idx = bytes.getUnsignedByte(offset + 1);
                     visitor.visitLocal(opcode, offset, 2, idx,
-                                       Type.RETURN_ADDRESS, 0);
+                                       com.duy.dx.rop.type.Type.RETURN_ADDRESS, 0);
                     return 2;
                 }
-                case ByteOps.TABLESWITCH: {
+                case com.duy.dx.cf.code.ByteOps.TABLESWITCH: {
                     return parseTableswitch(offset, visitor);
                 }
-                case ByteOps.LOOKUPSWITCH: {
+                case com.duy.dx.cf.code.ByteOps.LOOKUPSWITCH: {
                     return parseLookupswitch(offset, visitor);
                 }
-                case ByteOps.IRETURN: {
-                    visitor.visitNoArgs(ByteOps.IRETURN, offset, 1, Type.INT);
+                case com.duy.dx.cf.code.ByteOps.IRETURN: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IRETURN, offset, 1, com.duy.dx.rop.type.Type.INT);
                     return 1;
                 }
-                case ByteOps.LRETURN: {
-                    visitor.visitNoArgs(ByteOps.IRETURN, offset, 1,
-                                        Type.LONG);
+                case com.duy.dx.cf.code.ByteOps.LRETURN: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IRETURN, offset, 1,
+                                        com.duy.dx.rop.type.Type.LONG);
                     return 1;
                 }
-                case ByteOps.FRETURN: {
-                    visitor.visitNoArgs(ByteOps.IRETURN, offset, 1,
-                                        Type.FLOAT);
+                case com.duy.dx.cf.code.ByteOps.FRETURN: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IRETURN, offset, 1,
+                                        com.duy.dx.rop.type.Type.FLOAT);
                     return 1;
                 }
-                case ByteOps.DRETURN: {
-                    visitor.visitNoArgs(ByteOps.IRETURN, offset, 1,
-                                        Type.DOUBLE);
+                case com.duy.dx.cf.code.ByteOps.DRETURN: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IRETURN, offset, 1,
+                                        com.duy.dx.rop.type.Type.DOUBLE);
                     return 1;
                 }
-                case ByteOps.ARETURN: {
-                    visitor.visitNoArgs(ByteOps.IRETURN, offset, 1,
-                                        Type.OBJECT);
+                case com.duy.dx.cf.code.ByteOps.ARETURN: {
+                    visitor.visitNoArgs(com.duy.dx.cf.code.ByteOps.IRETURN, offset, 1,
+                                        com.duy.dx.rop.type.Type.OBJECT);
                     return 1;
                 }
-                case ByteOps.RETURN:
-                case ByteOps.ATHROW:
-                case ByteOps.MONITORENTER:
-                case ByteOps.MONITOREXIT: {
-                    visitor.visitNoArgs(opcode, offset, 1, Type.VOID);
+                case com.duy.dx.cf.code.ByteOps.RETURN:
+                case com.duy.dx.cf.code.ByteOps.ATHROW:
+                case com.duy.dx.cf.code.ByteOps.MONITORENTER:
+                case com.duy.dx.cf.code.ByteOps.MONITOREXIT: {
+                    visitor.visitNoArgs(opcode, offset, 1, com.duy.dx.rop.type.Type.VOID);
                     return 1;
                 }
-                case ByteOps.GETSTATIC:
-                case ByteOps.PUTSTATIC:
-                case ByteOps.GETFIELD:
-                case ByteOps.PUTFIELD:
-                case ByteOps.INVOKEVIRTUAL:
-                case ByteOps.INVOKESPECIAL:
-                case ByteOps.INVOKESTATIC:
-                case ByteOps.NEW:
-                case ByteOps.ANEWARRAY:
-                case ByteOps.CHECKCAST:
-                case ByteOps.INSTANCEOF: {
+                case com.duy.dx.cf.code.ByteOps.GETSTATIC:
+                case com.duy.dx.cf.code.ByteOps.PUTSTATIC:
+                case com.duy.dx.cf.code.ByteOps.GETFIELD:
+                case com.duy.dx.cf.code.ByteOps.PUTFIELD:
+                case com.duy.dx.cf.code.ByteOps.INVOKEVIRTUAL:
+                case com.duy.dx.cf.code.ByteOps.INVOKESPECIAL:
+                case com.duy.dx.cf.code.ByteOps.INVOKESTATIC:
+                case com.duy.dx.cf.code.ByteOps.NEW:
+                case com.duy.dx.cf.code.ByteOps.ANEWARRAY:
+                case com.duy.dx.cf.code.ByteOps.CHECKCAST:
+                case com.duy.dx.cf.code.ByteOps.INSTANCEOF: {
                     int idx = bytes.getUnsignedShort(offset + 1);
-                    Constant cst = pool.get(idx);
+                    com.duy.dx.rop.cst.Constant cst = pool.get(idx);
                     visitor.visitConstant(opcode, offset, 3, cst, 0);
                     return 3;
                 }
-                case ByteOps.INVOKEINTERFACE: {
+                case com.duy.dx.cf.code.ByteOps.INVOKEINTERFACE: {
                     int idx = bytes.getUnsignedShort(offset + 1);
                     int count = bytes.getUnsignedByte(offset + 3);
                     int expectZero = bytes.getUnsignedByte(offset + 4);
-                    Constant cst = pool.get(idx);
+                    com.duy.dx.rop.cst.Constant cst = pool.get(idx);
                     visitor.visitConstant(opcode, offset, 5, cst,
                                           count | (expectZero << 8));
                     return 5;
                 }
-                case ByteOps.INVOKEDYNAMIC: {
-                  throw new ParseException("invokedynamic not supported");
+                case com.duy.dx.cf.code.ByteOps.INVOKEDYNAMIC: {
+                    int idx = bytes.getUnsignedShort(offset + 1);
+                    // Skip to must-be-zero bytes at offsets 3 and 4
+                    com.duy.dx.rop.cst.CstInvokeDynamic cstInvokeDynamic = (CstInvokeDynamic) pool.get(idx);
+                    visitor.visitConstant(opcode, offset, 5, cstInvokeDynamic, 0);
+                    return 5;
                 }
-                case ByteOps.NEWARRAY: {
+                case com.duy.dx.cf.code.ByteOps.NEWARRAY: {
                     return parseNewarray(offset, visitor);
                 }
-                case ByteOps.WIDE: {
+                case com.duy.dx.cf.code.ByteOps.WIDE: {
                     return parseWide(offset, visitor);
                 }
-                case ByteOps.MULTIANEWARRAY: {
+                case com.duy.dx.cf.code.ByteOps.MULTIANEWARRAY: {
                     int idx = bytes.getUnsignedShort(offset + 1);
                     int dimensions = bytes.getUnsignedByte(offset + 3);
-                    Constant cst = pool.get(idx);
+                    com.duy.dx.rop.cst.Constant cst = pool.get(idx);
                     visitor.visitConstant(opcode, offset, 4, cst, dimensions);
                     return 4;
                 }
-                case ByteOps.GOTO_W:
-                case ByteOps.JSR_W: {
+                case com.duy.dx.cf.code.ByteOps.GOTO_W:
+                case com.duy.dx.cf.code.ByteOps.JSR_W: {
                     int target = offset + bytes.getInt(offset + 1);
                     int newop =
-                        (opcode == ByteOps.GOTO_W) ? ByteOps.GOTO :
-                        ByteOps.JSR;
+                        (opcode == com.duy.dx.cf.code.ByteOps.GOTO_W) ? com.duy.dx.cf.code.ByteOps.GOTO :
+                        com.duy.dx.cf.code.ByteOps.JSR;
                     visitor.visitBranch(newop, offset, 5, target);
                     return 5;
                 }
@@ -804,11 +809,11 @@ public final class BytecodeArray {
                 }
             }
         } catch (SimException ex) {
-            ex.addContext("...at bytecode offset " + Hex.u4(offset));
+            ex.addContext("...at bytecode offset " + com.duy.dx.util.Hex.u4(offset));
             throw ex;
         } catch (RuntimeException ex) {
             SimException se = new SimException(ex);
-            se.addContext("...at bytecode offset " + Hex.u4(offset));
+            se.addContext("...at bytecode offset " + com.duy.dx.util.Hex.u4(offset));
             throw se;
         }
     }
@@ -839,7 +844,7 @@ public final class BytecodeArray {
             throw new SimException("low / high inversion");
         }
 
-        SwitchList cases = new SwitchList(count);
+        com.duy.dx.cf.code.SwitchList cases = new com.duy.dx.cf.code.SwitchList(count);
         for (int i = 0; i < count; i++) {
             int target = offset + bytes.getInt(at);
             at += 4;
@@ -850,7 +855,7 @@ public final class BytecodeArray {
         cases.setImmutable();
 
         int length = at - offset;
-        visitor.visitSwitch(ByteOps.LOOKUPSWITCH, offset, length, cases,
+        visitor.visitSwitch(com.duy.dx.cf.code.ByteOps.LOOKUPSWITCH, offset, length, cases,
                             padding);
 
         return length;
@@ -876,7 +881,7 @@ public final class BytecodeArray {
         int npairs = bytes.getInt(at + 4);
         at += 8;
 
-        SwitchList cases = new SwitchList(npairs);
+        com.duy.dx.cf.code.SwitchList cases = new com.duy.dx.cf.code.SwitchList(npairs);
         for (int i = 0; i < npairs; i++) {
             int match = bytes.getInt(at);
             int target = offset + bytes.getInt(at + 4);
@@ -888,7 +893,7 @@ public final class BytecodeArray {
         cases.setImmutable();
 
         int length = at - offset;
-        visitor.visitSwitch(ByteOps.LOOKUPSWITCH, offset, length, cases,
+        visitor.visitSwitch(com.duy.dx.cf.code.ByteOps.LOOKUPSWITCH, offset, length, cases,
                             padding);
 
         return length;
@@ -903,38 +908,38 @@ public final class BytecodeArray {
      */
     private int parseNewarray(int offset, Visitor visitor) {
         int value = bytes.getUnsignedByte(offset + 1);
-        CstType type;
+        com.duy.dx.rop.cst.CstType type;
         switch (value) {
-            case ByteOps.NEWARRAY_BOOLEAN: {
-                type = CstType.BOOLEAN_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY_BOOLEAN: {
+                type = com.duy.dx.rop.cst.CstType.BOOLEAN_ARRAY;
                 break;
             }
-            case ByteOps.NEWARRAY_CHAR: {
-                type = CstType.CHAR_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY_CHAR: {
+                type = com.duy.dx.rop.cst.CstType.CHAR_ARRAY;
                 break;
             }
-            case ByteOps.NEWARRAY_DOUBLE: {
-                type = CstType.DOUBLE_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY_DOUBLE: {
+                type = com.duy.dx.rop.cst.CstType.DOUBLE_ARRAY;
                 break;
             }
-            case ByteOps.NEWARRAY_FLOAT: {
-                type = CstType.FLOAT_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY_FLOAT: {
+                type = com.duy.dx.rop.cst.CstType.FLOAT_ARRAY;
                 break;
             }
-            case ByteOps.NEWARRAY_BYTE: {
-                type = CstType.BYTE_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY_BYTE: {
+                type = com.duy.dx.rop.cst.CstType.BYTE_ARRAY;
                 break;
             }
-            case ByteOps.NEWARRAY_SHORT: {
-                type = CstType.SHORT_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY_SHORT: {
+                type = com.duy.dx.rop.cst.CstType.SHORT_ARRAY;
                 break;
             }
-            case ByteOps.NEWARRAY_INT: {
-                type = CstType.INT_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY_INT: {
+                type = com.duy.dx.rop.cst.CstType.INT_ARRAY;
                 break;
             }
-            case ByteOps.NEWARRAY_LONG: {
-                type = CstType.LONG_ARRAY;
+            case com.duy.dx.cf.code.ByteOps.NEWARRAY_LONG: {
+                type = com.duy.dx.rop.cst.CstType.LONG_ARRAY;
                 break;
             }
             default: {
@@ -954,7 +959,7 @@ public final class BytecodeArray {
          */
         if (previousOffset >= 0) {
             parseInstruction(previousOffset, constantVisitor);
-            if (constantVisitor.cst instanceof CstInteger &&
+            if (constantVisitor.cst instanceof com.duy.dx.rop.cst.CstInteger &&
                     constantVisitor.length + previousOffset == offset) {
                 arrayLength = constantVisitor.value;
 
@@ -975,7 +980,7 @@ public final class BytecodeArray {
         int nInit = 0;
         int curOffset = offset+2;
         int lastOffset = curOffset;
-        ArrayList<Constant> initVals = new ArrayList<Constant>();
+        ArrayList<com.duy.dx.rop.cst.Constant> initVals = new ArrayList<com.duy.dx.rop.cst.Constant>();
 
         if (arrayLength != 0) {
             while (true) {
@@ -983,7 +988,7 @@ public final class BytecodeArray {
 
                 // First, check if the next bytecode is dup.
                 int nextByte = bytes.getUnsignedByte(curOffset++);
-                if (nextByte != ByteOps.DUP)
+                if (nextByte != com.duy.dx.cf.code.ByteOps.DUP)
                     break;
 
                 /*
@@ -1014,45 +1019,45 @@ public final class BytecodeArray {
                 nextByte = bytes.getUnsignedByte(curOffset++);
                 // Now, check if the value is stored to the array properly.
                 switch (value) {
-                    case ByteOps.NEWARRAY_BYTE:
-                    case ByteOps.NEWARRAY_BOOLEAN: {
-                        if (nextByte != ByteOps.BASTORE) {
+                    case com.duy.dx.cf.code.ByteOps.NEWARRAY_BYTE:
+                    case com.duy.dx.cf.code.ByteOps.NEWARRAY_BOOLEAN: {
+                        if (nextByte != com.duy.dx.cf.code.ByteOps.BASTORE) {
                             punt = true;
                         }
                         break;
                     }
-                    case ByteOps.NEWARRAY_CHAR: {
-                        if (nextByte != ByteOps.CASTORE) {
+                    case com.duy.dx.cf.code.ByteOps.NEWARRAY_CHAR: {
+                        if (nextByte != com.duy.dx.cf.code.ByteOps.CASTORE) {
                             punt = true;
                         }
                         break;
                     }
-                    case ByteOps.NEWARRAY_DOUBLE: {
-                        if (nextByte != ByteOps.DASTORE) {
+                    case com.duy.dx.cf.code.ByteOps.NEWARRAY_DOUBLE: {
+                        if (nextByte != com.duy.dx.cf.code.ByteOps.DASTORE) {
                             punt = true;
                         }
                         break;
                     }
-                    case ByteOps.NEWARRAY_FLOAT: {
-                        if (nextByte != ByteOps.FASTORE) {
+                    case com.duy.dx.cf.code.ByteOps.NEWARRAY_FLOAT: {
+                        if (nextByte != com.duy.dx.cf.code.ByteOps.FASTORE) {
                             punt = true;
                         }
                         break;
                     }
-                    case ByteOps.NEWARRAY_SHORT: {
-                        if (nextByte != ByteOps.SASTORE) {
+                    case com.duy.dx.cf.code.ByteOps.NEWARRAY_SHORT: {
+                        if (nextByte != com.duy.dx.cf.code.ByteOps.SASTORE) {
                             punt = true;
                         }
                         break;
                     }
-                    case ByteOps.NEWARRAY_INT: {
-                        if (nextByte != ByteOps.IASTORE) {
+                    case com.duy.dx.cf.code.ByteOps.NEWARRAY_INT: {
+                        if (nextByte != com.duy.dx.cf.code.ByteOps.IASTORE) {
                             punt = true;
                         }
                         break;
                     }
-                    case ByteOps.NEWARRAY_LONG: {
-                        if (nextByte != ByteOps.LASTORE) {
+                    case com.duy.dx.cf.code.ByteOps.NEWARRAY_LONG: {
+                        if (nextByte != com.duy.dx.cf.code.ByteOps.LASTORE) {
                             punt = true;
                         }
                         break;
@@ -1094,65 +1099,65 @@ public final class BytecodeArray {
         int opcode = bytes.getUnsignedByte(offset + 1);
         int idx = bytes.getUnsignedShort(offset + 2);
         switch (opcode) {
-            case ByteOps.ILOAD: {
-                visitor.visitLocal(ByteOps.ILOAD, offset, 4, idx,
-                                   Type.INT, 0);
+            case com.duy.dx.cf.code.ByteOps.ILOAD: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.INT, 0);
                 return 4;
             }
-            case ByteOps.LLOAD: {
-                visitor.visitLocal(ByteOps.ILOAD, offset, 4, idx,
-                                   Type.LONG, 0);
+            case com.duy.dx.cf.code.ByteOps.LLOAD: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.LONG, 0);
                 return 4;
             }
-            case ByteOps.FLOAD: {
-                visitor.visitLocal(ByteOps.ILOAD, offset, 4, idx,
-                                   Type.FLOAT, 0);
+            case com.duy.dx.cf.code.ByteOps.FLOAD: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.FLOAT, 0);
                 return 4;
             }
-            case ByteOps.DLOAD: {
-                visitor.visitLocal(ByteOps.ILOAD, offset, 4, idx,
-                                   Type.DOUBLE, 0);
+            case com.duy.dx.cf.code.ByteOps.DLOAD: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.DOUBLE, 0);
                 return 4;
             }
-            case ByteOps.ALOAD: {
-                visitor.visitLocal(ByteOps.ILOAD, offset, 4, idx,
-                                   Type.OBJECT, 0);
+            case com.duy.dx.cf.code.ByteOps.ALOAD: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ILOAD, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.OBJECT, 0);
                 return 4;
             }
-            case ByteOps.ISTORE: {
-                visitor.visitLocal(ByteOps.ISTORE, offset, 4, idx,
-                                   Type.INT, 0);
+            case com.duy.dx.cf.code.ByteOps.ISTORE: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.INT, 0);
                 return 4;
             }
-            case ByteOps.LSTORE: {
-                visitor.visitLocal(ByteOps.ISTORE, offset, 4, idx,
-                                   Type.LONG, 0);
+            case com.duy.dx.cf.code.ByteOps.LSTORE: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.LONG, 0);
                 return 4;
             }
-            case ByteOps.FSTORE: {
-                visitor.visitLocal(ByteOps.ISTORE, offset, 4, idx,
-                                   Type.FLOAT, 0);
+            case com.duy.dx.cf.code.ByteOps.FSTORE: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.FLOAT, 0);
                 return 4;
             }
-            case ByteOps.DSTORE: {
-                visitor.visitLocal(ByteOps.ISTORE, offset, 4, idx,
-                                   Type.DOUBLE, 0);
+            case com.duy.dx.cf.code.ByteOps.DSTORE: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.DOUBLE, 0);
                 return 4;
             }
-            case ByteOps.ASTORE: {
-                visitor.visitLocal(ByteOps.ISTORE, offset, 4, idx,
-                                   Type.OBJECT, 0);
+            case com.duy.dx.cf.code.ByteOps.ASTORE: {
+                visitor.visitLocal(com.duy.dx.cf.code.ByteOps.ISTORE, offset, 4, idx,
+                                   com.duy.dx.rop.type.Type.OBJECT, 0);
                 return 4;
             }
-            case ByteOps.RET: {
+            case com.duy.dx.cf.code.ByteOps.RET: {
                 visitor.visitLocal(opcode, offset, 4, idx,
-                                   Type.RETURN_ADDRESS, 0);
+                                   com.duy.dx.rop.type.Type.RETURN_ADDRESS, 0);
                 return 4;
             }
-            case ByteOps.IINC: {
+            case com.duy.dx.cf.code.ByteOps.IINC: {
                 int value = bytes.getShort(offset + 4);
                 visitor.visitLocal(opcode, offset, 6, idx,
-                                   Type.INT, value);
+                                   com.duy.dx.rop.type.Type.INT, value);
                 return 6;
             }
             default: {
@@ -1185,7 +1190,7 @@ public final class BytecodeArray {
          * @param type {@code non-null;} type the instruction operates on
          */
         public void visitNoArgs(int opcode, int offset, int length,
-                Type type);
+                com.duy.dx.rop.type.Type type);
 
         /**
          * Visits an instruction which has a local variable index argument.
@@ -1199,7 +1204,7 @@ public final class BytecodeArray {
          * for {@code iinc})
          */
         public void visitLocal(int opcode, int offset, int length,
-                int idx, Type type, int value);
+                               int idx, com.duy.dx.rop.type.Type type, int value);
 
         /**
          * Visits an instruction which has a (possibly synthetic)
@@ -1215,7 +1220,7 @@ public final class BytecodeArray {
          * <p><b>Note:</b> In order to avoid giving it a barely-useful
          * visitor all its own, {@code newarray} also uses this
          * form, passing {@code value} as the array type code and
-         * {@code cst} as a {@link CstType} instance
+         * {@code cst} as a {@link com.duy.dx.rop.cst.CstType} instance
          * corresponding to the array type.</p>
          *
          * @param opcode the opcode
@@ -1226,7 +1231,7 @@ public final class BytecodeArray {
          * (ignore if not)
          */
         public void visitConstant(int opcode, int offset, int length,
-                Constant cst, int value);
+                                  com.duy.dx.rop.cst.Constant cst, int value);
 
         /**
          * Visits an instruction which has a branch target argument.
@@ -1251,7 +1256,7 @@ public final class BytecodeArray {
          * packed
          */
         public void visitSwitch(int opcode, int offset, int length,
-                SwitchList cases, int padding);
+                                com.duy.dx.cf.code.SwitchList cases, int padding);
 
         /**
          * Visits a newarray instruction.
@@ -1262,8 +1267,8 @@ public final class BytecodeArray {
          * @param initVals {@code non-null;} list of bytecode offsets
          * for init values
          */
-        public void visitNewarray(int offset, int length, CstType type,
-                ArrayList<Constant> initVals);
+        public void visitNewarray(int offset, int length, com.duy.dx.rop.cst.CstType type,
+                ArrayList<com.duy.dx.rop.cst.Constant> initVals);
 
         /**
          * Set previous bytecode offset
@@ -1292,52 +1297,61 @@ public final class BytecodeArray {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitInvalid(int opcode, int offset, int length) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitNoArgs(int opcode, int offset, int length,
-                Type type) {
+                com.duy.dx.rop.type.Type type) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitLocal(int opcode, int offset, int length,
-                int idx, Type type, int value) {
+                               int idx, com.duy.dx.rop.type.Type type, int value) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitConstant(int opcode, int offset, int length,
-                Constant cst, int value) {
+                                  com.duy.dx.rop.cst.Constant cst, int value) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitBranch(int opcode, int offset, int length,
                 int target) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitSwitch(int opcode, int offset, int length,
-                SwitchList cases, int padding) {
+                                com.duy.dx.cf.code.SwitchList cases, int padding) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
-        public void visitNewarray(int offset, int length, CstType type,
-                ArrayList<Constant> initValues) {
+        @Override
+        public void visitNewarray(int offset, int length, com.duy.dx.rop.cst.CstType type,
+                ArrayList<com.duy.dx.rop.cst.Constant> initValues) {
             // This space intentionally left blank.
         }
 
         /** {@inheritDoc} */
+        @Override
         public void setPreviousOffset(int offset) {
             previousOffset = offset;
         }
 
         /** {@inheritDoc} */
+        @Override
         public int getPreviousOffset() {
             return previousOffset;
         }
@@ -1348,7 +1362,7 @@ public final class BytecodeArray {
      * to constant values.
      */
     class ConstantParserVisitor extends BaseVisitor {
-        Constant cst;
+        com.duy.dx.rop.cst.Constant cst;
         int length;
         int value;
 
@@ -1369,21 +1383,21 @@ public final class BytecodeArray {
         /** {@inheritDoc} */
         @Override
         public void visitNoArgs(int opcode, int offset, int length,
-                Type type) {
+                com.duy.dx.rop.type.Type type) {
             clear();
         }
 
         /** {@inheritDoc} */
         @Override
         public void visitLocal(int opcode, int offset, int length,
-                int idx, Type type, int value) {
+                               int idx, Type type, int value) {
             clear();
         }
 
         /** {@inheritDoc} */
         @Override
         public void visitConstant(int opcode, int offset, int length,
-                Constant cst, int value) {
+                                  com.duy.dx.rop.cst.Constant cst, int value) {
             this.cst = cst;
             this.length = length;
             this.value = value;
@@ -1399,7 +1413,7 @@ public final class BytecodeArray {
         /** {@inheritDoc} */
         @Override
         public void visitSwitch(int opcode, int offset, int length,
-                SwitchList cases, int padding) {
+                                SwitchList cases, int padding) {
             clear();
         }
 

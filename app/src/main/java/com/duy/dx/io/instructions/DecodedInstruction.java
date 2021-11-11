@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .io.instructions;
+package com.duy.dx.io.instructions;
 
 import com.duy.dex.DexException;
-import com.duy.dx .io.IndexType;
-import com.duy.dx .io.OpcodeInfo;
-import com.duy.dx .io.Opcodes;
-import com.duy.dx .util.Hex;
+import com.duy.dx.io.IndexType;
+import com.duy.dx.io.OpcodeInfo;
+import com.duy.dx.io.Opcodes;
+import com.duy.dx.util.Hex;
+
 import java.io.EOFException;
 
 /**
@@ -38,7 +39,7 @@ import java.io.EOFException;
  */
 public abstract class DecodedInstruction {
     /** non-null; instruction format / codec */
-    private final InstructionCodec format;
+    private final com.duy.dx.io.instructions.InstructionCodec format;
 
     /** opcode number */
     private final int opcode;
@@ -47,7 +48,7 @@ public abstract class DecodedInstruction {
     private final int index;
 
     /** null-ok; index type */
-    private final IndexType indexType;
+    private final com.duy.dx.io.IndexType indexType;
 
     /**
      * target address argument. This is an absolute address, not just
@@ -68,8 +69,8 @@ public abstract class DecodedInstruction {
      */
     public static DecodedInstruction decode(CodeInput in) throws EOFException {
         int opcodeUnit = in.read();
-        int opcode = Opcodes.extractOpcodeFromUnit(opcodeUnit);
-        InstructionCodec format = OpcodeInfo.getFormat(opcode);
+        int opcode = com.duy.dx.io.Opcodes.extractOpcodeFromUnit(opcodeUnit);
+        com.duy.dx.io.instructions.InstructionCodec format = OpcodeInfo.getFormat(opcode);
 
         return format.decode(opcodeUnit, in);
     }
@@ -82,7 +83,7 @@ public abstract class DecodedInstruction {
     public static DecodedInstruction[] decodeAll(short[] encodedInstructions) {
         int size = encodedInstructions.length;
         DecodedInstruction[] decoded = new DecodedInstruction[size];
-        ShortArrayCodeInput in = new ShortArrayCodeInput(encodedInstructions);
+        com.duy.dx.io.instructions.ShortArrayCodeInput in = new ShortArrayCodeInput(encodedInstructions);
 
         try {
             while (in.hasMore()) {
@@ -98,8 +99,8 @@ public abstract class DecodedInstruction {
     /**
      * Constructs an instance.
      */
-    public DecodedInstruction(InstructionCodec format, int opcode,
-            int index, IndexType indexType, int target, long literal) {
+    public DecodedInstruction(com.duy.dx.io.instructions.InstructionCodec format, int opcode,
+                              int index, com.duy.dx.io.IndexType indexType, int target, long literal) {
         if (format == null) {
             throw new NullPointerException("format == null");
         }
@@ -170,7 +171,7 @@ public abstract class DecodedInstruction {
 
         if (relativeTarget != (short) relativeTarget) {
             throw new DexException("Target out of range: "
-                    + Hex.s4(relativeTarget));
+                    + com.duy.dx.util.Hex.s4(relativeTarget));
         }
 
         return (short) relativeTarget;
@@ -186,7 +187,7 @@ public abstract class DecodedInstruction {
 
         if (relativeTarget != (byte) relativeTarget) {
             throw new DexException("Target out of range: "
-                    + Hex.s4(relativeTarget));
+                    + com.duy.dx.util.Hex.s4(relativeTarget));
         }
 
         return relativeTarget & 0xff;
@@ -202,7 +203,7 @@ public abstract class DecodedInstruction {
      */
     public final int getLiteralInt() {
         if (literal != (int) literal) {
-            throw new DexException("Literal out of range: " + Hex.u8(literal));
+            throw new DexException("Literal out of range: " + com.duy.dx.util.Hex.u8(literal));
         }
 
         return (int) literal;
@@ -214,7 +215,7 @@ public abstract class DecodedInstruction {
      */
     public final short getLiteralUnit() {
         if (literal != (short) literal) {
-            throw new DexException("Literal out of range: " + Hex.u8(literal));
+            throw new DexException("Literal out of range: " + com.duy.dx.util.Hex.u8(literal));
         }
 
         return (short) literal;
@@ -226,7 +227,7 @@ public abstract class DecodedInstruction {
      */
     public final int getLiteralByte() {
         if (literal != (byte) literal) {
-            throw new DexException("Literal out of range: " + Hex.u8(literal));
+            throw new DexException("Literal out of range: " + com.duy.dx.util.Hex.u8(literal));
         }
 
         return (int) literal & 0xff;
@@ -238,7 +239,7 @@ public abstract class DecodedInstruction {
      */
     public final int getLiteralNibble() {
         if ((literal < -8) || (literal > 7)) {
-            throw new DexException("Literal out of range: " + Hex.u8(literal));
+            throw new DexException("Literal out of range: " + com.duy.dx.util.Hex.u8(literal));
         }
 
         return (int) literal & 0xf;
@@ -275,7 +276,7 @@ public abstract class DecodedInstruction {
 
         if ((registerCount & ~0xffff) != 0) {
             throw new DexException("Register count out of range: "
-                    + Hex.u8(registerCount));
+                    + com.duy.dx.util.Hex.u8(registerCount));
         }
 
         return (short) registerCount;
@@ -289,7 +290,7 @@ public abstract class DecodedInstruction {
         int a = getA();
 
         if ((a & ~0xffff) != 0) {
-            throw new DexException("Register A out of range: " + Hex.u8(a));
+            throw new DexException("Register A out of range: " + com.duy.dx.util.Hex.u8(a));
         }
 
         return (short) a;
@@ -303,7 +304,7 @@ public abstract class DecodedInstruction {
         int a = getA();
 
         if ((a & ~0xff) != 0) {
-            throw new DexException("Register A out of range: " + Hex.u8(a));
+            throw new DexException("Register A out of range: " + com.duy.dx.util.Hex.u8(a));
         }
 
         return (short) a;
@@ -317,7 +318,7 @@ public abstract class DecodedInstruction {
         int a = getA();
 
         if ((a & ~0xf) != 0) {
-            throw new DexException("Register A out of range: " + Hex.u8(a));
+            throw new DexException("Register A out of range: " + com.duy.dx.util.Hex.u8(a));
         }
 
         return (short) a;
@@ -331,7 +332,7 @@ public abstract class DecodedInstruction {
         int b = getB();
 
         if ((b & ~0xffff) != 0) {
-            throw new DexException("Register B out of range: " + Hex.u8(b));
+            throw new DexException("Register B out of range: " + com.duy.dx.util.Hex.u8(b));
         }
 
         return (short) b;
@@ -345,7 +346,7 @@ public abstract class DecodedInstruction {
         int b = getB();
 
         if ((b & ~0xff) != 0) {
-            throw new DexException("Register B out of range: " + Hex.u8(b));
+            throw new DexException("Register B out of range: " + com.duy.dx.util.Hex.u8(b));
         }
 
         return (short) b;
@@ -359,7 +360,7 @@ public abstract class DecodedInstruction {
         int b = getB();
 
         if ((b & ~0xf) != 0) {
-            throw new DexException("Register B out of range: " + Hex.u8(b));
+            throw new DexException("Register B out of range: " + com.duy.dx.util.Hex.u8(b));
         }
 
         return (short) b;
@@ -373,7 +374,7 @@ public abstract class DecodedInstruction {
         int c = getC();
 
         if ((c & ~0xffff) != 0) {
-            throw new DexException("Register C out of range: " + Hex.u8(c));
+            throw new DexException("Register C out of range: " + com.duy.dx.util.Hex.u8(c));
         }
 
         return (short) c;
@@ -387,7 +388,7 @@ public abstract class DecodedInstruction {
         int c = getC();
 
         if ((c & ~0xff) != 0) {
-            throw new DexException("Register C out of range: " + Hex.u8(c));
+            throw new DexException("Register C out of range: " + com.duy.dx.util.Hex.u8(c));
         }
 
         return (short) c;
@@ -401,7 +402,7 @@ public abstract class DecodedInstruction {
         int c = getC();
 
         if ((c & ~0xf) != 0) {
-            throw new DexException("Register C out of range: " + Hex.u8(c));
+            throw new DexException("Register C out of range: " + com.duy.dx.util.Hex.u8(c));
         }
 
         return (short) c;
@@ -415,7 +416,7 @@ public abstract class DecodedInstruction {
         int d = getD();
 
         if ((d & ~0xffff) != 0) {
-            throw new DexException("Register D out of range: " + Hex.u8(d));
+            throw new DexException("Register D out of range: " + com.duy.dx.util.Hex.u8(d));
         }
 
         return (short) d;
@@ -429,7 +430,7 @@ public abstract class DecodedInstruction {
         int d = getD();
 
         if ((d & ~0xff) != 0) {
-            throw new DexException("Register D out of range: " + Hex.u8(d));
+            throw new DexException("Register D out of range: " + com.duy.dx.util.Hex.u8(d));
         }
 
         return (short) d;
@@ -443,7 +444,7 @@ public abstract class DecodedInstruction {
         int d = getD();
 
         if ((d & ~0xf) != 0) {
-            throw new DexException("Register D out of range: " + Hex.u8(d));
+            throw new DexException("Register D out of range: " + com.duy.dx.util.Hex.u8(d));
         }
 
         return (short) d;
@@ -475,4 +476,14 @@ public abstract class DecodedInstruction {
      * with the given one.
      */
     public abstract DecodedInstruction withIndex(int newIndex);
+
+    /** Update the instruction with a new 45cc or 4rcc proto index. */
+    public DecodedInstruction withProtoIndex(int newIndex, int newProtoIndex) {
+        throw new IllegalStateException(getClass().toString());
+    }
+
+    /** Returns a 45cc or 4rcc proto index. */
+    public short getProtoIndex() {
+        throw new IllegalStateException(getClass().toString());
+    }
 }

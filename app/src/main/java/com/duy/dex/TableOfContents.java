@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2011 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.duy.dex;
 
 import java.io.IOException;
@@ -20,6 +36,8 @@ public final class TableOfContents {
     public final Section fieldIds = new Section(0x0004);
     public final Section methodIds = new Section(0x0005);
     public final Section classDefs = new Section(0x0006);
+    public final Section callSiteIds = new Section(0x0007);
+    public final Section methodHandles = new Section(0x0008);
     public final Section mapList = new Section(0x1000);
     public final Section typeLists = new Section(0x1001);
     public final Section annotationSetRefLists = new Section(0x1002);
@@ -32,11 +50,12 @@ public final class TableOfContents {
     public final Section encodedArrays = new Section(0x2005);
     public final Section annotationsDirectories = new Section(0x2006);
     public final Section[] sections = {
-            header, stringIds, typeIds, protoIds, fieldIds, methodIds, classDefs, mapList,
-            typeLists, annotationSetRefLists, annotationSets, classDatas, codes, stringDatas,
-            debugInfos, annotations, encodedArrays, annotationsDirectories
+        header, stringIds, typeIds, protoIds, fieldIds, methodIds, classDefs, mapList, callSiteIds,
+        methodHandles, typeLists, annotationSetRefLists, annotationSets, classDatas, codes,
+        stringDatas, debugInfos, annotations, encodedArrays, annotationsDirectories
     };
 
+    public int apiLevel;
     public int checksum;
     public byte[] signature;
     public int fileSize;
@@ -57,21 +76,26 @@ public final class TableOfContents {
 
     private void readHeader(Dex.Section headerIn) throws UnsupportedEncodingException {
         byte[] magic = headerIn.readByteArray(8);
-        int apiTarget = DexFormat.magicToApi(magic);
 
-        if (apiTarget != DexFormat.API_NO_EXTENDED_OPCODES) {
-            throw new DexException("Unexpected magic: " + Arrays.toString(magic));
+        if (!com.duy.dex.DexFormat.isSupportedDexMagic(magic)) {
+            String msg =
+                    String.format("Unexpected magic: [0x%02x, 0x%02x, 0x%02x, 0x%02x, "
+                                  + "0x%02x, 0x%02x, 0x%02x, 0x%02x]",
+                                  magic[0], magic[1], magic[2], magic[3],
+                                  magic[4], magic[5], magic[6], magic[7]);
+            throw new DexException(msg);
         }
 
+        apiLevel = com.duy.dex.DexFormat.magicToApi(magic);
         checksum = headerIn.readInt();
         signature = headerIn.readByteArray(20);
         fileSize = headerIn.readInt();
         int headerSize = headerIn.readInt();
-        if (headerSize != SizeOf.HEADER_ITEM) {
+        if (headerSize != com.duy.dex.SizeOf.HEADER_ITEM) {
             throw new DexException("Unexpected header: 0x" + Integer.toHexString(headerSize));
         }
         int endianTag = headerIn.readInt();
-        if (endianTag != DexFormat.ENDIAN_TAG) {
+        if (endianTag != com.duy.dex.DexFormat.ENDIAN_TAG) {
             throw new DexException("Unexpected endian tag: 0x" + Integer.toHexString(endianTag));
         }
         linkSize = headerIn.readInt();
@@ -147,8 +171,8 @@ public final class TableOfContents {
         throw new IllegalArgumentException("No such map item: " + type);
     }
 
-    public void writeHeader(Dex.Section out) throws IOException {
-        out.write(DexFormat.apiToMagic(DexFormat.API_NO_EXTENDED_OPCODES).getBytes("UTF-8"));
+    public void writeHeader(Dex.Section out, int api) throws IOException {
+        out.write(com.duy.dex.DexFormat.apiToMagic(api).getBytes("UTF-8"));
         out.writeInt(checksum);
         out.write(signature);
         out.writeInt(fileSize);
@@ -206,6 +230,7 @@ public final class TableOfContents {
             return size > 0;
         }
 
+        @Override
         public int compareTo(Section section) {
             if (off != section.off) {
                 return off < section.off ? -1 : 1;
@@ -213,7 +238,8 @@ public final class TableOfContents {
             return 0;
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return String.format("Section[type=%#x,off=%#x,size=%#x]", type, off, size);
         }
     }

@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.PlainCstInsn;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.code.ThrowingCstInsn;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.TypedConstant;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.TypeBearer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.PlainCstInsn;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.code.ThrowingCstInsn;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.TypedConstant;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.TypeBearer;
 
 /**
  * Collects constants that are used more than once at the top of the
@@ -54,13 +55,13 @@ public class ConstCollector {
      * to return false for const-string insns whose exceptions are not
      * caught in the current method.
      */
-    private static boolean COLLECT_STRINGS = false;
+    private static final boolean COLLECT_STRINGS = false;
 
     /**
      * If true, allow one local var to be involved with a collected const.
      * Turned off because it mostly just inserts more moves.
      */
-    private static boolean COLLECT_ONE_LOCAL = false;
+    private static final boolean COLLECT_ONE_LOCAL = false;
 
     /** method we're processing */
     private final SsaMethod ssaMeth;
@@ -90,53 +91,53 @@ public class ConstCollector {
     private void run() {
         int regSz = ssaMeth.getRegCount();
 
-        ArrayList<TypedConstant> constantList
+        ArrayList<com.duy.dx.rop.cst.TypedConstant> constantList
                 = getConstsSortedByCountUse();
 
         int toCollect = Math.min(constantList.size(), MAX_COLLECTED_CONSTANTS);
 
-        SsaBasicBlock start = ssaMeth.getEntryBlock();
+        com.duy.dx.ssa.SsaBasicBlock start = ssaMeth.getEntryBlock();
 
         // Constant to new register containing the constant
-        HashMap<TypedConstant, RegisterSpec> newRegs
-                = new HashMap<TypedConstant, RegisterSpec> (toCollect);
+        HashMap<com.duy.dx.rop.cst.TypedConstant, com.duy.dx.rop.code.RegisterSpec> newRegs
+                = new HashMap<com.duy.dx.rop.cst.TypedConstant, com.duy.dx.rop.code.RegisterSpec> (toCollect);
 
         for (int i = 0; i < toCollect; i++) {
-            TypedConstant cst = constantList.get(i);
-            RegisterSpec result
-                    = RegisterSpec.make(ssaMeth.makeNewSsaReg(), cst);
+            com.duy.dx.rop.cst.TypedConstant cst = constantList.get(i);
+            com.duy.dx.rop.code.RegisterSpec result
+                    = com.duy.dx.rop.code.RegisterSpec.make(ssaMeth.makeNewSsaReg(), cst);
 
-            Rop constRop = Rops.opConst(cst);
+            com.duy.dx.rop.code.Rop constRop = com.duy.dx.rop.code.Rops.opConst(cst);
 
             if (constRop.getBranchingness() == Rop.BRANCH_NONE) {
                 start.addInsnToHead(
-                        new PlainCstInsn(Rops.opConst(cst),
-                                SourcePosition.NO_INFO, result,
-                                RegisterSpecList.EMPTY, cst));
+                        new PlainCstInsn(com.duy.dx.rop.code.Rops.opConst(cst),
+                                com.duy.dx.rop.code.SourcePosition.NO_INFO, result,
+                                com.duy.dx.rop.code.RegisterSpecList.EMPTY, cst));
             } else {
                 // We need two new basic blocks along with the new insn
-                SsaBasicBlock entryBlock = ssaMeth.getEntryBlock();
-                SsaBasicBlock successorBlock
+                com.duy.dx.ssa.SsaBasicBlock entryBlock = ssaMeth.getEntryBlock();
+                com.duy.dx.ssa.SsaBasicBlock successorBlock
                         = entryBlock.getPrimarySuccessor();
 
                 // Insert a block containing the const insn.
-                SsaBasicBlock constBlock
+                com.duy.dx.ssa.SsaBasicBlock constBlock
                         = entryBlock.insertNewSuccessor(successorBlock);
 
                 constBlock.replaceLastInsn(
-                        new ThrowingCstInsn(constRop, SourcePosition.NO_INFO,
-                                RegisterSpecList.EMPTY,
+                        new ThrowingCstInsn(constRop, com.duy.dx.rop.code.SourcePosition.NO_INFO,
+                                com.duy.dx.rop.code.RegisterSpecList.EMPTY,
                                 StdTypeList.EMPTY, cst));
 
                 // Insert a block containing the move-result-pseudo insn.
 
                 SsaBasicBlock resultBlock
                         = constBlock.insertNewSuccessor(successorBlock);
-                PlainInsn insn
-                    = new PlainInsn(
-                            Rops.opMoveResultPseudo(result.getTypeBearer()),
-                            SourcePosition.NO_INFO,
-                            result, RegisterSpecList.EMPTY);
+                com.duy.dx.rop.code.PlainInsn insn
+                    = new com.duy.dx.rop.code.PlainInsn(
+                            com.duy.dx.rop.code.Rops.opMoveResultPseudo(result.getTypeBearer()),
+                            com.duy.dx.rop.code.SourcePosition.NO_INFO,
+                            result, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
 
                 resultBlock.addInsnToHead(insn);
             }
@@ -154,36 +155,36 @@ public class ConstCollector {
      *
      * @return {@code non-null;} list of constants in most-to-least used order
      */
-    private ArrayList<TypedConstant> getConstsSortedByCountUse() {
+    private ArrayList<com.duy.dx.rop.cst.TypedConstant> getConstsSortedByCountUse() {
         int regSz = ssaMeth.getRegCount();
 
-        final HashMap<TypedConstant, Integer> countUses
-                = new HashMap<TypedConstant, Integer>();
+        final HashMap<com.duy.dx.rop.cst.TypedConstant, Integer> countUses
+                = new HashMap<com.duy.dx.rop.cst.TypedConstant, Integer>();
 
         /*
          * Each collected constant can be used by just one local
          * (used only if COLLECT_ONE_LOCAL is true).
          */
-        final HashSet<TypedConstant> usedByLocal
-                = new HashSet<TypedConstant>();
+        final HashSet<com.duy.dx.rop.cst.TypedConstant> usedByLocal
+                = new HashSet<com.duy.dx.rop.cst.TypedConstant>();
 
         // Count how many times each const value is used.
         for (int i = 0; i < regSz; i++) {
-            SsaInsn insn = ssaMeth.getDefinitionForRegister(i);
+            com.duy.dx.ssa.SsaInsn insn = ssaMeth.getDefinitionForRegister(i);
 
             if (insn == null || insn.getOpcode() == null) continue;
 
-            RegisterSpec result = insn.getResult();
-            TypeBearer typeBearer = result.getTypeBearer();
+            com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
+            com.duy.dx.rop.type.TypeBearer typeBearer = result.getTypeBearer();
 
             if (!typeBearer.isConstant()) continue;
 
-            TypedConstant cst = (TypedConstant) typeBearer;
+            com.duy.dx.rop.cst.TypedConstant cst = (com.duy.dx.rop.cst.TypedConstant) typeBearer;
 
             // Find defining instruction for move-result-pseudo instructions
             if (insn.getOpcode().getOpcode() == RegOps.MOVE_RESULT_PSEUDO) {
                 int pred = insn.getBlock().getPredecessors().nextSetBit(0);
-                ArrayList<SsaInsn> predInsns;
+                ArrayList<com.duy.dx.ssa.SsaInsn> predInsns;
                 predInsns = ssaMeth.getBlocks().get(pred).getInsns();
                 insn = predInsns.get(predInsns.size()-1);
             }
@@ -231,16 +232,17 @@ public class ConstCollector {
         }
 
         // Collect constants that have been reused.
-        ArrayList<TypedConstant> constantList = new ArrayList<TypedConstant>();
-        for (Map.Entry<TypedConstant, Integer> entry : countUses.entrySet()) {
+        ArrayList<com.duy.dx.rop.cst.TypedConstant> constantList = new ArrayList<com.duy.dx.rop.cst.TypedConstant>();
+        for (Map.Entry<com.duy.dx.rop.cst.TypedConstant, Integer> entry : countUses.entrySet()) {
             if (entry.getValue() > 1) {
                 constantList.add(entry.getKey());
             }
         }
 
         // Sort by use, with most used at the beginning of the list.
-        Collections.sort(constantList, new Comparator<Constant>() {
-            public int compare(Constant a, Constant b) {
+        Collections.sort(constantList, new Comparator<com.duy.dx.rop.cst.Constant>() {
+            @Override
+            public int compare(com.duy.dx.rop.cst.Constant a, Constant b) {
                 int ret;
                 ret = countUses.get(b) - countUses.get(a);
 
@@ -275,10 +277,10 @@ public class ConstCollector {
      * @param newReg {@code non-null;} new register that will replace
      * {@code origReg}
      */
-    private void fixLocalAssignment(RegisterSpec origReg,
-            RegisterSpec newReg) {
-        for (SsaInsn use : ssaMeth.getUseListForRegister(origReg.getReg())) {
-            RegisterSpec localAssignment = use.getLocalAssignment();
+    private void fixLocalAssignment(com.duy.dx.rop.code.RegisterSpec origReg,
+                                    com.duy.dx.rop.code.RegisterSpec newReg) {
+        for (com.duy.dx.ssa.SsaInsn use : ssaMeth.getUseListForRegister(origReg.getReg())) {
+            com.duy.dx.rop.code.RegisterSpec localAssignment = use.getLocalAssignment();
             if (localAssignment == null) {
                 continue;
             }
@@ -299,14 +301,14 @@ public class ConstCollector {
             // Now add a mark-local to the new reg immediately after.
             newReg = newReg.withLocalItem(local);
 
-            SsaInsn newInsn
-                    = SsaInsn.makeFromRop(
+            com.duy.dx.ssa.SsaInsn newInsn
+                    = com.duy.dx.ssa.SsaInsn.makeFromRop(
                         new PlainInsn(Rops.opMarkLocal(newReg),
                         SourcePosition.NO_INFO, null,
                                 RegisterSpecList.make(newReg)),
                     use.getBlock());
 
-            ArrayList<SsaInsn> insns = use.getBlock().getInsns();
+            ArrayList<com.duy.dx.ssa.SsaInsn> insns = use.getBlock().getInsns();
 
             insns.add(insns.indexOf(use) + 1, newInsn);
         }
@@ -320,32 +322,32 @@ public class ConstCollector {
      * @param origRegCount {@code >=0;} original SSA reg count, not including
      * newly added constant regs
      */
-    private void updateConstUses(HashMap<TypedConstant, RegisterSpec> newRegs,
+    private void updateConstUses(HashMap<com.duy.dx.rop.cst.TypedConstant, com.duy.dx.rop.code.RegisterSpec> newRegs,
             int origRegCount) {
 
         /*
          * set of constants associated with a local variable; used
          * only if COLLECT_ONE_LOCAL is true.
          */
-        final HashSet<TypedConstant> usedByLocal
-                = new HashSet<TypedConstant>();
+        final HashSet<com.duy.dx.rop.cst.TypedConstant> usedByLocal
+                = new HashSet<com.duy.dx.rop.cst.TypedConstant>();
 
-        final ArrayList<SsaInsn>[] useList = ssaMeth.getUseListCopy();
+        final ArrayList<com.duy.dx.ssa.SsaInsn>[] useList = ssaMeth.getUseListCopy();
 
         for (int i = 0; i < origRegCount; i++) {
-            SsaInsn insn = ssaMeth.getDefinitionForRegister(i);
+            com.duy.dx.ssa.SsaInsn insn = ssaMeth.getDefinitionForRegister(i);
 
             if (insn == null) {
                 continue;
             }
 
-            final RegisterSpec origReg = insn.getResult();
+            final com.duy.dx.rop.code.RegisterSpec origReg = insn.getResult();
             TypeBearer typeBearer = insn.getResult().getTypeBearer();
 
             if (!typeBearer.isConstant()) continue;
 
-            TypedConstant cst = (TypedConstant) typeBearer;
-            final RegisterSpec newReg = newRegs.get(cst);
+            com.duy.dx.rop.cst.TypedConstant cst = (TypedConstant) typeBearer;
+            final com.duy.dx.rop.code.RegisterSpec newReg = newRegs.get(cst);
 
             if (newReg == null) {
                 continue;
@@ -370,14 +372,14 @@ public class ConstCollector {
             }
 
             // maps an original const register to the new collected register
-            RegisterMapper mapper = new RegisterMapper() {
+            com.duy.dx.ssa.RegisterMapper mapper = new RegisterMapper() {
                 @Override
                 public int getNewRegisterCount() {
                     return ssaMeth.getRegCount();
                 }
 
                 @Override
-                public RegisterSpec map(RegisterSpec registerSpec) {
+                public com.duy.dx.rop.code.RegisterSpec map(RegisterSpec registerSpec) {
                     if (registerSpec.getReg() == origReg.getReg()) {
                         return newReg.withLocalItem(
                                 registerSpec.getLocalItem());

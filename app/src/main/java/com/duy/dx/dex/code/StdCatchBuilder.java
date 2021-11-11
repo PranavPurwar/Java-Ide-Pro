@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.BasicBlock;
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.IntList;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import com.duy.dx.rop.code.BasicBlock;
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.IntList;
+
 /**
- * Constructor of {@link CatchTable} instances from {@link RopMethod}
+ * Constructor of {@link com.duy.dx.dex.code.CatchTable} instances from {@link com.duy.dx.rop.code.RopMethod}
  * and associated data.
  */
 public final class StdCatchBuilder implements CatchBuilder {
@@ -35,13 +36,13 @@ public final class StdCatchBuilder implements CatchBuilder {
     private static final int MAX_CATCH_RANGE = 65535;
 
     /** {@code non-null;} method to build the list for */
-    private final RopMethod method;
+    private final com.duy.dx.rop.code.RopMethod method;
 
     /** {@code non-null;} block output order */
     private final int[] order;
 
     /** {@code non-null;} address objects for each block */
-    private final BlockAddresses addresses;
+    private final com.duy.dx.dex.code.BlockAddresses addresses;
 
     /**
      * Constructs an instance. It merely holds onto its parameters for
@@ -51,8 +52,8 @@ public final class StdCatchBuilder implements CatchBuilder {
      * @param order {@code non-null;} block output order
      * @param addresses {@code non-null;} address objects for each block
      */
-    public StdCatchBuilder(RopMethod method, int[] order,
-            BlockAddresses addresses) {
+    public StdCatchBuilder(com.duy.dx.rop.code.RopMethod method, int[] order,
+                           com.duy.dx.dex.code.BlockAddresses addresses) {
         if (method == null) {
             throw new NullPointerException("method == null");
         }
@@ -71,18 +72,20 @@ public final class StdCatchBuilder implements CatchBuilder {
     }
 
     /** {@inheritDoc} */
-    public CatchTable build() {
+    @Override
+    public com.duy.dx.dex.code.CatchTable build() {
         return build(method, order, addresses);
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean hasAnyCatches() {
-        BasicBlockList blocks = method.getBlocks();
+        com.duy.dx.rop.code.BasicBlockList blocks = method.getBlocks();
         int size = blocks.size();
 
         for (int i = 0; i < size; i++) {
-            BasicBlock block = blocks.get(i);
-            TypeList catches = block.getLastInsn().getCatches();
+            com.duy.dx.rop.code.BasicBlock block = blocks.get(i);
+            com.duy.dx.rop.type.TypeList catches = block.getLastInsn().getCatches();
             if (catches.size() != 0) {
                 return true;
             }
@@ -92,14 +95,15 @@ public final class StdCatchBuilder implements CatchBuilder {
     }
 
     /** {@inheritDoc} */
-    public HashSet<Type> getCatchTypes() {
-        HashSet<Type> result = new HashSet<Type>(20);
-        BasicBlockList blocks = method.getBlocks();
+    @Override
+    public HashSet<com.duy.dx.rop.type.Type> getCatchTypes() {
+        HashSet<com.duy.dx.rop.type.Type> result = new HashSet<com.duy.dx.rop.type.Type>(20);
+        com.duy.dx.rop.code.BasicBlockList blocks = method.getBlocks();
         int size = blocks.size();
 
         for (int i = 0; i < size; i++) {
-            BasicBlock block = blocks.get(i);
-            TypeList catches = block.getLastInsn().getCatches();
+            com.duy.dx.rop.code.BasicBlock block = blocks.get(i);
+            com.duy.dx.rop.type.TypeList catches = block.getLastInsn().getCatches();
             int catchSize = catches.size();
 
             for (int j = 0; j < catchSize; j++) {
@@ -118,18 +122,18 @@ public final class StdCatchBuilder implements CatchBuilder {
      * @param addresses {@code non-null;} address objects for each block
      * @return {@code non-null;} the constructed table
      */
-    public static CatchTable build(RopMethod method, int[] order,
-            BlockAddresses addresses) {
+    public static com.duy.dx.dex.code.CatchTable build(RopMethod method, int[] order,
+                                                                com.duy.dx.dex.code.BlockAddresses addresses) {
         int len = order.length;
         BasicBlockList blocks = method.getBlocks();
-        ArrayList<CatchTable.Entry> resultList =
-            new ArrayList<CatchTable.Entry>(len);
-        CatchHandlerList currentHandlers = CatchHandlerList.EMPTY;
-        BasicBlock currentStartBlock = null;
-        BasicBlock currentEndBlock = null;
+        ArrayList<com.duy.dx.dex.code.CatchTable.Entry> resultList =
+            new ArrayList<com.duy.dx.dex.code.CatchTable.Entry>(len);
+        com.duy.dx.dex.code.CatchHandlerList currentHandlers = com.duy.dx.dex.code.CatchHandlerList.EMPTY;
+        com.duy.dx.rop.code.BasicBlock currentStartBlock = null;
+        com.duy.dx.rop.code.BasicBlock currentEndBlock = null;
 
         for (int i = 0; i < len; i++) {
-            BasicBlock block = blocks.labelToBlock(order[i]);
+            com.duy.dx.rop.code.BasicBlock block = blocks.labelToBlock(order[i]);
 
             if (!block.canThrow()) {
                 /*
@@ -140,7 +144,7 @@ public final class StdCatchBuilder implements CatchBuilder {
                 continue;
             }
 
-            CatchHandlerList handlers = handlersFor(block, addresses);
+            com.duy.dx.dex.code.CatchHandlerList handlers = handlersFor(block, addresses);
 
             if (currentHandlers.size() == 0) {
                 // This is the start of a new catch range.
@@ -168,7 +172,7 @@ public final class StdCatchBuilder implements CatchBuilder {
              * one. Note: We only emit an entry if it has associated handlers.
              */
             if (currentHandlers.size() != 0) {
-                CatchTable.Entry entry =
+                com.duy.dx.dex.code.CatchTable.Entry entry =
                     makeEntry(currentStartBlock, currentEndBlock,
                             currentHandlers, addresses);
                 resultList.add(entry);
@@ -181,7 +185,7 @@ public final class StdCatchBuilder implements CatchBuilder {
 
         if (currentHandlers.size() != 0) {
             // Emit an entry for the range that was left hanging.
-            CatchTable.Entry entry =
+            com.duy.dx.dex.code.CatchTable.Entry entry =
                 makeEntry(currentStartBlock, currentEndBlock,
                         currentHandlers, addresses);
             resultList.add(entry);
@@ -192,10 +196,10 @@ public final class StdCatchBuilder implements CatchBuilder {
         int resultSz = resultList.size();
 
         if (resultSz == 0) {
-            return CatchTable.EMPTY;
+            return com.duy.dx.dex.code.CatchTable.EMPTY;
         }
 
-        CatchTable result = new CatchTable(resultSz);
+        com.duy.dx.dex.code.CatchTable result = new com.duy.dx.dex.code.CatchTable(resultSz);
 
         for (int i = 0; i < resultSz; i++) {
             result.set(i, resultList.get(i));
@@ -206,14 +210,14 @@ public final class StdCatchBuilder implements CatchBuilder {
     }
 
     /**
-     * Makes the {@link CatchHandlerList} for the given basic block.
+     * Makes the {@link com.duy.dx.dex.code.CatchHandlerList} for the given basic block.
      *
      * @param block {@code non-null;} block to get entries for
      * @param addresses {@code non-null;} address objects for each block
      * @return {@code non-null;} array of entries
      */
-    private static CatchHandlerList handlersFor(BasicBlock block,
-            BlockAddresses addresses) {
+    private static com.duy.dx.dex.code.CatchHandlerList handlersFor(com.duy.dx.rop.code.BasicBlock block,
+                                                                             com.duy.dx.dex.code.BlockAddresses addresses) {
         IntList successors = block.getSuccessors();
         int succSize = successors.size();
         int primary = block.getPrimarySuccessor();
@@ -221,7 +225,7 @@ public final class StdCatchBuilder implements CatchBuilder {
         int catchSize = catches.size();
 
         if (catchSize == 0) {
-            return CatchHandlerList.EMPTY;
+            return com.duy.dx.dex.code.CatchHandlerList.EMPTY;
         }
 
         if (((primary == -1) && (succSize != catchSize))
@@ -242,18 +246,18 @@ public final class StdCatchBuilder implements CatchBuilder {
          * isn't at the end.
          */
         for (int i = 0; i < catchSize; i++) {
-            Type type = catches.getType(i);
+            com.duy.dx.rop.type.Type type = catches.getType(i);
             if (type.equals(Type.OBJECT)) {
                 catchSize = i + 1;
                 break;
             }
         }
 
-        CatchHandlerList result = new CatchHandlerList(catchSize);
+        com.duy.dx.dex.code.CatchHandlerList result = new com.duy.dx.dex.code.CatchHandlerList(catchSize);
 
         for (int i = 0; i < catchSize; i++) {
-            CstType oneType = new CstType(catches.getType(i));
-            CodeAddress oneHandler = addresses.getStart(successors.get(i));
+            com.duy.dx.rop.cst.CstType oneType = new CstType(catches.getType(i));
+            com.duy.dx.dex.code.CodeAddress oneHandler = addresses.getStart(successors.get(i));
             result.set(i, oneType, oneHandler.getAddress());
         }
 
@@ -262,7 +266,7 @@ public final class StdCatchBuilder implements CatchBuilder {
     }
 
     /**
-     * Makes a {@link CatchTable#Entry} for the given block range and
+     * Makes a {@link com.duy.dx.dex.code.CatchTable.Entry} for the given block range and
      * handlers.
      *
      * @param start {@code non-null;} the start block for the range (inclusive)
@@ -270,14 +274,14 @@ public final class StdCatchBuilder implements CatchBuilder {
      * @param handlers {@code non-null;} the handlers for the range
      * @param addresses {@code non-null;} address objects for each block
      */
-    private static CatchTable.Entry makeEntry(BasicBlock start,
-            BasicBlock end, CatchHandlerList handlers,
-            BlockAddresses addresses) {
+    private static com.duy.dx.dex.code.CatchTable.Entry makeEntry(com.duy.dx.rop.code.BasicBlock start,
+                                                                           com.duy.dx.rop.code.BasicBlock end, CatchHandlerList handlers,
+                                                                           com.duy.dx.dex.code.BlockAddresses addresses) {
         /*
          * We start at the *last* instruction of the start block, since
          * that's the instruction that can throw...
          */
-        CodeAddress startAddress = addresses.getLast(start);
+        com.duy.dx.dex.code.CodeAddress startAddress = addresses.getLast(start);
 
         // ...And we end *after* the last instruction of the end block.
         CodeAddress endAddress = addresses.getEnd(end);
@@ -296,8 +300,8 @@ public final class StdCatchBuilder implements CatchBuilder {
      * @param addresses {@code non-null;} address objects for each block
      * @return {@code true} if the range is valid as a catch range
      */
-    private static boolean rangeIsValid(BasicBlock start, BasicBlock end,
-            BlockAddresses addresses) {
+    private static boolean rangeIsValid(com.duy.dx.rop.code.BasicBlock start, BasicBlock end,
+                                        BlockAddresses addresses) {
         if (start == null) {
             throw new NullPointerException("start == null");
         }

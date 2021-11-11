@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.IntList;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.IntList;
 
 /**
  * Representation of a Java method execution frame. A frame consists
@@ -30,13 +30,13 @@ import com.duy.dx .util.IntList;
  */
 public final class Frame {
     /** {@code non-null;} the locals */
-    private final LocalsArray locals;
+    private final com.duy.dx.cf.code.LocalsArray locals;
 
     /** {@code non-null;} the stack */
-    private final ExecutionStack stack;
+    private final com.duy.dx.cf.code.ExecutionStack stack;
 
     /** {@code null-ok;} stack of labels of subroutines that this block is nested in */
-    private final IntList subroutines;
+    private final com.duy.dx.util.IntList subroutines;
 
     /**
      * Constructs an instance.
@@ -44,8 +44,8 @@ public final class Frame {
      * @param locals {@code non-null;} the locals array to use
      * @param stack {@code non-null;} the execution stack to use
      */
-    private Frame(LocalsArray locals, ExecutionStack stack) {
-        this(locals, stack, IntList.EMPTY);
+    private Frame(com.duy.dx.cf.code.LocalsArray locals, com.duy.dx.cf.code.ExecutionStack stack) {
+        this(locals, stack, com.duy.dx.util.IntList.EMPTY);
     }
 
     /**
@@ -56,8 +56,8 @@ public final class Frame {
      * @param subroutines {@code non-null;} list of subroutine start labels for
      * subroutines this frame is nested in
      */
-    private Frame(LocalsArray locals,
-            ExecutionStack stack, IntList subroutines) {
+    private Frame(com.duy.dx.cf.code.LocalsArray locals,
+                  com.duy.dx.cf.code.ExecutionStack stack, com.duy.dx.util.IntList subroutines) {
         if (locals == null) {
             throw new NullPointerException("locals == null");
         }
@@ -84,7 +84,7 @@ public final class Frame {
      * instance
      */
     public Frame(int maxLocals, int maxStack) {
-        this(new OneLocalsArray(maxLocals), new ExecutionStack(maxStack));
+        this(new OneLocalsArray(maxLocals), new com.duy.dx.cf.code.ExecutionStack(maxStack));
     }
 
     /**
@@ -113,7 +113,7 @@ public final class Frame {
      *
      * @param type {@code non-null;} type to replace
      */
-    public void makeInitialized(Type type) {
+    public void makeInitialized(com.duy.dx.rop.type.Type type) {
         locals.makeInitialized(type);
         stack.makeInitialized(type);
     }
@@ -123,7 +123,7 @@ public final class Frame {
      *
      * @return {@code non-null;} the locals array
      */
-    public LocalsArray getLocals() {
+    public com.duy.dx.cf.code.LocalsArray getLocals() {
         return locals;
     }
 
@@ -132,7 +132,7 @@ public final class Frame {
      *
      * @return {@code non-null;} the execution stack
      */
-    public ExecutionStack getStack() {
+    public com.duy.dx.cf.code.ExecutionStack getStack() {
         return stack;
     }
 
@@ -145,7 +145,7 @@ public final class Frame {
      *
      * @return {@code non-null;} list as noted above
      */
-    public IntList getSubroutines() {
+    public com.duy.dx.util.IntList getSubroutines() {
         return subroutines;
     }
 
@@ -178,13 +178,13 @@ public final class Frame {
      * if label is not in the set
      */
     public Frame subFrameForLabel(int startLabel, int subLabel) {
-        LocalsArray subLocals = null;
+        com.duy.dx.cf.code.LocalsArray subLocals = null;
 
         if (locals instanceof LocalsArraySet) {
             subLocals = ((LocalsArraySet)locals).subArrayForLabel(subLabel);
         }
 
-        IntList newSubroutines;
+        com.duy.dx.util.IntList newSubroutines;
         try {
             newSubroutines = subroutines.mutableCopy();
 
@@ -210,9 +210,9 @@ public final class Frame {
      * @return {@code non-null;} the result of merging the two frames
      */
     public Frame mergeWith(Frame other) {
-        LocalsArray resultLocals;
-        ExecutionStack resultStack;
-        IntList resultSubroutines;
+        com.duy.dx.cf.code.LocalsArray resultLocals;
+        com.duy.dx.cf.code.ExecutionStack resultStack;
+        com.duy.dx.util.IntList resultSubroutines;
 
         resultLocals = getLocals().merge(other.getLocals());
         resultStack = getStack().merge(other.getStack());
@@ -239,12 +239,12 @@ public final class Frame {
      * least-nested to most-nested.
      * @return {@code non-null;} merged subroutine nest list as described above
      */
-    private IntList mergeSubroutineLists(IntList otherSubroutines) {
+    private com.duy.dx.util.IntList mergeSubroutineLists(com.duy.dx.util.IntList otherSubroutines) {
         if (subroutines.equals(otherSubroutines)) {
             return subroutines;
         }
 
-        IntList resultSubroutines = new IntList();
+        com.duy.dx.util.IntList resultSubroutines = new com.duy.dx.util.IntList();
 
         int szSubroutines = subroutines.size();
         int szOthers = otherSubroutines.size();
@@ -270,8 +270,8 @@ public final class Frame {
      * representing the subroutine nesting of the block being merged into.
      * @return {@code non-null;} locals set appropriate for merge
      */
-    private static LocalsArray adjustLocalsForSubroutines(
-            LocalsArray locals, IntList subroutines) {
+    private static com.duy.dx.cf.code.LocalsArray adjustLocalsForSubroutines(
+            com.duy.dx.cf.code.LocalsArray locals, com.duy.dx.util.IntList subroutines) {
         if (! (locals instanceof LocalsArraySet)) {
             // nothing to see here
             return locals;
@@ -312,13 +312,13 @@ public final class Frame {
     public Frame mergeWithSubroutineCaller(Frame other, int subLabel,
             int predLabel) {
         LocalsArray resultLocals;
-        ExecutionStack resultStack;
+        com.duy.dx.cf.code.ExecutionStack resultStack;
 
         resultLocals = getLocals().mergeWithSubroutineCaller(
                 other.getLocals(), predLabel);
         resultStack = getStack().merge(other.getStack());
 
-        IntList newOtherSubroutines = other.subroutines.mutableCopy();
+        com.duy.dx.util.IntList newOtherSubroutines = other.subroutines.mutableCopy();
         newOtherSubroutines.add(subLabel);
         newOtherSubroutines.setImmutable();
 
@@ -328,7 +328,7 @@ public final class Frame {
             return this;
         }
 
-        IntList resultSubroutines;
+        com.duy.dx.util.IntList resultSubroutines;
 
         if (subroutines.equals(newOtherSubroutines)) {
             resultSubroutines = subroutines;
@@ -338,7 +338,7 @@ public final class Frame {
              * lists being merged, but the postfix of the resultant list
              * must be equal to the shorter list.
              */
-            IntList nonResultSubroutines;
+            com.duy.dx.util.IntList nonResultSubroutines;
 
             if (subroutines.size() > newOtherSubroutines.size()) {
                 resultSubroutines = subroutines;
@@ -379,7 +379,7 @@ public final class Frame {
      * @return a new instance to begin a called subroutine.
      */
     public Frame makeNewSubroutineStartFrame(int subLabel, int callerLabel) {
-        IntList newSubroutines = subroutines.mutableCopy();
+        com.duy.dx.util.IntList newSubroutines = subroutines.mutableCopy();
         newSubroutines.add(subLabel);
         Frame newFrame = new Frame(locals.getPrimary(), stack,
                 IntList.makeImmutable(subLabel));

@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.IntList;
+import com.duy.dx.util.IntList;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.type.Type;
 
 /**
  * Complete transformation to SSA form by renaming all registers accessed.<p>
@@ -63,7 +64,7 @@ public class SsaRenamer implements Runnable {
     private static final boolean DEBUG = false;
 
     /** method we're processing */
-    private final SsaMethod ssaMeth;
+    private final com.duy.dx.ssa.SsaMethod ssaMeth;
 
     /** next available SSA register */
     private int nextSsaReg;
@@ -80,10 +81,10 @@ public class SsaRenamer implements Runnable {
      * sub-arrays that exist at any one time are the start states for blocks
      * yet to be processed by a {@code BlockRenamer} instance.
      */
-    private final RegisterSpec[][] startsForBlocks;
+    private final com.duy.dx.rop.code.RegisterSpec[][] startsForBlocks;
 
     /** map of SSA register number to debug (local var names) or null of n/a */
-    private final ArrayList<LocalItem> ssaRegToLocalItems;
+    private final ArrayList<com.duy.dx.rop.code.LocalItem> ssaRegToLocalItems;
 
     /**
      * maps SSA registers back to the original rop number. Used for
@@ -97,7 +98,7 @@ public class SsaRenamer implements Runnable {
      * @param ssaMeth {@code non-null;} un-renamed SSA method that will
      * be renamed.
      */
-    public SsaRenamer(SsaMethod ssaMeth) {
+    public SsaRenamer(com.duy.dx.ssa.SsaMethod ssaMeth) {
         ropRegCount = ssaMeth.getRegCount();
 
         this.ssaMeth = ssaMeth;
@@ -108,9 +109,9 @@ public class SsaRenamer implements Runnable {
          */
         nextSsaReg = ropRegCount;
         threshold = 0;
-        startsForBlocks = new RegisterSpec[ssaMeth.getBlocks().size()][];
+        startsForBlocks = new com.duy.dx.rop.code.RegisterSpec[ssaMeth.getBlocks().size()][];
 
-        ssaRegToLocalItems = new ArrayList<LocalItem>();
+        ssaRegToLocalItems = new ArrayList<com.duy.dx.rop.code.LocalItem>();
 
         if (DEBUG) {
             ssaRegToRopReg = new IntList(ropRegCount);
@@ -128,10 +129,10 @@ public class SsaRenamer implements Runnable {
          */
 
         // top entry for the version stack is version 0
-        RegisterSpec[] initialRegMapping = new RegisterSpec[ropRegCount];
+        com.duy.dx.rop.code.RegisterSpec[] initialRegMapping = new com.duy.dx.rop.code.RegisterSpec[ropRegCount];
         for (int i = 0; i < ropRegCount; i++) {
             // everyone starts with a version 0 register
-            initialRegMapping[i] = RegisterSpec.make(i, Type.VOID);
+            initialRegMapping[i] = com.duy.dx.rop.code.RegisterSpec.make(i, com.duy.dx.rop.type.Type.VOID);
 
             if (DEBUG) {
                 ssaRegToRopReg.add(i);
@@ -158,11 +159,13 @@ public class SsaRenamer implements Runnable {
      * Performs renaming transformation, modifying the method's instructions
      * in-place.
      */
+    @Override
     public void run() {
         // Rename each block in dom-tree DFS order.
-        ssaMeth.forEachBlockDepthFirstDom(new SsaBasicBlock.Visitor() {
-            public void visitBlock (SsaBasicBlock block,
-                    SsaBasicBlock unused) {
+        ssaMeth.forEachBlockDepthFirstDom(new com.duy.dx.ssa.SsaBasicBlock.Visitor() {
+            @Override
+            public void visitBlock (com.duy.dx.ssa.SsaBasicBlock block,
+                                    com.duy.dx.ssa.SsaBasicBlock unused) {
                 new BlockRenamer(block).process();
             }
         });
@@ -195,8 +198,8 @@ public class SsaRenamer implements Runnable {
      * @param orig {@code non-null;} array to duplicate
      * @return {@code non-null;} new instance
      */
-    private static  RegisterSpec[] dupArray(RegisterSpec[] orig) {
-        RegisterSpec[] copy = new RegisterSpec[orig.length];
+    private static  com.duy.dx.rop.code.RegisterSpec[] dupArray(com.duy.dx.rop.code.RegisterSpec[] orig) {
+        com.duy.dx.rop.code.RegisterSpec[] copy = new com.duy.dx.rop.code.RegisterSpec[orig.length];
 
         System.arraycopy(orig, 0, copy, 0, orig.length);
 
@@ -209,7 +212,7 @@ public class SsaRenamer implements Runnable {
      * @param ssaReg register in SSA name space
      * @return {@code null-ok;} Local variable name or null if none
      */
-    private LocalItem getLocalForNewReg(int ssaReg) {
+    private com.duy.dx.rop.code.LocalItem getLocalForNewReg(int ssaReg) {
         if (ssaReg < ssaRegToLocalItems.size()) {
             return ssaRegToLocalItems.get(ssaReg);
         } else {
@@ -222,9 +225,9 @@ public class SsaRenamer implements Runnable {
      *
      * @param ssaReg non-null named register spec in SSA name space
      */
-    private void setNameForSsaReg(RegisterSpec ssaReg) {
+    private void setNameForSsaReg(com.duy.dx.rop.code.RegisterSpec ssaReg) {
         int reg = ssaReg.getReg();
-        LocalItem local = ssaReg.getLocalItem();
+        com.duy.dx.rop.code.LocalItem local = ssaReg.getLocalItem();
 
         ssaRegToLocalItems.ensureCapacity(reg + 1);
         while (ssaRegToLocalItems.size() <= reg) {
@@ -273,9 +276,9 @@ public class SsaRenamer implements Runnable {
      * Processes all insns in a block and renames their registers
      * as appropriate.
      */
-    private class BlockRenamer implements SsaInsn.Visitor{
+    private class BlockRenamer implements com.duy.dx.ssa.SsaInsn.Visitor {
         /** {@code non-null;} block we're processing. */
-        private final SsaBasicBlock block;
+        private final com.duy.dx.ssa.SsaBasicBlock block;
 
         /**
          * {@code non-null;} indexed by old register name. The current
@@ -284,19 +287,19 @@ public class SsaRenamer implements Runnable {
          * updated as the block's instructions are processed, and then
          * copied to each one of its dom children.
          */
-        private final RegisterSpec[] currentMapping;
+        private final com.duy.dx.rop.code.RegisterSpec[] currentMapping;
 
         /**
          * contains the set of moves we need to keep to preserve local
          * var info. All other moves will be deleted.
          */
-        private final HashSet<SsaInsn> movesToKeep;
+        private final HashSet<com.duy.dx.ssa.SsaInsn> movesToKeep;
 
         /**
          * maps the set of insns to replace after renaming is finished
          * on the block.
          */
-        private final HashMap<SsaInsn, SsaInsn> insnsToReplace;
+        private final HashMap<com.duy.dx.ssa.SsaInsn, com.duy.dx.ssa.SsaInsn> insnsToReplace;
 
         private final RenamingMapper mapper;
 
@@ -306,11 +309,11 @@ public class SsaRenamer implements Runnable {
          *
          * @param block {@code non-null;} block to process
          */
-        BlockRenamer(final SsaBasicBlock block) {
+        BlockRenamer(final com.duy.dx.ssa.SsaBasicBlock block) {
             this.block = block;
             currentMapping = startsForBlocks[block.getIndex()];
-            movesToKeep = new HashSet<SsaInsn>();
-            insnsToReplace = new HashMap<SsaInsn, SsaInsn>();
+            movesToKeep = new HashSet<com.duy.dx.ssa.SsaInsn>();
+            insnsToReplace = new HashMap<com.duy.dx.ssa.SsaInsn, com.duy.dx.ssa.SsaInsn>();
             mapper =  new RenamingMapper();
 
             // We don't need our own start state anymore
@@ -335,14 +338,14 @@ public class SsaRenamer implements Runnable {
 
             /** {@inheritDoc} */
             @Override
-            public RegisterSpec map(RegisterSpec registerSpec) {
+            public com.duy.dx.rop.code.RegisterSpec map(com.duy.dx.rop.code.RegisterSpec registerSpec) {
                 if (registerSpec == null) return null;
 
                 int reg = registerSpec.getReg();
 
                 // For debugging: assert that the mapped types are compatible.
                 if (DEBUG) {
-                    RegisterSpec newVersion = currentMapping[reg];
+                    com.duy.dx.rop.code.RegisterSpec newVersion = currentMapping[reg];
                     if (newVersion.getBasicType() != Type.BT_VOID
                             && registerSpec.getBasicFrameType()
                                 != newVersion.getBasicFrameType()) {
@@ -375,12 +378,12 @@ public class SsaRenamer implements Runnable {
             updateSuccessorPhis();
 
             // Delete all move insns in this block.
-            ArrayList<SsaInsn> insns = block.getInsns();
+            ArrayList<com.duy.dx.ssa.SsaInsn> insns = block.getInsns();
             int szInsns = insns.size();
 
             for (int i = szInsns - 1; i >= 0 ; i--) {
-                SsaInsn insn = insns.get(i);
-                SsaInsn replaceInsn;
+                com.duy.dx.ssa.SsaInsn insn = insns.get(i);
+                com.duy.dx.ssa.SsaInsn replaceInsn;
 
                 replaceInsn = insnsToReplace.get(insn);
 
@@ -394,10 +397,10 @@ public class SsaRenamer implements Runnable {
 
             // Store the start states for our dom children.
             boolean first = true;
-            for (SsaBasicBlock child : block.getDomChildren()) {
+            for (com.duy.dx.ssa.SsaBasicBlock child : block.getDomChildren()) {
                 if (child != block) {
                     // Don't bother duplicating the array for the first child.
-                    RegisterSpec[] childStart = first ? currentMapping
+                    com.duy.dx.rop.code.RegisterSpec[] childStart = first ? currentMapping
                         : dupArray(currentMapping);
 
                     startsForBlocks[child.getIndex()] = childStart;
@@ -430,9 +433,9 @@ public class SsaRenamer implements Runnable {
          * @param ssaReg {@code non-null;} an SSA register that has just
          * been added to {@code currentMapping}
          */
-        private void addMapping(int ropReg, RegisterSpec ssaReg) {
+        private void addMapping(int ropReg, com.duy.dx.rop.code.RegisterSpec ssaReg) {
             int ssaRegNum = ssaReg.getReg();
-            LocalItem ssaRegLocal = ssaReg.getLocalItem();
+            com.duy.dx.rop.code.LocalItem ssaRegLocal = ssaReg.getLocalItem();
 
             currentMapping[ropReg] = ssaReg;
 
@@ -440,7 +443,7 @@ public class SsaRenamer implements Runnable {
              * Ensure all SSA register specs with the same reg are identical.
              */
             for (int i = currentMapping.length - 1; i >= 0; i--) {
-                RegisterSpec cur = currentMapping[i];
+                com.duy.dx.rop.code.RegisterSpec cur = currentMapping[i];
 
                 if (ssaRegNum == cur.getReg()) {
                     currentMapping[i] = ssaReg;
@@ -457,7 +460,7 @@ public class SsaRenamer implements Runnable {
 
             // Ensure that no other SSA regs are associated with this local.
             for (int i = currentMapping.length - 1; i >= 0; i--) {
-                RegisterSpec cur = currentMapping[i];
+                com.duy.dx.rop.code.RegisterSpec cur = currentMapping[i];
 
                 if (ssaRegNum != cur.getReg()
                         && ssaRegLocal.equals(cur.getLocalItem())) {
@@ -471,7 +474,8 @@ public class SsaRenamer implements Runnable {
          *
          * Phi insns have their result registers renamed.
          */
-        public void visitPhiInsn(PhiInsn phi) {
+        @Override
+        public void visitPhiInsn(com.duy.dx.ssa.PhiInsn phi) {
             /* don't process sources for phi's */
             processResultReg(phi);
         }
@@ -484,6 +488,7 @@ public class SsaRenamer implements Runnable {
          * assignment. If they represent a local variable assignement, they
          * are preserved.
          */
+        @Override
         public void visitMoveInsn(NormalSsaInsn insn) {
             /*
              * For moves: copy propogate the move if we can, but don't
@@ -491,16 +496,16 @@ public class SsaRenamer implements Runnable {
              * result has a different name than the source.
              */
 
-            RegisterSpec ropResult = insn.getResult();
+            com.duy.dx.rop.code.RegisterSpec ropResult = insn.getResult();
             int ropResultReg = ropResult.getReg();
             int ropSourceReg = insn.getSources().get(0).getReg();
 
             insn.mapSourceRegisters(mapper);
             int ssaSourceReg = insn.getSources().get(0).getReg();
 
-            LocalItem sourceLocal
+            com.duy.dx.rop.code.LocalItem sourceLocal
                 = currentMapping[ropSourceReg].getLocalItem();
-            LocalItem resultLocal = ropResult.getLocalItem();
+            com.duy.dx.rop.code.LocalItem resultLocal = ropResult.getLocalItem();
 
             /*
              * A move from a register that's currently associated with a local
@@ -509,7 +514,7 @@ public class SsaRenamer implements Runnable {
              * Hence, we inherit the sourceLocal where the resultLocal is null.
              */
 
-            LocalItem newLocal
+            com.duy.dx.rop.code.LocalItem newLocal
                 = (resultLocal == null) ? sourceLocal : resultLocal;
             LocalItem associatedLocal = getLocalForNewReg(ssaSourceReg);
 
@@ -531,8 +536,8 @@ public class SsaRenamer implements Runnable {
              * The move source has incomplete type information in null
              * object cases, so the result type is used.
              */
-            RegisterSpec ssaReg
-                    = RegisterSpec.makeLocalOptional(
+            com.duy.dx.rop.code.RegisterSpec ssaReg
+                    = com.duy.dx.rop.code.RegisterSpec.makeLocalOptional(
                         ssaSourceReg, ropResult.getType(), newLocal);
 
             if (!Optimizer.getPreserveLocals() || (onlyOneAssociatedLocal
@@ -552,12 +557,12 @@ public class SsaRenamer implements Runnable {
                  * local starts after it's first assignment in SSA form
                  */
 
-                RegisterSpecList ssaSources = RegisterSpecList.make(
-                        RegisterSpec.make(ssaReg.getReg(),
+                com.duy.dx.rop.code.RegisterSpecList ssaSources = RegisterSpecList.make(
+                        com.duy.dx.rop.code.RegisterSpec.make(ssaReg.getReg(),
                                 ssaReg.getType(), newLocal));
 
-                SsaInsn newInsn
-                        = SsaInsn.makeFromRop(
+                com.duy.dx.ssa.SsaInsn newInsn
+                        = com.duy.dx.ssa.SsaInsn.makeFromRop(
                             new PlainInsn(Rops.opMarkLocal(ssaReg),
                             SourcePosition.NO_INFO, null, ssaSources),block);
 
@@ -584,6 +589,7 @@ public class SsaRenamer implements Runnable {
          * renamed to a new SSA register which is then added to the current
          * register mapping.
          */
+        @Override
         public void visitNonMoveInsn(NormalSsaInsn insn) {
             /* for each use of some variable X in S */
             insn.mapSourceRegisters(mapper);
@@ -599,7 +605,7 @@ public class SsaRenamer implements Runnable {
          * @param insn insn to process.
          */
         void processResultReg(SsaInsn insn) {
-            RegisterSpec ropResult = insn.getResult();
+            com.duy.dx.rop.code.RegisterSpec ropResult = insn.getResult();
 
             if (ropResult == null) {
                 return;
@@ -625,7 +631,8 @@ public class SsaRenamer implements Runnable {
          * on the current mapping of the rop register the phis represent.
          */
         private void updateSuccessorPhis() {
-            PhiInsn.Visitor visitor = new PhiInsn.Visitor() {
+            com.duy.dx.ssa.PhiInsn.Visitor visitor = new com.duy.dx.ssa.PhiInsn.Visitor() {
+                @Override
                 public void visitPhiInsn (PhiInsn insn) {
                     int ropReg;
 

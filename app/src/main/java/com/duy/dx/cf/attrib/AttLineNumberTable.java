@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .cf.code.LineNumberList;
-import com.duy.dx .util.MutabilityException;
+import com.duy.dx.cf.code.LineNumberList;
+import com.duy.dx.util.MutabilityException;
 
 /**
  * Attribute class for standard {@code LineNumberTable} attributes.
@@ -27,14 +27,14 @@ public final class AttLineNumberTable extends BaseAttribute {
     public static final String ATTRIBUTE_NAME = "LineNumberTable";
 
     /** {@code non-null;} list of line number entries */
-    private final LineNumberList lineNumbers;
+    private final com.duy.dx.cf.code.LineNumberList lineNumbers;
 
     /**
      * Constructs an instance.
      *
      * @param lineNumbers {@code non-null;} list of line number entries
      */
-    public AttLineNumberTable(LineNumberList lineNumbers) {
+    public AttLineNumberTable(com.duy.dx.cf.code.LineNumberList lineNumbers) {
         super(ATTRIBUTE_NAME);
 
         try {
@@ -50,6 +50,7 @@ public final class AttLineNumberTable extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         return 8 + 4 * lineNumbers.size();
     }

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .util.IntList;
-import com.duy.dx .util.MutabilityControl;
+import com.duy.dx.util.IntList;
+import com.duy.dx.util.MutabilityControl;
 
 /**
  * List of (value, target) mappings representing the choices of a
@@ -26,14 +26,14 @@ import com.duy.dx .util.MutabilityControl;
  */
 public final class SwitchList extends MutabilityControl {
     /** {@code non-null;} list of test values */
-    private final IntList values;
+    private final com.duy.dx.util.IntList values;
 
     /**
      * {@code non-null;} list of targets corresponding to the test values; there
      * is always one extra element in the target list, to hold the
      * default target
      */
-    private final IntList targets;
+    private final com.duy.dx.util.IntList targets;
 
     /** ultimate size of the list */
     private int size;
@@ -45,8 +45,8 @@ public final class SwitchList extends MutabilityControl {
      */
     public SwitchList(int size) {
         super(true);
-        this.values = new IntList(size);
-        this.targets = new IntList(size + 1);
+        this.values = new com.duy.dx.util.IntList(size);
+        this.targets = new com.duy.dx.util.IntList(size + 1);
         this.size = size;
     }
 
@@ -104,7 +104,7 @@ public final class SwitchList extends MutabilityControl {
      *
      * @return {@code non-null;} the target list
      */
-    public IntList getTargets() {
+    public com.duy.dx.util.IntList getTargets() {
         return targets;
     }
 

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.iface;
+package com.duy.dx.cf.iface;
 
-import com.duy.dx .util.FixedSizeList;
+import com.duy.dx.util.FixedSizeList;
 
 /**
- * Standard implementation of {@link AttributeList}, which directly stores
- * an array of {@link Attribute} objects and can be made immutable.
+ * Standard implementation of {@link com.duy.dx.cf.iface.AttributeList}, which directly stores
+ * an array of {@link com.duy.dx.cf.iface.Attribute} objects and can be made immutable.
  */
 public final class StdAttributeList extends FixedSizeList
         implements AttributeList {
@@ -34,11 +34,13 @@ public final class StdAttributeList extends FixedSizeList
     }
 
     /** {@inheritDoc} */
-    public Attribute get(int n) {
-        return (Attribute) get0(n);
+    @Override
+    public com.duy.dx.cf.iface.Attribute get(int n) {
+        return (com.duy.dx.cf.iface.Attribute) get0(n);
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         int sz = size();
         int result = 2; // u2 attributes_count
@@ -51,11 +53,12 @@ public final class StdAttributeList extends FixedSizeList
     }
 
     /** {@inheritDoc} */
-    public Attribute findFirst(String name) {
+    @Override
+    public com.duy.dx.cf.iface.Attribute findFirst(String name) {
         int sz = size();
 
         for (int i = 0; i < sz; i++) {
-            Attribute att = get(i);
+            com.duy.dx.cf.iface.Attribute att = get(i);
             if (att.getName().equals(name)) {
                 return att;
             }
@@ -65,13 +68,14 @@ public final class StdAttributeList extends FixedSizeList
     }
 
     /** {@inheritDoc} */
-    public Attribute findNext(Attribute attrib) {
+    @Override
+    public com.duy.dx.cf.iface.Attribute findNext(com.duy.dx.cf.iface.Attribute attrib) {
         int sz = size();
         int at;
 
         outer: {
             for (at = 0; at < sz; at++) {
-                Attribute att = get(at);
+                com.duy.dx.cf.iface.Attribute att = get(at);
                 if (att == attrib) {
                     break outer;
                 }
@@ -83,7 +87,7 @@ public final class StdAttributeList extends FixedSizeList
         String name = attrib.getName();
 
         for (at++; at < sz; at++) {
-            Attribute att = get(at);
+            com.duy.dx.cf.iface.Attribute att = get(at);
             if (att.getName().equals(name)) {
                 return att;
             }

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
 import java.util.List;
+
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Class that represents a contiguous list of uniform items. Each
@@ -106,7 +107,7 @@ public final class UniformListItem<T extends OffsettedItem>
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         sb.append(getClass().getName());
         sb.append(items);
@@ -125,7 +126,7 @@ public final class UniformListItem<T extends OffsettedItem>
     /** {@inheritDoc} */
     @Override
     public final String toHuman() {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
         boolean first = true;
 
         sb.append("{");

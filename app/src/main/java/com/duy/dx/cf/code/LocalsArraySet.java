@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.util.Hex;
+
 import java.util.ArrayList;
 
 /**
@@ -29,23 +30,23 @@ import java.util.ArrayList;
  * have different locals sets for each caller.
  *
  * <p><b>Note:</b> For the most part, the documentation for this class
- * ignores the distinction between {@link com.duy.dx .rop.type.Type} and {@link
- * com.duy.dx .rop.type.TypeBearer}.</p>
+ * ignores the distinction between {@link com.duy.dx.rop.type.Type} and {@link
+ * com.duy.dx.rop.type.TypeBearer}.</p>
  */
-public class LocalsArraySet extends LocalsArray {
+public class LocalsArraySet extends com.duy.dx.cf.code.LocalsArray {
 
     /**
      * The primary LocalsArray represents the locals as seen from
      * the subroutine itself, which is the merged representation of all the
      * individual locals states.
      */
-    private final OneLocalsArray primary;
+    private final com.duy.dx.cf.code.OneLocalsArray primary;
 
     /**
      * Indexed by label of caller block: the locals specific to each caller's
      * invocation of the subroutine.
      */
-    private final ArrayList<LocalsArray> secondaries;
+    private final ArrayList<com.duy.dx.cf.code.LocalsArray> secondaries;
 
     /**
      * Constructs an instance. The locals array initially consists of
@@ -56,7 +57,7 @@ public class LocalsArraySet extends LocalsArray {
      */
     public LocalsArraySet(int maxLocals) {
         super(maxLocals != 0);
-        primary = new OneLocalsArray(maxLocals);
+        primary = new com.duy.dx.cf.code.OneLocalsArray(maxLocals);
         secondaries = new ArrayList();
     }
 
@@ -67,8 +68,8 @@ public class LocalsArraySet extends LocalsArray {
      * @param secondaries {@code non-null;} secondaries set, indexed by subroutine
      * caller label.
      */
-    public LocalsArraySet(OneLocalsArray primary,
-            ArrayList<LocalsArray> secondaries) {
+    public LocalsArraySet(com.duy.dx.cf.code.OneLocalsArray primary,
+                          ArrayList<com.duy.dx.cf.code.LocalsArray> secondaries) {
         super(primary.getMaxLocals() > 0);
 
         this.primary = primary;
@@ -88,7 +89,7 @@ public class LocalsArraySet extends LocalsArray {
 
         int sz = toCopy.secondaries.size();
         for (int i = 0; i < sz; i++) {
-            LocalsArray la = toCopy.secondaries.get(i);
+            com.duy.dx.cf.code.LocalsArray la = toCopy.secondaries.get(i);
 
             if (la == null) {
                 secondaries.add(null);
@@ -99,12 +100,12 @@ public class LocalsArraySet extends LocalsArray {
     }
 
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
     public void setImmutable() {
         primary.setImmutable();
 
-        for (LocalsArray la : secondaries) {
+        for (com.duy.dx.cf.code.LocalsArray la : secondaries) {
             if (la != null) {
                 la.setImmutable();
             }
@@ -112,13 +113,13 @@ public class LocalsArraySet extends LocalsArray {
         super.setImmutable();
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
-    public LocalsArray copy() {
+    public com.duy.dx.cf.code.LocalsArray copy() {
         return new LocalsArraySet(this);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
     public void annotate(ExceptionWithContext ex) {
         ex.addContext("(locals array set; primary)");
@@ -126,18 +127,19 @@ public class LocalsArraySet extends LocalsArray {
 
         int sz = secondaries.size();
         for (int label = 0; label < sz; label++) {
-            LocalsArray la = secondaries.get(label);
+            com.duy.dx.cf.code.LocalsArray la = secondaries.get(label);
 
             if (la != null) {
                 ex.addContext("(locals array set: primary for caller "
-                        + Hex.u2(label) + ')');
+                        + com.duy.dx.util.Hex.u2(label) + ')');
 
                 la.getPrimary().annotate(ex);
             }
         }
     }
 
-    /** {@inheritDoc*/
+    /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         StringBuilder sb = new StringBuilder();
 
@@ -148,11 +150,11 @@ public class LocalsArraySet extends LocalsArray {
 
         int sz = secondaries.size();
         for (int label = 0; label < sz; label++) {
-            LocalsArray la = secondaries.get(label);
+            com.duy.dx.cf.code.LocalsArray la = secondaries.get(label);
 
             if (la != null) {
                 sb.append("(locals array set: primary for caller "
-                        + Hex.u2(label) + ")\n");
+                        + com.duy.dx.util.Hex.u2(label) + ")\n");
 
                 sb.append(la.getPrimary().toHuman());
                 sb.append('\n');
@@ -162,7 +164,7 @@ public class LocalsArraySet extends LocalsArray {
         return sb.toString();
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
     public void makeInitialized(Type type) {
         int len = primary.getMaxLocals();
@@ -176,72 +178,72 @@ public class LocalsArraySet extends LocalsArray {
 
         primary.makeInitialized(type);
 
-        for (LocalsArray la : secondaries) {
+        for (com.duy.dx.cf.code.LocalsArray la : secondaries) {
             if (la != null) {
                 la.makeInitialized(type);
             }
         }
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
     public int getMaxLocals() {
         return primary.getMaxLocals();
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
-    public void set(int idx, TypeBearer type) {
+    public void set(int idx, com.duy.dx.rop.type.TypeBearer type) {
         throwIfImmutable();
 
         primary.set(idx, type);
 
-        for (LocalsArray la : secondaries) {
+        for (com.duy.dx.cf.code.LocalsArray la : secondaries) {
             if (la != null) {
                 la.set(idx, type);
             }
         }
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
     public void set(RegisterSpec spec) {
         set(spec.getReg(), spec);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
     public void invalidate(int idx) {
         throwIfImmutable();
 
         primary.invalidate(idx);
 
-        for (LocalsArray la : secondaries) {
+        for (com.duy.dx.cf.code.LocalsArray la : secondaries) {
             if (la != null) {
                 la.invalidate(idx);
             }
         }
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
-    public TypeBearer getOrNull(int idx) {
+    public com.duy.dx.rop.type.TypeBearer getOrNull(int idx) {
         return primary.getOrNull(idx);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
-    public TypeBearer get(int idx) {
+    public com.duy.dx.rop.type.TypeBearer get(int idx) {
         return primary.get(idx);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
-    public TypeBearer getCategory1(int idx) {
+    public com.duy.dx.rop.type.TypeBearer getCategory1(int idx) {
         return primary.getCategory1(idx);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
     public TypeBearer getCategory2(int idx) {
         return primary.getCategory2(idx);
@@ -255,8 +257,8 @@ public class LocalsArraySet extends LocalsArray {
      * new merged instance.
      */
     private LocalsArraySet mergeWithSet(LocalsArraySet other) {
-        OneLocalsArray newPrimary;
-        ArrayList<LocalsArray> newSecondaries;
+        com.duy.dx.cf.code.OneLocalsArray newPrimary;
+        ArrayList<com.duy.dx.cf.code.LocalsArray> newSecondaries;
         boolean secondariesChanged = false;
 
         newPrimary = primary.merge(other.getPrimary());
@@ -267,9 +269,9 @@ public class LocalsArraySet extends LocalsArray {
         newSecondaries = new ArrayList(sz);
 
         for (int i = 0; i < sz; i++) {
-            LocalsArray la1 = (i < sz1 ? secondaries.get(i) : null);
-            LocalsArray la2 = (i < sz2 ? other.secondaries.get(i) : null);
-            LocalsArray resultla = null;
+            com.duy.dx.cf.code.LocalsArray la1 = (i < sz1 ? secondaries.get(i) : null);
+            com.duy.dx.cf.code.LocalsArray la2 = (i < sz2 ? other.secondaries.get(i) : null);
+            com.duy.dx.cf.code.LocalsArray resultla = null;
 
             if (la1 == la2) {
                 resultla = la1;
@@ -282,7 +284,7 @@ public class LocalsArraySet extends LocalsArray {
                     resultla = la1.merge(la2);
                 } catch (SimException ex) {
                     ex.addContext(
-                            "Merging locals set for caller block " + Hex.u2(i));
+                            "Merging locals set for caller block " + com.duy.dx.util.Hex.u2(i));
                 }
             }
 
@@ -305,9 +307,9 @@ public class LocalsArraySet extends LocalsArray {
      * @return {@code non-null;} this instance if merge was a no-op, or
      * new merged instance.
      */
-    private LocalsArraySet mergeWithOne(OneLocalsArray other) {
-        OneLocalsArray newPrimary;
-        ArrayList<LocalsArray> newSecondaries;
+    private LocalsArraySet mergeWithOne(com.duy.dx.cf.code.OneLocalsArray other) {
+        com.duy.dx.cf.code.OneLocalsArray newPrimary;
+        ArrayList<com.duy.dx.cf.code.LocalsArray> newSecondaries;
         boolean secondariesChanged = false;
 
         newPrimary = primary.merge(other.getPrimary());
@@ -315,8 +317,8 @@ public class LocalsArraySet extends LocalsArray {
 
         int sz = secondaries.size();
         for (int i = 0; i < sz; i++) {
-            LocalsArray la = secondaries.get(i);
-            LocalsArray resultla = null;
+            com.duy.dx.cf.code.LocalsArray la = secondaries.get(i);
+            com.duy.dx.cf.code.LocalsArray resultla = null;
 
             if (la != null) {
                 try {
@@ -339,16 +341,16 @@ public class LocalsArraySet extends LocalsArray {
         return new LocalsArraySet(newPrimary, newSecondaries);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     @Override
-    public LocalsArraySet merge(LocalsArray other) {
+    public LocalsArraySet merge(com.duy.dx.cf.code.LocalsArray other) {
         LocalsArraySet result;
 
         try {
             if (other instanceof LocalsArraySet) {
                 result = mergeWithSet((LocalsArraySet) other);
             } else {
-                result = mergeWithOne((OneLocalsArray) other);
+                result = mergeWithOne((com.duy.dx.cf.code.OneLocalsArray) other);
             }
         } catch (SimException ex) {
             ex.addContext("underlay locals:");
@@ -369,7 +371,7 @@ public class LocalsArraySet extends LocalsArray {
      * @param label {@code >= 0;} subroutine caller label
      * @return {@code null-ok;} locals if available.
      */
-    private LocalsArray getSecondaryForLabel(int label) {
+    private com.duy.dx.cf.code.LocalsArray getSecondaryForLabel(int label) {
         if (label >= secondaries.size()) {
             return null;
         }
@@ -380,11 +382,11 @@ public class LocalsArraySet extends LocalsArray {
     /** {@inheritDoc} */
     @Override
     public LocalsArraySet mergeWithSubroutineCaller
-            (LocalsArray other, int predLabel) {
+            (com.duy.dx.cf.code.LocalsArray other, int predLabel) {
 
-        LocalsArray mine = getSecondaryForLabel(predLabel);
-        LocalsArray newSecondary;
-        OneLocalsArray newPrimary;
+        com.duy.dx.cf.code.LocalsArray mine = getSecondaryForLabel(predLabel);
+        com.duy.dx.cf.code.LocalsArray newSecondary;
+        com.duy.dx.cf.code.OneLocalsArray newPrimary;
 
         newPrimary = primary.merge(other.getPrimary());
 
@@ -407,9 +409,9 @@ public class LocalsArraySet extends LocalsArray {
 
             int szSecondaries = secondaries.size();
             int sz = Math.max(predLabel + 1, szSecondaries);
-            ArrayList<LocalsArray> newSecondaries = new ArrayList(sz);
+            ArrayList<com.duy.dx.cf.code.LocalsArray> newSecondaries = new ArrayList(sz);
             for (int i = 0; i < sz; i++) {
-                LocalsArray la = null;
+                com.duy.dx.cf.code.LocalsArray la = null;
 
                 if (i == predLabel) {
                     /*
@@ -447,7 +449,7 @@ public class LocalsArraySet extends LocalsArray {
      * @return {@code null-ok;} an instance for this subroutine, or null if subroutine
      * is not in this set.
      */
-    public LocalsArray subArrayForLabel(int subLabel) {
+    public com.duy.dx.cf.code.LocalsArray subArrayForLabel(int subLabel) {
         LocalsArray result = getSecondaryForLabel(subLabel);
         return result;
     }

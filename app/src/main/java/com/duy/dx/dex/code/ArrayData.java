@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .io.Opcodes;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstLiteral32;
-import com.duy.dx .rop.cst.CstLiteral64;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
 import java.util.ArrayList;
+
+import com.duy.dx.io.Opcodes;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstLiteral32;
+import com.duy.dx.rop.cst.CstLiteral64;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Pseudo-instruction which holds fill array data.
@@ -35,13 +36,13 @@ public final class ArrayData extends VariableSizeInsn {
      * {@code non-null;} address representing the instruction that uses this
      * instance
      */
-    private final CodeAddress user;
+    private final com.duy.dx.dex.code.CodeAddress user;
 
     /** {@code non-null;} initial values to be filled into an array */
-    private final ArrayList<Constant> values;
+    private final ArrayList<com.duy.dx.rop.cst.Constant> values;
 
     /** non-null: type of constant that initializes the array */
-    private final Constant arrayType;
+    private final com.duy.dx.rop.cst.Constant arrayType;
 
     /** Width of the init value element */
     private final int elemWidth;
@@ -59,9 +60,9 @@ public final class ArrayData extends VariableSizeInsn {
      * @param values {@code non-null;} initial values to be filled into an array
      */
     public ArrayData(SourcePosition position, CodeAddress user,
-                     ArrayList<Constant> values,
-                     Constant arrayType) {
-        super(position, RegisterSpecList.EMPTY);
+                     ArrayList<com.duy.dx.rop.cst.Constant> values,
+                     com.duy.dx.rop.cst.Constant arrayType) {
+        super(position, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
 
         if (user == null) {
             throw new NullPointerException("user == null");
@@ -79,16 +80,16 @@ public final class ArrayData extends VariableSizeInsn {
 
         this.arrayType = arrayType;
 
-        if (arrayType == CstType.BYTE_ARRAY ||
-                arrayType == CstType.BOOLEAN_ARRAY) {
+        if (arrayType == com.duy.dx.rop.cst.CstType.BYTE_ARRAY ||
+                arrayType == com.duy.dx.rop.cst.CstType.BOOLEAN_ARRAY) {
             elemWidth = 1;
-        } else if (arrayType == CstType.SHORT_ARRAY ||
-                arrayType == CstType.CHAR_ARRAY) {
+        } else if (arrayType == com.duy.dx.rop.cst.CstType.SHORT_ARRAY ||
+                arrayType == com.duy.dx.rop.cst.CstType.CHAR_ARRAY) {
             elemWidth = 2;
-        } else if (arrayType == CstType.INT_ARRAY ||
-                arrayType == CstType.FLOAT_ARRAY) {
+        } else if (arrayType == com.duy.dx.rop.cst.CstType.INT_ARRAY ||
+                arrayType == com.duy.dx.rop.cst.CstType.FLOAT_ARRAY) {
             elemWidth = 4;
-        } else if (arrayType == CstType.LONG_ARRAY ||
+        } else if (arrayType == com.duy.dx.rop.cst.CstType.LONG_ARRAY ||
                 arrayType == CstType.DOUBLE_ARRAY) {
             elemWidth = 8;
         } else {
@@ -121,21 +122,21 @@ public final class ArrayData extends VariableSizeInsn {
         switch (elemWidth) {
             case 1: {
                 for (int i = 0; i < sz; i++) {
-                    Constant cst = values.get(i);
-                    out.writeByte((byte) ((CstLiteral32) cst).getIntBits());
+                    com.duy.dx.rop.cst.Constant cst = values.get(i);
+                    out.writeByte((byte) ((com.duy.dx.rop.cst.CstLiteral32) cst).getIntBits());
                 }
                 break;
             }
             case 2: {
                 for (int i = 0; i < sz; i++) {
-                    Constant cst = values.get(i);
-                    out.writeShort((short) ((CstLiteral32) cst).getIntBits());
+                    com.duy.dx.rop.cst.Constant cst = values.get(i);
+                    out.writeShort((short) ((com.duy.dx.rop.cst.CstLiteral32) cst).getIntBits());
                 }
                 break;
             }
             case 4: {
                 for (int i = 0; i < sz; i++) {
-                    Constant cst = values.get(i);
+                    com.duy.dx.rop.cst.Constant cst = values.get(i);
                     out.writeInt(((CstLiteral32) cst).getIntBits());
                 }
                 break;
@@ -166,7 +167,7 @@ public final class ArrayData extends VariableSizeInsn {
     /** {@inheritDoc} */
     @Override
     protected String argString() {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         int sz = values.size();
         for (int i = 0; i < sz; i++) {
@@ -183,7 +184,7 @@ public final class ArrayData extends VariableSizeInsn {
     @Override
     protected String listingString0(boolean noteIndices) {
         int baseAddress = user.getAddress();
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
         int sz = values.size();
 
         sb.append("fill-array-data-payload // for fill-array-data @ ");

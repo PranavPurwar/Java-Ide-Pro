@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
 import java.util.ArrayList;
+
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Class that represents a map item.
@@ -180,7 +181,7 @@ public final class MapItem extends OffsettedItem {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         sb.append(getClass().getName());
         sb.append('{');
@@ -219,10 +220,10 @@ public final class MapItem extends OffsettedItem {
         if (out.annotates()) {
             out.annotate(0, offsetString() + ' ' + type.getTypeName() +
                     " map");
-            out.annotate(2, "  type:   " + Hex.u2(value) + " // " +
+            out.annotate(2, "  type:   " + com.duy.dx.util.Hex.u2(value) + " // " +
                     type.toString());
             out.annotate(2, "  unused: 0");
-            out.annotate(4, "  size:   " + Hex.u4(itemCount));
+            out.annotate(4, "  size:   " + com.duy.dx.util.Hex.u4(itemCount));
             out.annotate(4, "  offset: " + Hex.u4(offset));
         }
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
-import com.duy.dx .util.LabeledItem;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
+import com.duy.dx.util.LabeledItem;
 
 /**
  * Representation of a basic block in a bytecode array.
@@ -34,10 +34,10 @@ public final class ByteBlock implements LabeledItem {
     private final int end;
 
     /** {@code non-null;} list of successors that this block may branch to */
-    private final IntList successors;
+    private final com.duy.dx.util.IntList successors;
 
     /** {@code non-null;} list of exceptions caught and their handler targets */
-    private final ByteCatchList catches;
+    private final com.duy.dx.cf.code.ByteCatchList catches;
 
     /**
      * Constructs an instance.
@@ -52,8 +52,8 @@ public final class ByteBlock implements LabeledItem {
      * @param catches {@code non-null;} list of exceptions caught and their
      * handler targets
      */
-    public ByteBlock(int label, int start, int end, IntList successors,
-                     ByteCatchList catches) {
+    public ByteBlock(int label, int start, int end, com.duy.dx.util.IntList successors,
+                     com.duy.dx.cf.code.ByteCatchList catches) {
         if (label < 0) {
             throw new IllegalArgumentException("label < 0");
         }
@@ -93,7 +93,7 @@ public final class ByteBlock implements LabeledItem {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return '{' + Hex.u2(label) + ": " + Hex.u2(start) + ".." +
+        return '{' + com.duy.dx.util.Hex.u2(label) + ": " + com.duy.dx.util.Hex.u2(start) + ".." +
             Hex.u2(end) + '}';
     }
 
@@ -102,6 +102,7 @@ public final class ByteBlock implements LabeledItem {
      *
      * @return {@code >= 0;} the label
      */
+    @Override
     public int getLabel() {
         return label;
     }

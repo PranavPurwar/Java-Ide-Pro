@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .util.IntList;
+import com.duy.dx.util.IntList;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -34,12 +24,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.SourcePosition;
+
 /**
  * A method in SSA form.
  */
 public final class SsaMethod {
     /** basic blocks, indexed by block index */
-    private ArrayList<SsaBasicBlock> blocks;
+    private ArrayList<com.duy.dx.ssa.SsaBasicBlock> blocks;
 
     /** Index of first executed block in method */
     private int entryBlockIndex;
@@ -72,13 +73,13 @@ public final class SsaMethod {
      * indexed by register: the insn where said register is defined or null
      * if undefined. null until (lazily) created.
      */
-    private SsaInsn[] definitionList;
+    private com.duy.dx.ssa.SsaInsn[] definitionList;
 
     /** indexed by register: the list of all insns that use a register */
-    private ArrayList<SsaInsn>[] useList;
+    private ArrayList<com.duy.dx.ssa.SsaInsn>[] useList;
 
     /** A version of useList with each List unmodifiable */
-    private List<SsaInsn>[] unmodifiableUseList;
+    private List<com.duy.dx.ssa.SsaInsn>[] unmodifiableUseList;
 
     /**
      * "back-convert mode". Set during back-conversion when registers
@@ -96,8 +97,8 @@ public final class SsaMethod {
      * @param isStatic {@code true} if this method has no {@code this}
      * pointer argument
      */
-    public static SsaMethod newFromRopMethod(RopMethod ropMethod,
-            int paramWidth, boolean isStatic) {
+    public static SsaMethod newFromRopMethod(com.duy.dx.rop.code.RopMethod ropMethod,
+                                             int paramWidth, boolean isStatic) {
         SsaMethod result = new SsaMethod(ropMethod, paramWidth, isStatic);
 
         result.convertRopToSsaBlocks(ropMethod);
@@ -115,7 +116,7 @@ public final class SsaMethod {
      * @param isStatic {@code true} if this method has no {@code this}
      * pointer argument
      */
-    private SsaMethod(RopMethod ropMethod, int paramWidth, boolean isStatic) {
+    private SsaMethod(com.duy.dx.rop.code.RopMethod ropMethod, int paramWidth, boolean isStatic) {
         this.paramWidth = paramWidth;
         this.isStatic = isStatic;
         this.backMode = false;
@@ -132,8 +133,8 @@ public final class SsaMethod {
      * @param labelList list of rop block labels
      * @return BitSet of block indices
      */
-    static BitSet bitSetFromLabelList(BasicBlockList blocks,
-            IntList labelList) {
+    static BitSet bitSetFromLabelList(com.duy.dx.rop.code.BasicBlockList blocks,
+                                      IntList labelList) {
         BitSet result = new BitSet(blocks.size());
 
         for (int i = 0, sz = labelList.size(); i < sz; i++) {
@@ -151,8 +152,8 @@ public final class SsaMethod {
      * @param labelList list of rop block labels
      * @return IntList of block indices
      */
-    public static IntList indexListFromLabelList(BasicBlockList ropBlocks,
-            IntList labelList) {
+    public static IntList indexListFromLabelList(com.duy.dx.rop.code.BasicBlockList ropBlocks,
+                                                 IntList labelList) {
 
         IntList result = new IntList(labelList.size());
 
@@ -167,10 +168,10 @@ public final class SsaMethod {
         BasicBlockList ropBlocks = rmeth.getBlocks();
         int sz = ropBlocks.size();
 
-        blocks = new ArrayList<SsaBasicBlock>(sz + 2);
+        blocks = new ArrayList<com.duy.dx.ssa.SsaBasicBlock>(sz + 2);
 
         for (int i = 0; i < sz; i++) {
-            SsaBasicBlock sbb = SsaBasicBlock.newFromRop(rmeth, i, this);
+            com.duy.dx.ssa.SsaBasicBlock sbb = com.duy.dx.ssa.SsaBasicBlock.newFromRop(rmeth, i, this);
             blocks.add(sbb);
         }
 
@@ -178,7 +179,7 @@ public final class SsaMethod {
         int origEntryBlockIndex = rmeth.getBlocks()
                 .indexOfLabel(rmeth.getFirstLabel());
 
-        SsaBasicBlock entryBlock
+        com.duy.dx.ssa.SsaBasicBlock entryBlock
                 = blocks.get(origEntryBlockIndex).insertNewPredecessor();
 
         entryBlockIndex = entryBlock.getIndex();
@@ -197,12 +198,12 @@ public final class SsaMethod {
         }
 
         exitBlockIndex = blocks.size();
-        SsaBasicBlock exitBlock
-                = new SsaBasicBlock(exitBlockIndex, maxLabel++, this);
+        com.duy.dx.ssa.SsaBasicBlock exitBlock
+                = new com.duy.dx.ssa.SsaBasicBlock(exitBlockIndex, maxLabel++, this);
 
         blocks.add(exitBlock);
 
-        for (SsaBasicBlock block : blocks) {
+        for (com.duy.dx.ssa.SsaBasicBlock block : blocks) {
             block.exitBlockFixup(exitBlock);
         }
 
@@ -221,10 +222,10 @@ public final class SsaMethod {
      * (not it's destination!)
      * @return an appropriately-constructed instance.
      */
-    private static SsaInsn getGoto(SsaBasicBlock block) {
+    private static com.duy.dx.ssa.SsaInsn getGoto(com.duy.dx.ssa.SsaBasicBlock block) {
         return new NormalSsaInsn (
-                new PlainInsn(Rops.GOTO, SourcePosition.NO_INFO,
-                    null, RegisterSpecList.EMPTY), block);
+                new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.GOTO, com.duy.dx.rop.code.SourcePosition.NO_INFO,
+                    null, com.duy.dx.rop.code.RegisterSpecList.EMPTY), block);
     }
 
     /**
@@ -234,9 +235,9 @@ public final class SsaMethod {
      *
      * @return new block
      */
-    public SsaBasicBlock makeNewGotoBlock() {
+    public com.duy.dx.ssa.SsaBasicBlock makeNewGotoBlock() {
         int newIndex = blocks.size();
-        SsaBasicBlock newBlock = new SsaBasicBlock(newIndex, maxLabel++, this);
+        com.duy.dx.ssa.SsaBasicBlock newBlock = new com.duy.dx.ssa.SsaBasicBlock(newIndex, maxLabel++, this);
 
         newBlock.getInsns().add(getGoto(newBlock));
         blocks.add(newBlock);
@@ -254,7 +255,7 @@ public final class SsaMethod {
     /**
      * @return first execution block
      */
-    public SsaBasicBlock getEntryBlock() {
+    public com.duy.dx.ssa.SsaBasicBlock getEntryBlock() {
         return blocks.get(entryBlockIndex);
     }
 
@@ -269,7 +270,7 @@ public final class SsaMethod {
      * @return {@code null-ok;} block of exit block or {@code null} if
      * there is none
      */
-    public SsaBasicBlock getExitBlock() {
+    public com.duy.dx.ssa.SsaBasicBlock getExitBlock() {
         return exitBlockIndex < 0 ? null : blocks.get(exitBlockIndex);
     }
 
@@ -334,53 +335,30 @@ public final class SsaMethod {
     /**
      * @return {@code non-null;} basic block list. Do not modify.
      */
-    public ArrayList<SsaBasicBlock> getBlocks() {
+    public ArrayList<com.duy.dx.ssa.SsaBasicBlock> getBlocks() {
         return blocks;
     }
 
     /**
-     * Returns the count of reachable blocks in this method: blocks that have
-     * predecessors (or are the start block)
+     * Computes reachability for all blocks in the method.
      *
-     * @return {@code >= 0;} number of reachable basic blocks
+     * @return a BitSet of reachable blocks.
      */
-    public int getCountReachableBlocks() {
-        int ret = 0;
+    public BitSet computeReachability() {
+        final int size = blocks.size();
+        BitSet reachableUnvisited = new BitSet(size);
+        BitSet reachableVisited = new BitSet(size);
 
-        for (SsaBasicBlock b : blocks) {
-            // Blocks that have been disconnected don't count.
-            if (b.isReachable()) {
-                ret++;
-            }
+        reachableUnvisited.set(getEntryBlock().getIndex());
+
+        int index;
+        while ((index = reachableUnvisited.nextSetBit(0)) != -1) {
+            reachableVisited.set(index);
+            reachableUnvisited.or(blocks.get(index).getSuccessors());
+            reachableUnvisited.andNot(reachableVisited);
         }
 
-        return ret;
-    }
-
-    /**
-     * Computes reachability for all blocks in the method. First clears old
-     * values from all blocks, then starts with the entry block and walks down
-     * the control flow graph, marking all blocks it finds as reachable.
-     */
-    public void computeReachability() {
-        for (SsaBasicBlock block : blocks) {
-            block.setReachable(0);
-        }
-
-        ArrayList<SsaBasicBlock> blockList = new ArrayList<SsaBasicBlock>();
-        blockList.add(this.getEntryBlock());
-
-        while (!blockList.isEmpty()) {
-            SsaBasicBlock block = blockList.remove(0);
-            if (block.isReachable()) continue;
-
-            block.setReachable(1);
-            BitSet succs = block.getSuccessors();
-            for (int i = succs.nextSetBit(0); i >= 0;
-                     i = succs.nextSetBit(i + 1)) {
-                blockList.add(blocks.get(i));
-            }
-        }
+        return reachableVisited;
     }
 
     /**
@@ -389,8 +367,8 @@ public final class SsaMethod {
      * @param mapper maps old registers to new.
      */
     public void mapRegisters(RegisterMapper mapper) {
-        for (SsaBasicBlock block : getBlocks()) {
-            for (SsaInsn insn : block.getInsns()) {
+        for (com.duy.dx.ssa.SsaBasicBlock block : getBlocks()) {
+            for (com.duy.dx.ssa.SsaInsn insn : block.getInsns()) {
                 insn.mapRegisters(mapper);
             }
         }
@@ -405,7 +383,7 @@ public final class SsaMethod {
      * @return insn (actual instance from code) that defined this reg or null
      * if reg is not defined.
      */
-    public SsaInsn getDefinitionForRegister(int reg) {
+    public com.duy.dx.ssa.SsaInsn getDefinitionForRegister(int reg) {
         if (backMode) {
             throw new RuntimeException("No def list in back mode");
         }
@@ -414,17 +392,20 @@ public final class SsaMethod {
             return definitionList[reg];
         }
 
-        definitionList = new SsaInsn[getRegCount()];
+        definitionList = new com.duy.dx.ssa.SsaInsn[getRegCount()];
 
-        forEachInsn(new SsaInsn.Visitor() {
+        forEachInsn(new com.duy.dx.ssa.SsaInsn.Visitor() {
+            @Override
             public void visitMoveInsn (NormalSsaInsn insn) {
                 definitionList[insn.getResult().getReg()] = insn;
             }
+            @Override
             public void visitPhiInsn (PhiInsn phi) {
                 definitionList[phi.getResult().getReg()] = phi;
             }
+            @Override
             public void visitNonMoveInsn (NormalSsaInsn insn) {
-                RegisterSpec result = insn.getResult();
+                com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
                 if (result != null) {
                     definitionList[insn.getResult().getReg()] = insn;
                 }
@@ -448,16 +429,19 @@ public final class SsaMethod {
             useList[i] = new ArrayList();
         }
 
-        forEachInsn(new SsaInsn.Visitor() {
+        forEachInsn(new com.duy.dx.ssa.SsaInsn.Visitor() {
             /** {@inheritDoc} */
+            @Override
             public void visitMoveInsn (NormalSsaInsn insn) {
                 addToUses(insn);
             }
             /** {@inheritDoc} */
+            @Override
             public void visitPhiInsn (PhiInsn phi) {
                 addToUses(phi);
             }
             /** {@inheritDoc} */
+            @Override
             public void visitNonMoveInsn (NormalSsaInsn insn) {
                 addToUses(insn);
             }
@@ -465,8 +449,8 @@ public final class SsaMethod {
              * Adds specified insn to the uses list for all of its sources.
              * @param insn {@code non-null;} insn to process
              */
-            private void addToUses(SsaInsn insn) {
-                RegisterSpecList rl = insn.getSources();
+            private void addToUses(com.duy.dx.ssa.SsaInsn insn) {
+                com.duy.dx.rop.code.RegisterSpecList rl = insn.getSources();
                 int sz = rl.size();
 
                 for (int i = 0; i < sz; i++) {
@@ -490,8 +474,8 @@ public final class SsaMethod {
      * applicable
      * @param newSource {@code non-null;} the new source being used
      */
-    /*package*/ void onSourceChanged(SsaInsn insn,
-            RegisterSpec oldSource, RegisterSpec newSource) {
+    /*package*/ void onSourceChanged(com.duy.dx.ssa.SsaInsn insn,
+                                     com.duy.dx.rop.code.RegisterSpec oldSource, com.duy.dx.rop.code.RegisterSpec newSource) {
         if (useList == null) return;
 
         if (oldSource != null) {
@@ -515,15 +499,15 @@ public final class SsaMethod {
      * @param oldSources {@code null-ok;} list of sources that were
      * previously used
      */
-    /*package*/ void onSourcesChanged(SsaInsn insn,
-            RegisterSpecList oldSources) {
+    /*package*/ void onSourcesChanged(com.duy.dx.ssa.SsaInsn insn,
+                                      com.duy.dx.rop.code.RegisterSpecList oldSources) {
         if (useList == null) return;
 
         if (oldSources != null) {
             removeFromUseList(insn, oldSources);
         }
 
-        RegisterSpecList sources = insn.getSources();
+        com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
         int szNew = sources.size();
 
         for (int i = 0; i < szNew; i++) {
@@ -541,7 +525,7 @@ public final class SsaMethod {
      * @param oldSources {@code null-ok;} registers whose use lists
      * {@code insn} should be removed form
      */
-    private void removeFromUseList(SsaInsn insn, RegisterSpecList oldSources) {
+    private void removeFromUseList(com.duy.dx.ssa.SsaInsn insn, com.duy.dx.rop.code.RegisterSpecList oldSources) {
         if (oldSources == null) {
             return;
         }
@@ -560,7 +544,7 @@ public final class SsaMethod {
      *
      * @param insn {@code non-null;} insn to add
      */
-    /*package*/ void onInsnAdded(SsaInsn insn) {
+    /*package*/ void onInsnAdded(com.duy.dx.ssa.SsaInsn insn) {
         onSourcesChanged(insn, null);
         updateOneDefinition(insn, null);
     }
@@ -571,12 +555,12 @@ public final class SsaMethod {
      *
      * @param insn {@code non-null;} insn to remove
      */
-    /*package*/ void onInsnRemoved(SsaInsn insn) {
+    /*package*/ void onInsnRemoved(com.duy.dx.ssa.SsaInsn insn) {
         if (useList != null) {
             removeFromUseList(insn, insn.getSources());
         }
 
-        RegisterSpec resultReg = insn.getResult();
+        com.duy.dx.rop.code.RegisterSpec resultReg = insn.getResult();
         if (definitionList != null && resultReg != null) {
             definitionList[resultReg.getReg()] = null;
         }
@@ -606,8 +590,8 @@ public final class SsaMethod {
      * @param oldResult {@code null-ok;} a previous result that should
      * be no longer considered a definition by this insn
      */
-    /*package*/ void updateOneDefinition(SsaInsn insn,
-            RegisterSpec oldResult) {
+    /*package*/ void updateOneDefinition(com.duy.dx.ssa.SsaInsn insn,
+                                         com.duy.dx.rop.code.RegisterSpec oldResult) {
         if (definitionList == null) return;
 
         if (oldResult != null) {
@@ -615,7 +599,7 @@ public final class SsaMethod {
             definitionList[reg] = null;
         }
 
-        RegisterSpec resultReg = insn.getResult();
+        com.duy.dx.rop.code.RegisterSpec resultReg = insn.getResult();
 
         if (resultReg != null) {
             int reg = resultReg.getReg();
@@ -634,7 +618,7 @@ public final class SsaMethod {
      * @param reg register in question
      * @return unmodifiable instruction list
      */
-    public List<SsaInsn> getUseListForRegister(int reg) {
+    public List<com.duy.dx.ssa.SsaInsn> getUseListForRegister(int reg) {
 
         if (unmodifiableUseList == null) {
             buildUseList();
@@ -648,16 +632,16 @@ public final class SsaMethod {
      *
      * @return modifiable copy of the use-list, indexed by register
      */
-    public ArrayList<SsaInsn>[] getUseListCopy() {
+    public ArrayList<com.duy.dx.ssa.SsaInsn>[] getUseListCopy() {
         if (useList == null) {
             buildUseList();
         }
 
-        ArrayList<SsaInsn>[] useListCopy
-                = (ArrayList<SsaInsn>[])(new ArrayList[registerCount]);
+        ArrayList<com.duy.dx.ssa.SsaInsn>[] useListCopy
+                = (ArrayList<com.duy.dx.ssa.SsaInsn>[])(new ArrayList[registerCount]);
 
         for (int i = 0; i < registerCount; i++) {
-            useListCopy[i] = (ArrayList<SsaInsn>)(new ArrayList(useList[i]));
+            useListCopy[i] = (ArrayList<com.duy.dx.ssa.SsaInsn>)(new ArrayList(useList[i]));
         }
 
         return useListCopy;
@@ -672,7 +656,7 @@ public final class SsaMethod {
      * @return true if reg is ever associated with a local
      */
     public boolean isRegALocal(RegisterSpec spec) {
-        SsaInsn defn = getDefinitionForRegister(spec.getReg());
+        com.duy.dx.ssa.SsaInsn defn = getDefinitionForRegister(spec.getReg());
 
         if (defn == null) {
             // version 0 registers are never used as locals
@@ -683,8 +667,8 @@ public final class SsaMethod {
         if (defn.getLocalAssignment() != null) return true;
 
         // If not, is there a mark-local insn?
-        for (SsaInsn use : getUseListForRegister(spec.getReg())) {
-            Insn insn = use.getOriginalRopInsn();
+        for (com.duy.dx.ssa.SsaInsn use : getUseListForRegister(spec.getReg())) {
+            com.duy.dx.rop.code.Insn insn = use.getOriginalRopInsn();
 
             if (insn != null
                     && insn.getOpcode().getOpcode() == RegOps.MARK_LOCAL) {
@@ -723,8 +707,8 @@ public final class SsaMethod {
      *
      * @param visitor {@code non-null;} callback interface
      */
-    public void forEachInsn(SsaInsn.Visitor visitor) {
-        for (SsaBasicBlock block : blocks) {
+    public void forEachInsn(com.duy.dx.ssa.SsaInsn.Visitor visitor) {
+        for (com.duy.dx.ssa.SsaBasicBlock block : blocks) {
             block.forEachInsn(visitor);
         }
     }
@@ -735,7 +719,7 @@ public final class SsaMethod {
      *
      */
     public void forEachPhiInsn(PhiInsn.Visitor v) {
-        for (SsaBasicBlock block : blocks) {
+        for (com.duy.dx.ssa.SsaBasicBlock block : blocks) {
             block.forEachPhiInsn(v);
         }
     }
@@ -751,13 +735,13 @@ public final class SsaMethod {
      * unless this is the root node
      */
     public void forEachBlockDepthFirst(boolean reverse,
-            SsaBasicBlock.Visitor v) {
+            com.duy.dx.ssa.SsaBasicBlock.Visitor v) {
         BitSet visited = new BitSet(blocks.size());
 
         // We push the parent first, then the child on the stack.
-        Stack<SsaBasicBlock> stack = new Stack<SsaBasicBlock>();
+        Stack<com.duy.dx.ssa.SsaBasicBlock> stack = new Stack<com.duy.dx.ssa.SsaBasicBlock>();
 
-        SsaBasicBlock rootBlock = reverse ? getExitBlock() : getEntryBlock();
+        com.duy.dx.ssa.SsaBasicBlock rootBlock = reverse ? getExitBlock() : getEntryBlock();
 
         if (rootBlock == null) {
             // in the case there's no exit block
@@ -768,8 +752,8 @@ public final class SsaMethod {
         stack.add(rootBlock);
 
         while (stack.size() > 0) {
-            SsaBasicBlock cur = stack.pop();
-            SsaBasicBlock parent = stack.pop();
+            com.duy.dx.ssa.SsaBasicBlock cur = stack.pop();
+            com.duy.dx.ssa.SsaBasicBlock parent = stack.pop();
 
             if (!visited.get(cur.getIndex())) {
                 BitSet children
@@ -792,20 +776,20 @@ public final class SsaMethod {
      *
      * @param v {@code non-null;} callback interface
      */
-    public void forEachBlockDepthFirstDom(SsaBasicBlock.Visitor v) {
+    public void forEachBlockDepthFirstDom(com.duy.dx.ssa.SsaBasicBlock.Visitor v) {
         BitSet visited = new BitSet(getBlocks().size());
-        Stack<SsaBasicBlock> stack = new Stack<SsaBasicBlock>();
+        Stack<com.duy.dx.ssa.SsaBasicBlock> stack = new Stack<com.duy.dx.ssa.SsaBasicBlock>();
 
         stack.add(getEntryBlock());
 
         while (stack.size() > 0) {
-            SsaBasicBlock cur = stack.pop();
-            ArrayList<SsaBasicBlock> curDomChildren = cur.getDomChildren();
+            com.duy.dx.ssa.SsaBasicBlock cur = stack.pop();
+            ArrayList<com.duy.dx.ssa.SsaBasicBlock> curDomChildren = cur.getDomChildren();
 
             if (!visited.get(cur.getIndex())) {
                 // We walk the tree this way for historical reasons...
                 for (int i = curDomChildren.size() - 1; i >= 0; i--) {
-                    SsaBasicBlock child = curDomChildren.get(i);
+                    com.duy.dx.ssa.SsaBasicBlock child = curDomChildren.get(i);
                     stack.add(child);
                 }
                 visited.set(cur.getIndex());
@@ -819,23 +803,25 @@ public final class SsaMethod {
      *
      * @param deletedInsns {@code non-null;} insns to delete
      */
-    public void deleteInsns(Set<SsaInsn> deletedInsns) {
-        for (SsaBasicBlock block : getBlocks()) {
-            ArrayList<SsaInsn> insns = block.getInsns();
+    public void deleteInsns(Set<com.duy.dx.ssa.SsaInsn> deletedInsns) {
+        for (com.duy.dx.ssa.SsaInsn deletedInsn : deletedInsns) {
+            SsaBasicBlock block = deletedInsn.getBlock();
+            ArrayList<com.duy.dx.ssa.SsaInsn> insns = block.getInsns();
 
             for (int i = insns.size() - 1; i >= 0; i--) {
-                SsaInsn insn = insns.get(i);
+                com.duy.dx.ssa.SsaInsn insn = insns.get(i);
 
-                if (deletedInsns.contains(insn)) {
+                if (deletedInsn == insn) {
                     onInsnRemoved(insn);
                     insns.remove(i);
+                    break;
                 }
             }
 
             // Check to see if we need to add a GOTO
 
             int insnsSz = insns.size();
-            SsaInsn lastInsn = (insnsSz == 0) ? null : insns.get(insnsSz - 1);
+            com.duy.dx.ssa.SsaInsn lastInsn = (insnsSz == 0) ? null : insns.get(insnsSz - 1);
 
             if (block != getExitBlock() && (insnsSz == 0
                     || lastInsn.getOriginalRopInsn() == null

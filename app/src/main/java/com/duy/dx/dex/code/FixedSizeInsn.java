@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.util.AnnotatedOutput;
 
 /**
  * Base class for instructions which are of a fixed code size and
  * which use {@link InsnFormat} methods to write themselves. This
  * includes most &mdash; but not all &mdash; instructions.
  */
-public abstract class FixedSizeInsn extends DalvInsn {
+public abstract class FixedSizeInsn extends com.duy.dx.dex.code.DalvInsn {
     /**
      * Constructs an instance. The output address of this instance is initially
      * unknown ({@code -1}).
@@ -34,7 +34,7 @@ public abstract class FixedSizeInsn extends DalvInsn {
      * absolutely no registers (e.g., a {@code nop} or a
      * no-argument no-result * static method call), then the given
      * register list may be passed as {@link
-     * RegisterSpecList#EMPTY}.</p>
+     * com.duy.dx.rop.code.RegisterSpecList#EMPTY}.</p>
      *
      * @param opcode the opcode; one of the constants from {@link Dops}
      * @param position {@code non-null;} source position

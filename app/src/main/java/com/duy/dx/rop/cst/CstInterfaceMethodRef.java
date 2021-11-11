@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.cst;
+package com.duy.dx.rop.cst;
 
 /**
  * Constants of type {@code CONSTANT_InterfaceMethodref_info}.
@@ -22,10 +22,10 @@ package com.duy.dx .rop.cst;
 public final class CstInterfaceMethodRef
         extends CstBaseMethodRef {
     /**
-     * {@code null-ok;} normal {@link CstMethodRef} that corresponds to this
+     * {@code null-ok;} normal {@link com.duy.dx.rop.cst.CstMethodRef} that corresponds to this
      * instance, if calculated
      */
-    private CstMethodRef methodRef;
+    private com.duy.dx.rop.cst.CstMethodRef methodRef;
 
     /**
      * Constructs an instance.
@@ -45,12 +45,12 @@ public final class CstInterfaceMethodRef
     }
 
     /**
-     * Gets a normal (non-interface) {@link CstMethodRef} that corresponds to
+     * Gets a normal (non-interface) {@link com.duy.dx.rop.cst.CstMethodRef} that corresponds to
      * this instance.
      *
      * @return {@code non-null;} an appropriate instance
      */
-    public CstMethodRef toMethodRef() {
+    public com.duy.dx.rop.cst.CstMethodRef toMethodRef() {
         if (methodRef == null) {
             methodRef = new CstMethodRef(getDefiningClass(), getNat());
         }

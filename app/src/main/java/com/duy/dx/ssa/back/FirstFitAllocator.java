@@ -1,14 +1,31 @@
-package com.duy.dx .ssa.back;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .rop.code.CstInsn;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .ssa.BasicRegisterMapper;
-import com.duy.dx .ssa.NormalSsaInsn;
-import com.duy.dx .ssa.RegisterMapper;
-import com.duy.dx .ssa.SsaMethod;
-import com.duy.dx .util.BitIntSet;
-import com.duy.dx .util.IntSet;
+package com.duy.dx.ssa.back;
+
+import com.duy.dx.ssa.BasicRegisterMapper;
+import com.duy.dx.ssa.NormalSsaInsn;
+import com.duy.dx.ssa.RegisterMapper;
+import com.duy.dx.ssa.SsaMethod;
+import com.duy.dx.util.BitIntSet;
+import com.duy.dx.util.IntSet;
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.CstInsn;
+import com.duy.dx.rop.cst.CstInteger;
 
 /**
  * Allocates registers via a naive n^2 register allocator.
@@ -126,7 +143,7 @@ public class FirstFitAllocator extends RegisterAllocator {
      * @return parameter number (offset in the total parameter width)
      */
     private int paramNumberFromMoveParam(NormalSsaInsn ndefInsn) {
-        CstInsn origInsn = (CstInsn) ndefInsn.getOriginalRopInsn();
+        com.duy.dx.rop.code.CstInsn origInsn = (CstInsn) ndefInsn.getOriginalRopInsn();
 
         return ((CstInteger) origInsn.getConstant()).getValue();
     }

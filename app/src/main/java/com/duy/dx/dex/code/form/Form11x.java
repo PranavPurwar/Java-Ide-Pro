@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code.form;
+package com.duy.dx.dex.code.form;
 
-import com.duy.dx .dex.code.DalvInsn;
-import com.duy.dx .dex.code.InsnFormat;
-import com.duy.dx .dex.code.SimpleInsn;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.dex.code.DalvInsn;
+import com.duy.dx.dex.code.InsnFormat;
+import com.duy.dx.dex.code.SimpleInsn;
+import com.duy.dx.util.AnnotatedOutput;
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.RegisterSpecList;
 
 /**
  * Instruction format {@code 11x}. See the instruction format spec
@@ -42,7 +43,7 @@ public final class Form11x extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public String insnArgString(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
         return regs.get(0).regString();
     }
 
@@ -62,7 +63,7 @@ public final class Form11x extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public boolean isCompatible(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
         return (insn instanceof SimpleInsn) &&
             (regs.size() == 1) &&
             unsignedFitsInByte(regs.get(0).getReg());
@@ -71,7 +72,7 @@ public final class Form11x extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public BitSet compatibleRegs(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
         BitSet bits = new BitSet(1);
 
         bits.set(0, unsignedFitsInByte(regs.get(0).getReg()));

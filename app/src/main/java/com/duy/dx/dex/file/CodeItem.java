@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .dex.code.DalvCode;
-import com.duy.dx .dex.code.DalvInsnList;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.dex.code.DalvCode;
+import com.duy.dx.dex.code.DalvInsnList;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+
 import java.io.PrintWriter;
 
 /**
@@ -40,13 +41,13 @@ public final class CodeItem extends OffsettedItem {
     private static final int HEADER_SIZE = 16;
 
     /** {@code non-null;} method that this code implements */
-    private final CstMethodRef ref;
+    private final com.duy.dx.rop.cst.CstMethodRef ref;
 
     /** {@code non-null;} the bytecode instructions and associated data */
-    private final DalvCode code;
+    private final com.duy.dx.dex.code.DalvCode code;
 
     /** {@code null-ok;} the catches, if needed; set in {@link #addContents} */
-    private CatchStructs catches;
+    private com.duy.dx.dex.file.CatchStructs catches;
 
     /** whether this instance is for a {@code static} method */
     private final boolean isStatic;
@@ -55,7 +56,7 @@ public final class CodeItem extends OffsettedItem {
      * {@code non-null;} list of possibly-thrown exceptions; just used in
      * generating debugging output (listings)
      */
-    private final TypeList throwsList;
+    private final com.duy.dx.rop.type.TypeList throwsList;
 
     /**
      * {@code null-ok;} the debug info or {@code null} if there is none;
@@ -73,8 +74,8 @@ public final class CodeItem extends OffsettedItem {
      * @param throwsList {@code non-null;} list of possibly-thrown exceptions,
      * just used in generating debugging output (listings)
      */
-    public CodeItem(CstMethodRef ref, DalvCode code, boolean isStatic,
-            TypeList throwsList) {
+    public CodeItem(com.duy.dx.rop.cst.CstMethodRef ref, com.duy.dx.dex.code.DalvCode code, boolean isStatic,
+                    TypeList throwsList) {
         super(ALIGNMENT, -1);
 
         if (ref == null) {
@@ -104,6 +105,7 @@ public final class CodeItem extends OffsettedItem {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addContents(DexFile file) {
         MixedItemSection byteData = file.getByteData();
         TypeIdsSection typeIds = file.getTypeIds();
@@ -120,7 +122,7 @@ public final class CodeItem extends OffsettedItem {
             catches = new CatchStructs(code);
         }
 
-        for (Constant c : code.getInsnConstants()) {
+        for (com.duy.dx.rop.cst.Constant c : code.getInsnConstants()) {
             file.internIfAppropriate(c);
         }
     }
@@ -156,10 +158,10 @@ public final class CodeItem extends OffsettedItem {
     public void debugPrint(PrintWriter out, String prefix, boolean verbose) {
         out.println(ref.toHuman() + ":");
 
-        DalvInsnList insns = code.getInsns();
-        out.println("regs: " + Hex.u2(getRegistersSize()) +
-                "; ins: " + Hex.u2(getInsSize()) + "; outs: " +
-                Hex.u2(getOutsSize()));
+        com.duy.dx.dex.code.DalvInsnList insns = code.getInsns();
+        out.println("regs: " + com.duy.dx.util.Hex.u2(getRegistersSize()) +
+                "; ins: " + com.duy.dx.util.Hex.u2(getInsSize()) + "; outs: " +
+                com.duy.dx.util.Hex.u2(getOutsSize()));
 
         insns.debugPrint(out, prefix, verbose);
 
@@ -189,6 +191,7 @@ public final class CodeItem extends OffsettedItem {
          * constants need to be assigned indices.
          */
         code.assignIndices(new DalvCode.AssignIndicesCallback() {
+                @Override
                 public int getIndex(Constant cst) {
                     IndexedItem item = file.findItemOrNull(cst);
                     if (item == null) {
@@ -221,7 +224,7 @@ public final class CodeItem extends OffsettedItem {
 
     /** {@inheritDoc} */
     @Override
-    protected void writeTo0(DexFile file, AnnotatedOutput out) {
+    protected void writeTo0(DexFile file, com.duy.dx.util.AnnotatedOutput out) {
         boolean annotates = out.annotates();
         int regSz = getRegistersSize();
         int outsSz = getOutsSize();
@@ -233,11 +236,11 @@ public final class CodeItem extends OffsettedItem {
 
         if (annotates) {
             out.annotate(0, offsetString() + ' ' + ref.toHuman());
-            out.annotate(2, "  registers_size: " + Hex.u2(regSz));
-            out.annotate(2, "  ins_size:       " + Hex.u2(insSz));
-            out.annotate(2, "  outs_size:      " + Hex.u2(outsSz));
-            out.annotate(2, "  tries_size:     " + Hex.u2(triesSz));
-            out.annotate(4, "  debug_off:      " + Hex.u4(debugOff));
+            out.annotate(2, "  registers_size: " + com.duy.dx.util.Hex.u2(regSz));
+            out.annotate(2, "  ins_size:       " + com.duy.dx.util.Hex.u2(insSz));
+            out.annotate(2, "  outs_size:      " + com.duy.dx.util.Hex.u2(outsSz));
+            out.annotate(2, "  tries_size:     " + com.duy.dx.util.Hex.u2(triesSz));
+            out.annotate(4, "  debug_off:      " + com.duy.dx.util.Hex.u4(debugOff));
             out.annotate(4, "  insns_size:     " + Hex.u4(insnsSz));
 
             // This isn't represented directly here, but it is useful to see.

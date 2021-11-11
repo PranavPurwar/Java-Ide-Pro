@@ -1,13 +1,32 @@
-package com.duy.dx .ssa.back;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .ssa.PhiInsn;
-import com.duy.dx .ssa.SsaBasicBlock;
-import com.duy.dx .ssa.SsaInsn;
-import com.duy.dx .ssa.SsaMethod;
+package com.duy.dx.ssa.back;
+
+import com.duy.dx.ssa.PhiInsn;
+import com.duy.dx.ssa.SsaBasicBlock;
+import com.duy.dx.ssa.SsaInsn;
+import com.duy.dx.ssa.SsaMethod;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
 
 /**
  * From Appel "Modern Compiler Implementation in Java" algorithm 19.17
@@ -40,7 +59,7 @@ public class LivenessAnalyzer {
     private final SsaMethod ssaMeth;
 
     /** interference graph being updated */
-    private final InterferenceGraph interference;
+    private final com.duy.dx.ssa.back.InterferenceGraph interference;
 
     /** block "n" in Appel 19.17 */
     private SsaBasicBlock blockN;
@@ -68,10 +87,10 @@ public class LivenessAnalyzer {
      * @return {@code non-null;} interference graph indexed by SSA
      * registers in both directions
      */
-    public static InterferenceGraph constructInterferenceGraph(
+    public static com.duy.dx.ssa.back.InterferenceGraph constructInterferenceGraph(
             SsaMethod ssaMeth) {
         int szRegs = ssaMeth.getRegCount();
-        InterferenceGraph interference = new InterferenceGraph(szRegs);
+        com.duy.dx.ssa.back.InterferenceGraph interference = new com.duy.dx.ssa.back.InterferenceGraph(szRegs);
 
         for (int i = 0; i < szRegs; i++) {
             new LivenessAnalyzer(ssaMeth, i, interference).run();
@@ -92,7 +111,7 @@ public class LivenessAnalyzer {
      *
      */
     private LivenessAnalyzer(SsaMethod ssaMeth, int reg,
-            InterferenceGraph interference) {
+            com.duy.dx.ssa.back.InterferenceGraph interference) {
         int blocksSz = ssaMeth.getBlocks().size();
 
         this.ssaMeth = ssaMeth;
@@ -216,7 +235,7 @@ public class LivenessAnalyzer {
      */
     private void liveOutAtStatement() {
         SsaInsn statement = blockN.getInsns().get(statementIndex);
-        RegisterSpec rs = statement.getResult();
+        com.duy.dx.rop.code.RegisterSpec rs = statement.getResult();
 
         if (!statement.isResultReg(regV)) {
             if (rs != null) {
@@ -228,18 +247,19 @@ public class LivenessAnalyzer {
 
     /**
      * Ensures that all the phi result registers for all the phis in the
-     * same basic block interfere with each other. This is needed since
+     * same basic block interfere with each other, and also that a phi's source
+     * registers interfere with the result registers from other phis. This is needed since
      * the dead code remover has allowed through "dead-end phis" whose
      * results are not used except as local assignments. Without this step,
      * a the result of a dead-end phi might be assigned the same register
      * as the result of another phi, and the phi removal move scheduler may
      * generate moves that over-write the live result.
      *
-     * @param ssaMeth {@code non-null;} method to pricess
+     * @param ssaMeth {@code non-null;} method to process
      * @param interference {@code non-null;} interference graph
      */
     private static void coInterferePhis(SsaMethod ssaMeth,
-            InterferenceGraph interference) {
+            com.duy.dx.ssa.back.InterferenceGraph interference) {
         for (SsaBasicBlock b : ssaMeth.getBlocks()) {
             List<SsaInsn> phis = b.getPhiInsns();
 
@@ -251,10 +271,21 @@ public class LivenessAnalyzer {
                         continue;
                     }
 
-                    interference.add(phis.get(i).getResult().getReg(),
-                        phis.get(j).getResult().getReg());
+                    SsaInsn first = phis.get(i);
+                    SsaInsn second = phis.get(j);
+                    coInterferePhiRegisters(interference, first.getResult(), second.getSources());
+                    coInterferePhiRegisters(interference, second.getResult(), first.getSources());
+                    interference.add(first.getResult().getReg(), second.getResult().getReg());
                 }
             }
+        }
+    }
+
+    private static void coInterferePhiRegisters(InterferenceGraph interference, RegisterSpec result,
+                                                RegisterSpecList sources) {
+        int resultReg = result.getReg();
+        for (int i = 0; i < sources.size(); ++i) {
+            interference.add(resultReg, sources.get(i).getReg());
         }
     }
 }

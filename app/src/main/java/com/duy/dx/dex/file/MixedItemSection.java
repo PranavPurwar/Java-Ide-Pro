@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +31,7 @@ import java.util.TreeMap;
 
 /**
  * A section of a {@code .dex} file which consists of a sequence of
- * {@link OffsettedItem} objects, which may each be of a different concrete
+ * {@link com.duy.dx.dex.file.OffsettedItem} objects, which may each be of a different concrete
  * class and/or size.
  *
  * <b>Note:</b> It is invalid for an item in an instance of this class to
@@ -50,9 +50,10 @@ public final class MixedItemSection extends Section {
     };
 
     /** {@code non-null;} sorter which sorts instances by type */
-    private static final Comparator<OffsettedItem> TYPE_SORTER =
-        new Comparator<OffsettedItem>() {
-        public int compare(OffsettedItem item1, OffsettedItem item2) {
+    private static final Comparator<com.duy.dx.dex.file.OffsettedItem> TYPE_SORTER =
+        new Comparator<com.duy.dx.dex.file.OffsettedItem>() {
+        @Override
+        public int compare(com.duy.dx.dex.file.OffsettedItem item1, com.duy.dx.dex.file.OffsettedItem item2) {
             ItemType type1 = item1.itemType();
             ItemType type2 = item2.itemType();
             return type1.compareTo(type2);
@@ -60,10 +61,10 @@ public final class MixedItemSection extends Section {
     };
 
     /** {@code non-null;} the items in this part */
-    private final ArrayList<OffsettedItem> items;
+    private final ArrayList<com.duy.dx.dex.file.OffsettedItem> items;
 
     /** {@code non-null;} items that have been explicitly interned */
-    private final HashMap<OffsettedItem, OffsettedItem> interns;
+    private final HashMap<com.duy.dx.dex.file.OffsettedItem, com.duy.dx.dex.file.OffsettedItem> interns;
 
     /** {@code non-null;} how to sort the items */
     private final SortType sort;
@@ -84,12 +85,12 @@ public final class MixedItemSection extends Section {
      * must be a power of 2
      * @param sort how the items should be sorted in the final output
      */
-    public MixedItemSection(String name, DexFile file, int alignment,
-            SortType sort) {
+    public MixedItemSection(String name, com.duy.dx.dex.file.DexFile file, int alignment,
+                            SortType sort) {
         super(name, file, alignment);
 
-        this.items = new ArrayList<OffsettedItem>(100);
-        this.interns = new HashMap<OffsettedItem, OffsettedItem>(100);
+        this.items = new ArrayList<com.duy.dx.dex.file.OffsettedItem>(100);
+        this.interns = new HashMap<com.duy.dx.dex.file.OffsettedItem, com.duy.dx.dex.file.OffsettedItem>(100);
         this.sort = sort;
         this.writeSize = -1;
     }
@@ -110,7 +111,7 @@ public final class MixedItemSection extends Section {
     /** {@inheritDoc} */
     @Override
     public int getAbsoluteItemOffset(Item item) {
-        OffsettedItem oi = (OffsettedItem) item;
+        com.duy.dx.dex.file.OffsettedItem oi = (com.duy.dx.dex.file.OffsettedItem) item;
         return oi.getAbsoluteOffset();
     }
 
@@ -165,7 +166,7 @@ public final class MixedItemSection extends Section {
      *
      * @param item {@code non-null;} the item to add
      */
-    public void add(OffsettedItem item) {
+    public void add(com.duy.dx.dex.file.OffsettedItem item) {
         throwIfPrepared();
 
         try {
@@ -189,10 +190,10 @@ public final class MixedItemSection extends Section {
      * @param item {@code non-null;} the item to intern
      * @return {@code non-null;} the equivalent interned instance
      */
-    public synchronized <T extends OffsettedItem> T intern(T item) {
+    public synchronized <T extends com.duy.dx.dex.file.OffsettedItem> T intern(T item) {
         throwIfPrepared();
 
-        OffsettedItem result = interns.get(item);
+        com.duy.dx.dex.file.OffsettedItem result = interns.get(item);
 
         if (result != null) {
             return (T) result;
@@ -209,10 +210,10 @@ public final class MixedItemSection extends Section {
      * @param item {@code non-null;} the item to look for
      * @return {@code non-null;} the equivalent already-interned instance
      */
-    public <T extends OffsettedItem> T get(T item) {
+    public <T extends com.duy.dx.dex.file.OffsettedItem> T get(T item) {
         throwIfNotPrepared();
 
-        OffsettedItem result = interns.get(item);
+        com.duy.dx.dex.file.OffsettedItem result = interns.get(item);
 
         if (result != null) {
             return (T) result;
@@ -234,10 +235,10 @@ public final class MixedItemSection extends Section {
             String intro) {
         throwIfNotPrepared();
 
-        TreeMap<String, OffsettedItem> index =
-            new TreeMap<String, OffsettedItem>();
+        TreeMap<String, com.duy.dx.dex.file.OffsettedItem> index =
+            new TreeMap<String, com.duy.dx.dex.file.OffsettedItem>();
 
-        for (OffsettedItem item : items) {
+        for (com.duy.dx.dex.file.OffsettedItem item : items) {
             if (item.itemType() == itemType) {
                 String label = item.toHuman();
                 index.put(label, item);
@@ -250,9 +251,9 @@ public final class MixedItemSection extends Section {
 
         out.annotate(0, intro);
 
-        for (Map.Entry<String, OffsettedItem> entry : index.entrySet()) {
+        for (Map.Entry<String, com.duy.dx.dex.file.OffsettedItem> entry : index.entrySet()) {
             String label = entry.getKey();
-            OffsettedItem item = entry.getValue();
+            com.duy.dx.dex.file.OffsettedItem item = entry.getValue();
             out.annotate(0, item.offsetString() + ' ' + label + '\n');
         }
     }
@@ -260,7 +261,7 @@ public final class MixedItemSection extends Section {
     /** {@inheritDoc} */
     @Override
     protected void prepare0() {
-        DexFile file = getFile();
+        com.duy.dx.dex.file.DexFile file = getFile();
 
         /*
          * It's okay for new items to be added as a result of an
@@ -275,7 +276,7 @@ public final class MixedItemSection extends Section {
             }
 
             for (/*i*/; i < sz; i++) {
-                OffsettedItem one = items.get(i);
+                com.duy.dx.dex.file.OffsettedItem one = items.get(i);
                 one.addContents(file);
             }
         }
@@ -283,7 +284,7 @@ public final class MixedItemSection extends Section {
 
     /**
      * Places all the items in this instance at particular offsets. This
-     * will call {@link OffsettedItem#place} on each item. If an item
+     * will call {@link com.duy.dx.dex.file.OffsettedItem#place} on each item. If an item
      * does not know its write size before the call to {@code place},
      * it is that call which is responsible for setting the write size.
      * This method may only be called once per instance; subsequent calls
@@ -306,7 +307,7 @@ public final class MixedItemSection extends Section {
         int sz = items.size();
         int outAt = 0;
         for (int i = 0; i < sz; i++) {
-            OffsettedItem one = items.get(i);
+            com.duy.dx.dex.file.OffsettedItem one = items.get(i);
             try {
                 int placedAt = one.place(this, outAt);
 

@@ -14,40 +14,42 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .cf.iface.MethodList;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.code.BasicBlock;
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.InsnList;
-import com.duy.dx .rop.code.PlainCstInsn;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.code.ThrowingCstInsn;
-import com.duy.dx .rop.code.ThrowingInsn;
-import com.duy.dx .rop.code.TranslationAdvice;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Prototype;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.Bits;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
+import com.duy.dx.cf.iface.MethodList;
 
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.duy.dx.dex.DexOptions;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.code.BasicBlock;
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.InsnList;
+import com.duy.dx.rop.code.PlainCstInsn;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.code.ThrowingCstInsn;
+import com.duy.dx.rop.code.ThrowingInsn;
+import com.duy.dx.rop.code.TranslationAdvice;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Prototype;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.Bits;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
 
 /**
  * Utility that converts a basic block list into a list of register-oriented
@@ -100,7 +102,7 @@ public final class Ropper {
     private final RopperMachine machine;
 
     /** {@code non-null;} simulator to use */
-    private final Simulator sim;
+    private final com.duy.dx.cf.code.Simulator sim;
 
     /**
      * {@code non-null;} sparse array mapping block labels to initial frame
@@ -109,14 +111,14 @@ public final class Ropper {
     private final Frame[] startFrames;
 
     /** {@code non-null;} output block list in-progress */
-    private final ArrayList<BasicBlock> result;
+    private final ArrayList<com.duy.dx.rop.code.BasicBlock> result;
 
     /**
      * {@code non-null;} list of subroutine-nest labels
      * (See {@link Frame#getSubroutines} associated with each result block.
      * Parallel to {@link Ropper#result}.
      */
-    private final ArrayList<IntList> resultSubroutines;
+    private final ArrayList<com.duy.dx.util.IntList> resultSubroutines;
 
     /**
      * {@code non-null;} for each block (by label) that is used as an exception
@@ -148,8 +150,8 @@ public final class Ropper {
     private class CatchInfo {
         /**
          * {@code non-null;} map of ExceptionHandlerSetup by the type they handle */
-        private final Map<Type, ExceptionHandlerSetup> setups =
-                new HashMap<Type, ExceptionHandlerSetup>();
+        private final Map<com.duy.dx.rop.type.Type, ExceptionHandlerSetup> setups =
+                new HashMap<com.duy.dx.rop.type.Type, ExceptionHandlerSetup>();
 
         /**
          * Get the {@link ExceptionHandlerSetup} corresponding to the given type. The
@@ -158,7 +160,7 @@ public final class Ropper {
          * @param caughtType {@code non-null;}  the type catch by the requested setup
          * @return {@code non-null;} the handler setup block info for the given type
          */
-        ExceptionHandlerSetup getSetup(Type caughtType) {
+        ExceptionHandlerSetup getSetup(com.duy.dx.rop.type.Type caughtType) {
             ExceptionHandlerSetup handler = setups.get(caughtType);
             if (handler == null) {
                 int handlerSetupLabel = exceptionSetupLabelAllocator.getNextLabel();
@@ -184,7 +186,7 @@ public final class Ropper {
     private static class ExceptionHandlerSetup {
         /**
          * {@code non-null;} The caught type. */
-        private Type caughtType;
+        private com.duy.dx.rop.type.Type caughtType;
         /**
          * {@code >= 0;} The label of the exception setup block. */
         private int label;
@@ -195,7 +197,7 @@ public final class Ropper {
          * @param caughtType {@code non-null;} the caught type
          * @param label {@code >= 0;} the label
          */
-        ExceptionHandlerSetup(Type caughtType, int label) {
+        ExceptionHandlerSetup(com.duy.dx.rop.type.Type caughtType, int label) {
             this.caughtType = caughtType;
             this.label = label;
         }
@@ -203,7 +205,7 @@ public final class Ropper {
         /**
          * @return {@code non-null;} the caught type
          */
-        Type getCaughtType() {
+        com.duy.dx.rop.type.Type getCaughtType() {
             return caughtType;
         }
 
@@ -287,8 +289,8 @@ public final class Ropper {
          * @return all currently known successors
          * (return destinations) for that subroutine
          */
-        IntList getSuccessors() {
-            IntList successors = new IntList(callerBlocks.size());
+        com.duy.dx.util.IntList getSuccessors() {
+            com.duy.dx.util.IntList successors = new com.duy.dx.util.IntList(callerBlocks.size());
 
             /*
              * For each subroutine caller, get it's target. If the
@@ -298,7 +300,7 @@ public final class Ropper {
 
             for (int label = callerBlocks.nextSetBit(0); label >= 0;
                  label = callerBlocks.nextSetBit(label+1)) {
-                BasicBlock subCaller = labelToBlock(label);
+                com.duy.dx.rop.code.BasicBlock subCaller = labelToBlock(label);
                 successors.add(subCaller.getSuccessors().get(0));
             }
 
@@ -318,7 +320,7 @@ public final class Ropper {
         void mergeToSuccessors(Frame frame, int[] workSet) {
             for (int label = callerBlocks.nextSetBit(0); label >= 0;
                  label = callerBlocks.nextSetBit(label+1)) {
-                BasicBlock subCaller = labelToBlock(label);
+                com.duy.dx.rop.code.BasicBlock subCaller = labelToBlock(label);
                 int succLabel = subCaller.getSuccessors().get(0);
 
                 Frame subFrame = frame.subFrameForLabel(startBlock, label);
@@ -327,14 +329,14 @@ public final class Ropper {
                     mergeAndWorkAsNecessary(succLabel, -1, null,
                             subFrame, workSet);
                 } else {
-                    Bits.set(workSet, label);
+                    com.duy.dx.util.Bits.set(workSet, label);
                 }
             }
         }
     }
 
     /**
-     * Converts a {@link ConcreteMethod} to a {@link RopMethod}.
+     * Converts a {@link ConcreteMethod} to a {@link com.duy.dx.rop.code.RopMethod}.
      *
      * @param method {@code non-null;} method to convert
      * @param advice {@code non-null;} translation advice to use
@@ -342,10 +344,10 @@ public final class Ropper {
      *     that defines {@code method}.
      * @return {@code non-null;} the converted instance
      */
-    public static RopMethod convert(ConcreteMethod method,
-            TranslationAdvice advice, MethodList methods) {
+    public static com.duy.dx.rop.code.RopMethod convert(ConcreteMethod method,
+                                                                 com.duy.dx.rop.code.TranslationAdvice advice, MethodList methods, com.duy.dx.dex.DexOptions dexOptions) {
         try {
-            Ropper r = new Ropper(method, advice, methods);
+            Ropper r = new Ropper(method, advice, methods, dexOptions);
             r.doit();
             return r.getRopMethod();
         } catch (SimException ex) {
@@ -363,8 +365,10 @@ public final class Ropper {
      * @param advice {@code non-null;} translation advice to use
      * @param methods {@code non-null;} list of methods defined by the class
      *     that defines {@code method}.
+     * @param dexOptions {@code non-null;} options for dex output
      */
-    private Ropper(ConcreteMethod method, TranslationAdvice advice, MethodList methods) {
+    private Ropper(ConcreteMethod method, TranslationAdvice advice, MethodList methods,
+                   DexOptions dexOptions) {
         if (method == null) {
             throw new NullPointerException("method == null");
         }
@@ -378,7 +382,7 @@ public final class Ropper {
         this.maxLabel = blocks.getMaxLabel();
         this.maxLocals = method.getMaxLocals();
         this.machine = new RopperMachine(this, method, advice, methods);
-        this.sim = new Simulator(machine, method);
+        this.sim = new Simulator(machine, method, dexOptions);
         this.startFrames = new Frame[maxLabel];
         this.subroutines = new Subroutine[maxLabel];
 
@@ -388,9 +392,9 @@ public final class Ropper {
          * take care of enough other possible extra overhead such that
          * the underlying array is unlikely to need resizing.
          */
-        this.result = new ArrayList<BasicBlock>(blocks.size() * 2 + 10);
+        this.result = new ArrayList<com.duy.dx.rop.code.BasicBlock>(blocks.size() * 2 + 10);
         this.resultSubroutines =
-            new ArrayList<IntList>(blocks.size() * 2 + 10);
+            new ArrayList<com.duy.dx.util.IntList>(blocks.size() * 2 + 10);
 
         this.catchInfos = new CatchInfo[maxLabel];
         this.synchNeedsExceptionHandler = false;
@@ -478,7 +482,7 @@ public final class Ropper {
     private int getAvailableLabel() {
         int candidate = getMinimumUnreservedLabel();
 
-        for (BasicBlock bb : result) {
+        for (com.duy.dx.rop.code.BasicBlock bb : result) {
             int label = bb.getLabel();
             if (label >= candidate) {
                 candidate = label + 1;
@@ -495,7 +499,7 @@ public final class Ropper {
      */
     private boolean isSynchronized() {
         int accessFlags = method.getAccessFlags();
-        return (accessFlags & AccessFlags.ACC_SYNCHRONIZED) != 0;
+        return (accessFlags & com.duy.dx.rop.code.AccessFlags.ACC_SYNCHRONIZED) != 0;
     }
 
     /**
@@ -524,7 +528,7 @@ public final class Ropper {
      *
      * @return {@code non-null;} the register spec
      */
-    private RegisterSpec getSynchReg() {
+    private com.duy.dx.rop.code.RegisterSpec getSynchReg() {
         /*
          * We use the register that is just past the deepest possible
          * stack element, with a minimum of v1 since v0 is what's
@@ -534,7 +538,7 @@ public final class Ropper {
          * by explicit inspection.
          */
         int reg = getNormalRegCount();
-        return RegisterSpec.make((reg < 1) ? 1 : reg, Type.OBJECT);
+        return com.duy.dx.rop.code.RegisterSpec.make((reg < 1) ? 1 : reg, com.duy.dx.rop.type.Type.OBJECT);
     }
 
     /**
@@ -548,7 +552,7 @@ public final class Ropper {
     private int labelToResultIndex(int label) {
         int sz = result.size();
         for (int i = 0; i < sz; i++) {
-            BasicBlock one = result.get(i);
+            com.duy.dx.rop.code.BasicBlock one = result.get(i);
             if (one.getLabel() == label) {
                 return i;
             }
@@ -564,12 +568,12 @@ public final class Ropper {
      * @param label the label to look for
      * @return {@code non-null;} the block with the given label
      */
-    private BasicBlock labelToBlock(int label) {
+    private com.duy.dx.rop.code.BasicBlock labelToBlock(int label) {
         int idx = labelToResultIndex(label);
 
         if (idx < 0) {
             throw new IllegalArgumentException("no such label " +
-                    Hex.u2(label));
+                    com.duy.dx.util.Hex.u2(label));
         }
 
         return result.get(idx);
@@ -582,7 +586,7 @@ public final class Ropper {
      * @param subroutines {@code non-null;} subroutine label list
      * as described in {@link Frame#getSubroutines}
      */
-    private void addBlock(BasicBlock block, IntList subroutines) {
+    private void addBlock(com.duy.dx.rop.code.BasicBlock block, com.duy.dx.util.IntList subroutines) {
         if (block == null) {
             throw new NullPointerException("block == null");
         }
@@ -603,7 +607,7 @@ public final class Ropper {
      * @return {@code true} if the block was replaced or
      * {@code false} if it was added for the first time
      */
-    private boolean addOrReplaceBlock(BasicBlock block, IntList subroutines) {
+    private boolean addOrReplaceBlock(com.duy.dx.rop.code.BasicBlock block, com.duy.dx.util.IntList subroutines) {
         if (block == null) {
             throw new NullPointerException("block == null");
         }
@@ -641,8 +645,8 @@ public final class Ropper {
      * @return {@code true} if the block was replaced or
      * {@code false} if it was added for the first time
      */
-    private boolean addOrReplaceBlockNoDelete(BasicBlock block,
-            IntList subroutines) {
+    private boolean addOrReplaceBlockNoDelete(com.duy.dx.rop.code.BasicBlock block,
+                                              com.duy.dx.util.IntList subroutines) {
         if (block == null) {
             throw new NullPointerException("block == null");
         }
@@ -674,8 +678,8 @@ public final class Ropper {
      */
     private void removeBlockAndSpecialSuccessors(int idx) {
         int minLabel = getMinimumUnreservedLabel();
-        BasicBlock block = result.get(idx);
-        IntList successors = block.getSuccessors();
+        com.duy.dx.rop.code.BasicBlock block = result.get(idx);
+        com.duy.dx.util.IntList successors = block.getSuccessors();
         int sz = successors.size();
 
         result.remove(idx);
@@ -687,7 +691,7 @@ public final class Ropper {
                 idx = labelToResultIndex(label);
                 if (idx < 0) {
                     throw new RuntimeException("Invalid label "
-                            + Hex.u2(label));
+                            + com.duy.dx.util.Hex.u2(label));
                 }
                 removeBlockAndSpecialSuccessors(idx);
             }
@@ -695,16 +699,16 @@ public final class Ropper {
     }
 
     /**
-     * Extracts the resulting {@link RopMethod} from the instance.
+     * Extracts the resulting {@link com.duy.dx.rop.code.RopMethod} from the instance.
      *
      * @return {@code non-null;} the method object
      */
-    private RopMethod getRopMethod() {
+    private com.duy.dx.rop.code.RopMethod getRopMethod() {
 
         // Construct the final list of blocks.
 
         int sz = result.size();
-        BasicBlockList bbl = new BasicBlockList(sz);
+        com.duy.dx.rop.code.BasicBlockList bbl = new BasicBlockList(sz);
         for (int i = 0; i < sz; i++) {
             bbl.set(i, result.get(i));
         }
@@ -724,24 +728,24 @@ public final class Ropper {
      * Does the conversion.
      */
     private void doit() {
-        int[] workSet = Bits.makeBitSet(maxLabel);
+        int[] workSet = com.duy.dx.util.Bits.makeBitSet(maxLabel);
 
-        Bits.set(workSet, 0);
+        com.duy.dx.util.Bits.set(workSet, 0);
         addSetupBlocks();
         setFirstFrame();
 
         for (;;) {
-            int offset = Bits.findFirst(workSet, 0);
+            int offset = com.duy.dx.util.Bits.findFirst(workSet, 0);
             if (offset < 0) {
                 break;
             }
-            Bits.clear(workSet, offset);
+            com.duy.dx.util.Bits.clear(workSet, offset);
             ByteBlock block = blocks.labelToBlock(offset);
             Frame frame = startFrames[offset];
             try {
                 processBlock(block, frame, workSet);
             } catch (SimException ex) {
-                ex.addContext("...while working on block " + Hex.u2(offset));
+                ex.addContext("...while working on block " + com.duy.dx.util.Hex.u2(offset));
                 throw ex;
             }
         }
@@ -761,7 +765,7 @@ public final class Ropper {
      * locals.
      */
     private void setFirstFrame() {
-        Prototype desc = method.getEffectiveDescriptor();
+        com.duy.dx.rop.type.Prototype desc = method.getEffectiveDescriptor();
         startFrames[0].initializeWithParameters(desc.getParameterTypes());
         startFrames[0].setImmutable();
     }
@@ -776,7 +780,7 @@ public final class Ropper {
      */
     private void processBlock(ByteBlock block, Frame frame, int[] workSet) {
         // Prepare the list of caught exceptions for this block.
-        ByteCatchList catches = block.getCatches();
+        com.duy.dx.cf.code.ByteCatchList catches = block.getCatches();
         machine.startBlock(catches.toRopCatchList());
 
         /*
@@ -788,7 +792,7 @@ public final class Ropper {
         frame.setImmutable();
 
         int extraBlockCount = machine.getExtraBlockCount();
-        ArrayList<Insn> insns = machine.getInsns();
+        ArrayList<com.duy.dx.rop.code.Insn> insns = machine.getInsns();
         int insnSz = insns.size();
 
         /*
@@ -797,7 +801,7 @@ public final class Ropper {
          */
 
         int catchSz = catches.size();
-        IntList successors = block.getSuccessors();
+        com.duy.dx.util.IntList successors = block.getSuccessors();
 
         int startSuccessorIndex;
 
@@ -860,7 +864,7 @@ public final class Ropper {
                 mergeAndWorkAsNecessary(succ, block.getLabel(),
                         calledSubroutine, frame, workSet);
             } catch (SimException ex) {
-                ex.addContext("...while merging to block " + Hex.u2(succ));
+                ex.addContext("...while merging to block " + com.duy.dx.util.Hex.u2(succ));
                 throw ex;
             }
         }
@@ -875,7 +879,7 @@ public final class Ropper {
              * actually exist; it gets synthesized at the end of
              * processing the original blocks.
              */
-            successors = IntList.makeImmutable(getSpecialLabel(RETURN));
+            successors = com.duy.dx.util.IntList.makeImmutable(getSpecialLabel(RETURN));
             succSz = 1;
         }
 
@@ -905,10 +909,10 @@ public final class Ropper {
              * at the very end of processing).
              */
             boolean catchesAny = false;
-            IntList newSucc = new IntList(succSz);
+            com.duy.dx.util.IntList newSucc = new com.duy.dx.util.IntList(succSz);
             for (int i = 0; i < catchSz; i++) {
                 ByteCatchList.Item one = catches.get(i);
-                CstType exceptionClass = one.getExceptionClass();
+                com.duy.dx.rop.cst.CstType exceptionClass = one.getExceptionClass();
                 int targ = one.getHandlerPc();
 
                 catchesAny |= (exceptionClass == CstType.OBJECT);
@@ -920,7 +924,7 @@ public final class Ropper {
                             null, f, workSet);
                 } catch (SimException ex) {
                     ex.addContext("...while merging exception to block " +
-                                  Hex.u2(targ));
+                                  com.duy.dx.util.Hex.u2(targ));
                     throw ex;
                 }
 
@@ -952,9 +956,9 @@ public final class Ropper {
                 synchNeedsExceptionHandler = true;
 
                 for (int i = insnSz - extraBlockCount - 1; i < insnSz; i++) {
-                    Insn insn = insns.get(i);
+                    com.duy.dx.rop.code.Insn insn = insns.get(i);
                     if (insn.canThrow()) {
-                        insn = insn.withAddedCatch(Type.OBJECT);
+                        insn = insn.withAddedCatch(com.duy.dx.rop.type.Type.OBJECT);
                         insns.set(i, insn);
                     }
                 }
@@ -982,29 +986,29 @@ public final class Ropper {
              * Some of the blocks that the RopperMachine wants added
              * are for move-result insns, and these need goto insns as well.
              */
-            Insn extraInsn = insns.get(--insnSz);
+            com.duy.dx.rop.code.Insn extraInsn = insns.get(--insnSz);
             boolean needsGoto
                     = extraInsn.getOpcode().getBranchingness()
-                        == Rop.BRANCH_NONE;
-            InsnList il = new InsnList(needsGoto ? 2 : 1);
-            IntList extraBlockSuccessors = successors;
+                        == com.duy.dx.rop.code.Rop.BRANCH_NONE;
+            com.duy.dx.rop.code.InsnList il = new com.duy.dx.rop.code.InsnList(needsGoto ? 2 : 1);
+            com.duy.dx.util.IntList extraBlockSuccessors = successors;
 
             il.set(0, extraInsn);
 
             if (needsGoto) {
-                il.set(1, new PlainInsn(Rops.GOTO,
+                il.set(1, new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.GOTO,
                         extraInsn.getPosition(), null,
-                        RegisterSpecList.EMPTY));
+                        com.duy.dx.rop.code.RegisterSpecList.EMPTY));
                 /*
                  * Obviously, this block won't be throwing an exception
                  * so it should only have one successor.
                  */
-                extraBlockSuccessors = IntList.makeImmutable(primarySucc);
+                extraBlockSuccessors = com.duy.dx.util.IntList.makeImmutable(primarySucc);
             }
             il.setImmutable();
 
             int label = getAvailableLabel();
-            BasicBlock bb = new BasicBlock(label, il, extraBlockSuccessors,
+            com.duy.dx.rop.code.BasicBlock bb = new com.duy.dx.rop.code.BasicBlock(label, il, extraBlockSuccessors,
                     primarySucc);
             // All of these extra blocks will be in the same subroutine
             addBlock(bb, frame.getSubroutines());
@@ -1015,7 +1019,7 @@ public final class Ropper {
             primarySucc = label;
         }
 
-        Insn lastInsn = (insnSz == 0) ? null : insns.get(insnSz - 1);
+        com.duy.dx.rop.code.Insn lastInsn = (insnSz == 0) ? null : insns.get(insnSz - 1);
 
         /*
          * Add a goto to the end of the block if it doesn't already
@@ -1026,11 +1030,11 @@ public final class Ropper {
          * in the original Java bytecode).
          */
         if ((lastInsn == null) ||
-            (lastInsn.getOpcode().getBranchingness() == Rop.BRANCH_NONE)) {
-            SourcePosition pos = (lastInsn == null) ? SourcePosition.NO_INFO :
+            (lastInsn.getOpcode().getBranchingness() == com.duy.dx.rop.code.Rop.BRANCH_NONE)) {
+            com.duy.dx.rop.code.SourcePosition pos = (lastInsn == null) ? com.duy.dx.rop.code.SourcePosition.NO_INFO :
                 lastInsn.getPosition();
-            insns.add(new PlainInsn(Rops.GOTO, pos, null,
-                                    RegisterSpecList.EMPTY));
+            insns.add(new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.GOTO, pos, null,
+                                    com.duy.dx.rop.code.RegisterSpecList.EMPTY));
             insnSz++;
         }
 
@@ -1039,14 +1043,14 @@ public final class Ropper {
          * the usual case is all of them).
          */
 
-        InsnList il = new InsnList(insnSz);
+        com.duy.dx.rop.code.InsnList il = new com.duy.dx.rop.code.InsnList(insnSz);
         for (int i = 0; i < insnSz; i++) {
             il.set(i, insns.get(i));
         }
         il.setImmutable();
 
-        BasicBlock bb =
-            new BasicBlock(block.getLabel(), il, successors, primarySucc);
+        com.duy.dx.rop.code.BasicBlock bb =
+            new com.duy.dx.rop.code.BasicBlock(block.getLabel(), il, successors, primarySucc);
         addOrReplaceBlock(bb, frame.getSubroutines());
     }
 
@@ -1083,7 +1087,7 @@ public final class Ropper {
             }
             if (merged != existing) {
                 startFrames[label] = merged;
-                Bits.set(workSet, label);
+                com.duy.dx.util.Bits.set(workSet, label);
             }
         } else {
             // This is the first time this label has been encountered.
@@ -1105,79 +1109,79 @@ public final class Ropper {
      */
     private void addSetupBlocks() {
         LocalVariableList localVariables = method.getLocalVariables();
-        SourcePosition pos = method.makeSourcePosistion(0);
+        com.duy.dx.rop.code.SourcePosition pos = method.makeSourcePosistion(0);
         Prototype desc = method.getEffectiveDescriptor();
-        StdTypeList params = desc.getParameterTypes();
+        com.duy.dx.rop.type.StdTypeList params = desc.getParameterTypes();
         int sz = params.size();
-        InsnList insns = new InsnList(sz + 1);
+        com.duy.dx.rop.code.InsnList insns = new com.duy.dx.rop.code.InsnList(sz + 1);
         int at = 0;
 
         for (int i = 0; i < sz; i++) {
-            Type one = params.get(i);
+            com.duy.dx.rop.type.Type one = params.get(i);
             LocalVariableList.Item local =
                 localVariables.pcAndIndexToLocal(0, at);
-            RegisterSpec result = (local == null) ?
-                RegisterSpec.make(at, one) :
-                RegisterSpec.makeLocalOptional(at, one, local.getLocalItem());
+            com.duy.dx.rop.code.RegisterSpec result = (local == null) ?
+                com.duy.dx.rop.code.RegisterSpec.make(at, one) :
+                com.duy.dx.rop.code.RegisterSpec.makeLocalOptional(at, one, local.getLocalItem());
 
-            Insn insn = new PlainCstInsn(Rops.opMoveParam(one), pos, result,
-                                         RegisterSpecList.EMPTY,
-                                         CstInteger.make(at));
+            com.duy.dx.rop.code.Insn insn = new com.duy.dx.rop.code.PlainCstInsn(com.duy.dx.rop.code.Rops.opMoveParam(one), pos, result,
+                                         com.duy.dx.rop.code.RegisterSpecList.EMPTY,
+                                         com.duy.dx.rop.cst.CstInteger.make(at));
             insns.set(i, insn);
             at += one.getCategory();
         }
 
-        insns.set(sz, new PlainInsn(Rops.GOTO, pos, null,
-                                    RegisterSpecList.EMPTY));
+        insns.set(sz, new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.GOTO, pos, null,
+                                    com.duy.dx.rop.code.RegisterSpecList.EMPTY));
         insns.setImmutable();
 
         boolean synch = isSynchronized();
         int label = synch ? getSpecialLabel(SYNCH_SETUP_1) : 0;
-        BasicBlock bb =
-            new BasicBlock(getSpecialLabel(PARAM_ASSIGNMENT), insns,
-                           IntList.makeImmutable(label), label);
-        addBlock(bb, IntList.EMPTY);
+        com.duy.dx.rop.code.BasicBlock bb =
+            new com.duy.dx.rop.code.BasicBlock(getSpecialLabel(PARAM_ASSIGNMENT), insns,
+                           com.duy.dx.util.IntList.makeImmutable(label), label);
+        addBlock(bb, com.duy.dx.util.IntList.EMPTY);
 
         if (synch) {
-            RegisterSpec synchReg = getSynchReg();
-            Insn insn;
+            com.duy.dx.rop.code.RegisterSpec synchReg = getSynchReg();
+            com.duy.dx.rop.code.Insn insn;
             if (isStatic()) {
-                insn = new ThrowingCstInsn(Rops.CONST_OBJECT, pos,
-                                           RegisterSpecList.EMPTY,
-                                           StdTypeList.EMPTY,
+                insn = new ThrowingCstInsn(com.duy.dx.rop.code.Rops.CONST_OBJECT, pos,
+                                           com.duy.dx.rop.code.RegisterSpecList.EMPTY,
+                                           com.duy.dx.rop.type.StdTypeList.EMPTY,
                                            method.getDefiningClass());
-                insns = new InsnList(1);
+                insns = new com.duy.dx.rop.code.InsnList(1);
                 insns.set(0, insn);
             } else {
-                insns = new InsnList(2);
-                insn = new PlainCstInsn(Rops.MOVE_PARAM_OBJECT, pos,
-                                        synchReg, RegisterSpecList.EMPTY,
+                insns = new com.duy.dx.rop.code.InsnList(2);
+                insn = new PlainCstInsn(com.duy.dx.rop.code.Rops.MOVE_PARAM_OBJECT, pos,
+                                        synchReg, com.duy.dx.rop.code.RegisterSpecList.EMPTY,
                                         CstInteger.VALUE_0);
                 insns.set(0, insn);
-                insns.set(1, new PlainInsn(Rops.GOTO, pos, null,
-                                           RegisterSpecList.EMPTY));
+                insns.set(1, new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.GOTO, pos, null,
+                                           com.duy.dx.rop.code.RegisterSpecList.EMPTY));
             }
 
             int label2 = getSpecialLabel(SYNCH_SETUP_2);
             insns.setImmutable();
-            bb = new BasicBlock(label, insns,
-                                IntList.makeImmutable(label2), label2);
-            addBlock(bb, IntList.EMPTY);
+            bb = new com.duy.dx.rop.code.BasicBlock(label, insns,
+                                com.duy.dx.util.IntList.makeImmutable(label2), label2);
+            addBlock(bb, com.duy.dx.util.IntList.EMPTY);
 
-            insns = new InsnList(isStatic() ? 2 : 1);
+            insns = new com.duy.dx.rop.code.InsnList(isStatic() ? 2 : 1);
 
             if (isStatic()) {
-                insns.set(0, new PlainInsn(Rops.opMoveResultPseudo(synchReg),
-                        pos, synchReg, RegisterSpecList.EMPTY));
+                insns.set(0, new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMoveResultPseudo(synchReg),
+                        pos, synchReg, com.duy.dx.rop.code.RegisterSpecList.EMPTY));
             }
 
-            insn = new ThrowingInsn(Rops.MONITOR_ENTER, pos,
-                                    RegisterSpecList.make(synchReg),
-                                    StdTypeList.EMPTY);
+            insn = new com.duy.dx.rop.code.ThrowingInsn(com.duy.dx.rop.code.Rops.MONITOR_ENTER, pos,
+                                    com.duy.dx.rop.code.RegisterSpecList.make(synchReg),
+                                    com.duy.dx.rop.type.StdTypeList.EMPTY);
             insns.set(isStatic() ? 1 :0, insn);
             insns.setImmutable();
-            bb = new BasicBlock(label2, insns, IntList.makeImmutable(0), 0);
-            addBlock(bb, IntList.EMPTY);
+            bb = new com.duy.dx.rop.code.BasicBlock(label2, insns, com.duy.dx.util.IntList.makeImmutable(0), 0);
+            addBlock(bb, com.duy.dx.util.IntList.EMPTY);
         }
     }
 
@@ -1197,43 +1201,43 @@ public final class Ropper {
             return;
         }
 
-        SourcePosition returnPos = machine.getReturnPosition();
+        com.duy.dx.rop.code.SourcePosition returnPos = machine.getReturnPosition();
         int label = getSpecialLabel(RETURN);
 
         if (isSynchronized()) {
-            InsnList insns = new InsnList(1);
-            Insn insn = new ThrowingInsn(Rops.MONITOR_EXIT, returnPos,
-                                         RegisterSpecList.make(getSynchReg()),
-                                         StdTypeList.EMPTY);
+            com.duy.dx.rop.code.InsnList insns = new com.duy.dx.rop.code.InsnList(1);
+            com.duy.dx.rop.code.Insn insn = new com.duy.dx.rop.code.ThrowingInsn(com.duy.dx.rop.code.Rops.MONITOR_EXIT, returnPos,
+                                         com.duy.dx.rop.code.RegisterSpecList.make(getSynchReg()),
+                                         com.duy.dx.rop.type.StdTypeList.EMPTY);
             insns.set(0, insn);
             insns.setImmutable();
 
             int nextLabel = getSpecialLabel(SYNCH_RETURN);
-            BasicBlock bb =
-                new BasicBlock(label, insns,
-                               IntList.makeImmutable(nextLabel), nextLabel);
-            addBlock(bb, IntList.EMPTY);
+            com.duy.dx.rop.code.BasicBlock bb =
+                new com.duy.dx.rop.code.BasicBlock(label, insns,
+                               com.duy.dx.util.IntList.makeImmutable(nextLabel), nextLabel);
+            addBlock(bb, com.duy.dx.util.IntList.EMPTY);
 
             label = nextLabel;
         }
 
-        InsnList insns = new InsnList(1);
+        com.duy.dx.rop.code.InsnList insns = new com.duy.dx.rop.code.InsnList(1);
         TypeList sourceTypes = returnOp.getSources();
-        RegisterSpecList sources;
+        com.duy.dx.rop.code.RegisterSpecList sources;
 
         if (sourceTypes.size() == 0) {
-            sources = RegisterSpecList.EMPTY;
+            sources = com.duy.dx.rop.code.RegisterSpecList.EMPTY;
         } else {
-            RegisterSpec source = RegisterSpec.make(0, sourceTypes.getType(0));
-            sources = RegisterSpecList.make(source);
+            com.duy.dx.rop.code.RegisterSpec source = com.duy.dx.rop.code.RegisterSpec.make(0, sourceTypes.getType(0));
+            sources = com.duy.dx.rop.code.RegisterSpecList.make(source);
         }
 
-        Insn insn = new PlainInsn(returnOp, returnPos, null, sources);
+        com.duy.dx.rop.code.Insn insn = new com.duy.dx.rop.code.PlainInsn(returnOp, returnPos, null, sources);
         insns.set(0, insn);
         insns.setImmutable();
 
-        BasicBlock bb = new BasicBlock(label, insns, IntList.EMPTY, -1);
-        addBlock(bb, IntList.EMPTY);
+        com.duy.dx.rop.code.BasicBlock bb = new com.duy.dx.rop.code.BasicBlock(label, insns, com.duy.dx.util.IntList.EMPTY, -1);
+        addBlock(bb, com.duy.dx.util.IntList.EMPTY);
     }
 
     /**
@@ -1252,35 +1256,35 @@ public final class Ropper {
             return;
         }
 
-        SourcePosition pos = method.makeSourcePosistion(0);
-        RegisterSpec exReg = RegisterSpec.make(0, Type.THROWABLE);
-        BasicBlock bb;
-        Insn insn;
+        com.duy.dx.rop.code.SourcePosition pos = method.makeSourcePosistion(0);
+        com.duy.dx.rop.code.RegisterSpec exReg = com.duy.dx.rop.code.RegisterSpec.make(0, com.duy.dx.rop.type.Type.THROWABLE);
+        com.duy.dx.rop.code.BasicBlock bb;
+        com.duy.dx.rop.code.Insn insn;
 
-        InsnList insns = new InsnList(2);
-        insn = new PlainInsn(Rops.opMoveException(Type.THROWABLE), pos,
-                             exReg, RegisterSpecList.EMPTY);
+        com.duy.dx.rop.code.InsnList insns = new com.duy.dx.rop.code.InsnList(2);
+        insn = new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMoveException(Type.THROWABLE), pos,
+                             exReg, com.duy.dx.rop.code.RegisterSpecList.EMPTY);
         insns.set(0, insn);
-        insn = new ThrowingInsn(Rops.MONITOR_EXIT, pos,
-                                RegisterSpecList.make(getSynchReg()),
-                                StdTypeList.EMPTY);
+        insn = new com.duy.dx.rop.code.ThrowingInsn(com.duy.dx.rop.code.Rops.MONITOR_EXIT, pos,
+                                com.duy.dx.rop.code.RegisterSpecList.make(getSynchReg()),
+                                com.duy.dx.rop.type.StdTypeList.EMPTY);
         insns.set(1, insn);
         insns.setImmutable();
 
         int label2 = getSpecialLabel(SYNCH_CATCH_2);
-        bb = new BasicBlock(getSpecialLabel(SYNCH_CATCH_1), insns,
-                            IntList.makeImmutable(label2), label2);
-        addBlock(bb, IntList.EMPTY);
+        bb = new com.duy.dx.rop.code.BasicBlock(getSpecialLabel(SYNCH_CATCH_1), insns,
+                            com.duy.dx.util.IntList.makeImmutable(label2), label2);
+        addBlock(bb, com.duy.dx.util.IntList.EMPTY);
 
-        insns = new InsnList(1);
-        insn = new ThrowingInsn(Rops.THROW, pos,
-                                RegisterSpecList.make(exReg),
+        insns = new com.duy.dx.rop.code.InsnList(1);
+        insn = new ThrowingInsn(com.duy.dx.rop.code.Rops.THROW, pos,
+                                com.duy.dx.rop.code.RegisterSpecList.make(exReg),
                                 StdTypeList.EMPTY);
         insns.set(0, insn);
         insns.setImmutable();
 
-        bb = new BasicBlock(label2, insns, IntList.EMPTY, -1);
-        addBlock(bb, IntList.EMPTY);
+        bb = new com.duy.dx.rop.code.BasicBlock(label2, insns, com.duy.dx.util.IntList.EMPTY, -1);
+        addBlock(bb, com.duy.dx.util.IntList.EMPTY);
     }
 
     /**
@@ -1296,24 +1300,24 @@ public final class Ropper {
             CatchInfo catches = catchInfos[i];
             if (catches != null) {
                 for (ExceptionHandlerSetup one : catches.getSetups()) {
-                    Insn proto = labelToBlock(i).getFirstInsn();
+                    com.duy.dx.rop.code.Insn proto = labelToBlock(i).getFirstInsn();
                     SourcePosition pos = proto.getPosition();
-                    InsnList il = new InsnList(2);
+                    com.duy.dx.rop.code.InsnList il = new com.duy.dx.rop.code.InsnList(2);
 
-                    Insn insn = new PlainInsn(Rops.opMoveException(one.getCaughtType()),
+                    com.duy.dx.rop.code.Insn insn = new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMoveException(one.getCaughtType()),
                             pos,
                             RegisterSpec.make(maxLocals, one.getCaughtType()),
-                            RegisterSpecList.EMPTY);
+                            com.duy.dx.rop.code.RegisterSpecList.EMPTY);
                     il.set(0, insn);
 
-                    insn = new PlainInsn(Rops.GOTO, pos, null,
+                    insn = new PlainInsn(com.duy.dx.rop.code.Rops.GOTO, pos, null,
                             RegisterSpecList.EMPTY);
                     il.set(1, insn);
                     il.setImmutable();
 
-                    BasicBlock bb = new BasicBlock(one.getLabel(),
+                    com.duy.dx.rop.code.BasicBlock bb = new com.duy.dx.rop.code.BasicBlock(one.getLabel(),
                             il,
-                            IntList.makeImmutable(i),
+                            com.duy.dx.util.IntList.makeImmutable(i),
                             i);
                     addBlock(bb, startFrames[i].getSubroutines());
                 }
@@ -1327,8 +1331,8 @@ public final class Ropper {
      * @param bb {@code non-null;} the basic block in question
      * @return true if this block calls a subroutine
      */
-    private boolean isSubroutineCaller(BasicBlock bb) {
-        IntList successors = bb.getSuccessors();
+    private boolean isSubroutineCaller(com.duy.dx.rop.code.BasicBlock bb) {
+        com.duy.dx.util.IntList successors = bb.getSuccessors();
         if (successors.size() < 2) return false;
 
         int subLabel = successors.get(1);
@@ -1341,7 +1345,7 @@ public final class Ropper {
      * Inlines any subroutine calls.
      */
     private void inlineSubroutines() {
-        final IntList reachableSubroutineCallerLabels = new IntList(4);
+        final com.duy.dx.util.IntList reachableSubroutineCallerLabels = new com.duy.dx.util.IntList(4);
 
         /*
          * Compile a list of all subroutine calls reachable
@@ -1350,8 +1354,9 @@ public final class Ropper {
          *
          * Start at label 0 --  the param assignment block has nothing for us
          */
-        forEachNonSubBlockDepthFirst(0, new BasicBlock.Visitor() {
-            public void visitBlock(BasicBlock b) {
+        forEachNonSubBlockDepthFirst(0, new com.duy.dx.rop.code.BasicBlock.Visitor() {
+            @Override
+            public void visitBlock(com.duy.dx.rop.code.BasicBlock b) {
                 if (isSubroutineCaller(b)) {
                     reachableSubroutineCallerLabels.add(b.getLabel());
                 }
@@ -1363,18 +1368,18 @@ public final class Ropper {
          * to a label-to-subroutines mapping used by the inliner.
          */
         int largestAllocedLabel = getAvailableLabel();
-        ArrayList<IntList> labelToSubroutines
-                = new ArrayList<IntList>(largestAllocedLabel);
+        ArrayList<com.duy.dx.util.IntList> labelToSubroutines
+                = new ArrayList<com.duy.dx.util.IntList>(largestAllocedLabel);
         for (int i = 0; i < largestAllocedLabel; i++) {
             labelToSubroutines.add(null);
         }
 
         for (int i = 0; i < result.size(); i++) {
-            BasicBlock b = result.get(i);
+            com.duy.dx.rop.code.BasicBlock b = result.get(i);
             if (b == null) {
                 continue;
             }
-            IntList subroutineList = resultSubroutines.get(i);
+            com.duy.dx.util.IntList subroutineList = resultSubroutines.get(i);
             labelToSubroutines.set(b.getLabel(), subroutineList);
         }
 
@@ -1400,15 +1405,16 @@ public final class Ropper {
      * original subroutine blocks after subroutine inlining.
      */
     private void deleteUnreachableBlocks() {
-        final IntList reachableLabels = new IntList(result.size());
+        final com.duy.dx.util.IntList reachableLabels = new com.duy.dx.util.IntList(result.size());
 
         // subroutine inlining is done now and we won't update this list here
         resultSubroutines.clear();
 
         forEachNonSubBlockDepthFirst(getSpecialLabel(PARAM_ASSIGNMENT),
-                new BasicBlock.Visitor() {
+                new com.duy.dx.rop.code.BasicBlock.Visitor() {
 
-            public void visitBlock(BasicBlock b) {
+            @Override
+            public void visitBlock(com.duy.dx.rop.code.BasicBlock b) {
                 reachableLabels.add(b.getLabel());
             }
         });
@@ -1494,10 +1500,10 @@ public final class Ropper {
          * The subroutine nest list is as returned by
          * {@link Frame#getSubroutines}.
          */
-        private final ArrayList<IntList> labelToSubroutines;
+        private final ArrayList<com.duy.dx.util.IntList> labelToSubroutines;
 
         SubroutineInliner(final LabelAllocator labelAllocator,
-                ArrayList<IntList> labelToSubroutines) {
+                ArrayList<com.duy.dx.util.IntList> labelToSubroutines) {
             origLabelToCopiedLabel = new HashMap<Integer, Integer>();
 
             workList = new BitSet(maxLabel);
@@ -1511,7 +1517,7 @@ public final class Ropper {
          *
          * @param b block where {@code jsr} occurred in the original bytecode
          */
-        void inlineSubroutineCalledFrom(final BasicBlock b) {
+        void inlineSubroutineCalledFrom(final com.duy.dx.rop.code.BasicBlock b) {
             /*
              * The 0th successor of a subroutine caller block is where
              * the subroutine should return to. The 1st successor is
@@ -1545,8 +1551,8 @@ public final class Ropper {
              */
 
             addOrReplaceBlockNoDelete(
-                new BasicBlock(b.getLabel(), b.getInsns(),
-                    IntList.makeImmutable (newSubStartLabel),
+                new com.duy.dx.rop.code.BasicBlock(b.getLabel(), b.getInsns(),
+                    com.duy.dx.util.IntList.makeImmutable (newSubStartLabel),
                             newSubStartLabel),
                 labelToSubroutines.get(b.getLabel()));
         }
@@ -1559,10 +1565,10 @@ public final class Ropper {
          */
         private void copyBlock(int origLabel, int newLabel) {
 
-            BasicBlock origBlock = labelToBlock(origLabel);
+            com.duy.dx.rop.code.BasicBlock origBlock = labelToBlock(origLabel);
 
-            final IntList origSuccessors = origBlock.getSuccessors();
-            IntList successors;
+            final com.duy.dx.util.IntList origSuccessors = origBlock.getSuccessors();
+            com.duy.dx.util.IntList successors;
             int primarySuccessor = -1;
             Subroutine subroutine;
 
@@ -1576,7 +1582,7 @@ public final class Ropper {
                  * label of the start of the inner subroutine.
                  */
 
-                successors = IntList.makeImmutable(
+                successors = com.duy.dx.util.IntList.makeImmutable(
                         mapOrAllocateLabel(origSuccessors.get(0)),
                         origSuccessors.get(1));
                 // primary successor will be set when this block is replaced
@@ -1587,15 +1593,15 @@ public final class Ropper {
                  * should be subroutineSuccessor
                  */
 
-                // Sanity check
+                // Check we have the expected subroutine.
                 if (subroutine.startBlock != subroutineStart) {
                     throw new RuntimeException (
                             "ret instruction returns to label "
-                            + Hex.u2 (subroutine.startBlock)
+                            + com.duy.dx.util.Hex.u2 (subroutine.startBlock)
                             + " expected: " + Hex.u2(subroutineStart));
                 }
 
-                successors = IntList.makeImmutable(subroutineSuccessor);
+                successors = com.duy.dx.util.IntList.makeImmutable(subroutineSuccessor);
                 primarySuccessor = subroutineSuccessor;
             } else {
                 // Map all the successor labels
@@ -1603,7 +1609,7 @@ public final class Ropper {
                 int origPrimary = origBlock.getPrimarySuccessor();
                 int sz = origSuccessors.size();
 
-                successors = new IntList(sz);
+                successors = new com.duy.dx.util.IntList(sz);
 
                 for (int i = 0 ; i < sz ; i++) {
                     int origSuccLabel = origSuccessors.get(i);
@@ -1620,7 +1626,7 @@ public final class Ropper {
             }
 
             addBlock (
-                new BasicBlock(newLabel,
+                new com.duy.dx.rop.code.BasicBlock(newLabel,
                     filterMoveReturnAddressInsns(origBlock.getInsns()),
                     successors, primarySuccessor),
                     labelToSubroutines.get(newLabel));
@@ -1636,7 +1642,7 @@ public final class Ropper {
          * @return true if the block is dominated by the subroutine call
          */
         private boolean involvedInSubroutine(int label, int subroutineStart) {
-            IntList subroutinesList = labelToSubroutines.get(label);
+            com.duy.dx.util.IntList subroutinesList = labelToSubroutines.get(label);
             return (subroutinesList != null && subroutinesList.size() > 0
                     && subroutinesList.top() == subroutineStart);
         }
@@ -1713,14 +1719,14 @@ public final class Ropper {
      * {@code move-return-address} insns
      * @return {@code InsnList} with {@code move-return-address} removed
      */
-    private InsnList filterMoveReturnAddressInsns(InsnList insns) {
+    private com.duy.dx.rop.code.InsnList filterMoveReturnAddressInsns(com.duy.dx.rop.code.InsnList insns) {
         int sz;
         int newSz = 0;
 
         // First see if we need to filter, and if so what the new size will be
         sz = insns.size();
         for (int i = 0; i < sz; i++) {
-            if (insns.get(i).getOpcode() != Rops.MOVE_RETURN_ADDRESS) {
+            if (insns.get(i).getOpcode() != com.duy.dx.rop.code.Rops.MOVE_RETURN_ADDRESS) {
                 newSz++;
             }
         }
@@ -1730,7 +1736,7 @@ public final class Ropper {
         }
 
         // Make a new list without the MOVE_RETURN_ADDRESS insns
-        InsnList newInsns = new InsnList(newSz);
+        com.duy.dx.rop.code.InsnList newInsns = new InsnList(newSz);
 
         int newIndex = 0;
         for (int i = 0; i < sz; i++) {
@@ -1751,7 +1757,7 @@ public final class Ropper {
      * @param v callback interface
      */
     private void forEachNonSubBlockDepthFirst(int firstLabel,
-            BasicBlock.Visitor v) {
+            com.duy.dx.rop.code.BasicBlock.Visitor v) {
         forEachNonSubBlockDepthFirst0(labelToBlock(firstLabel),
                 v, new BitSet(maxLabel));
     }
@@ -1765,7 +1771,7 @@ public final class Ropper {
      * @param visited set of blocks already visited
      */
     private void forEachNonSubBlockDepthFirst0(
-            BasicBlock next, BasicBlock.Visitor v, BitSet visited) {
+            com.duy.dx.rop.code.BasicBlock next, BasicBlock.Visitor v, BitSet visited) {
         v.visitBlock(next);
         visited.set(next.getLabel());
 

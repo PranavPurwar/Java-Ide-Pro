@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.LabeledList;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.LabeledList;
 
 /**
- * List of {@link ByteBlock} instances.
+ * List of {@link com.duy.dx.cf.code.ByteBlock} instances.
  */
 public final class ByteBlockList extends LabeledList {
 
@@ -41,8 +41,8 @@ public final class ByteBlockList extends LabeledList {
      * @param n {@code >= 0, < size();} which element
      * @return {@code non-null;} the indicated element
      */
-    public ByteBlock get(int n) {
-        return (ByteBlock) get0(n);
+    public com.duy.dx.cf.code.ByteBlock get(int n) {
+        return (com.duy.dx.cf.code.ByteBlock) get0(n);
     }
 
     /**
@@ -51,7 +51,7 @@ public final class ByteBlockList extends LabeledList {
      * @param label the label to look for
      * @return {@code non-null;} the block with the given label
      */
-    public ByteBlock labelToBlock(int label) {
+    public com.duy.dx.cf.code.ByteBlock labelToBlock(int label) {
         int idx = indexOfLabel(label);
 
         if (idx < 0) {

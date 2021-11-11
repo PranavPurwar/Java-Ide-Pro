@@ -1,19 +1,36 @@
-package com.duy.dx .ssa.back;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .ssa.NormalSsaInsn;
-import com.duy.dx .ssa.RegisterMapper;
-import com.duy.dx .ssa.SsaBasicBlock;
-import com.duy.dx .ssa.SsaInsn;
-import com.duy.dx .ssa.SsaMethod;
-import com.duy.dx .util.IntIterator;
-import com.duy.dx .util.IntSet;
+package com.duy.dx.ssa.back;
+
+import com.duy.dx.ssa.NormalSsaInsn;
+import com.duy.dx.ssa.RegisterMapper;
+import com.duy.dx.ssa.SsaBasicBlock;
+import com.duy.dx.ssa.SsaInsn;
+import com.duy.dx.ssa.SsaMethod;
+import com.duy.dx.util.IntIterator;
+import com.duy.dx.util.IntSet;
 import java.util.ArrayList;
+
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.SourcePosition;
 
 /**
  * Base class of all register allocators.
@@ -23,7 +40,7 @@ public abstract class RegisterAllocator {
     protected final SsaMethod ssaMeth;
 
     /** interference graph, indexed by register in both dimensions */
-    protected final InterferenceGraph interference;
+    protected final com.duy.dx.ssa.back.InterferenceGraph interference;
 
     /**
      * Creates an instance. Call {@code allocateRegisters} to run.
@@ -78,7 +95,7 @@ public abstract class RegisterAllocator {
      * @return definition spec of the register or null if it is never defined
      * (for the case of "version 0" SSA registers)
      */
-    protected final RegisterSpec getDefinitionSpecForSsaReg(int reg) {
+    protected final com.duy.dx.rop.code.RegisterSpec getDefinitionSpecForSsaReg(int reg) {
         SsaInsn definition = ssaMeth.getDefinitionForRegister(reg);
 
         return definition == null ? null : definition.getResult();
@@ -114,8 +131,8 @@ public abstract class RegisterAllocator {
      * @param reg {@code non-null;} SSA register to duplicate
      * @return {@code non-null;} spec of new SSA register created by move
      */
-    protected final RegisterSpec insertMoveBefore(SsaInsn insn,
-            RegisterSpec reg) {
+    protected final com.duy.dx.rop.code.RegisterSpec insertMoveBefore(SsaInsn insn,
+                                                                               com.duy.dx.rop.code.RegisterSpec reg) {
         SsaBasicBlock block = insn.getBlock();
         ArrayList<SsaInsn> insns = block.getInsns();
         int insnIndex = insns.indexOf(insn);
@@ -140,13 +157,13 @@ public abstract class RegisterAllocator {
          */
 
         // The new result must not have an associated local variable.
-        RegisterSpec newRegSpec = RegisterSpec.make(ssaMeth.makeNewSsaReg(),
+        com.duy.dx.rop.code.RegisterSpec newRegSpec = RegisterSpec.make(ssaMeth.makeNewSsaReg(),
                 reg.getTypeBearer());
 
         SsaInsn toAdd = SsaInsn.makeFromRop(
                 new PlainInsn(Rops.opMove(newRegSpec.getType()),
                         SourcePosition.NO_INFO, newRegSpec,
-                        RegisterSpecList.make(reg)), block);
+                        com.duy.dx.rop.code.RegisterSpecList.make(reg)), block);
 
         insns.add(insnIndex, toAdd);
 

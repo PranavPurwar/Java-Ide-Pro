@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .util.FixedSizeList;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.util.FixedSizeList;
+import com.duy.dx.util.Hex;
 
 /**
  * Ordered list of (exception type, handler address) entries.
@@ -50,6 +50,7 @@ public final class CatchHandlerList extends FixedSizeList
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         return toHuman("", "");
     }
@@ -108,7 +109,7 @@ public final class CatchHandlerList extends FixedSizeList
         }
 
         Entry last = get(size - 1);
-        return last.getExceptionType().equals(CstType.OBJECT);
+        return last.getExceptionType().equals(com.duy.dx.rop.cst.CstType.OBJECT);
     }
 
     /**
@@ -118,7 +119,7 @@ public final class CatchHandlerList extends FixedSizeList
      * @param exceptionType {@code non-null;} type of exception handled
      * @param handler {@code >= 0;} exception handler address
      */
-    public void set(int n, CstType exceptionType, int handler) {
+    public void set(int n, com.duy.dx.rop.cst.CstType exceptionType, int handler) {
         set0(n, new Entry(exceptionType, handler));
     }
 
@@ -133,6 +134,7 @@ public final class CatchHandlerList extends FixedSizeList
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(CatchHandlerList other) {
         if (this == other) {
             // Easy out.
@@ -166,7 +168,7 @@ public final class CatchHandlerList extends FixedSizeList
      */
     public static class Entry implements Comparable<Entry> {
         /** {@code non-null;} type of exception handled */
-        private final CstType exceptionType;
+        private final com.duy.dx.rop.cst.CstType exceptionType;
 
         /** {@code >= 0;} exception handler address */
         private final int handler;
@@ -177,7 +179,7 @@ public final class CatchHandlerList extends FixedSizeList
          * @param exceptionType {@code non-null;} type of exception handled
          * @param handler {@code >= 0;} exception handler address
          */
-        public Entry(CstType exceptionType, int handler) {
+        public Entry(com.duy.dx.rop.cst.CstType exceptionType, int handler) {
             if (handler < 0) {
                 throw new IllegalArgumentException("handler < 0");
             }
@@ -207,6 +209,7 @@ public final class CatchHandlerList extends FixedSizeList
         }
 
         /** {@inheritDoc} */
+        @Override
         public int compareTo(Entry other) {
             if (handler < other.handler) {
                 return -1;

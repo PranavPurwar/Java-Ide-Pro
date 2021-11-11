@@ -14,51 +14,57 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.attrib.AttAnnotationDefault;
-import com.duy.dx .cf.attrib.AttCode;
-import com.duy.dx .cf.attrib.AttConstantValue;
-import com.duy.dx .cf.attrib.AttDeprecated;
-import com.duy.dx .cf.attrib.AttEnclosingMethod;
-import com.duy.dx .cf.attrib.AttExceptions;
-import com.duy.dx .cf.attrib.AttInnerClasses;
-import com.duy.dx .cf.attrib.AttLineNumberTable;
-import com.duy.dx .cf.attrib.AttLocalVariableTable;
-import com.duy.dx .cf.attrib.AttLocalVariableTypeTable;
-import com.duy.dx .cf.attrib.AttRuntimeInvisibleAnnotations;
-import com.duy.dx .cf.attrib.AttRuntimeInvisibleParameterAnnotations;
-import com.duy.dx .cf.attrib.AttRuntimeVisibleAnnotations;
-import com.duy.dx .cf.attrib.AttRuntimeVisibleParameterAnnotations;
-import com.duy.dx .cf.attrib.AttSignature;
-import com.duy.dx .cf.attrib.AttSourceFile;
-import com.duy.dx .cf.attrib.AttSynthetic;
-import com.duy.dx .cf.attrib.InnerClassList;
-import com.duy.dx .cf.code.ByteCatchList;
-import com.duy.dx .cf.code.BytecodeArray;
-import com.duy.dx .cf.code.LineNumberList;
-import com.duy.dx .cf.code.LocalVariableList;
-import com.duy.dx .cf.iface.Attribute;
-import com.duy.dx .cf.iface.ParseException;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .cf.iface.StdAttributeList;
-import com.duy.dx .rop.annotation.AnnotationVisibility;
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .rop.annotation.AnnotationsList;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.ConstantPool;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.cst.TypedConstant;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
 import java.io.IOException;
 
+import com.duy.dx.cf.attrib.AttAnnotationDefault;
+import com.duy.dx.cf.attrib.AttBootstrapMethods;
+import com.duy.dx.cf.attrib.AttCode;
+import com.duy.dx.cf.attrib.AttConstantValue;
+import com.duy.dx.cf.attrib.AttDeprecated;
+import com.duy.dx.cf.attrib.AttEnclosingMethod;
+import com.duy.dx.cf.attrib.AttExceptions;
+import com.duy.dx.cf.attrib.AttInnerClasses;
+import com.duy.dx.cf.attrib.AttLineNumberTable;
+import com.duy.dx.cf.attrib.AttLocalVariableTable;
+import com.duy.dx.cf.attrib.AttLocalVariableTypeTable;
+import com.duy.dx.cf.attrib.AttRuntimeInvisibleAnnotations;
+import com.duy.dx.cf.attrib.AttRuntimeInvisibleParameterAnnotations;
+import com.duy.dx.cf.attrib.AttRuntimeVisibleAnnotations;
+import com.duy.dx.cf.attrib.AttRuntimeVisibleParameterAnnotations;
+import com.duy.dx.cf.attrib.AttSignature;
+import com.duy.dx.cf.attrib.AttSourceDebugExtension;
+import com.duy.dx.cf.attrib.AttSourceFile;
+import com.duy.dx.cf.attrib.AttSynthetic;
+import com.duy.dx.cf.attrib.InnerClassList;
+import com.duy.dx.cf.code.BootstrapMethodArgumentsList;
+import com.duy.dx.cf.code.BootstrapMethodsList;
+import com.duy.dx.cf.code.ByteCatchList;
+import com.duy.dx.cf.code.BytecodeArray;
+import com.duy.dx.cf.code.LineNumberList;
+import com.duy.dx.cf.code.LocalVariableList;
+import com.duy.dx.cf.iface.Attribute;
+import com.duy.dx.cf.iface.ParseException;
+import com.duy.dx.cf.iface.ParseObserver;
+import com.duy.dx.cf.iface.StdAttributeList;
+import com.duy.dx.rop.annotation.AnnotationVisibility;
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.rop.annotation.AnnotationsList;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.ConstantPool;
+import com.duy.dx.rop.cst.CstMethodHandle;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.cst.TypedConstant;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
+
 /**
- * Standard subclass of {@link AttributeFactory}, which knows how to parse
+ * Standard subclass of {@link com.duy.dx.cf.direct.AttributeFactory}, which knows how to parse
  * all the standard attribute types.
  */
 public class StdAttributeFactory
@@ -76,108 +82,114 @@ public class StdAttributeFactory
 
     /** {@inheritDoc} */
     @Override
-    protected Attribute parse0(DirectClassFile cf, int context, String name,
-            int offset, int length, ParseObserver observer) {
+    protected com.duy.dx.cf.iface.Attribute parse0(com.duy.dx.cf.direct.DirectClassFile cf, int context, String name,
+                                                            int offset, int length, com.duy.dx.cf.iface.ParseObserver observer) {
         switch (context) {
             case CTX_CLASS: {
-                if (name == AttDeprecated.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttBootstrapMethods.ATTRIBUTE_NAME) {
+                    return bootstrapMethods(cf, offset, length, observer);
+                }
+                if (name == com.duy.dx.cf.attrib.AttDeprecated.ATTRIBUTE_NAME) {
                     return deprecated(cf, offset, length, observer);
                 }
-                if (name == AttEnclosingMethod.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttEnclosingMethod.ATTRIBUTE_NAME) {
                     return enclosingMethod(cf, offset, length, observer);
                 }
-                if (name == AttInnerClasses.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttInnerClasses.ATTRIBUTE_NAME) {
                     return innerClasses(cf, offset, length, observer);
                 }
-                if (name == AttRuntimeInvisibleAnnotations.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttRuntimeInvisibleAnnotations.ATTRIBUTE_NAME) {
                     return runtimeInvisibleAnnotations(cf, offset, length,
                             observer);
                 }
-                if (name == AttRuntimeVisibleAnnotations.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttRuntimeVisibleAnnotations.ATTRIBUTE_NAME) {
                     return runtimeVisibleAnnotations(cf, offset, length,
                             observer);
                 }
-                if (name == AttSynthetic.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttSynthetic.ATTRIBUTE_NAME) {
                     return synthetic(cf, offset, length, observer);
                 }
-                if (name == AttSignature.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttSignature.ATTRIBUTE_NAME) {
                     return signature(cf, offset, length, observer);
                 }
-                if (name == AttSourceFile.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttSourceDebugExtension.ATTRIBUTE_NAME) {
+                    return sourceDebugExtension(cf, offset, length, observer);
+                }
+                if (name == com.duy.dx.cf.attrib.AttSourceFile.ATTRIBUTE_NAME) {
                     return sourceFile(cf, offset, length, observer);
                 }
                 break;
             }
             case CTX_FIELD: {
-                if (name == AttConstantValue.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttConstantValue.ATTRIBUTE_NAME) {
                     return constantValue(cf, offset, length, observer);
                 }
-                if (name == AttDeprecated.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttDeprecated.ATTRIBUTE_NAME) {
                     return deprecated(cf, offset, length, observer);
                 }
-                if (name == AttRuntimeInvisibleAnnotations.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttRuntimeInvisibleAnnotations.ATTRIBUTE_NAME) {
                     return runtimeInvisibleAnnotations(cf, offset, length,
                             observer);
                 }
-                if (name == AttRuntimeVisibleAnnotations.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttRuntimeVisibleAnnotations.ATTRIBUTE_NAME) {
                     return runtimeVisibleAnnotations(cf, offset, length,
                             observer);
                 }
-                if (name == AttSignature.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttSignature.ATTRIBUTE_NAME) {
                     return signature(cf, offset, length, observer);
                 }
-                if (name == AttSynthetic.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttSynthetic.ATTRIBUTE_NAME) {
                     return synthetic(cf, offset, length, observer);
                 }
                 break;
             }
             case CTX_METHOD: {
-                if (name == AttAnnotationDefault.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttAnnotationDefault.ATTRIBUTE_NAME) {
                     return annotationDefault(cf, offset, length, observer);
                 }
-                if (name == AttCode.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttCode.ATTRIBUTE_NAME) {
                     return code(cf, offset, length, observer);
                 }
-                if (name == AttDeprecated.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttDeprecated.ATTRIBUTE_NAME) {
                     return deprecated(cf, offset, length, observer);
                 }
-                if (name == AttExceptions.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttExceptions.ATTRIBUTE_NAME) {
                     return exceptions(cf, offset, length, observer);
                 }
-                if (name == AttRuntimeInvisibleAnnotations.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttRuntimeInvisibleAnnotations.ATTRIBUTE_NAME) {
                     return runtimeInvisibleAnnotations(cf, offset, length,
                             observer);
                 }
-                if (name == AttRuntimeVisibleAnnotations.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttRuntimeVisibleAnnotations.ATTRIBUTE_NAME) {
                     return runtimeVisibleAnnotations(cf, offset, length,
                             observer);
                 }
-                if (name == AttRuntimeInvisibleParameterAnnotations.
+                if (name == com.duy.dx.cf.attrib.AttRuntimeInvisibleParameterAnnotations.
                         ATTRIBUTE_NAME) {
                     return runtimeInvisibleParameterAnnotations(
                             cf, offset, length, observer);
                 }
-                if (name == AttRuntimeVisibleParameterAnnotations.
+                if (name == com.duy.dx.cf.attrib.AttRuntimeVisibleParameterAnnotations.
                         ATTRIBUTE_NAME) {
                     return runtimeVisibleParameterAnnotations(
                             cf, offset, length, observer);
                 }
-                if (name == AttSignature.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttSignature.ATTRIBUTE_NAME) {
                     return signature(cf, offset, length, observer);
                 }
-                if (name == AttSynthetic.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttSynthetic.ATTRIBUTE_NAME) {
                     return synthetic(cf, offset, length, observer);
                 }
                 break;
             }
             case CTX_CODE: {
-                if (name == AttLineNumberTable.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttLineNumberTable.ATTRIBUTE_NAME) {
                     return lineNumberTable(cf, offset, length, observer);
                 }
-                if (name == AttLocalVariableTable.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttLocalVariableTable.ATTRIBUTE_NAME) {
                     return localVariableTable(cf, offset, length, observer);
                 }
-                if (name == AttLocalVariableTypeTable.ATTRIBUTE_NAME) {
+                if (name == com.duy.dx.cf.attrib.AttLocalVariableTypeTable.ATTRIBUTE_NAME) {
                     return localVariableTypeTable(cf, offset, length,
                             observer);
                 }
@@ -191,30 +203,55 @@ public class StdAttributeFactory
     /**
      * Parses an {@code AnnotationDefault} attribute.
      */
-    private Attribute annotationDefault(DirectClassFile cf,
-            int offset, int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute annotationDefault(com.duy.dx.cf.direct.DirectClassFile cf,
+                                                                     int offset, int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             throwSeverelyTruncated();
         }
 
-        AnnotationParser ap =
-            new AnnotationParser(cf, offset, length, observer);
-        Constant cst = ap.parseValueAttribute();
+        com.duy.dx.cf.direct.AnnotationParser ap =
+            new com.duy.dx.cf.direct.AnnotationParser(cf, offset, length, observer);
+        com.duy.dx.rop.cst.Constant cst = ap.parseValueAttribute();
 
         return new AttAnnotationDefault(cst, length);
     }
 
     /**
+     * Parses a {@code BootstrapMethods} attribute.
+     */
+    private com.duy.dx.cf.iface.Attribute bootstrapMethods(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                                    com.duy.dx.cf.iface.ParseObserver observer) {
+        if (length < 2) {
+            return throwSeverelyTruncated();
+        }
+
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
+        int numMethods = bytes.getUnsignedShort(offset);
+        if (observer != null) {
+            observer.parsed(bytes, offset, 2,
+                            "num_boostrap_methods: " + com.duy.dx.util.Hex.u2(numMethods));
+        }
+
+        offset += 2;
+        length -= 2;
+
+        com.duy.dx.cf.code.BootstrapMethodsList methods = parseBootstrapMethods(bytes, cf.getConstantPool(),
+                                                             cf.getThisClass(), numMethods,
+                                                             offset, length, observer);
+        return new AttBootstrapMethods(methods);
+    }
+
+    /**
      * Parses a {@code Code} attribute.
      */
-    private Attribute code(DirectClassFile cf, int offset, int length,
-            ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute code(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                        com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 12) {
             return throwSeverelyTruncated();
         }
 
-        ByteArray bytes = cf.getBytes();
-        ConstantPool pool = cf.getConstantPool();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
+        com.duy.dx.rop.cst.ConstantPool pool = cf.getConstantPool();
         int maxStack = bytes.getUnsignedShort(offset); // u2 max_stack
         int maxLocals = bytes.getUnsignedShort(offset + 2); // u2 max_locals
         int codeLength = bytes.getInt(offset + 4); // u4 code_length
@@ -222,11 +259,11 @@ public class StdAttributeFactory
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2,
-                            "max_stack: " + Hex.u2(maxStack));
+                            "max_stack: " + com.duy.dx.util.Hex.u2(maxStack));
             observer.parsed(bytes, offset + 2, 2,
-                            "max_locals: " + Hex.u2(maxLocals));
+                            "max_locals: " + com.duy.dx.util.Hex.u2(maxLocals));
             observer.parsed(bytes, offset + 4, 4,
-                            "code_length: " + Hex.u4(codeLength));
+                            "code_length: " + com.duy.dx.util.Hex.u4(codeLength));
         }
 
         offset += 8;
@@ -239,7 +276,7 @@ public class StdAttributeFactory
         int codeOffset = offset;
         offset += codeLength;
         length -= codeLength;
-        BytecodeArray code =
+        com.duy.dx.cf.code.BytecodeArray code =
             new BytecodeArray(bytes.slice(codeOffset, codeOffset + codeLength),
                               pool);
         if (observer != null) {
@@ -248,14 +285,14 @@ public class StdAttributeFactory
 
         // u2 exception_table_length
         int exceptionTableLength = bytes.getUnsignedShort(offset);
-        ByteCatchList catches = (exceptionTableLength == 0) ?
-            ByteCatchList.EMPTY :
+        com.duy.dx.cf.code.ByteCatchList catches = (exceptionTableLength == 0) ?
+            com.duy.dx.cf.code.ByteCatchList.EMPTY :
             new ByteCatchList(exceptionTableLength);
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2,
                             "exception_table_length: " +
-                            Hex.u2(exceptionTableLength));
+                            com.duy.dx.util.Hex.u2(exceptionTableLength));
         }
 
         offset += 2;
@@ -274,12 +311,12 @@ public class StdAttributeFactory
             int endPc = bytes.getUnsignedShort(offset + 2);
             int handlerPc = bytes.getUnsignedShort(offset + 4);
             int catchTypeIdx = bytes.getUnsignedShort(offset + 6);
-            CstType catchType = (CstType) pool.get0Ok(catchTypeIdx);
+            com.duy.dx.rop.cst.CstType catchType = (com.duy.dx.rop.cst.CstType) pool.get0Ok(catchTypeIdx);
             catches.set(i, startPc, endPc, handlerPc, catchType);
             if (observer != null) {
                 observer.parsed(bytes, offset, 8,
-                                Hex.u2(startPc) + ".." + Hex.u2(endPc) +
-                                " -> " + Hex.u2(handlerPc) + " " +
+                                com.duy.dx.util.Hex.u2(startPc) + ".." + com.duy.dx.util.Hex.u2(endPc) +
+                                " -> " + com.duy.dx.util.Hex.u2(handlerPc) + " " +
                                 ((catchType == null) ? "<any>" :
                                  catchType.toHuman()));
             }
@@ -293,8 +330,8 @@ public class StdAttributeFactory
 
         catches.setImmutable();
 
-        AttributeListParser parser =
-            new AttributeListParser(cf, CTX_CODE, offset, this);
+        com.duy.dx.cf.direct.AttributeListParser parser =
+            new com.duy.dx.cf.direct.AttributeListParser(cf, CTX_CODE, offset, this);
         parser.setObserver(observer);
 
         StdAttributeList attributes = parser.getList();
@@ -311,17 +348,17 @@ public class StdAttributeFactory
     /**
      * Parses a {@code ConstantValue} attribute.
      */
-    private Attribute constantValue(DirectClassFile cf, int offset, int length,
-            ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute constantValue(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                                 com.duy.dx.cf.iface.ParseObserver observer) {
         if (length != 2) {
             return throwBadLength(2);
         }
 
-        ByteArray bytes = cf.getBytes();
-        ConstantPool pool = cf.getConstantPool();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
+        com.duy.dx.rop.cst.ConstantPool pool = cf.getConstantPool();
         int idx = bytes.getUnsignedShort(offset);
-        TypedConstant cst = (TypedConstant) pool.get(idx);
-        Attribute result = new AttConstantValue(cst);
+        com.duy.dx.rop.cst.TypedConstant cst = (TypedConstant) pool.get(idx);
+        com.duy.dx.cf.iface.Attribute result = new AttConstantValue(cst);
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2, "value: " + cst);
@@ -333,8 +370,8 @@ public class StdAttributeFactory
     /**
      * Parses a {@code Deprecated} attribute.
      */
-    private Attribute deprecated(DirectClassFile cf, int offset, int length,
-            ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute deprecated(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                              com.duy.dx.cf.iface.ParseObserver observer) {
         if (length != 0) {
             return throwBadLength(0);
         }
@@ -345,27 +382,27 @@ public class StdAttributeFactory
     /**
      * Parses an {@code EnclosingMethod} attribute.
      */
-    private Attribute enclosingMethod(DirectClassFile cf, int offset,
-            int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute enclosingMethod(com.duy.dx.cf.direct.DirectClassFile cf, int offset,
+                                                                   int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length != 4) {
             throwBadLength(4);
         }
 
-        ByteArray bytes = cf.getBytes();
-        ConstantPool pool = cf.getConstantPool();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
+        com.duy.dx.rop.cst.ConstantPool pool = cf.getConstantPool();
 
         int idx = bytes.getUnsignedShort(offset);
-        CstType type = (CstType) pool.get(idx);
+        com.duy.dx.rop.cst.CstType type = (com.duy.dx.rop.cst.CstType) pool.get(idx);
 
         idx = bytes.getUnsignedShort(offset + 2);
-        CstNat method = (CstNat) pool.get0Ok(idx);
+        com.duy.dx.rop.cst.CstNat method = (CstNat) pool.get0Ok(idx);
 
-        Attribute result = new AttEnclosingMethod(type, method);
+        com.duy.dx.cf.iface.Attribute result = new AttEnclosingMethod(type, method);
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2, "class: " + type);
             observer.parsed(bytes, offset + 2, 2, "method: " +
-                            DirectClassFile.stringOrNone(method));
+                            com.duy.dx.cf.direct.DirectClassFile.stringOrNone(method));
         }
 
         return result;
@@ -374,18 +411,18 @@ public class StdAttributeFactory
     /**
      * Parses an {@code Exceptions} attribute.
      */
-    private Attribute exceptions(DirectClassFile cf, int offset, int length,
-            ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute exceptions(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                              com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             return throwSeverelyTruncated();
         }
 
-        ByteArray bytes = cf.getBytes();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
         int count = bytes.getUnsignedShort(offset); // number_of_exceptions
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2,
-                            "number_of_exceptions: " + Hex.u2(count));
+                            "number_of_exceptions: " + com.duy.dx.util.Hex.u2(count));
         }
 
         offset += 2;
@@ -402,19 +439,19 @@ public class StdAttributeFactory
     /**
      * Parses an {@code InnerClasses} attribute.
      */
-    private Attribute innerClasses(DirectClassFile cf, int offset, int length,
-            ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute innerClasses(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                                com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             return throwSeverelyTruncated();
         }
 
-        ByteArray bytes = cf.getBytes();
-        ConstantPool pool = cf.getConstantPool();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
+        com.duy.dx.rop.cst.ConstantPool pool = cf.getConstantPool();
         int count = bytes.getUnsignedShort(offset); // number_of_classes
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2,
-                            "number_of_classes: " + Hex.u2(count));
+                            "number_of_classes: " + com.duy.dx.util.Hex.u2(count));
         }
 
         offset += 2;
@@ -424,27 +461,27 @@ public class StdAttributeFactory
             throwBadLength((count * 8) + 2);
         }
 
-        InnerClassList list = new InnerClassList(count);
+        com.duy.dx.cf.attrib.InnerClassList list = new InnerClassList(count);
 
         for (int i = 0; i < count; i++) {
             int innerClassIdx = bytes.getUnsignedShort(offset);
             int outerClassIdx = bytes.getUnsignedShort(offset + 2);
             int nameIdx = bytes.getUnsignedShort(offset + 4);
             int accessFlags = bytes.getUnsignedShort(offset + 6);
-            CstType innerClass = (CstType) pool.get(innerClassIdx);
-            CstType outerClass = (CstType) pool.get0Ok(outerClassIdx);
-            CstString name = (CstString) pool.get0Ok(nameIdx);
+            com.duy.dx.rop.cst.CstType innerClass = (com.duy.dx.rop.cst.CstType) pool.get(innerClassIdx);
+            com.duy.dx.rop.cst.CstType outerClass = (com.duy.dx.rop.cst.CstType) pool.get0Ok(outerClassIdx);
+            com.duy.dx.rop.cst.CstString name = (com.duy.dx.rop.cst.CstString) pool.get0Ok(nameIdx);
             list.set(i, innerClass, outerClass, name, accessFlags);
             if (observer != null) {
                 observer.parsed(bytes, offset, 2,
                                 "inner_class: " +
-                                DirectClassFile.stringOrNone(innerClass));
+                                com.duy.dx.cf.direct.DirectClassFile.stringOrNone(innerClass));
                 observer.parsed(bytes, offset + 2, 2,
                                 "  outer_class: " +
-                                DirectClassFile.stringOrNone(outerClass));
+                                com.duy.dx.cf.direct.DirectClassFile.stringOrNone(outerClass));
                 observer.parsed(bytes, offset + 4, 2,
                                 "  name: " +
-                                DirectClassFile.stringOrNone(name));
+                                com.duy.dx.cf.direct.DirectClassFile.stringOrNone(name));
                 observer.parsed(bytes, offset + 6, 2,
                                 "  access_flags: " +
                                 AccessFlags.innerClassString(accessFlags));
@@ -459,18 +496,18 @@ public class StdAttributeFactory
     /**
      * Parses a {@code LineNumberTable} attribute.
      */
-    private Attribute lineNumberTable(DirectClassFile cf, int offset,
-            int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute lineNumberTable(com.duy.dx.cf.direct.DirectClassFile cf, int offset,
+                                                                   int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             return throwSeverelyTruncated();
         }
 
-        ByteArray bytes = cf.getBytes();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
         int count = bytes.getUnsignedShort(offset); // line_number_table_length
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2,
-                            "line_number_table_length: " + Hex.u2(count));
+                            "line_number_table_length: " + com.duy.dx.util.Hex.u2(count));
         }
 
         offset += 2;
@@ -480,7 +517,7 @@ public class StdAttributeFactory
             throwBadLength((count * 4) + 2);
         }
 
-        LineNumberList list = new LineNumberList(count);
+        com.duy.dx.cf.code.LineNumberList list = new LineNumberList(count);
 
         for (int i = 0; i < count; i++) {
             int startPc = bytes.getUnsignedShort(offset);
@@ -488,7 +525,7 @@ public class StdAttributeFactory
             list.set(i, startPc, lineNumber);
             if (observer != null) {
                 observer.parsed(bytes, offset, 4,
-                                Hex.u2(startPc) + " " + lineNumber);
+                                com.duy.dx.util.Hex.u2(startPc) + " " + lineNumber);
             }
             offset += 4;
         }
@@ -500,21 +537,21 @@ public class StdAttributeFactory
     /**
      * Parses a {@code LocalVariableTable} attribute.
      */
-    private Attribute localVariableTable(DirectClassFile cf, int offset,
-            int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute localVariableTable(com.duy.dx.cf.direct.DirectClassFile cf, int offset,
+                                                                      int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             return throwSeverelyTruncated();
         }
 
-        ByteArray bytes = cf.getBytes();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
         int count = bytes.getUnsignedShort(offset);
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2,
-                    "local_variable_table_length: " + Hex.u2(count));
+                    "local_variable_table_length: " + com.duy.dx.util.Hex.u2(count));
         }
 
-        LocalVariableList list = parseLocalVariables(
+        com.duy.dx.cf.code.LocalVariableList list = parseLocalVariables(
                 bytes.slice(offset + 2, offset + length), cf.getConstantPool(),
                 observer, count, false);
         return new AttLocalVariableTable(list);
@@ -523,21 +560,21 @@ public class StdAttributeFactory
     /**
      * Parses a {@code LocalVariableTypeTable} attribute.
      */
-    private Attribute localVariableTypeTable(DirectClassFile cf, int offset,
-            int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute localVariableTypeTable(com.duy.dx.cf.direct.DirectClassFile cf, int offset,
+                                                                          int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             return throwSeverelyTruncated();
         }
 
-        ByteArray bytes = cf.getBytes();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
         int count = bytes.getUnsignedShort(offset);
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2,
-                    "local_variable_type_table_length: " + Hex.u2(count));
+                    "local_variable_type_table_length: " + com.duy.dx.util.Hex.u2(count));
         }
 
-        LocalVariableList list = parseLocalVariables(
+        com.duy.dx.cf.code.LocalVariableList list = parseLocalVariables(
                 bytes.slice(offset + 2, offset + length), cf.getConstantPool(),
                 observer, count, true);
         return new AttLocalVariableTypeTable(list);
@@ -554,16 +591,16 @@ public class StdAttributeFactory
      * @param typeTable {@code true} iff this is for a type table
      * @return {@code non-null;} the constructed list
      */
-    private LocalVariableList parseLocalVariables(ByteArray bytes,
-            ConstantPool pool, ParseObserver observer, int count,
-            boolean typeTable) {
+    private com.duy.dx.cf.code.LocalVariableList parseLocalVariables(com.duy.dx.util.ByteArray bytes,
+                                                                              com.duy.dx.rop.cst.ConstantPool pool, com.duy.dx.cf.iface.ParseObserver observer, int count,
+                                                                              boolean typeTable) {
         if (bytes.size() != (count * 10)) {
             // "+ 2" is for the count.
             throwBadLength((count * 10) + 2);
         }
 
-        ByteArray.MyDataInputStream in = bytes.makeDataInputStream();
-        LocalVariableList list = new LocalVariableList(count);
+        com.duy.dx.util.ByteArray.MyDataInputStream in = bytes.makeDataInputStream();
+        com.duy.dx.cf.code.LocalVariableList list = new LocalVariableList(count);
 
         try {
             for (int i = 0; i < count; i++) {
@@ -572,10 +609,10 @@ public class StdAttributeFactory
                 int nameIdx = in.readUnsignedShort();
                 int typeIdx = in.readUnsignedShort();
                 int index = in.readUnsignedShort();
-                CstString name = (CstString) pool.get(nameIdx);
-                CstString type = (CstString) pool.get(typeIdx);
-                CstString descriptor = null;
-                CstString signature = null;
+                com.duy.dx.rop.cst.CstString name = (com.duy.dx.rop.cst.CstString) pool.get(nameIdx);
+                com.duy.dx.rop.cst.CstString type = (com.duy.dx.rop.cst.CstString) pool.get(typeIdx);
+                com.duy.dx.rop.cst.CstString descriptor = null;
+                com.duy.dx.rop.cst.CstString signature = null;
 
                 if (typeTable) {
                     signature = type;
@@ -587,9 +624,9 @@ public class StdAttributeFactory
                         descriptor, signature, index);
 
                 if (observer != null) {
-                    observer.parsed(bytes, i * 10, 10, Hex.u2(startPc) +
-                            ".." + Hex.u2(startPc + length) + " " +
-                            Hex.u2(index) + " " + name.toHuman() + " " +
+                    observer.parsed(bytes, i * 10, 10, com.duy.dx.util.Hex.u2(startPc) +
+                            ".." + com.duy.dx.util.Hex.u2(startPc + length) + " " +
+                            com.duy.dx.util.Hex.u2(index) + " " + name.toHuman() + " " +
                             type.toHuman());
                 }
             }
@@ -604,16 +641,16 @@ public class StdAttributeFactory
     /**
      * Parses a {@code RuntimeInvisibleAnnotations} attribute.
      */
-    private Attribute runtimeInvisibleAnnotations(DirectClassFile cf,
-            int offset, int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute runtimeInvisibleAnnotations(com.duy.dx.cf.direct.DirectClassFile cf,
+                                                                               int offset, int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             throwSeverelyTruncated();
         }
 
-        AnnotationParser ap =
-            new AnnotationParser(cf, offset, length, observer);
-        Annotations annotations =
-            ap.parseAnnotationAttribute(AnnotationVisibility.BUILD);
+        com.duy.dx.cf.direct.AnnotationParser ap =
+            new com.duy.dx.cf.direct.AnnotationParser(cf, offset, length, observer);
+        com.duy.dx.rop.annotation.Annotations annotations =
+            ap.parseAnnotationAttribute(com.duy.dx.rop.annotation.AnnotationVisibility.BUILD);
 
         return new AttRuntimeInvisibleAnnotations(annotations, length);
     }
@@ -621,16 +658,16 @@ public class StdAttributeFactory
     /**
      * Parses a {@code RuntimeVisibleAnnotations} attribute.
      */
-    private Attribute runtimeVisibleAnnotations(DirectClassFile cf,
-            int offset, int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute runtimeVisibleAnnotations(com.duy.dx.cf.direct.DirectClassFile cf,
+                                                                             int offset, int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             throwSeverelyTruncated();
         }
 
-        AnnotationParser ap =
-            new AnnotationParser(cf, offset, length, observer);
+        com.duy.dx.cf.direct.AnnotationParser ap =
+            new com.duy.dx.cf.direct.AnnotationParser(cf, offset, length, observer);
         Annotations annotations =
-            ap.parseAnnotationAttribute(AnnotationVisibility.RUNTIME);
+            ap.parseAnnotationAttribute(com.duy.dx.rop.annotation.AnnotationVisibility.RUNTIME);
 
         return new AttRuntimeVisibleAnnotations(annotations, length);
     }
@@ -638,16 +675,16 @@ public class StdAttributeFactory
     /**
      * Parses a {@code RuntimeInvisibleParameterAnnotations} attribute.
      */
-    private Attribute runtimeInvisibleParameterAnnotations(DirectClassFile cf,
-            int offset, int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute runtimeInvisibleParameterAnnotations(com.duy.dx.cf.direct.DirectClassFile cf,
+                                                                                        int offset, int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             throwSeverelyTruncated();
         }
 
-        AnnotationParser ap =
-            new AnnotationParser(cf, offset, length, observer);
-        AnnotationsList list =
-            ap.parseParameterAttribute(AnnotationVisibility.BUILD);
+        com.duy.dx.cf.direct.AnnotationParser ap =
+            new com.duy.dx.cf.direct.AnnotationParser(cf, offset, length, observer);
+        com.duy.dx.rop.annotation.AnnotationsList list =
+            ap.parseParameterAttribute(com.duy.dx.rop.annotation.AnnotationVisibility.BUILD);
 
         return new AttRuntimeInvisibleParameterAnnotations(list, length);
     }
@@ -655,13 +692,13 @@ public class StdAttributeFactory
     /**
      * Parses a {@code RuntimeVisibleParameterAnnotations} attribute.
      */
-    private Attribute runtimeVisibleParameterAnnotations(DirectClassFile cf,
-            int offset, int length, ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute runtimeVisibleParameterAnnotations(com.duy.dx.cf.direct.DirectClassFile cf,
+                                                                                      int offset, int length, com.duy.dx.cf.iface.ParseObserver observer) {
         if (length < 2) {
             throwSeverelyTruncated();
         }
 
-        AnnotationParser ap =
+        com.duy.dx.cf.direct.AnnotationParser ap =
             new AnnotationParser(cf, offset, length, observer);
         AnnotationsList list =
             ap.parseParameterAttribute(AnnotationVisibility.RUNTIME);
@@ -672,17 +709,17 @@ public class StdAttributeFactory
     /**
      * Parses a {@code Signature} attribute.
      */
-    private Attribute signature(DirectClassFile cf, int offset, int length,
-            ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute signature(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                             com.duy.dx.cf.iface.ParseObserver observer) {
         if (length != 2) {
             throwBadLength(2);
         }
 
-        ByteArray bytes = cf.getBytes();
-        ConstantPool pool = cf.getConstantPool();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
+        com.duy.dx.rop.cst.ConstantPool pool = cf.getConstantPool();
         int idx = bytes.getUnsignedShort(offset);
-        CstString cst = (CstString) pool.get(idx);
-        Attribute result = new AttSignature(cst);
+        com.duy.dx.rop.cst.CstString cst = (com.duy.dx.rop.cst.CstString) pool.get(idx);
+        com.duy.dx.cf.iface.Attribute result = new AttSignature(cst);
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2, "signature: " + cst);
@@ -692,19 +729,36 @@ public class StdAttributeFactory
     }
 
     /**
+     * Parses a {@code SourceDebugExtesion} attribute.
+     */
+    private com.duy.dx.cf.iface.Attribute sourceDebugExtension(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                                        com.duy.dx.cf.iface.ParseObserver observer) {
+        com.duy.dx.util.ByteArray bytes = cf.getBytes().slice(offset, offset + length);
+        com.duy.dx.rop.cst.CstString smapString = new com.duy.dx.rop.cst.CstString(bytes);
+        com.duy.dx.cf.iface.Attribute result = new AttSourceDebugExtension(smapString);
+
+        if (observer != null) {
+            String decoded = smapString.getString();
+            observer.parsed(bytes, offset, length, "sourceDebugExtension: " + decoded);
+        }
+
+        return result;
+    }
+
+    /**
      * Parses a {@code SourceFile} attribute.
      */
-    private Attribute sourceFile(DirectClassFile cf, int offset, int length,
-            ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute sourceFile(com.duy.dx.cf.direct.DirectClassFile cf, int offset, int length,
+                                                              com.duy.dx.cf.iface.ParseObserver observer) {
         if (length != 2) {
             throwBadLength(2);
         }
 
-        ByteArray bytes = cf.getBytes();
-        ConstantPool pool = cf.getConstantPool();
+        com.duy.dx.util.ByteArray bytes = cf.getBytes();
+        com.duy.dx.rop.cst.ConstantPool pool = cf.getConstantPool();
         int idx = bytes.getUnsignedShort(offset);
-        CstString cst = (CstString) pool.get(idx);
-        Attribute result = new AttSourceFile(cst);
+        com.duy.dx.rop.cst.CstString cst = (CstString) pool.get(idx);
+        com.duy.dx.cf.iface.Attribute result = new AttSourceFile(cst);
 
         if (observer != null) {
             observer.parsed(bytes, offset, 2, "source: " + cst);
@@ -716,8 +770,8 @@ public class StdAttributeFactory
     /**
      * Parses a {@code Synthetic} attribute.
      */
-    private Attribute synthetic(DirectClassFile cf, int offset, int length,
-            ParseObserver observer) {
+    private com.duy.dx.cf.iface.Attribute synthetic(DirectClassFile cf, int offset, int length,
+                                                             com.duy.dx.cf.iface.ParseObserver observer) {
         if (length != 0) {
             return throwBadLength(0);
         }
@@ -730,10 +784,10 @@ public class StdAttributeFactory
      * length.
      *
      * @return never
-     * @throws ParseException always thrown
+     * @throws com.duy.dx.cf.iface.ParseException always thrown
      */
-    private static Attribute throwSeverelyTruncated() {
-        throw new ParseException("severely truncated attribute");
+    private static com.duy.dx.cf.iface.Attribute throwSeverelyTruncated() {
+        throw new com.duy.dx.cf.iface.ParseException("severely truncated attribute");
     }
 
     /**
@@ -741,10 +795,10 @@ public class StdAttributeFactory
      * length.
      *
      * @return never
-     * @throws ParseException always thrown
+     * @throws com.duy.dx.cf.iface.ParseException always thrown
      */
-    private static Attribute throwTruncated() {
-        throw new ParseException("truncated attribute");
+    private static com.duy.dx.cf.iface.Attribute throwTruncated() {
+        throw new com.duy.dx.cf.iface.ParseException("truncated attribute");
     }
 
     /**
@@ -753,10 +807,56 @@ public class StdAttributeFactory
      *
      * @param expected expected length
      * @return never
-     * @throws ParseException always thrown
+     * @throws com.duy.dx.cf.iface.ParseException always thrown
      */
     private static Attribute throwBadLength(int expected) {
-        throw new ParseException("bad attribute length; expected length " +
-                                 Hex.u4(expected));
+        throw new com.duy.dx.cf.iface.ParseException("bad attribute length; expected length " +
+                                 com.duy.dx.util.Hex.u4(expected));
+    }
+
+    private com.duy.dx.cf.code.BootstrapMethodsList parseBootstrapMethods(ByteArray bytes, ConstantPool constantPool,
+                                                                                   CstType declaringClass, int numMethods, int offset, int length, ParseObserver observer)
+        throws ParseException {
+        com.duy.dx.cf.code.BootstrapMethodsList methods = new BootstrapMethodsList(numMethods);
+        for (int methodIndex = 0; methodIndex < numMethods; ++methodIndex) {
+            if (length < 4) {
+                throwTruncated();
+            }
+
+            int methodRef = bytes.getUnsignedShort(offset);
+            int numArguments = bytes.getUnsignedShort(offset + 2);
+
+            if (observer != null) {
+                observer.parsed(bytes, offset, 2, "bootstrap_method_ref: " + com.duy.dx.util.Hex.u2(methodRef));
+                observer.parsed(bytes, offset + 2, 2,
+                                "num_bootstrap_arguments: " + com.duy.dx.util.Hex.u2(numArguments));
+            }
+
+            offset += 4;
+            length -= 4;
+            if (length < numArguments * 2) {
+                throwTruncated();
+            }
+
+            com.duy.dx.cf.code.BootstrapMethodArgumentsList arguments = new BootstrapMethodArgumentsList(numArguments);
+            for (int argIndex = 0; argIndex < numArguments; ++argIndex, offset += 2, length -= 2) {
+                int argumentRef = bytes.getUnsignedShort(offset);
+                if (observer != null) {
+                    observer.parsed(bytes, offset, 2,
+                                    "bootstrap_arguments[" + argIndex + "]" + Hex.u2(argumentRef));
+                }
+                arguments.set(argIndex, constantPool.get(argumentRef));
+            }
+            arguments.setImmutable();
+            Constant cstMethodRef = constantPool.get(methodRef);
+            methods.set(methodIndex, declaringClass, (CstMethodHandle) cstMethodRef, arguments);
+        }
+        methods.setImmutable();
+
+        if (length != 0) {
+            throwBadLength(length);
+        }
+
+        return methods;
     }
 }

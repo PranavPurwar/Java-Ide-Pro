@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.iface.Attribute;
-import com.duy.dx .cf.iface.ParseException;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .cf.iface.StdAttributeList;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
+import com.duy.dx.cf.iface.Attribute;
+import com.duy.dx.cf.iface.ParseException;
+import com.duy.dx.cf.iface.ParseObserver;
+import com.duy.dx.cf.iface.StdAttributeList;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
  * Parser for lists of attributes.
@@ -40,14 +40,14 @@ final /*package*/ class AttributeListParser {
     private final AttributeFactory attributeFactory;
 
     /** {@code non-null;} list of parsed attributes */
-    private final StdAttributeList list;
+    private final com.duy.dx.cf.iface.StdAttributeList list;
 
     /** {@code >= -1;} the end offset of this list in the byte array of the
      * classfile, or {@code -1} if not yet parsed */
     private int endOffset;
 
     /** {@code null-ok;} parse observer, if any */
-    private ParseObserver observer;
+    private com.duy.dx.cf.iface.ParseObserver observer;
 
     /**
      * Constructs an instance.
@@ -73,7 +73,7 @@ final /*package*/ class AttributeListParser {
         this.context = context;
         this.offset = offset;
         this.attributeFactory = attributeFactory;
-        this.list = new StdAttributeList(size);
+        this.list = new com.duy.dx.cf.iface.StdAttributeList(size);
         this.endOffset = -1;
     }
 
@@ -149,11 +149,11 @@ final /*package*/ class AttributeListParser {
                     observer.parsed(bytes, at, 0,
                                     "end attributes[" + i + "]\n");
                 }
-            } catch (ParseException ex) {
+            } catch (com.duy.dx.cf.iface.ParseException ex) {
                 ex.addContext("...while parsing attributes[" + i + "]");
                 throw ex;
             } catch (RuntimeException ex) {
-                ParseException pe = new ParseException(ex);
+                com.duy.dx.cf.iface.ParseException pe = new ParseException(ex);
                 pe.addContext("...while parsing attributes[" + i + "]");
                 throw pe;
             }

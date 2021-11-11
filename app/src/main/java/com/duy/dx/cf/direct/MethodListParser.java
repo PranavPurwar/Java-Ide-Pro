@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.iface.AttributeList;
-import com.duy.dx .cf.iface.Member;
-import com.duy.dx .cf.iface.StdMethod;
-import com.duy.dx .cf.iface.StdMethodList;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstType;
+import com.duy.dx.cf.iface.AttributeList;
+import com.duy.dx.cf.iface.Member;
+import com.duy.dx.cf.iface.StdMethod;
+import com.duy.dx.cf.iface.StdMethodList;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * Parser for lists of methods in a class file.
  */
-final /*package*/ class MethodListParser extends MemberListParser {
+final /*package*/ class MethodListParser extends com.duy.dx.cf.direct.MemberListParser {
     /** {@code non-null;} list in progress */
-    final private StdMethodList methods;
+    final private com.duy.dx.cf.iface.StdMethodList methods;
 
     /**
      * Constructs an instance.
@@ -42,7 +42,7 @@ final /*package*/ class MethodListParser extends MemberListParser {
     public MethodListParser(DirectClassFile cf, CstType definer,
             int offset, AttributeFactory attributeFactory) {
         super(cf, definer, offset, attributeFactory);
-        methods = new StdMethodList(getCount());
+        methods = new com.duy.dx.cf.iface.StdMethodList(getCount());
     }
 
     /**
@@ -77,7 +77,7 @@ final /*package*/ class MethodListParser extends MemberListParser {
     @Override
     protected Member set(int n, int accessFlags, CstNat nat,
                          AttributeList attributes) {
-        StdMethod meth =
+        com.duy.dx.cf.iface.StdMethod meth =
             new StdMethod(getDefiner(), accessFlags, nat, attributes);
 
         methods.set(n, meth);

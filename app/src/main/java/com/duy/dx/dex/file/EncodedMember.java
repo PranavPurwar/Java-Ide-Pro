@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.ToHuman;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.ToHuman;
 import java.io.PrintWriter;
 
 /**
@@ -63,11 +63,11 @@ public abstract class EncodedMember implements ToHuman {
     public abstract void debugPrint(PrintWriter out, boolean verbose);
 
     /**
-     * Populates a {@link DexFile} with items from within this instance.
+     * Populates a {@link com.duy.dx.dex.file.DexFile} with items from within this instance.
      *
      * @param file {@code non-null;} the file to populate
      */
-    public abstract void addContents(DexFile file);
+    public abstract void addContents(com.duy.dx.dex.file.DexFile file);
 
     /**
      * Encodes this instance to the given output.
@@ -81,5 +81,5 @@ public abstract class EncodedMember implements ToHuman {
      * @return {@code >= 0;} the member index value that was encoded
      */
     public abstract int encode(DexFile file, AnnotatedOutput out,
-            int lastIndex, int dumpSeq);
+                               int lastIndex, int dumpSeq);
 }

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.iface;
+package com.duy.dx.cf.iface;
 
-import com.duy.dx .util.FixedSizeList;
+import com.duy.dx.util.FixedSizeList;
 
 /**
- * Standard implementation of {@link FieldList}, which directly stores
- * an array of {@link Field} objects and can be made immutable.
+ * Standard implementation of {@link com.duy.dx.cf.iface.FieldList}, which directly stores
+ * an array of {@link com.duy.dx.cf.iface.Field} objects and can be made immutable.
  */
 public final class StdFieldList extends FixedSizeList implements FieldList {
     /**
@@ -33,8 +33,9 @@ public final class StdFieldList extends FixedSizeList implements FieldList {
     }
 
     /** {@inheritDoc} */
-    public Field get(int n) {
-        return (Field) get0(n);
+    @Override
+    public com.duy.dx.cf.iface.Field get(int n) {
+        return (com.duy.dx.cf.iface.Field) get0(n);
     }
 
     /**

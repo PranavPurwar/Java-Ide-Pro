@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .util.MutabilityControl;
-import com.duy.dx .util.ToHuman;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.util.MutabilityControl;
+import com.duy.dx.util.ToHuman;
 
 /**
  * Representation of an array of local variables, with Java semantics.
  *
  * <p><b>Note:</b> For the most part, the documentation for this class
- * ignores the distinction between {@link Type} and {@link
- * TypeBearer}.</p>
+ * ignores the distinction between {@link com.duy.dx.rop.type.Type} and {@link
+ * com.duy.dx.rop.type.TypeBearer}.</p>
  */
 public abstract class LocalsArray extends MutabilityControl implements ToHuman {
 
@@ -82,7 +82,7 @@ public abstract class LocalsArray extends MutabilityControl implements ToHuman {
      * @param idx {@code >= 0, < getMaxLocals();} which local
      * @param type {@code non-null;} new type for the local at {@code idx}
      */
-    public abstract void set(int idx, TypeBearer type);
+    public abstract void set(int idx, com.duy.dx.rop.type.TypeBearer type);
 
     /**
      * Sets the type for the local indicated by the given register spec
@@ -108,7 +108,7 @@ public abstract class LocalsArray extends MutabilityControl implements ToHuman {
      * @param idx {@code >= 0, < getMaxLocals();} which local
      * @return {@code null-ok;} the type of value stored in that local
      */
-    public abstract TypeBearer getOrNull(int idx);
+    public abstract com.duy.dx.rop.type.TypeBearer getOrNull(int idx);
 
     /**
      * Gets the type stored at the given local index, only succeeding if
@@ -120,7 +120,7 @@ public abstract class LocalsArray extends MutabilityControl implements ToHuman {
      * @throws SimException thrown if {@code idx} is valid, but
      * the contents are invalid
      */
-    public abstract TypeBearer get(int idx);
+    public abstract com.duy.dx.rop.type.TypeBearer get(int idx);
 
     /**
      * Gets the type stored at the given local index, which is expected
@@ -133,7 +133,7 @@ public abstract class LocalsArray extends MutabilityControl implements ToHuman {
      * contains an uninitialized instance; (c) the local contains a
      * category-2 value
      */
-    public abstract TypeBearer getCategory1(int idx);
+    public abstract com.duy.dx.rop.type.TypeBearer getCategory1(int idx);
 
     /**
      * Gets the type stored at the given local index, which is expected

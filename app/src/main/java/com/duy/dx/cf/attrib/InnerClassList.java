@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .util.FixedSizeList;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.util.FixedSizeList;
 
 /**
  * List of "inner class" entries, which are the contents of
@@ -55,8 +55,8 @@ public final class InnerClassList extends FixedSizeList {
      * if not anonymous
      * @param accessFlags original declared access flags
      */
-    public void set(int n, CstType innerClass, CstType outerClass,
-                    CstString innerName, int accessFlags) {
+    public void set(int n, com.duy.dx.rop.cst.CstType innerClass, com.duy.dx.rop.cst.CstType outerClass,
+                    com.duy.dx.rop.cst.CstString innerName, int accessFlags) {
         set0(n, new Item(innerClass, outerClass, innerName, accessFlags));
     }
 
@@ -65,13 +65,13 @@ public final class InnerClassList extends FixedSizeList {
      */
     public static class Item {
         /** {@code non-null;} class this item refers to */
-        private final CstType innerClass;
+        private final com.duy.dx.rop.cst.CstType innerClass;
 
         /** {@code null-ok;} outer class that this class is a member of, if any */
-        private final CstType outerClass;
+        private final com.duy.dx.rop.cst.CstType outerClass;
 
         /** {@code null-ok;} original simple name of this class, if not anonymous */
-        private final CstString innerName;
+        private final com.duy.dx.rop.cst.CstString innerName;
 
         /** original declared access flags */
         private final int accessFlags;
@@ -86,8 +86,8 @@ public final class InnerClassList extends FixedSizeList {
          * class, if not anonymous
          * @param accessFlags original declared access flags
          */
-        public Item(CstType innerClass, CstType outerClass,
-                    CstString innerName, int accessFlags) {
+        public Item(com.duy.dx.rop.cst.CstType innerClass, com.duy.dx.rop.cst.CstType outerClass,
+                    com.duy.dx.rop.cst.CstString innerName, int accessFlags) {
             if (innerClass == null) {
                 throw new NullPointerException("innerClass == null");
             }
@@ -103,7 +103,7 @@ public final class InnerClassList extends FixedSizeList {
          *
          * @return {@code non-null;} the class
          */
-        public CstType getInnerClass() {
+        public com.duy.dx.rop.cst.CstType getInnerClass() {
             return innerClass;
         }
 

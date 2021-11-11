@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.attrib.AttSourceFile;
-import com.duy.dx .cf.cst.ConstantPoolParser;
-import com.duy.dx .cf.iface.Attribute;
-import com.duy.dx .cf.iface.AttributeList;
-import com.duy.dx .cf.iface.ClassFile;
-import com.duy.dx .cf.iface.FieldList;
-import com.duy.dx .cf.iface.MethodList;
-import com.duy.dx .cf.iface.ParseException;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .cf.iface.StdAttributeList;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.cst.ConstantPool;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.cst.StdConstantPool;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
+import com.duy.dx.cf.attrib.AttBootstrapMethods;
+import com.duy.dx.cf.attrib.AttSourceFile;
+import com.duy.dx.cf.code.BootstrapMethodsList;
+import com.duy.dx.cf.cst.ConstantPoolParser;
+import com.duy.dx.cf.iface.Attribute;
+import com.duy.dx.cf.iface.AttributeList;
+import com.duy.dx.cf.iface.ClassFile;
+import com.duy.dx.cf.iface.FieldList;
+import com.duy.dx.cf.iface.MethodList;
+import com.duy.dx.cf.iface.ParseException;
+import com.duy.dx.cf.iface.ParseObserver;
+import com.duy.dx.cf.iface.StdAttributeList;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.cst.ConstantPool;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.cst.StdConstantPool;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
  * Class file with info taken from a {@code byte[]} or slice thereof.
@@ -50,9 +52,11 @@ public class DirectClassFile implements ClassFile {
      * See http://en.wikipedia.org/wiki/Java_class_file for an up-to-date
      * list of version numbers. Currently known (taken from that table) are:
      *
-     *     J2SE 7.0 = 51 (0x33 hex),
-     *     J2SE 6.0 = 50 (0x32 hex),
-     *     J2SE 5.0 = 49 (0x31 hex),
+     *     Java SE 9 = 53 (0x35 hex),
+     *     Java SE 8 = 52 (0x34 hex),
+     *     Java SE 7 = 51 (0x33 hex),
+     *     Java SE 6.0 = 50 (0x32 hex),
+     *     Java SE 5.0 = 49 (0x31 hex),
      *     JDK 1.4 = 48 (0x30 hex),
      *     JDK 1.3 = 47 (0x2F hex),
      *     JDK 1.2 = 46 (0x2E hex),
@@ -69,7 +73,7 @@ public class DirectClassFile implements ClassFile {
      *
      * Note: if you change this, please change "java.class.version" in System.java.
      */
-    private static final int CLASS_FILE_MAX_MAJOR_VERSION = 51;
+    private static final int CLASS_FILE_MAX_MAJOR_VERSION = 53;
 
     /** maximum {@code .class} file minor version */
     private static final int CLASS_FILE_MAX_MINOR_VERSION = 0;
@@ -81,7 +85,7 @@ public class DirectClassFile implements ClassFile {
     private final String filePath;
 
     /** {@code non-null;} the bytes of the file */
-    private final ByteArray bytes;
+    private final com.duy.dx.util.ByteArray bytes;
 
     /**
      * whether to be strict about parsing; if
@@ -95,7 +99,7 @@ public class DirectClassFile implements ClassFile {
      * {@code null-ok;} the constant pool; only ever {@code null}
      * before the constant pool is successfully parsed
      */
-    private StdConstantPool pool;
+    private com.duy.dx.rop.cst.StdConstantPool pool;
 
     /**
      * the class file field {@code access_flags}; will be {@code -1}
@@ -108,32 +112,32 @@ public class DirectClassFile implements ClassFile {
      * interpreted as a type constant; only ever {@code null}
      * before the file is successfully parsed
      */
-    private CstType thisClass;
+    private com.duy.dx.rop.cst.CstType thisClass;
 
     /**
      * {@code null-ok;} the class file field {@code super_class}, interpreted
      * as a type constant if non-zero
      */
-    private CstType superClass;
+    private com.duy.dx.rop.cst.CstType superClass;
 
     /**
      * {@code null-ok;} the class file field {@code interfaces}; only
      * ever {@code null} before the file is successfully
      * parsed
      */
-    private TypeList interfaces;
+    private com.duy.dx.rop.type.TypeList interfaces;
 
     /**
      * {@code null-ok;} the class file field {@code fields}; only ever
      * {@code null} before the file is successfully parsed
      */
-    private FieldList fields;
+    private com.duy.dx.cf.iface.FieldList fields;
 
     /**
      * {@code null-ok;} the class file field {@code methods}; only ever
      * {@code null} before the file is successfully parsed
      */
-    private MethodList methods;
+    private com.duy.dx.cf.iface.MethodList methods;
 
     /**
      * {@code null-ok;} the class file field {@code attributes}; only
@@ -143,10 +147,10 @@ public class DirectClassFile implements ClassFile {
     private StdAttributeList attributes;
 
     /** {@code null-ok;} attribute factory, if any */
-    private AttributeFactory attributeFactory;
+    private com.duy.dx.cf.direct.AttributeFactory attributeFactory;
 
     /** {@code null-ok;} parse observer, if any */
-    private ParseObserver observer;
+    private com.duy.dx.cf.iface.ParseObserver observer;
 
     /**
      * Returns the string form of an object or {@code "(none)"}
@@ -174,7 +178,7 @@ public class DirectClassFile implements ClassFile {
      * for purposes of verification (such as magic number matching and
      * path-package consistency checking)
      */
-    public DirectClassFile(ByteArray bytes, String filePath,
+    public DirectClassFile(com.duy.dx.util.ByteArray bytes, String filePath,
                            boolean strictParse) {
         if (bytes == null) {
             throw new NullPointerException("bytes == null");
@@ -203,7 +207,7 @@ public class DirectClassFile implements ClassFile {
      */
     public DirectClassFile(byte[] bytes, String filePath,
                            boolean strictParse) {
-        this(new ByteArray(bytes), filePath, strictParse);
+        this(new com.duy.dx.util.ByteArray(bytes), filePath, strictParse);
     }
 
     /**
@@ -211,7 +215,7 @@ public class DirectClassFile implements ClassFile {
      *
      * @param observer {@code null-ok;} the observer
      */
-    public void setObserver(ParseObserver observer) {
+    public void setObserver(com.duy.dx.cf.iface.ParseObserver observer) {
         this.observer = observer;
     }
 
@@ -220,7 +224,7 @@ public class DirectClassFile implements ClassFile {
      *
      * @param attributeFactory {@code non-null;} the attribute factory
      */
-    public void setAttributeFactory(AttributeFactory attributeFactory) {
+    public void setAttributeFactory(com.duy.dx.cf.direct.AttributeFactory attributeFactory) {
         if (attributeFactory == null) {
             throw new NullPointerException("attributeFactory == null");
         }
@@ -238,86 +242,110 @@ public class DirectClassFile implements ClassFile {
     }
 
     /**
-     * Gets the {@link ByteArray} that this instance's data comes from.
+     * Gets the {@link com.duy.dx.util.ByteArray} that this instance's data comes from.
      *
      * @return {@code non-null;} the bytes
      */
-    public ByteArray getBytes() {
+    public com.duy.dx.util.ByteArray getBytes() {
         return bytes;
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getMagic() {
         parseToInterfacesIfNecessary();
         return getMagic0();
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getMinorVersion() {
         parseToInterfacesIfNecessary();
         return getMinorVersion0();
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getMajorVersion() {
         parseToInterfacesIfNecessary();
         return getMajorVersion0();
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getAccessFlags() {
         parseToInterfacesIfNecessary();
         return accessFlags;
     }
 
     /** {@inheritDoc} */
-    public CstType getThisClass() {
+    @Override
+    public com.duy.dx.rop.cst.CstType getThisClass() {
         parseToInterfacesIfNecessary();
         return thisClass;
     }
 
     /** {@inheritDoc} */
-    public CstType getSuperclass() {
+    @Override
+    public com.duy.dx.rop.cst.CstType getSuperclass() {
         parseToInterfacesIfNecessary();
         return superClass;
     }
 
     /** {@inheritDoc} */
+    @Override
     public ConstantPool getConstantPool() {
         parseToInterfacesIfNecessary();
         return pool;
     }
 
     /** {@inheritDoc} */
-    public TypeList getInterfaces() {
+    @Override
+    public com.duy.dx.rop.type.TypeList getInterfaces() {
         parseToInterfacesIfNecessary();
         return interfaces;
     }
 
     /** {@inheritDoc} */
+    @Override
     public FieldList getFields() {
         parseToEndIfNecessary();
         return fields;
     }
 
     /** {@inheritDoc} */
+    @Override
     public MethodList getMethods() {
         parseToEndIfNecessary();
         return methods;
     }
 
     /** {@inheritDoc} */
-    public AttributeList getAttributes() {
+    @Override
+    public com.duy.dx.cf.iface.AttributeList getAttributes() {
         parseToEndIfNecessary();
         return attributes;
     }
 
     /** {@inheritDoc} */
+    @Override
+    public com.duy.dx.cf.code.BootstrapMethodsList getBootstrapMethods() {
+        com.duy.dx.cf.attrib.AttBootstrapMethods bootstrapMethodsAttribute =
+                (com.duy.dx.cf.attrib.AttBootstrapMethods) getAttributes().findFirst(AttBootstrapMethods.ATTRIBUTE_NAME);
+        if (bootstrapMethodsAttribute != null) {
+            return bootstrapMethodsAttribute.getBootstrapMethods();
+        } else {
+            return BootstrapMethodsList.EMPTY;
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public CstString getSourceFile() {
         AttributeList attribs = getAttributes();
-        Attribute attSf = attribs.findFirst(AttSourceFile.ATTRIBUTE_NAME);
+        Attribute attSf = attribs.findFirst(com.duy.dx.cf.attrib.AttSourceFile.ATTRIBUTE_NAME);
 
-        if (attSf instanceof AttSourceFile) {
+        if (attSf instanceof com.duy.dx.cf.attrib.AttSourceFile) {
             return ((AttSourceFile) attSf).getSourceFile();
         }
 
@@ -325,7 +353,7 @@ public class DirectClassFile implements ClassFile {
     }
 
     /**
-     * Constructs and returns an instance of {@link TypeList} whose
+     * Constructs and returns an instance of {@link com.duy.dx.rop.type.TypeList} whose
      * data comes from the bytes of this instance, interpreted as a
      * list of constant pool indices for classes, which are in turn
      * translated to type constants. Instance construction will fail
@@ -337,7 +365,7 @@ public class DirectClassFile implements ClassFile {
      * @param size number of elements in the list (not number of bytes)
      * @return {@code non-null;} an appropriately-constructed class list
      */
-    public TypeList makeTypeList(int offset, int size) {
+    public com.duy.dx.rop.type.TypeList makeTypeList(int offset, int size) {
         if (size == 0) {
             return StdTypeList.EMPTY;
         }
@@ -404,32 +432,40 @@ public class DirectClassFile implements ClassFile {
     private void parse() {
         try {
             parse0();
-        } catch (ParseException ex) {
+        } catch (com.duy.dx.cf.iface.ParseException ex) {
             ex.addContext("...while parsing " + filePath);
             throw ex;
         } catch (RuntimeException ex) {
-            ParseException pe = new ParseException(ex);
+            com.duy.dx.cf.iface.ParseException pe = new com.duy.dx.cf.iface.ParseException(ex);
             pe.addContext("...while parsing " + filePath);
             throw pe;
         }
     }
 
     /**
-     * Sees if the .class file header magic/version are within
-     * range.
+     * Sees if the .class file header magic has the good value.
      *
      * @param magic the value of a classfile "magic" field
+     * @return true if the magic is valid
+     */
+    private boolean isGoodMagic(int magic) {
+        return magic == CLASS_FILE_MAGIC;
+    }
+
+    /**
+     * Sees if the .class file header version are within
+     * range.
+     *
      * @param minorVersion the value of a classfile "minor_version" field
      * @param majorVersion the value of a classfile "major_version" field
-     * @return true iff the parameters are valid and within range
+     * @return true if the parameters are valid and within range
      */
-    private boolean isGoodVersion(int magic, int minorVersion,
-            int majorVersion) {
+    private boolean isGoodVersion(int minorVersion, int majorVersion) {
         /* Valid version ranges are typically of the form
          * "A.0 through B.C inclusive" where A <= B and C >= 0,
          * which is why we don't have a CLASS_FILE_MIN_MINOR_VERSION.
          */
-        if (magic == CLASS_FILE_MAGIC && minorVersion >= 0) {
+        if (minorVersion >= 0) {
             /* Check against max first to handle the case where
              * MIN_MAJOR == MAX_MAJOR.
              */
@@ -451,33 +487,34 @@ public class DirectClassFile implements ClassFile {
      */
     private void parse0() {
         if (bytes.size() < 10) {
-            throw new ParseException("severely truncated class file");
+            throw new com.duy.dx.cf.iface.ParseException("severely truncated class file");
         }
 
         if (observer != null) {
             observer.parsed(bytes, 0, 0, "begin classfile");
-            observer.parsed(bytes, 0, 4, "magic: " + Hex.u4(getMagic0()));
+            observer.parsed(bytes, 0, 4, "magic: " + com.duy.dx.util.Hex.u4(getMagic0()));
             observer.parsed(bytes, 4, 2,
-                            "minor_version: " + Hex.u2(getMinorVersion0()));
+                            "minor_version: " + com.duy.dx.util.Hex.u2(getMinorVersion0()));
             observer.parsed(bytes, 6, 2,
-                            "major_version: " + Hex.u2(getMajorVersion0()));
+                            "major_version: " + com.duy.dx.util.Hex.u2(getMajorVersion0()));
         }
 
         if (strictParse) {
             /* Make sure that this looks like a valid class file with a
              * version that we can handle.
              */
-            if (!isGoodVersion(getMagic0(), getMinorVersion0(),
-                               getMajorVersion0())) {
-                throw new ParseException("bad class file magic (" +
-                                         Hex.u4(getMagic0()) +
-                                         ") or version (" +
-                                         Hex.u2(getMajorVersion0()) + "." +
-                                         Hex.u2(getMinorVersion0()) + ")");
+            if (!isGoodMagic(getMagic0())) {
+                throw new com.duy.dx.cf.iface.ParseException("bad class file magic (" + com.duy.dx.util.Hex.u4(getMagic0()) + ")");
+            }
+
+            if (!isGoodVersion(getMinorVersion0(), getMajorVersion0())) {
+                throw new com.duy.dx.cf.iface.ParseException("unsupported class file version " +
+                                         getMajorVersion0() + "." +
+                                         getMinorVersion0());
             }
         }
 
-        ConstantPoolParser cpParser = new ConstantPoolParser(bytes);
+        com.duy.dx.cf.cst.ConstantPoolParser cpParser = new ConstantPoolParser(bytes);
         cpParser.setObserver(observer);
         pool = cpParser.getPool();
         pool.setImmutable();
@@ -485,9 +522,9 @@ public class DirectClassFile implements ClassFile {
         int at = cpParser.getEndOffset();
         int accessFlags = bytes.getUnsignedShort(at); // u2 access_flags;
         int cpi = bytes.getUnsignedShort(at + 2); // u2 this_class;
-        thisClass = (CstType) pool.get(cpi);
+        thisClass = (com.duy.dx.rop.cst.CstType) pool.get(cpi);
         cpi = bytes.getUnsignedShort(at + 4); // u2 super_class;
-        superClass = (CstType) pool.get0Ok(cpi);
+        superClass = (com.duy.dx.rop.cst.CstType) pool.get0Ok(cpi);
         int count = bytes.getUnsignedShort(at + 6); // u2 interfaces_count
 
         if (observer != null) {
@@ -498,7 +535,7 @@ public class DirectClassFile implements ClassFile {
             observer.parsed(bytes, at + 4, 2, "super_class: " +
                             stringOrNone(superClass));
             observer.parsed(bytes, at + 6, 2,
-                            "interfaces_count: " + Hex.u2(count));
+                            "interfaces_count: " + com.duy.dx.util.Hex.u2(count));
             if (count != 0) {
                 observer.parsed(bytes, at + 8, 0, "interfaces:");
             }
@@ -517,7 +554,7 @@ public class DirectClassFile implements ClassFile {
             if (!(filePath.endsWith(".class") &&
                   filePath.startsWith(thisClassName) &&
                   (filePath.length() == (thisClassName.length() + 6)))) {
-                throw new ParseException("class name (" + thisClassName +
+                throw new com.duy.dx.cf.iface.ParseException("class name (" + thisClassName +
                                          ") does not match path (" +
                                          filePath + ")");
             }
@@ -530,20 +567,20 @@ public class DirectClassFile implements ClassFile {
          */
         this.accessFlags = accessFlags;
 
-        FieldListParser flParser =
-            new FieldListParser(this, thisClass, at, attributeFactory);
+        com.duy.dx.cf.direct.FieldListParser flParser =
+            new com.duy.dx.cf.direct.FieldListParser(this, thisClass, at, attributeFactory);
         flParser.setObserver(observer);
         fields = flParser.getList();
         at = flParser.getEndOffset();
 
-        MethodListParser mlParser =
-            new MethodListParser(this, thisClass, at, attributeFactory);
+        com.duy.dx.cf.direct.MethodListParser mlParser =
+            new com.duy.dx.cf.direct.MethodListParser(this, thisClass, at, attributeFactory);
         mlParser.setObserver(observer);
         methods = mlParser.getList();
         at = mlParser.getEndOffset();
 
-        AttributeListParser alParser =
-            new AttributeListParser(this, AttributeFactory.CTX_CLASS, at,
+        com.duy.dx.cf.direct.AttributeListParser alParser =
+            new com.duy.dx.cf.direct.AttributeListParser(this, AttributeFactory.CTX_CLASS, at,
                                     attributeFactory);
         alParser.setObserver(observer);
         attributes = alParser.getList();
@@ -561,7 +598,7 @@ public class DirectClassFile implements ClassFile {
     }
 
     /**
-     * Implementation of {@link TypeList} whose data comes directly
+     * Implementation of {@link com.duy.dx.rop.type.TypeList} whose data comes directly
      * from the bytes of an instance of this (outer) class,
      * interpreted as a list of constant pool indices for classes
      * which are in turn returned as type constants. Instance
@@ -569,15 +606,15 @@ public class DirectClassFile implements ClassFile {
      * not to refer to constant pool entries of type
      * {@code Class}.
      */
-    private static class DcfTypeList implements TypeList {
+    private static class DcfTypeList implements com.duy.dx.rop.type.TypeList {
         /** {@code non-null;} array containing the data */
-        private final ByteArray bytes;
+        private final com.duy.dx.util.ByteArray bytes;
 
         /** number of elements in the list (not number of bytes) */
         private final int size;
 
         /** {@code non-null;} the constant pool */
-        private final StdConstantPool pool;
+        private final com.duy.dx.rop.cst.StdConstantPool pool;
 
         /**
          * Constructs an instance.
@@ -590,7 +627,7 @@ public class DirectClassFile implements ClassFile {
          * @param observer {@code null-ok;} parse observer to use, if any
          */
         public DcfTypeList(ByteArray bytes, int offset, int size,
-                StdConstantPool pool, ParseObserver observer) {
+                           StdConstantPool pool, ParseObserver observer) {
             if (size < 0) {
                 throw new IllegalArgumentException("size < 0");
             }
@@ -603,9 +640,9 @@ public class DirectClassFile implements ClassFile {
             for (int i = 0; i < size; i++) {
                 offset = i * 2;
                 int idx = bytes.getUnsignedShort(offset);
-                CstType type;
+                com.duy.dx.rop.cst.CstType type;
                 try {
-                    type = (CstType) pool.get(idx);
+                    type = (com.duy.dx.rop.cst.CstType) pool.get(idx);
                 } catch (ClassCastException ex) {
                     // Translate the exception.
                     throw new RuntimeException("bogus class cpi", ex);
@@ -617,28 +654,33 @@ public class DirectClassFile implements ClassFile {
         }
 
         /** {@inheritDoc} */
+        @Override
         public boolean isMutable() {
             return false;
         }
 
         /** {@inheritDoc} */
+        @Override
         public int size() {
             return size;
         }
 
         /** {@inheritDoc} */
+        @Override
         public int getWordCount() {
             // It is the same as size because all elements are classes.
             return size;
         }
 
         /** {@inheritDoc} */
-        public Type getType(int n) {
+        @Override
+        public com.duy.dx.rop.type.Type getType(int n) {
             int idx = bytes.getUnsignedShort(n * 2);
             return ((CstType) pool.get(idx)).getClassType();
         }
 
         /** {@inheritDoc} */
+        @Override
         public TypeList withAddedType(Type type) {
             throw new UnsupportedOperationException("unsupported");
         }

@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.CstInsn;
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.cst.CstInteger;
 import java.util.HashSet;
 import java.util.List;
+
+import com.duy.dx.rop.code.CstInsn;
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.cst.CstInteger;
 
 /**
  * Combine identical move-param insns, which may result from Ropper's
@@ -31,14 +32,14 @@ import java.util.List;
 public class MoveParamCombiner {
 
     /** method to process */
-    private final SsaMethod ssaMeth;
+    private final com.duy.dx.ssa.SsaMethod ssaMeth;
 
     /**
      * Processes a method with this optimization step.
      *
      * @param ssaMethod method to process
      */
-    public static void process(SsaMethod ssaMethod) {
+    public static void process(com.duy.dx.ssa.SsaMethod ssaMethod) {
         new MoveParamCombiner(ssaMethod).run();
     }
 
@@ -51,17 +52,20 @@ public class MoveParamCombiner {
      */
     private void run() {
         // This will contain the definition specs for each parameter
-        final RegisterSpec[] paramSpecs
-                = new RegisterSpec[ssaMeth.getParamWidth()];
+        final com.duy.dx.rop.code.RegisterSpec[] paramSpecs
+                = new com.duy.dx.rop.code.RegisterSpec[ssaMeth.getParamWidth()];
 
         // Insns to delete when all done
-        final HashSet<SsaInsn> deletedInsns = new HashSet();
+        final HashSet<com.duy.dx.ssa.SsaInsn> deletedInsns = new HashSet();
 
-        ssaMeth.forEachInsn(new SsaInsn.Visitor() {
+        ssaMeth.forEachInsn(new com.duy.dx.ssa.SsaInsn.Visitor() {
+            @Override
             public void visitMoveInsn (NormalSsaInsn insn) {
             }
+            @Override
             public void visitPhiInsn (PhiInsn phi) {
             }
+            @Override
             public void visitNonMoveInsn (NormalSsaInsn insn) {
                 if (insn.getOpcode().getOpcode() != RegOps.MOVE_PARAM) {
                     return;
@@ -72,10 +76,10 @@ public class MoveParamCombiner {
                 if (paramSpecs[param] == null) {
                     paramSpecs[param] = insn.getResult();
                 } else {
-                    final RegisterSpec specA = paramSpecs[param];
-                    final RegisterSpec specB = insn.getResult();
-                    LocalItem localA = specA.getLocalItem();
-                    LocalItem localB = specB.getLocalItem();
+                    final com.duy.dx.rop.code.RegisterSpec specA = paramSpecs[param];
+                    final com.duy.dx.rop.code.RegisterSpec specB = insn.getResult();
+                    com.duy.dx.rop.code.LocalItem localA = specA.getLocalItem();
+                    com.duy.dx.rop.code.LocalItem localB = specB.getLocalItem();
                     LocalItem newLocal;
 
                     /*
@@ -103,14 +107,16 @@ public class MoveParamCombiner {
                      * Map all uses of specB to specA
                      */
 
-                    RegisterMapper mapper = new RegisterMapper() {
-                        /** @inheritDoc */
+                    com.duy.dx.ssa.RegisterMapper mapper = new RegisterMapper() {
+                        /** {@inheritDoc} */
+                        @Override
                         public int getNewRegisterCount() {
                             return ssaMeth.getRegCount();
                         }
 
-                        /** @inheritDoc */
-                        public RegisterSpec map(RegisterSpec registerSpec) {
+                        /** {@inheritDoc} */
+                        @Override
+                        public com.duy.dx.rop.code.RegisterSpec map(RegisterSpec registerSpec) {
                             if (registerSpec.getReg() == specB.getReg()) {
                                 return specA;
                             }
@@ -119,7 +125,7 @@ public class MoveParamCombiner {
                         }
                     };
 
-                    List<SsaInsn> uses
+                    List<com.duy.dx.ssa.SsaInsn> uses
                             = ssaMeth.getUseListForRegister(specB.getReg());
 
                     // Use list is modified by mapSourceRegisters
@@ -145,7 +151,7 @@ public class MoveParamCombiner {
      * @return {@code >=0;} parameter index
      */
     private int getParamIndex(NormalSsaInsn insn) {
-        CstInsn cstInsn = (CstInsn)(insn.getOriginalRopInsn());
+        com.duy.dx.rop.code.CstInsn cstInsn = (CstInsn)(insn.getOriginalRopInsn());
 
         int param = ((CstInteger)cstInsn.getConstant()).getValue();
         return param;

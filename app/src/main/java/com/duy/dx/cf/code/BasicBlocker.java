@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstMemberRef;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.Bits;
-import com.duy.dx .util.IntList;
 import java.util.ArrayList;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstInvokeDynamic;
+import com.duy.dx.rop.cst.CstMemberRef;
+import com.duy.dx.rop.cst.CstMethodHandle;
+import com.duy.dx.rop.cst.CstProtoRef;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.Bits;
+import com.duy.dx.util.IntList;
 
 /**
  * Utility that identifies basic blocks in bytecode.
  */
-public final class BasicBlocker implements BytecodeArray.Visitor {
+public final class BasicBlocker implements com.duy.dx.cf.code.BytecodeArray.Visitor {
     /** {@code non-null;} method being converted */
-    private final ConcreteMethod method;
+    private final com.duy.dx.cf.code.ConcreteMethod method;
 
     /**
      * {@code non-null;} work set; bits indicate offsets in need of
@@ -56,13 +60,13 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
      * {@code non-null, sparse;} for each instruction offset to a branch of
      * some sort, the list of targets for that instruction
      */
-    private final IntList[] targetLists;
+    private final com.duy.dx.util.IntList[] targetLists;
 
     /**
      * {@code non-null, sparse;} for each instruction offset to a throwing
      * instruction, the list of exception handlers for that instruction
      */
-    private final ByteCatchList[] catchLists;
+    private final com.duy.dx.cf.code.ByteCatchList[] catchLists;
 
     /** offset of the previously parsed bytecode */
     private int previousOffset;
@@ -75,7 +79,7 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
      * @param method {@code non-null;} method to convert
      * @return {@code non-null;} list of basic blocks
      */
-    public static ByteBlockList identifyBlocks(ConcreteMethod method) {
+    public static ByteBlockList identifyBlocks(com.duy.dx.cf.code.ConcreteMethod method) {
         BasicBlocker bb = new BasicBlocker(method);
 
         bb.doit();
@@ -103,11 +107,11 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
          */
         int sz = method.getCode().size() + 1;
 
-        workSet = Bits.makeBitSet(sz);
-        liveSet = Bits.makeBitSet(sz);
-        blockSet = Bits.makeBitSet(sz);
-        targetLists = new IntList[sz];
-        catchLists = new ByteCatchList[sz];
+        workSet = com.duy.dx.util.Bits.makeBitSet(sz);
+        liveSet = com.duy.dx.util.Bits.makeBitSet(sz);
+        blockSet = com.duy.dx.util.Bits.makeBitSet(sz);
+        targetLists = new com.duy.dx.util.IntList[sz];
+        catchLists = new com.duy.dx.cf.code.ByteCatchList[sz];
         previousOffset = -1;
     }
 
@@ -119,43 +123,45 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
      */
 
     /** {@inheritDoc} */
+    @Override
     public void visitInvalid(int opcode, int offset, int length) {
         visitCommon(offset, length, true);
     }
 
     /** {@inheritDoc} */
-    public void visitNoArgs(int opcode, int offset, int length, Type type) {
+    @Override
+    public void visitNoArgs(int opcode, int offset, int length, com.duy.dx.rop.type.Type type) {
         switch (opcode) {
-            case ByteOps.IRETURN:
-            case ByteOps.RETURN: {
+            case com.duy.dx.cf.code.ByteOps.IRETURN:
+            case com.duy.dx.cf.code.ByteOps.RETURN: {
                 visitCommon(offset, length, false);
-                targetLists[offset] = IntList.EMPTY;
+                targetLists[offset] = com.duy.dx.util.IntList.EMPTY;
                 break;
             }
-            case ByteOps.ATHROW: {
+            case com.duy.dx.cf.code.ByteOps.ATHROW: {
                 visitCommon(offset, length, false);
                 visitThrowing(offset, length, false);
                 break;
             }
-            case ByteOps.IALOAD:
-            case ByteOps.LALOAD:
-            case ByteOps.FALOAD:
-            case ByteOps.DALOAD:
-            case ByteOps.AALOAD:
-            case ByteOps.BALOAD:
-            case ByteOps.CALOAD:
-            case ByteOps.SALOAD:
-            case ByteOps.IASTORE:
-            case ByteOps.LASTORE:
-            case ByteOps.FASTORE:
-            case ByteOps.DASTORE:
-            case ByteOps.AASTORE:
-            case ByteOps.BASTORE:
-            case ByteOps.CASTORE:
-            case ByteOps.SASTORE:
-            case ByteOps.ARRAYLENGTH:
-            case ByteOps.MONITORENTER:
-            case ByteOps.MONITOREXIT: {
+            case com.duy.dx.cf.code.ByteOps.IALOAD:
+            case com.duy.dx.cf.code.ByteOps.LALOAD:
+            case com.duy.dx.cf.code.ByteOps.FALOAD:
+            case com.duy.dx.cf.code.ByteOps.DALOAD:
+            case com.duy.dx.cf.code.ByteOps.AALOAD:
+            case com.duy.dx.cf.code.ByteOps.BALOAD:
+            case com.duy.dx.cf.code.ByteOps.CALOAD:
+            case com.duy.dx.cf.code.ByteOps.SALOAD:
+            case com.duy.dx.cf.code.ByteOps.IASTORE:
+            case com.duy.dx.cf.code.ByteOps.LASTORE:
+            case com.duy.dx.cf.code.ByteOps.FASTORE:
+            case com.duy.dx.cf.code.ByteOps.DASTORE:
+            case com.duy.dx.cf.code.ByteOps.AASTORE:
+            case com.duy.dx.cf.code.ByteOps.BASTORE:
+            case com.duy.dx.cf.code.ByteOps.CASTORE:
+            case com.duy.dx.cf.code.ByteOps.SASTORE:
+            case com.duy.dx.cf.code.ByteOps.ARRAYLENGTH:
+            case com.duy.dx.cf.code.ByteOps.MONITORENTER:
+            case com.duy.dx.cf.code.ByteOps.MONITOREXIT: {
                 /*
                  * These instructions can all throw, so they have to end
                  * the block they appear in (since throws are branches).
@@ -164,14 +170,14 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
                 visitThrowing(offset, length, true);
                 break;
             }
-            case ByteOps.IDIV:
-            case ByteOps.IREM: {
+            case com.duy.dx.cf.code.ByteOps.IDIV:
+            case com.duy.dx.cf.code.ByteOps.IREM: {
                 /*
                  * The int and long versions of division and remainder may
                  * throw, but not the other types.
                  */
                 visitCommon(offset, length, true);
-                if ((type == Type.INT) || (type == Type.LONG)) {
+                if ((type == com.duy.dx.rop.type.Type.INT) || (type == com.duy.dx.rop.type.Type.LONG)) {
                     visitThrowing(offset, length, true);
                 }
                 break;
@@ -184,23 +190,26 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitLocal(int opcode, int offset, int length,
-            int idx, Type type, int value) {
-        if (opcode == ByteOps.RET) {
+                           int idx, Type type, int value) {
+        if (opcode == com.duy.dx.cf.code.ByteOps.RET) {
             visitCommon(offset, length, false);
-            targetLists[offset] = IntList.EMPTY;
+            targetLists[offset] = com.duy.dx.util.IntList.EMPTY;
         } else {
             visitCommon(offset, length, true);
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitConstant(int opcode, int offset, int length,
-            Constant cst, int value) {
+                              com.duy.dx.rop.cst.Constant cst, int value) {
         visitCommon(offset, length, true);
 
-        if ((cst instanceof CstMemberRef) || (cst instanceof CstType) ||
-            (cst instanceof CstString)) {
+        if (cst instanceof CstMemberRef || cst instanceof com.duy.dx.rop.cst.CstType ||
+            cst instanceof CstString || cst instanceof CstInvokeDynamic ||
+            cst instanceof CstMethodHandle || cst instanceof CstProtoRef) {
             /*
              * Instructions with these sorts of constants have the
              * possibility of throwing, so this instruction needs to
@@ -212,12 +221,13 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitBranch(int opcode, int offset, int length,
             int target) {
         switch (opcode) {
-            case ByteOps.GOTO: {
+            case com.duy.dx.cf.code.ByteOps.GOTO: {
                 visitCommon(offset, length, false);
-                targetLists[offset] = IntList.makeImmutable(target);
+                targetLists[offset] = com.duy.dx.util.IntList.makeImmutable(target);
                 break;
             }
             case ByteOps.JSR: {
@@ -234,7 +244,7 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
                 int next = offset + length;
                 visitCommon(offset, length, true);
                 addWorkIfNecessary(next, true);
-                targetLists[offset] = IntList.makeImmutable(next, target);
+                targetLists[offset] = com.duy.dx.util.IntList.makeImmutable(next, target);
                 break;
             }
         }
@@ -243,8 +253,9 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitSwitch(int opcode, int offset, int length,
-            SwitchList cases, int padding) {
+                            SwitchList cases, int padding) {
         visitCommon(offset, length, false);
         addWorkIfNecessary(cases.getDefaultTarget(), true);
 
@@ -257,6 +268,7 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitNewarray(int offset, int length, CstType type,
             ArrayList<Constant> intVals) {
         visitCommon(offset, length, true);
@@ -269,25 +281,25 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
      * @return {@code non-null;} the list of basic blocks
      */
     private ByteBlockList getBlockList() {
-        BytecodeArray bytes = method.getCode();
-        ByteBlock[] bbs = new ByteBlock[bytes.size()];
+        com.duy.dx.cf.code.BytecodeArray bytes = method.getCode();
+        com.duy.dx.cf.code.ByteBlock[] bbs = new com.duy.dx.cf.code.ByteBlock[bytes.size()];
         int count = 0;
 
         for (int at = 0, next; /*at*/; at = next) {
-            next = Bits.findFirst(blockSet, at + 1);
+            next = com.duy.dx.util.Bits.findFirst(blockSet, at + 1);
             if (next < 0) {
                 break;
             }
 
-            if (Bits.get(liveSet, at)) {
+            if (com.duy.dx.util.Bits.get(liveSet, at)) {
                 /*
                  * Search backward for the branch or throwing
                  * instruction at the end of this block, if any. If
                  * there isn't any, then "next" is the sole target.
                  */
-                IntList targets = null;
+                com.duy.dx.util.IntList targets = null;
                 int targetsAt = -1;
-                ByteCatchList blockCatches;
+                com.duy.dx.cf.code.ByteCatchList blockCatches;
 
                 for (int i = next - 1; i >= at; i--) {
                     targets = targetLists[i];
@@ -299,11 +311,11 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
 
                 if (targets == null) {
                     targets = IntList.makeImmutable(next);
-                    blockCatches = ByteCatchList.EMPTY;
+                    blockCatches = com.duy.dx.cf.code.ByteCatchList.EMPTY;
                 } else {
                     blockCatches = catchLists[targetsAt];
                     if (blockCatches == null) {
-                        blockCatches = ByteCatchList.EMPTY;
+                        blockCatches = com.duy.dx.cf.code.ByteCatchList.EMPTY;
                     }
                 }
 
@@ -326,22 +338,22 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
      */
     private void doit() {
         BytecodeArray bytes = method.getCode();
-        ByteCatchList catches = method.getCatches();
+        com.duy.dx.cf.code.ByteCatchList catches = method.getCatches();
         int catchSz = catches.size();
 
         /*
          * Start by setting offset 0 as the start of a block and in need
          * of work...
          */
-        Bits.set(workSet, 0);
-        Bits.set(blockSet, 0);
+        com.duy.dx.util.Bits.set(workSet, 0);
+        com.duy.dx.util.Bits.set(blockSet, 0);
 
         /*
          * And then process the work set, add new work based on
          * exception ranges that are active, and iterate until there's
          * nothing left to work on.
          */
-        while (!Bits.isEmpty(workSet)) {
+        while (!com.duy.dx.util.Bits.isEmpty(workSet)) {
             try {
                 bytes.processWorkSet(workSet, this);
             } catch (IllegalArgumentException ex) {
@@ -352,12 +364,12 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
             }
 
             for (int i = 0; i < catchSz; i++) {
-                ByteCatchList.Item item = catches.get(i);
+                com.duy.dx.cf.code.ByteCatchList.Item item = catches.get(i);
                 int start = item.getStartPc();
                 int end = item.getEndPc();
-                if (Bits.anyInRange(liveSet, start, end)) {
-                    Bits.set(blockSet, start);
-                    Bits.set(blockSet, end);
+                if (com.duy.dx.util.Bits.anyInRange(liveSet, start, end)) {
+                    com.duy.dx.util.Bits.set(blockSet, start);
+                    com.duy.dx.util.Bits.set(blockSet, end);
                     addWorkIfNecessary(item.getHandlerPc(), true);
                 }
             }
@@ -373,12 +385,12 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
      * basic block
      */
     private void addWorkIfNecessary(int offset, boolean blockStart) {
-        if (!Bits.get(liveSet, offset)) {
-            Bits.set(workSet, offset);
+        if (!com.duy.dx.util.Bits.get(liveSet, offset)) {
+            com.duy.dx.util.Bits.set(workSet, offset);
         }
 
         if (blockStart) {
-            Bits.set(blockSet, offset);
+            com.duy.dx.util.Bits.set(blockSet, offset);
         }
     }
 
@@ -392,7 +404,7 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
      * unconditional branch, a return, or a switch)
      */
     private void visitCommon(int offset, int length, boolean nextIsLive) {
-        Bits.set(liveSet, offset);
+        com.duy.dx.util.Bits.set(liveSet, offset);
 
         if (nextIsLive) {
             /*
@@ -439,6 +451,7 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setPreviousOffset(int offset) {
         previousOffset = offset;
     }
@@ -446,6 +459,7 @@ public final class BasicBlocker implements BytecodeArray.Visitor {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getPreviousOffset() {
         return previousOffset;
     }

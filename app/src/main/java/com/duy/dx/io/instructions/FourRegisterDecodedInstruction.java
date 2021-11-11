@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .io.instructions;
+package com.duy.dx.io.instructions;
 
-import com.duy.dx .io.IndexType;
+import com.duy.dx.io.IndexType;
 
 /**
  * A decoded Dalvik instruction which has five register arguments.
  */
-public final class FourRegisterDecodedInstruction extends DecodedInstruction {
+public final class FourRegisterDecodedInstruction extends com.duy.dx.io.instructions.DecodedInstruction {
     /** register argument "A" */
     private final int a;
 
@@ -38,8 +38,8 @@ public final class FourRegisterDecodedInstruction extends DecodedInstruction {
      * Constructs an instance.
      */
     public FourRegisterDecodedInstruction(InstructionCodec format, int opcode,
-            int index, IndexType indexType, int target, long literal,
-            int a, int b, int c, int d) {
+                                          int index, IndexType indexType, int target, long literal,
+                                          int a, int b, int c, int d) {
         super(format, opcode, index, indexType, target, literal);
 
         this.a = a;
@@ -48,32 +48,38 @@ public final class FourRegisterDecodedInstruction extends DecodedInstruction {
         this.d = d;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getRegisterCount() {
         return 4;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getA() {
         return a;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getB() {
         return b;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getC() {
         return c;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getD() {
         return d;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public DecodedInstruction withIndex(int newIndex) {
         return new FourRegisterDecodedInstruction(
                 getFormat(), getOpcode(), newIndex, getIndexType(),

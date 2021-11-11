@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .cf.code.ByteCatchList;
-import com.duy.dx .cf.code.BytecodeArray;
-import com.duy.dx .cf.iface.AttributeList;
-import com.duy.dx .util.MutabilityException;
+import com.duy.dx.cf.code.ByteCatchList;
+import com.duy.dx.cf.code.BytecodeArray;
+import com.duy.dx.cf.iface.AttributeList;
+import com.duy.dx.util.MutabilityException;
 
 /**
  * Attribute class for standard {@code Code} attributes.
@@ -35,13 +35,13 @@ public final class AttCode extends BaseAttribute {
     private final int maxLocals;
 
     /** {@code non-null;} array containing the bytecode per se */
-    private final BytecodeArray code;
+    private final com.duy.dx.cf.code.BytecodeArray code;
 
     /** {@code non-null;} the exception table */
-    private final ByteCatchList catches;
+    private final com.duy.dx.cf.code.ByteCatchList catches;
 
     /** {@code non-null;} the associated list of attributes */
-    private final AttributeList attributes;
+    private final com.duy.dx.cf.iface.AttributeList attributes;
 
     /**
      * Constructs an instance.
@@ -52,8 +52,8 @@ public final class AttCode extends BaseAttribute {
      * @param catches {@code non-null;} the exception table
      * @param attributes {@code non-null;} the associated list of attributes
      */
-    public AttCode(int maxStack, int maxLocals, BytecodeArray code,
-                   ByteCatchList catches, AttributeList attributes) {
+    public AttCode(int maxStack, int maxLocals, com.duy.dx.cf.code.BytecodeArray code,
+                   com.duy.dx.cf.code.ByteCatchList catches, com.duy.dx.cf.iface.AttributeList attributes) {
         super(ATTRIBUTE_NAME);
 
         if (maxStack < 0) {
@@ -70,7 +70,7 @@ public final class AttCode extends BaseAttribute {
 
         try {
             if (catches.isMutable()) {
-                throw new MutabilityException("catches.isMutable()");
+                throw new com.duy.dx.util.MutabilityException("catches.isMutable()");
             }
         } catch (NullPointerException ex) {
             // Translate the exception.
@@ -93,6 +93,7 @@ public final class AttCode extends BaseAttribute {
         this.attributes = attributes;
     }
 
+    @Override
     public int byteLength() {
         return 10 + code.byteLength() + catches.byteLength() +
             attributes.byteLength();

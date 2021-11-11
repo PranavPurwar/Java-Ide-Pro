@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.util.Hex;
 
 /**
  * Utility methods to merge various frame information.
@@ -39,8 +39,8 @@ public final class Merger {
      * @param locals2 {@code non-null;} another locals array
      * @return {@code non-null;} the result of merging the two locals arrays
      */
-    public static OneLocalsArray mergeLocals(OneLocalsArray locals1,
-                                          OneLocalsArray locals2) {
+    public static com.duy.dx.cf.code.OneLocalsArray mergeLocals(com.duy.dx.cf.code.OneLocalsArray locals1,
+                                                                         com.duy.dx.cf.code.OneLocalsArray locals2) {
         if (locals1 == locals2) {
             // Easy out.
             return locals1;
@@ -54,9 +54,9 @@ public final class Merger {
         }
 
         for (int i = 0; i < sz; i++) {
-            TypeBearer tb1 = locals1.getOrNull(i);
-            TypeBearer tb2 = locals2.getOrNull(i);
-            TypeBearer resultType = mergeType(tb1, tb2);
+            com.duy.dx.rop.type.TypeBearer tb1 = locals1.getOrNull(i);
+            com.duy.dx.rop.type.TypeBearer tb2 = locals2.getOrNull(i);
+            com.duy.dx.rop.type.TypeBearer resultType = mergeType(tb1, tb2);
             if (resultType != tb1) {
                 /*
                  * We only need to do anything when the result differs
@@ -91,8 +91,8 @@ public final class Merger {
      * @param stack2 {@code non-null;} another stack
      * @return {@code non-null;} the result of merging the two stacks
      */
-    public static ExecutionStack mergeStack(ExecutionStack stack1,
-                                            ExecutionStack stack2) {
+    public static com.duy.dx.cf.code.ExecutionStack mergeStack(com.duy.dx.cf.code.ExecutionStack stack1,
+                                                                        com.duy.dx.cf.code.ExecutionStack stack2) {
         if (stack1 == stack2) {
             // Easy out.
             return stack1;
@@ -106,9 +106,9 @@ public final class Merger {
         }
 
         for (int i = 0; i < sz; i++) {
-            TypeBearer tb1 = stack1.peek(i);
-            TypeBearer tb2 = stack2.peek(i);
-            TypeBearer resultType = mergeType(tb1, tb2);
+            com.duy.dx.rop.type.TypeBearer tb1 = stack1.peek(i);
+            com.duy.dx.rop.type.TypeBearer tb2 = stack2.peek(i);
+            com.duy.dx.rop.type.TypeBearer resultType = mergeType(tb1, tb2);
             if (resultType != tb1) {
                 /*
                  * We only need to do anything when the result differs
@@ -148,32 +148,32 @@ public final class Merger {
      * @param ft2 {@code non-null;} another frame type
      * @return {@code non-null;} the result of merging the two types
      */
-    public static TypeBearer mergeType(TypeBearer ft1, TypeBearer ft2) {
+    public static com.duy.dx.rop.type.TypeBearer mergeType(com.duy.dx.rop.type.TypeBearer ft1, com.duy.dx.rop.type.TypeBearer ft2) {
         if ((ft1 == null) || ft1.equals(ft2)) {
             return ft1;
         } else if (ft2 == null) {
             return null;
         } else {
-            Type type1 = ft1.getType();
-            Type type2 = ft2.getType();
+            com.duy.dx.rop.type.Type type1 = ft1.getType();
+            com.duy.dx.rop.type.Type type2 = ft2.getType();
 
             if (type1 == type2) {
                 return type1;
             } else if (type1.isReference() && type2.isReference()) {
-                if (type1 == Type.KNOWN_NULL) {
+                if (type1 == com.duy.dx.rop.type.Type.KNOWN_NULL) {
                     /*
                      * A known-null merges with any other reference type to
                      * be that reference type.
                      */
                     return type2;
-                } else if (type2 == Type.KNOWN_NULL) {
+                } else if (type2 == com.duy.dx.rop.type.Type.KNOWN_NULL) {
                     /*
                      * The same as above, but this time it's type2 that's
                      * the known-null.
                      */
                     return type1;
                 } else if (type1.isArray() && type2.isArray()) {
-                    TypeBearer componentUnion =
+                    com.duy.dx.rop.type.TypeBearer componentUnion =
                         mergeType(type1.getComponentType(),
                                 type2.getComponentType());
                     if (componentUnion == null) {
@@ -181,23 +181,23 @@ public final class Merger {
                          * At least one of the types is a primitive type,
                          * so the merged result is just Object.
                          */
-                        return Type.OBJECT;
+                        return com.duy.dx.rop.type.Type.OBJECT;
                     }
-                    return ((Type) componentUnion).getArrayType();
+                    return ((com.duy.dx.rop.type.Type) componentUnion).getArrayType();
                 } else {
                     /*
                      * All other unequal reference types get merged to be
                      * Object in this phase. This is fine here, but it
                      * won't be the right thing to do in the verifier.
                      */
-                    return Type.OBJECT;
+                    return com.duy.dx.rop.type.Type.OBJECT;
                 }
             } else if (type1.isIntlike() && type2.isIntlike()) {
                 /*
                  * Merging two non-identical int-like types results in
                  * the type int.
                  */
-                return Type.INT;
+                return com.duy.dx.rop.type.Type.INT;
             } else {
                 return null;
             }
@@ -216,10 +216,10 @@ public final class Merger {
      * @param supertypeBearer {@code non-null;} the supertype
      * @param subtypeBearer {@code non-null;} the subtype
      */
-    public static boolean isPossiblyAssignableFrom(TypeBearer supertypeBearer,
-            TypeBearer subtypeBearer) {
-        Type supertype = supertypeBearer.getType();
-        Type subtype = subtypeBearer.getType();
+    public static boolean isPossiblyAssignableFrom(com.duy.dx.rop.type.TypeBearer supertypeBearer,
+                                                   TypeBearer subtypeBearer) {
+        com.duy.dx.rop.type.Type supertype = supertypeBearer.getType();
+        com.duy.dx.rop.type.Type subtype = subtypeBearer.getType();
 
         if (supertype.equals(subtype)) {
             // Easy out.
@@ -231,17 +231,17 @@ public final class Merger {
 
         // Treat return types as Object for the purposes of this method.
 
-        if (superBt == Type.BT_ADDR) {
-            supertype = Type.OBJECT;
-            superBt = Type.BT_OBJECT;
+        if (superBt == com.duy.dx.rop.type.Type.BT_ADDR) {
+            supertype = com.duy.dx.rop.type.Type.OBJECT;
+            superBt = com.duy.dx.rop.type.Type.BT_OBJECT;
         }
 
-        if (subBt == Type.BT_ADDR) {
-            subtype = Type.OBJECT;
-            subBt = Type.BT_OBJECT;
+        if (subBt == com.duy.dx.rop.type.Type.BT_ADDR) {
+            subtype = com.duy.dx.rop.type.Type.OBJECT;
+            subBt = com.duy.dx.rop.type.Type.BT_OBJECT;
         }
 
-        if ((superBt != Type.BT_OBJECT) || (subBt != Type.BT_OBJECT)) {
+        if ((superBt != com.duy.dx.rop.type.Type.BT_OBJECT) || (subBt != com.duy.dx.rop.type.Type.BT_OBJECT)) {
             /*
              * No two distinct primitive types are assignable in this sense,
              * unless they are both int-like.
@@ -251,20 +251,20 @@ public final class Merger {
 
         // At this point, we know both types are reference types.
 
-        if (supertype == Type.KNOWN_NULL) {
+        if (supertype == com.duy.dx.rop.type.Type.KNOWN_NULL) {
             /*
              * A known-null supertype is only assignable from another
              * known-null (handled in the easy out at the top of the
              * method).
              */
             return false;
-        } else if (subtype == Type.KNOWN_NULL) {
+        } else if (subtype == com.duy.dx.rop.type.Type.KNOWN_NULL) {
             /*
              * A known-null subtype is in fact assignable to any
              * reference type.
              */
             return true;
-        } else if (supertype == Type.OBJECT) {
+        } else if (supertype == com.duy.dx.rop.type.Type.OBJECT) {
             /*
              * Object is assignable from any reference type.
              */
@@ -292,7 +292,7 @@ public final class Merger {
              * Other than Object (handled above), array types are
              * assignable only to Serializable and Cloneable.
              */
-            return (supertype == Type.SERIALIZABLE) ||
+            return (supertype == com.duy.dx.rop.type.Type.SERIALIZABLE) ||
                 (supertype == Type.CLONEABLE);
         } else {
             /*

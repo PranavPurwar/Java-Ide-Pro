@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.util.AnnotatedOutput;
 
 /**
  * Base class for any structurally-significant and (potentially)
@@ -55,7 +55,7 @@ public abstract class Item {
     public abstract int writeSize();
 
     /**
-     * Populates a {@link DexFile} with items from within this instance.
+     * Populates a {@link com.duy.dx.dex.file.DexFile} with items from within this instance.
      * This will <i>not</i> add an item to the file for this instance itself
      * (which should have been done by whatever refers to this instance).
      *
@@ -64,11 +64,11 @@ public abstract class Item {
      *
      * @param file {@code non-null;} the file to populate
      */
-    public abstract void addContents(DexFile file);
+    public abstract void addContents(com.duy.dx.dex.file.DexFile file);
 
     /**
      * Writes the representation of this instance to the given data section,
-     * using the given {@link DexFile} to look things up as needed.
+     * using the given {@link com.duy.dx.dex.file.DexFile} to look things up as needed.
      * If this instance keeps track of its offset, then this method will
      * note the written offset and will also throw an exception if this
      * instance has already been written.

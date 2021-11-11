@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.util.ExceptionWithContext;
-import com.duy.dx .dex.code.DalvCode;
-import com.duy.dx .dex.code.DalvInsnList;
-import com.duy.dx .dex.code.LocalList;
-import com.duy.dx .dex.code.PositionList;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.dex.code.DalvCode;
+import com.duy.dx.dex.code.DalvInsnList;
+import com.duy.dx.dex.code.LocalList;
+import com.duy.dx.dex.code.PositionList;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.util.AnnotatedOutput;
 import java.io.PrintWriter;
 
 public class DebugInfoItem extends OffsettedItem {
@@ -60,7 +60,7 @@ public class DebugInfoItem extends OffsettedItem {
 
     /** {@inheritDoc} */
     @Override
-    public void addContents(DexFile file) {
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
         // No contents to add.
     }
 
@@ -94,7 +94,7 @@ public class DebugInfoItem extends OffsettedItem {
      * @param out {@code non-null;} where to annotate to
      * @param prefix {@code null-ok;} prefix to attach to each line of output
      */
-    public void annotateTo(DexFile file, AnnotatedOutput out, String prefix) {
+    public void annotateTo(com.duy.dx.dex.file.DexFile file, AnnotatedOutput out, String prefix) {
         encode(file, prefix, null, out, false);
     }
 
@@ -110,7 +110,7 @@ public class DebugInfoItem extends OffsettedItem {
 
     /** {@inheritDoc} */
     @Override
-    protected void writeTo0(DexFile file, AnnotatedOutput out) {
+    protected void writeTo0(com.duy.dx.dex.file.DexFile file, AnnotatedOutput out) {
         if (out.annotates()) {
             /*
              * Re-run the encoder to generate the annotations,
@@ -136,8 +136,8 @@ public class DebugInfoItem extends OffsettedItem {
      * {@code out}
      * @return {@code non-null;} the encoded array
      */
-    private byte[] encode(DexFile file, String prefix, PrintWriter debugPrint,
-            AnnotatedOutput out, boolean consume) {
+    private byte[] encode(com.duy.dx.dex.file.DexFile file, String prefix, PrintWriter debugPrint,
+                          AnnotatedOutput out, boolean consume) {
         byte[] result = encode0(file, prefix, debugPrint, out, consume);
 
         if (ENABLE_ENCODER_SELF_CHECK && (file != null)) {
@@ -168,14 +168,14 @@ public class DebugInfoItem extends OffsettedItem {
      * @return {@code non-null;} the encoded array
      */
     private byte[] encode0(DexFile file, String prefix, PrintWriter debugPrint,
-            AnnotatedOutput out, boolean consume) {
+                           AnnotatedOutput out, boolean consume) {
         PositionList positions = code.getPositions();
         LocalList locals = code.getLocals();
         DalvInsnList insns = code.getInsns();
         int codeSize = insns.codeSize();
         int regSize = insns.getRegistersSize();
 
-        DebugInfoEncoder encoder =
+        com.duy.dx.dex.file.DebugInfoEncoder encoder =
             new DebugInfoEncoder(positions, locals,
                     file, codeSize, regSize, isStatic, ref);
 

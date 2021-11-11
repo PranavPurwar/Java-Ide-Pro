@@ -14,43 +14,45 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .dex.DexOptions;
-import com.duy.dx .io.Opcodes;
-import com.duy.dx .rop.code.BasicBlock;
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.FillArrayDataInsn;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.LocalVariableInfo;
-import com.duy.dx .rop.code.PlainCstInsn;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.RegisterSpecSet;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.code.SwitchInsn;
-import com.duy.dx .rop.code.ThrowingCstInsn;
-import com.duy.dx .rop.code.ThrowingInsn;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .util.Bits;
-import com.duy.dx .util.IntList;
 import java.util.ArrayList;
 
+import com.duy.dx.dex.DexOptions;
+import com.duy.dx.io.Opcodes;
+import com.duy.dx.rop.code.BasicBlock;
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.FillArrayDataInsn;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.InvokePolymorphicInsn;
+import com.duy.dx.rop.code.LocalVariableInfo;
+import com.duy.dx.rop.code.PlainCstInsn;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.RegisterSpecSet;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.code.SwitchInsn;
+import com.duy.dx.rop.code.ThrowingCstInsn;
+import com.duy.dx.rop.code.ThrowingInsn;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.util.Bits;
+import com.duy.dx.util.IntList;
+
 /**
- * Translator from {@link RopMethod} to {@link DalvCode}. The {@link
+ * Translator from {@link com.duy.dx.rop.code.RopMethod} to {@link DalvCode}. The {@link
  * #translate} method is the thing to call on this class.
  */
 public final class RopTranslator {
     /** {@code non-null;} options for dex output */
-    private final DexOptions dexOptions;
+    private final com.duy.dx.dex.DexOptions dexOptions;
 
     /** {@code non-null;} method to translate */
-    private final RopMethod method;
+    private final com.duy.dx.rop.code.RopMethod method;
 
     /**
      * how much position info to preserve; one of the static
@@ -59,7 +61,7 @@ public final class RopTranslator {
     private final int positionInfo;
 
     /** {@code null-ok;} local variable info to use */
-    private final LocalVariableInfo locals;
+    private final com.duy.dx.rop.code.LocalVariableInfo locals;
 
     /** {@code non-null;} container for all the address objects for the method */
     private final BlockAddresses addresses;
@@ -83,10 +85,10 @@ public final class RopTranslator {
      * true if the parameters to this method happen to be in proper order
      * at the end of the frame (as the optimizer emits them)
      */
-    private boolean paramsAreInOrder;
+    private final boolean paramsAreInOrder;
 
     /**
-     * Translates a {@link RopMethod}. This may modify the given
+     * Translates a {@link com.duy.dx.rop.code.RopMethod}. This may modify the given
      * input.
      *
      * @param method {@code non-null;} the original method
@@ -98,8 +100,8 @@ public final class RopTranslator {
      * @param dexOptions {@code non-null;} options for dex output
      * @return {@code non-null;} the translated version
      */
-    public static DalvCode translate(RopMethod method, int positionInfo,
-            LocalVariableInfo locals, int paramSize, DexOptions dexOptions) {
+    public static DalvCode translate(com.duy.dx.rop.code.RopMethod method, int positionInfo,
+                                     com.duy.dx.rop.code.LocalVariableInfo locals, int paramSize, com.duy.dx.dex.DexOptions dexOptions) {
         RopTranslator translator =
             new RopTranslator(method, positionInfo, locals, paramSize, dexOptions);
         return translator.translateAndGetResult();
@@ -116,8 +118,8 @@ public final class RopTranslator {
      * this method
      * @param dexOptions {@code non-null;} options for dex output
      */
-    private RopTranslator(RopMethod method, int positionInfo, LocalVariableInfo locals,
-            int paramSize, DexOptions dexOptions) {
+    private RopTranslator(com.duy.dx.rop.code.RopMethod method, int positionInfo, com.duy.dx.rop.code.LocalVariableInfo locals,
+                          int paramSize, DexOptions dexOptions) {
         this.dexOptions = dexOptions;
         this.method = method;
         this.positionInfo = positionInfo;
@@ -127,7 +129,7 @@ public final class RopTranslator {
         this.order = null;
         this.paramsAreInOrder = calculateParamsAreInOrder(method, paramSize);
 
-        BasicBlockList blocks = method.getBlocks();
+        com.duy.dx.rop.code.BasicBlockList blocks = method.getBlocks();
         int bsz = blocks.size();
 
         /*
@@ -176,7 +178,7 @@ public final class RopTranslator {
      * to this method
      */
     private static boolean calculateParamsAreInOrder(RopMethod method,
-            final int paramSize) {
+                                                     final int paramSize) {
         final boolean[] paramsAreInOrder = { true };
         final int initialRegCount = method.getBlocks().getRegCount();
 
@@ -185,12 +187,12 @@ public final class RopTranslator {
          * {@code cf} layer will put in a second move-param in a
          * subsequent block in the case of synchronized methods.
          */
-        method.getBlocks().forEachInsn(new Insn.BaseVisitor() {
+        method.getBlocks().forEachInsn(new com.duy.dx.rop.code.Insn.BaseVisitor() {
             @Override
-            public void visitPlainCstInsn(PlainCstInsn insn) {
-                if (insn.getOpcode().getOpcode()== RegOps.MOVE_PARAM) {
+            public void visitPlainCstInsn(com.duy.dx.rop.code.PlainCstInsn insn) {
+                if (insn.getOpcode().getOpcode()== com.duy.dx.rop.code.RegOps.MOVE_PARAM) {
                     int param =
-                        ((CstInteger) insn.getConstant()).getValue();
+                        ((com.duy.dx.rop.cst.CstInteger) insn.getConstant()).getValue();
 
                     paramsAreInOrder[0] = paramsAreInOrder[0]
                             && ((initialRegCount - paramSize + param)
@@ -222,7 +224,7 @@ public final class RopTranslator {
      * original blocks.
      */
     private void outputInstructions() {
-        BasicBlockList blocks = method.getBlocks();
+        com.duy.dx.rop.code.BasicBlockList blocks = method.getBlocks();
         int[] order = this.order;
         int len = order.length;
 
@@ -242,7 +244,7 @@ public final class RopTranslator {
      * @param nextLabel {@code >= -1;} the next block that will be processed, or
      * {@code -1} if there is no next block
      */
-    private void outputBlock(BasicBlock block, int nextLabel) {
+    private void outputBlock(com.duy.dx.rop.code.BasicBlock block, int nextLabel) {
         // Append the code address for this block.
         CodeAddress startAddress = addresses.getStart(block);
         output.add(startAddress);
@@ -267,7 +269,7 @@ public final class RopTranslator {
         // Set up for end-of-block activities.
 
         int succ = block.getPrimarySuccessor();
-        Insn lastInsn = block.getLastInsn();
+        com.duy.dx.rop.code.Insn lastInsn = block.getLastInsn();
 
         /*
          * Check for (and possibly correct for) a non-optimal choice of
@@ -279,8 +281,8 @@ public final class RopTranslator {
              * The block has a "primary successor" and that primary
              * successor isn't the next block to be output.
              */
-            Rop lastRop = lastInsn.getOpcode();
-            if ((lastRop.getBranchingness() == Rop.BRANCH_IF) &&
+            com.duy.dx.rop.code.Rop lastRop = lastInsn.getOpcode();
+            if ((lastRop.getBranchingness() == com.duy.dx.rop.code.Rop.BRANCH_IF) &&
                     (block.getSecondarySuccessor() == nextLabel)) {
                 /*
                  * The block ends with an "if" of some sort, and its
@@ -297,7 +299,7 @@ public final class RopTranslator {
                  */
                 TargetInsn insn =
                     new TargetInsn(Dops.GOTO, lastInsn.getPosition(),
-                            RegisterSpecList.EMPTY,
+                            com.duy.dx.rop.code.RegisterSpecList.EMPTY,
                             addresses.getStart(succ));
                 output.add(insn);
             }
@@ -311,12 +313,12 @@ public final class RopTranslator {
         BasicBlockList blocks = method.getBlocks();
         int sz = blocks.size();
         int maxLabel = blocks.getMaxLabel();
-        int[] workSet = Bits.makeBitSet(maxLabel);
-        int[] tracebackSet = Bits.makeBitSet(maxLabel);
+        int[] workSet = com.duy.dx.util.Bits.makeBitSet(maxLabel);
+        int[] tracebackSet = com.duy.dx.util.Bits.makeBitSet(maxLabel);
 
         for (int i = 0; i < sz; i++) {
-            BasicBlock one = blocks.get(i);
-            Bits.set(workSet, one.getLabel());
+            com.duy.dx.rop.code.BasicBlock one = blocks.get(i);
+            com.duy.dx.util.Bits.set(workSet, one.getLabel());
         }
 
         int[] order = new int[sz];
@@ -334,7 +336,7 @@ public final class RopTranslator {
          */
         for (int label = method.getFirstLabel();
              label != -1;
-             label = Bits.findFirst(workSet, 0)) {
+             label = com.duy.dx.util.Bits.findFirst(workSet, 0)) {
 
             /*
              * Attempt to trace backward from the chosen block to an
@@ -348,13 +350,13 @@ public final class RopTranslator {
              */
             traceBack:
             for (;;) {
-                IntList preds = method.labelToPredecessors(label);
+                com.duy.dx.util.IntList preds = method.labelToPredecessors(label);
                 int psz = preds.size();
 
                 for (int i = 0; i < psz; i++) {
                     int predLabel = preds.get(i);
 
-                    if (Bits.get(tracebackSet, predLabel)) {
+                    if (com.duy.dx.util.Bits.get(tracebackSet, predLabel)) {
                         /*
                          * We found a predecessor loop; stop tracing back
                          * from here.
@@ -362,16 +364,16 @@ public final class RopTranslator {
                         break;
                     }
 
-                    if (!Bits.get(workSet, predLabel)) {
+                    if (!com.duy.dx.util.Bits.get(workSet, predLabel)) {
                         // This one's already ordered.
                         continue;
                     }
 
-                    BasicBlock pred = blocks.labelToBlock(predLabel);
+                    com.duy.dx.rop.code.BasicBlock pred = blocks.labelToBlock(predLabel);
                     if (pred.getPrimarySuccessor() == label) {
                         // Found one!
                         label = predLabel;
-                        Bits.set(tracebackSet, label);
+                        com.duy.dx.util.Bits.set(tracebackSet, label);
                         continue traceBack;
                     }
                 }
@@ -386,13 +388,13 @@ public final class RopTranslator {
              * on, until we run out of unordered successors.
              */
             while (label != -1) {
-                Bits.clear(workSet, label);
-                Bits.clear(tracebackSet, label);
+                com.duy.dx.util.Bits.clear(workSet, label);
+                com.duy.dx.util.Bits.clear(tracebackSet, label);
                 order[at] = label;
                 at++;
 
-                BasicBlock one = blocks.labelToBlock(label);
-                BasicBlock preferredBlock = blocks.preferredSuccessorOf(one);
+                com.duy.dx.rop.code.BasicBlock one = blocks.labelToBlock(label);
+                com.duy.dx.rop.code.BasicBlock preferredBlock = blocks.preferredSuccessorOf(one);
 
                 if (preferredBlock == null) {
                     break;
@@ -401,14 +403,14 @@ public final class RopTranslator {
                 int preferred = preferredBlock.getLabel();
                 int primary = one.getPrimarySuccessor();
 
-                if (Bits.get(workSet, preferred)) {
+                if (com.duy.dx.util.Bits.get(workSet, preferred)) {
                     /*
                      * Order the current block's preferred successor
                      * next, as it has yet to be scheduled.
                      */
                     label = preferred;
                 } else if ((primary != preferred) && (primary >= 0)
-                        && Bits.get(workSet, primary)) {
+                        && com.duy.dx.util.Bits.get(workSet, primary)) {
                     /*
                      * The primary is available, so use that.
                      */
@@ -418,7 +420,7 @@ public final class RopTranslator {
                      * There's no obvious candidate, so pick the first
                      * one that's available, if any.
                      */
-                    IntList successors = one.getSuccessors();
+                    com.duy.dx.util.IntList successors = one.getSuccessors();
                     int ssz = successors.size();
                     label = -1;
                     for (int i = 0; i < ssz; i++) {
@@ -449,7 +451,7 @@ public final class RopTranslator {
      * @param insn {@code non-null;} instruction in question
      * @return {@code non-null;} the instruction's complete register list
      */
-    private static RegisterSpecList getRegs(Insn insn) {
+    private static com.duy.dx.rop.code.RegisterSpecList getRegs(com.duy.dx.rop.code.Insn insn) {
         return getRegs(insn, insn.getResult());
     }
 
@@ -463,9 +465,9 @@ public final class RopTranslator {
      * @param resultReg {@code null-ok;} the real result to use (ignore the insn's)
      * @return {@code non-null;} the instruction's complete register list
      */
-    private static RegisterSpecList getRegs(Insn insn,
-            RegisterSpec resultReg) {
-        RegisterSpecList regs = insn.getSources();
+    private static com.duy.dx.rop.code.RegisterSpecList getRegs(com.duy.dx.rop.code.Insn insn,
+                                                                         com.duy.dx.rop.code.RegisterSpec resultReg) {
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getSources();
 
         if (insn.getOpcode().isCommutative()
                 && (regs.size() == 2)
@@ -478,7 +480,7 @@ public final class RopTranslator {
              * instead of one of form 23x
              */
 
-            regs = RegisterSpecList.make(regs.get(1), regs.get(0));
+            regs = com.duy.dx.rop.code.RegisterSpecList.make(regs.get(1), regs.get(0));
         }
 
         if (resultReg == null) {
@@ -491,12 +493,12 @@ public final class RopTranslator {
     /**
      * Instruction visitor class for doing the instruction translation per se.
      */
-    private class TranslationVisitor implements Insn.Visitor {
+    private class TranslationVisitor implements com.duy.dx.rop.code.Insn.Visitor {
         /** {@code non-null;} list of output instructions in-progress */
         private final OutputCollector output;
 
         /** {@code non-null;} basic block being worked on */
-        private BasicBlock block;
+        private com.duy.dx.rop.code.BasicBlock block;
 
         /**
          * {@code null-ok;} code address for the salient last instruction of the
@@ -526,32 +528,33 @@ public final class RopTranslator {
         }
 
         /** {@inheritDoc} */
-        public void visitPlainInsn(PlainInsn insn) {
-            Rop rop = insn.getOpcode();
-            if (rop.getOpcode() == RegOps.MARK_LOCAL) {
+        @Override
+        public void visitPlainInsn(com.duy.dx.rop.code.PlainInsn insn) {
+            com.duy.dx.rop.code.Rop rop = insn.getOpcode();
+            if (rop.getOpcode() == com.duy.dx.rop.code.RegOps.MARK_LOCAL) {
                 /*
                  * Ignore these. They're dealt with by
                  * the LocalVariableAwareTranslationVisitor
                  */
                 return;
             }
-            if (rop.getOpcode() == RegOps.MOVE_RESULT_PSEUDO) {
+            if (rop.getOpcode() == com.duy.dx.rop.code.RegOps.MOVE_RESULT_PSEUDO) {
                 // These get skipped
                 return;
             }
 
-            SourcePosition pos = insn.getPosition();
+            com.duy.dx.rop.code.SourcePosition pos = insn.getPosition();
             Dop opcode = RopToDop.dopFor(insn);
             DalvInsn di;
 
             switch (rop.getBranchingness()) {
-                case Rop.BRANCH_NONE:
-                case Rop.BRANCH_RETURN:
-                case Rop.BRANCH_THROW: {
+                case com.duy.dx.rop.code.Rop.BRANCH_NONE:
+                case com.duy.dx.rop.code.Rop.BRANCH_RETURN:
+                case com.duy.dx.rop.code.Rop.BRANCH_THROW: {
                     di = new SimpleInsn(opcode, pos, getRegs(insn));
                     break;
                 }
-                case Rop.BRANCH_GOTO: {
+                case com.duy.dx.rop.code.Rop.BRANCH_GOTO: {
                     /*
                      * Code in the main translation loop will emit a
                      * goto if necessary (if the branch isn't to the
@@ -559,7 +562,7 @@ public final class RopTranslator {
                      */
                     return;
                 }
-                case Rop.BRANCH_IF: {
+                case com.duy.dx.rop.code.Rop.BRANCH_IF: {
                     int target = block.getSuccessors().get(1);
                     di = new TargetInsn(opcode, pos, getRegs(insn),
                                         addresses.getStart(target));
@@ -574,46 +577,48 @@ public final class RopTranslator {
         }
 
         /** {@inheritDoc} */
-        public void visitPlainCstInsn(PlainCstInsn insn) {
-            SourcePosition pos = insn.getPosition();
+        @Override
+        public void visitPlainCstInsn(com.duy.dx.rop.code.PlainCstInsn insn) {
+            com.duy.dx.rop.code.SourcePosition pos = insn.getPosition();
             Dop opcode = RopToDop.dopFor(insn);
-            Rop rop = insn.getOpcode();
+            com.duy.dx.rop.code.Rop rop = insn.getOpcode();
             int ropOpcode = rop.getOpcode();
             DalvInsn di;
 
-            if (rop.getBranchingness() != Rop.BRANCH_NONE) {
+            if (rop.getBranchingness() != com.duy.dx.rop.code.Rop.BRANCH_NONE) {
                 throw new RuntimeException("shouldn't happen");
             }
 
-            if (ropOpcode == RegOps.MOVE_PARAM) {
+            if (ropOpcode == com.duy.dx.rop.code.RegOps.MOVE_PARAM) {
                 if (!paramsAreInOrder) {
                     /*
                      * Parameters are not in order at the top of the reg space.
                      * We need to add moves.
                      */
 
-                    RegisterSpec dest = insn.getResult();
+                    com.duy.dx.rop.code.RegisterSpec dest = insn.getResult();
                     int param =
                         ((CstInteger) insn.getConstant()).getValue();
-                    RegisterSpec source =
-                        RegisterSpec.make(regCount - paramSize + param,
+                    com.duy.dx.rop.code.RegisterSpec source =
+                        com.duy.dx.rop.code.RegisterSpec.make(regCount - paramSize + param,
                                 dest.getType());
                     di = new SimpleInsn(opcode, pos,
-                                        RegisterSpecList.make(dest, source));
+                                        com.duy.dx.rop.code.RegisterSpecList.make(dest, source));
                     addOutput(di);
                 }
             } else {
                 // No moves required for the parameters
-                RegisterSpecList regs = getRegs(insn);
+                com.duy.dx.rop.code.RegisterSpecList regs = getRegs(insn);
                 di = new CstInsn(opcode, pos, regs, insn.getConstant());
                 addOutput(di);
             }
         }
 
         /** {@inheritDoc} */
-        public void visitSwitchInsn(SwitchInsn insn) {
-            SourcePosition pos = insn.getPosition();
-            IntList cases = insn.getCases();
+        @Override
+        public void visitSwitchInsn(com.duy.dx.rop.code.SwitchInsn insn) {
+            com.duy.dx.rop.code.SourcePosition pos = insn.getPosition();
+            com.duy.dx.util.IntList cases = insn.getCases();
             IntList successors = block.getSuccessors();
             int casesSz = cases.size();
             int succSz = successors.size();
@@ -653,7 +658,7 @@ public final class RopTranslator {
             addOutput(switchAddress);
             addOutput(switchInsn);
 
-            addOutputSuffix(new OddSpacer(pos));
+            addOutputSuffix(new com.duy.dx.dex.code.OddSpacer(pos));
             addOutputSuffix(dataAddress);
             addOutputSuffix(dataInsn);
         }
@@ -666,7 +671,7 @@ public final class RopTranslator {
          * @return {@code null-ok;} result of move-result-pseudo at the beginning of
          * primary successor
          */
-        private RegisterSpec getNextMoveResultPseudo()
+        private com.duy.dx.rop.code.RegisterSpec getNextMoveResultPseudo()
         {
             int label = block.getPrimarySuccessor();
 
@@ -674,10 +679,10 @@ public final class RopTranslator {
                 return null;
             }
 
-            Insn insn
+            com.duy.dx.rop.code.Insn insn
                     = method.getBlocks().labelToBlock(label).getInsns().get(0);
 
-            if (insn.getOpcode().getOpcode() != RegOps.MOVE_RESULT_PSEUDO) {
+            if (insn.getOpcode().getOpcode() != com.duy.dx.rop.code.RegOps.MOVE_RESULT_PSEUDO) {
                 return null;
             } else {
                 return insn.getResult();
@@ -685,31 +690,57 @@ public final class RopTranslator {
         }
 
         /** {@inheritDoc} */
-        public void visitThrowingCstInsn(ThrowingCstInsn insn) {
-            SourcePosition pos = insn.getPosition();
+        @Override
+        public void visitInvokePolymorphicInsn(InvokePolymorphicInsn insn) {
+            com.duy.dx.rop.code.SourcePosition pos = insn.getPosition();
             Dop opcode = RopToDop.dopFor(insn);
-            Rop rop = insn.getOpcode();
-            Constant cst = insn.getConstant();
+            com.duy.dx.rop.code.Rop rop = insn.getOpcode();
 
-            if (rop.getBranchingness() != Rop.BRANCH_THROW) {
-                throw new RuntimeException("shouldn't happen");
+            if (rop.getBranchingness() != com.duy.dx.rop.code.Rop.BRANCH_THROW) {
+                throw new RuntimeException("Expected BRANCH_THROW got " + rop.getBranchingness());
+            } else if (!rop.isCallLike()) {
+                throw new RuntimeException("Expected call-like operation");
+            }
+
+            addOutput(lastAddress);
+
+            com.duy.dx.rop.code.RegisterSpecList regs = insn.getSources();
+            com.duy.dx.rop.cst.Constant[] constants = new com.duy.dx.rop.cst.Constant[] {
+                insn.getPolymorphicMethod(),
+                insn.getCallSiteProto()
+                };
+            DalvInsn di = new MultiCstInsn(opcode, pos, regs, constants);
+
+            addOutput(di);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void visitThrowingCstInsn(com.duy.dx.rop.code.ThrowingCstInsn insn) {
+            com.duy.dx.rop.code.SourcePosition pos = insn.getPosition();
+            Dop opcode = RopToDop.dopFor(insn);
+            com.duy.dx.rop.code.Rop rop = insn.getOpcode();
+            com.duy.dx.rop.cst.Constant cst = insn.getConstant();
+
+            if (rop.getBranchingness() != com.duy.dx.rop.code.Rop.BRANCH_THROW) {
+                throw new RuntimeException("Expected BRANCH_THROW got " + rop.getBranchingness());
             }
 
             addOutput(lastAddress);
 
             if (rop.isCallLike()) {
-                RegisterSpecList regs = insn.getSources();
+                com.duy.dx.rop.code.RegisterSpecList regs = insn.getSources();
                 DalvInsn di = new CstInsn(opcode, pos, regs, cst);
 
                 addOutput(di);
             } else {
-                RegisterSpec realResult = getNextMoveResultPseudo();
+                com.duy.dx.rop.code.RegisterSpec realResult = getNextMoveResultPseudo();
 
-                RegisterSpecList regs = getRegs(insn, realResult);
+                com.duy.dx.rop.code.RegisterSpecList regs = getRegs(insn, realResult);
                 DalvInsn di;
 
                 boolean hasResult = opcode.hasResult()
-                        || (rop.getOpcode() == RegOps.CHECK_CAST);
+                        || (rop.getOpcode() == com.duy.dx.rop.code.RegOps.CHECK_CAST);
 
                 if (hasResult != (realResult != null)) {
                     throw new RuntimeException(
@@ -718,7 +749,7 @@ public final class RopTranslator {
                 }
 
                 if ((rop.getOpcode() == RegOps.NEW_ARRAY) &&
-                    (opcode.getOpcode() != Opcodes.NEW_ARRAY)) {
+                    (opcode.getOpcode() != com.duy.dx.io.Opcodes.NEW_ARRAY)) {
                     /*
                      * It's a type-specific new-array-<primitive>, and
                      * so it should be turned into a SimpleInsn (no
@@ -732,19 +763,40 @@ public final class RopTranslator {
                      */
                     di = new CstInsn(opcode, pos, regs, cst);
                 }
-
+                // (b/120985556) update the following code
+                // move-object vX, vY
+                // instance-of vY, vX, LMyClass;
+                // into
+                // move-object vX, vY
+                // nop
+                // instance-of vY, vX, LMyClass;
+                DalvInsn previousDi = getPrevNonSpecialInsn();
+                if (opcode.getOpcode() == com.duy.dx.io.Opcodes.INSTANCE_OF && previousDi != null) {
+                    int prevOpcode = previousDi.getOpcode().getOpcode();
+                    if (prevOpcode == com.duy.dx.io.Opcodes.MOVE_OBJECT
+                        || prevOpcode == com.duy.dx.io.Opcodes.MOVE_OBJECT_FROM16
+                        || prevOpcode == com.duy.dx.io.Opcodes.MOVE_OBJECT_16) {
+                        if (di.getRegisters().size() > 0 && previousDi.getRegisters().size() > 1
+                            && (di.getRegisters().get(0).getReg()
+                                    == previousDi.getRegisters().get(1).getReg())) {
+                            DalvInsn nopDi = new SimpleInsn(Dops.NOP, pos, RegisterSpecList.EMPTY);
+                            addOutput(nopDi);
+                        }
+                    }
+                }
                 addOutput(di);
             }
         }
 
         /** {@inheritDoc} */
-        public void visitThrowingInsn(ThrowingInsn insn) {
-            SourcePosition pos = insn.getPosition();
+        @Override
+        public void visitThrowingInsn(com.duy.dx.rop.code.ThrowingInsn insn) {
+            com.duy.dx.rop.code.SourcePosition pos = insn.getPosition();
             Dop opcode = RopToDop.dopFor(insn);
-            Rop rop = insn.getOpcode();
-            RegisterSpec realResult;
+            com.duy.dx.rop.code.Rop rop = insn.getOpcode();
+            com.duy.dx.rop.code.RegisterSpec realResult;
 
-            if (rop.getBranchingness() != Rop.BRANCH_THROW) {
+            if (rop.getBranchingness() != com.duy.dx.rop.code.Rop.BRANCH_THROW) {
                 throw new RuntimeException("shouldn't happen");
             }
 
@@ -764,11 +816,12 @@ public final class RopTranslator {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitFillArrayDataInsn(FillArrayDataInsn insn) {
             SourcePosition pos = insn.getPosition();
-            Constant cst = insn.getConstant();
+            com.duy.dx.rop.cst.Constant cst = insn.getConstant();
             ArrayList<Constant> values = insn.getInitValues();
-            Rop rop = insn.getOpcode();
+            com.duy.dx.rop.code.Rop rop = insn.getOpcode();
 
             if (rop.getBranchingness() != Rop.BRANCH_NONE) {
                 throw new RuntimeException("shouldn't happen");
@@ -798,6 +851,16 @@ public final class RopTranslator {
             output.add(insn);
         }
 
+        protected DalvInsn getPrevNonSpecialInsn() {
+            for (int i = output.size() - 1; i >= 0; --i) {
+                DalvInsn insn = output.get(i);
+                if (insn.getOpcode().getOpcode() != Opcodes.SPECIAL_FORMAT) {
+                    return insn;
+                }
+            }
+            return null;
+        }
+
         /**
          * Adds to the output suffix.
          *
@@ -815,7 +878,7 @@ public final class RopTranslator {
     private class LocalVariableAwareTranslationVisitor
             extends TranslationVisitor {
         /** {@code non-null;} local variable info */
-        private LocalVariableInfo locals;
+        private final com.duy.dx.rop.code.LocalVariableInfo locals;
 
         /**
          * Constructs an instance.

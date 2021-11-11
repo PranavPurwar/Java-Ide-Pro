@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.Constant;
+import com.duy.dx.rop.cst.Constant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 public final class HeaderSection extends UniformItemSection {
     /** {@code non-null;} the list of the one item in the section */
-    private final List<HeaderItem> list;
+    private final List<com.duy.dx.dex.file.HeaderItem> list;
 
     /**
      * Constructs an instance. The file offset is initially unknown.
@@ -36,7 +36,7 @@ public final class HeaderSection extends UniformItemSection {
     public HeaderSection(DexFile file) {
         super(null, file, 4);
 
-        HeaderItem item = new HeaderItem();
+        com.duy.dx.dex.file.HeaderItem item = new HeaderItem();
         item.setIndex(0);
 
         this.list = Collections.singletonList(item);

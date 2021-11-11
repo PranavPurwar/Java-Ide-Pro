@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.iface;
+package com.duy.dx.cf.iface;
 
-import com.duy.dx .cf.attrib.AttConstantValue;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.cst.TypedConstant;
+import com.duy.dx.cf.attrib.AttConstantValue;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.cst.TypedConstant;
 
 /**
  * Standard implementation of {@link Field}, which directly stores
@@ -35,11 +35,12 @@ public final class StdField extends StdMember implements Field {
      * @param attributes {@code non-null;} list of associated attributes
      */
     public StdField(CstType definingClass, int accessFlags, CstNat nat,
-                    AttributeList attributes) {
+                    com.duy.dx.cf.iface.AttributeList attributes) {
         super(definingClass, accessFlags, nat, attributes);
     }
 
     /** {@inheritDoc} */
+    @Override
     public TypedConstant getConstantValue() {
         AttributeList attribs = getAttributes();
         AttConstantValue cval = (AttConstantValue)

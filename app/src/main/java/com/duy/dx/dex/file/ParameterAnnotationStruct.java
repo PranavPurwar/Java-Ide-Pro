@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .rop.annotation.AnnotationsList;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.ToHuman;
-
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.rop.annotation.AnnotationsList;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.ToHuman;
 import java.util.ArrayList;
 
 /**
@@ -37,7 +36,7 @@ public final class ParameterAnnotationStruct
     private final AnnotationsList annotationsList;
 
     /** {@code non-null;} the associated annotations list, as an item */
-    private final UniformListItem<AnnotationSetRefItem> annotationsItem;
+    private final com.duy.dx.dex.file.UniformListItem<com.duy.dx.dex.file.AnnotationSetRefItem> annotationsItem;
 
     /**
      * Constructs an instance.
@@ -47,7 +46,7 @@ public final class ParameterAnnotationStruct
      * @param dexFile {@code non-null;} dex output
      */
     public ParameterAnnotationStruct(CstMethodRef method,
-            AnnotationsList annotationsList, DexFile dexFile) {
+            AnnotationsList annotationsList, com.duy.dx.dex.file.DexFile dexFile) {
         if (method == null) {
             throw new NullPointerException("method == null");
         }
@@ -65,25 +64,27 @@ public final class ParameterAnnotationStruct
          */
 
         int size = annotationsList.size();
-        ArrayList<AnnotationSetRefItem> arrayList = new
-            ArrayList<AnnotationSetRefItem>(size);
+        ArrayList<com.duy.dx.dex.file.AnnotationSetRefItem> arrayList = new
+            ArrayList<com.duy.dx.dex.file.AnnotationSetRefItem>(size);
 
         for (int i = 0; i < size; i++) {
             Annotations annotations = annotationsList.get(i);
-            AnnotationSetItem item = new AnnotationSetItem(annotations, dexFile);
-            arrayList.add(new AnnotationSetRefItem(item));
+            com.duy.dx.dex.file.AnnotationSetItem item = new AnnotationSetItem(annotations, dexFile);
+            arrayList.add(new com.duy.dx.dex.file.AnnotationSetRefItem(item));
         }
 
-        this.annotationsItem = new UniformListItem<AnnotationSetRefItem>(
+        this.annotationsItem = new UniformListItem<com.duy.dx.dex.file.AnnotationSetRefItem>(
                 ItemType.TYPE_ANNOTATION_SET_REF_LIST, arrayList);
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return method.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (! (other instanceof ParameterAnnotationStruct)) {
             return false;
@@ -93,12 +94,13 @@ public final class ParameterAnnotationStruct
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(ParameterAnnotationStruct other) {
         return method.compareTo(other.method);
     }
 
     /** {@inheritDoc} */
-    public void addContents(DexFile file) {
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
         MethodIdsSection methodIds = file.getMethodIds();
         MixedItemSection wordData = file.getWordData();
 
@@ -123,6 +125,7 @@ public final class ParameterAnnotationStruct
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         StringBuilder sb = new StringBuilder();
 

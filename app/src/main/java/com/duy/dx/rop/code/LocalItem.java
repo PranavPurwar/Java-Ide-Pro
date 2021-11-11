@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.cst.CstString;
+import com.duy.dx.rop.cst.CstString;
 
 /**
  * A local variable item: either a name or a signature or both.
  */
 public class LocalItem implements Comparable<LocalItem> {
     /** {@code null-ok;} local variable name */
-    private final CstString name;
+    private final com.duy.dx.rop.cst.CstString name;
 
     /** {@code null-ok;} local variable signature */
-    private final CstString signature;
+    private final com.duy.dx.rop.cst.CstString signature;
 
     /**
      * Make a new item. If both name and signature are null, null is returned.
@@ -37,7 +37,7 @@ public class LocalItem implements Comparable<LocalItem> {
      * @param signature {@code null-ok;} local variable signature
      * @return {@code non-null;} appropriate instance.
      */
-    public static LocalItem make(CstString name, CstString signature) {
+    public static LocalItem make(com.duy.dx.rop.cst.CstString name, com.duy.dx.rop.cst.CstString signature) {
         if (name == null && signature == null) {
             return null;
         }
@@ -51,7 +51,7 @@ public class LocalItem implements Comparable<LocalItem> {
      * @param name {@code null-ok;} local variable name
      * @param signature {@code null-ok;} local variable signature
      */
-    private LocalItem(CstString name, CstString signature) {
+    private LocalItem(com.duy.dx.rop.cst.CstString name, com.duy.dx.rop.cst.CstString signature) {
         this.name = name;
         this.signature = signature;
     }
@@ -75,7 +75,7 @@ public class LocalItem implements Comparable<LocalItem> {
      * @return negative integer, zero, or positive integer in accordance
      * with Comparable.compareTo()
      */
-    private static int compareHandlesNulls(CstString a, CstString b) {
+    private static int compareHandlesNulls(com.duy.dx.rop.cst.CstString a, com.duy.dx.rop.cst.CstString b) {
         if (a == b) {
             return 0;
         } else if (a == null) {
@@ -88,6 +88,7 @@ public class LocalItem implements Comparable<LocalItem> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(LocalItem local) {
         int ret;
 
@@ -128,7 +129,7 @@ public class LocalItem implements Comparable<LocalItem> {
      *
      * @return {@code null-ok;} name
      */
-    public CstString getName() {
+    public com.duy.dx.rop.cst.CstString getName() {
         return name;
     }
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .util.Bits;
-import com.duy.dx .util.IntList;
+import com.duy.dx.util.Bits;
+import com.duy.dx.util.IntList;
 
 /**
  * Code to figure out which local variables are active at which points in
@@ -25,7 +25,7 @@ import com.duy.dx .util.IntList;
  */
 public final class LocalVariableExtractor {
     /** {@code non-null;} method being extracted from */
-    private final RopMethod method;
+    private final com.duy.dx.rop.code.RopMethod method;
 
     /** {@code non-null;} block list for the method */
     private final BasicBlockList blocks;
@@ -42,7 +42,7 @@ public final class LocalVariableExtractor {
      * @param method {@code non-null;} the method to extract from
      * @return {@code non-null;} the extracted information
      */
-    public static LocalVariableInfo extract(RopMethod method) {
+    public static LocalVariableInfo extract(com.duy.dx.rop.code.RopMethod method) {
         LocalVariableExtractor lve = new LocalVariableExtractor(method);
         return lve.doit();
     }
@@ -89,7 +89,7 @@ public final class LocalVariableExtractor {
      * @param label {@code >= 0;} label of the block to process
      */
     private void processBlock(int label) {
-        RegisterSpecSet primaryState = resultInfo.mutableCopyOfStarts(label);
+        com.duy.dx.rop.code.RegisterSpecSet primaryState = resultInfo.mutableCopyOfStarts(label);
         BasicBlock block = blocks.labelToBlock(label);
         InsnList insns = block.getInsns();
         int insnSz = insns.size();
@@ -104,7 +104,7 @@ public final class LocalVariableExtractor {
         boolean canThrowDuringLastInsn = block.hasExceptionHandlers() &&
             (insns.getLast().getResult() != null);
         int freezeSecondaryStateAt = insnSz - 1;
-        RegisterSpecSet secondaryState = primaryState;
+        com.duy.dx.rop.code.RegisterSpecSet secondaryState = primaryState;
 
         /*
          * Iterate over the instructions, adding information for each place

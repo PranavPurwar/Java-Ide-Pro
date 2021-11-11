@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .util.MutabilityControl;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.util.MutabilityControl;
 import java.util.HashMap;
 
 /**
  * Container for local variable information for a particular {@link
- * RopMethod}.
+ * com.duy.dx.rop.code.RopMethod}.
  */
 public final class LocalVariableInfo
         extends MutabilityControl {
@@ -30,21 +30,21 @@ public final class LocalVariableInfo
     private final int regCount;
 
     /**
-     * {@code non-null;} {@link RegisterSpecSet} to use when indicating a block
+     * {@code non-null;} {@link com.duy.dx.rop.code.RegisterSpecSet} to use when indicating a block
      * that has no locals; it is empty and immutable but has an appropriate
      * max size for the method
      */
-    private final RegisterSpecSet emptySet;
+    private final com.duy.dx.rop.code.RegisterSpecSet emptySet;
 
     /**
      * {@code non-null;} array consisting of register sets representing the
      * sets of variables already assigned upon entry to each block,
      * where array indices correspond to block labels
      */
-    private final RegisterSpecSet[] blockStarts;
+    private final com.duy.dx.rop.code.RegisterSpecSet[] blockStarts;
 
     /** {@code non-null;} map from instructions to the variable each assigns */
-    private final HashMap<Insn, RegisterSpec> insnAssignments;
+    private final HashMap<com.duy.dx.rop.code.Insn, RegisterSpec> insnAssignments;
 
     /**
      * Constructs an instance.
@@ -60,10 +60,10 @@ public final class LocalVariableInfo
         int maxLabel = blocks.getMaxLabel();
 
         this.regCount = blocks.getRegCount();
-        this.emptySet = new RegisterSpecSet(regCount);
-        this.blockStarts = new RegisterSpecSet[maxLabel];
+        this.emptySet = new com.duy.dx.rop.code.RegisterSpecSet(regCount);
+        this.blockStarts = new com.duy.dx.rop.code.RegisterSpecSet[maxLabel];
         this.insnAssignments =
-            new HashMap<Insn, RegisterSpec>(blocks.getInstructionCount());
+            new HashMap<com.duy.dx.rop.code.Insn, RegisterSpec>(blocks.getInstructionCount());
 
         emptySet.setImmutable();
     }
@@ -75,7 +75,7 @@ public final class LocalVariableInfo
      * @param label {@code >= 0;} the block label
      * @param specs {@code non-null;} the register set to associate with the block
      */
-    public void setStarts(int label, RegisterSpecSet specs) {
+    public void setStarts(int label, com.duy.dx.rop.code.RegisterSpecSet specs) {
         throwIfImmutable();
 
         if (specs == null) {
@@ -104,8 +104,8 @@ public final class LocalVariableInfo
      * to the associated set (including storing one for the first time) or
      * {@code false} if there was no change
      */
-    public boolean mergeStarts(int label, RegisterSpecSet specs) {
-        RegisterSpecSet start = getStarts0(label);
+    public boolean mergeStarts(int label, com.duy.dx.rop.code.RegisterSpecSet specs) {
+        com.duy.dx.rop.code.RegisterSpecSet start = getStarts0(label);
         boolean changed = false;
 
         if (start == null) {
@@ -113,7 +113,7 @@ public final class LocalVariableInfo
             return true;
         }
 
-        RegisterSpecSet newStart = start.mutableCopy();
+        com.duy.dx.rop.code.RegisterSpecSet newStart = start.mutableCopy();
         if (start.size() != 0) {
             newStart.intersect(specs, true);
         } else {
@@ -138,8 +138,8 @@ public final class LocalVariableInfo
      * @param label {@code >= 0;} the block label
      * @return {@code non-null;} the associated register set
      */
-    public RegisterSpecSet getStarts(int label) {
-        RegisterSpecSet result = getStarts0(label);
+    public com.duy.dx.rop.code.RegisterSpecSet getStarts(int label) {
+        com.duy.dx.rop.code.RegisterSpecSet result = getStarts0(label);
 
         return (result != null) ? result : emptySet;
     }
@@ -152,24 +152,24 @@ public final class LocalVariableInfo
      * @param block {@code non-null;} the block in question
      * @return {@code non-null;} the associated register set
      */
-    public RegisterSpecSet getStarts(BasicBlock block) {
+    public com.duy.dx.rop.code.RegisterSpecSet getStarts(BasicBlock block) {
         return getStarts(block.getLabel());
     }
 
     /**
      * Gets a mutable copy of the register set associated with the
      * start of the block with the given label. This returns a
-     * newly-allocated empty {@link RegisterSpecSet} of appropriate
+     * newly-allocated empty {@link com.duy.dx.rop.code.RegisterSpecSet} of appropriate
      * max size if there is not yet any set associated with the block.
      *
      * @param label {@code >= 0;} the block label
      * @return {@code non-null;} the associated register set
      */
-    public RegisterSpecSet mutableCopyOfStarts(int label) {
-        RegisterSpecSet result = getStarts0(label);
+    public com.duy.dx.rop.code.RegisterSpecSet mutableCopyOfStarts(int label) {
+        com.duy.dx.rop.code.RegisterSpecSet result = getStarts0(label);
 
         return (result != null) ?
-            result.mutableCopy() : new RegisterSpecSet(regCount);
+            result.mutableCopy() : new com.duy.dx.rop.code.RegisterSpecSet(regCount);
     }
 
     /**
@@ -186,7 +186,7 @@ public final class LocalVariableInfo
      * @param insn {@code non-null;} the instruction in question
      * @param spec {@code non-null;} the associated register spec
      */
-    public void addAssignment(Insn insn, RegisterSpec spec) {
+    public void addAssignment(com.duy.dx.rop.code.Insn insn, RegisterSpec spec) {
         throwIfImmutable();
 
         if (insn == null) {

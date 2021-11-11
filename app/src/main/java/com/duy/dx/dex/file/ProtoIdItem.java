@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.SizeOf;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.type.Prototype;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.type.Prototype;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Representation of a method prototype reference inside a Dalvik file.
  */
 public final class ProtoIdItem extends IndexedItem {
     /** {@code non-null;} the wrapped prototype */
-    private final Prototype prototype;
+    private final com.duy.dx.rop.type.Prototype prototype;
 
     /** {@code non-null;} the short-form of the prototype */
-    private final CstString shortForm;
+    private final com.duy.dx.rop.cst.CstString shortForm;
 
     /**
      * {@code null-ok;} the list of parameter types or {@code null} if this
@@ -45,7 +45,7 @@ public final class ProtoIdItem extends IndexedItem {
      *
      * @param prototype {@code non-null;} the constant for the prototype
      */
-    public ProtoIdItem(Prototype prototype) {
+    public ProtoIdItem(com.duy.dx.rop.type.Prototype prototype) {
         if (prototype == null) {
             throw new NullPointerException("prototype == null");
         }
@@ -53,7 +53,7 @@ public final class ProtoIdItem extends IndexedItem {
         this.prototype = prototype;
         this.shortForm = makeShortForm(prototype);
 
-        StdTypeList parameters = prototype.getParameterTypes();
+        com.duy.dx.rop.type.StdTypeList parameters = prototype.getParameterTypes();
         this.parameterTypes = (parameters.size() == 0) ? null
             : new TypeListItem(parameters);
     }
@@ -64,8 +64,8 @@ public final class ProtoIdItem extends IndexedItem {
      * @param prototype {@code non-null;} the prototype
      * @return {@code non-null;} the short form
      */
-    private static CstString makeShortForm(Prototype prototype) {
-        StdTypeList parameters = prototype.getParameterTypes();
+    private static com.duy.dx.rop.cst.CstString makeShortForm(Prototype prototype) {
+        com.duy.dx.rop.type.StdTypeList parameters = prototype.getParameterTypes();
         int size = parameters.size();
         StringBuilder sb = new StringBuilder(size + 1);
 
@@ -145,9 +145,9 @@ public final class ProtoIdItem extends IndexedItem {
 
             sb.append(")");
             out.annotate(0, indexString() + ' ' + sb.toString());
-            out.annotate(4, "  shorty_idx:      " + Hex.u4(shortyIdx) +
+            out.annotate(4, "  shorty_idx:      " + com.duy.dx.util.Hex.u4(shortyIdx) +
                     " // " + shortForm.toQuoted());
-            out.annotate(4, "  return_type_idx: " + Hex.u4(returnIdx) +
+            out.annotate(4, "  return_type_idx: " + com.duy.dx.util.Hex.u4(returnIdx) +
                     " // " + prototype.getReturnType().toHuman());
             out.annotate(4, "  parameters_off:  " + Hex.u4(paramsOff));
         }

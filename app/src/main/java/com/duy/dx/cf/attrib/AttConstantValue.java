@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.cst.CstDouble;
-import com.duy.dx .rop.cst.CstFloat;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstLong;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.TypedConstant;
+import com.duy.dx.rop.cst.CstDouble;
+import com.duy.dx.rop.cst.CstFloat;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstLong;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.TypedConstant;
 
 /**
  * Attribute class for standard {@code ConstantValue} attributes.
@@ -31,7 +31,7 @@ public final class AttConstantValue extends BaseAttribute {
     public static final String ATTRIBUTE_NAME = "ConstantValue";
 
     /** {@code non-null;} the constant value */
-    private final TypedConstant constantValue;
+    private final com.duy.dx.rop.cst.TypedConstant constantValue;
 
     /**
      * Constructs an instance.
@@ -41,7 +41,7 @@ public final class AttConstantValue extends BaseAttribute {
      * {@code CstInteger}, {@code CstLong},
      * {@code CstFloat}, or {@code CstDouble}
      */
-    public AttConstantValue(TypedConstant constantValue) {
+    public AttConstantValue(com.duy.dx.rop.cst.TypedConstant constantValue) {
         super(ATTRIBUTE_NAME);
 
         if (!((constantValue instanceof CstString) ||
@@ -59,6 +59,7 @@ public final class AttConstantValue extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         return 8;
     }

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .util.MutabilityException;
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.util.MutabilityException;
 
 /**
  * Base class for annotations attributes.
  */
 public abstract class BaseAnnotations extends BaseAttribute {
     /** {@code non-null;} list of annotations */
-    private final Annotations annotations;
+    private final com.duy.dx.rop.annotation.Annotations annotations;
 
     /** {@code >= 0;} attribute data length in the original classfile (not
      * including the attribute header) */
@@ -38,7 +38,7 @@ public abstract class BaseAnnotations extends BaseAttribute {
      * @param byteLength {@code >= 0;} attribute data length in the original
      * classfile (not including the attribute header)
      */
-    public BaseAnnotations(String attributeName, Annotations annotations,
+    public BaseAnnotations(String attributeName, com.duy.dx.rop.annotation.Annotations annotations,
             int byteLength) {
         super(attributeName);
 
@@ -56,6 +56,7 @@ public abstract class BaseAnnotations extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public final int byteLength() {
         // Add six for the standard attribute header.
         return byteLength + 6;

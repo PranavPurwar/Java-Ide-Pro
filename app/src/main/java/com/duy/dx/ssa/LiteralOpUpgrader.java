@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.PlainCstInsn;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.TranslationAdvice;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstLiteralBits;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.PlainCstInsn;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.TranslationAdvice;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstLiteralBits;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
 
 /**
  * Upgrades insn to their literal (constant-immediate) equivalent if possible.
@@ -40,14 +41,14 @@ import java.util.List;
 public class LiteralOpUpgrader {
 
     /** method we're processing */
-    private final SsaMethod ssaMeth;
+    private final com.duy.dx.ssa.SsaMethod ssaMeth;
 
     /**
      * Process a method.
      *
      * @param ssaMethod {@code non-null;} method to process
      */
-    public static void process(SsaMethod ssaMethod) {
+    public static void process(com.duy.dx.ssa.SsaMethod ssaMethod) {
         LiteralOpUpgrader dc;
 
         dc = new LiteralOpUpgrader(ssaMethod);
@@ -66,10 +67,10 @@ public class LiteralOpUpgrader {
      * @param spec non-null spec
      * @return true for 0 or null type bearers
      */
-    private static boolean isConstIntZeroOrKnownNull(RegisterSpec spec) {
-        TypeBearer tb = spec.getTypeBearer();
-        if (tb instanceof CstLiteralBits) {
-            CstLiteralBits clb = (CstLiteralBits) tb;
+    private static boolean isConstIntZeroOrKnownNull(com.duy.dx.rop.code.RegisterSpec spec) {
+        com.duy.dx.rop.type.TypeBearer tb = spec.getTypeBearer();
+        if (tb instanceof com.duy.dx.rop.cst.CstLiteralBits) {
+            com.duy.dx.rop.cst.CstLiteralBits clb = (CstLiteralBits) tb;
             return (clb.getLongBits() == 0);
         }
         return false;
@@ -81,20 +82,23 @@ public class LiteralOpUpgrader {
     private void run() {
         final TranslationAdvice advice = Optimizer.getAdvice();
 
-        ssaMeth.forEachInsn(new SsaInsn.Visitor() {
-            public void visitMoveInsn(NormalSsaInsn insn) {
+        ssaMeth.forEachInsn(new com.duy.dx.ssa.SsaInsn.Visitor() {
+            @Override
+            public void visitMoveInsn(com.duy.dx.ssa.NormalSsaInsn insn) {
                 // do nothing
             }
 
+            @Override
             public void visitPhiInsn(PhiInsn insn) {
                 // do nothing
             }
 
-            public void visitNonMoveInsn(NormalSsaInsn insn) {
+            @Override
+            public void visitNonMoveInsn(com.duy.dx.ssa.NormalSsaInsn insn) {
 
-                Insn originalRopInsn = insn.getOriginalRopInsn();
-                Rop opcode = originalRopInsn.getOpcode();
-                RegisterSpecList sources = insn.getSources();
+                com.duy.dx.rop.code.Insn originalRopInsn = insn.getOriginalRopInsn();
+                com.duy.dx.rop.code.Rop opcode = originalRopInsn.getOpcode();
+                com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
 
                 // Replace insns with constant results with const insns
                 if (tryReplacingWithConstant(insn)) return;
@@ -104,13 +108,13 @@ public class LiteralOpUpgrader {
                     return;
                 }
 
-                if (opcode.getBranchingness() == Rop.BRANCH_IF) {
+                if (opcode.getBranchingness() == com.duy.dx.rop.code.Rop.BRANCH_IF) {
                     /*
                      * An if instruction can become an if-*z instruction.
                      */
                     if (isConstIntZeroOrKnownNull(sources.get(0))) {
                         replacePlainInsn(insn, sources.withoutFirst(),
-                              RegOps.flippedIfOpcode(opcode.getOpcode()), null);
+                              com.duy.dx.rop.code.RegOps.flippedIfOpcode(opcode.getOpcode()), null);
                     } else if (isConstIntZeroOrKnownNull(sources.get(1))) {
                         replacePlainInsn(insn, sources.withoutLast(),
                               opcode.getOpcode(), null);
@@ -126,7 +130,7 @@ public class LiteralOpUpgrader {
                      */
 
                     insn.setNewSources(
-                            RegisterSpecList.make(
+                            com.duy.dx.rop.code.RegisterSpecList.make(
                                     sources.get(1), sources.get(0)));
 
                     insn.upgradeToLiteral();
@@ -142,28 +146,28 @@ public class LiteralOpUpgrader {
      * @param insn {@code non-null;} instruction to try to replace
      * @return true if the instruction was replaced
      */
-    private boolean tryReplacingWithConstant(NormalSsaInsn insn) {
-        Insn originalRopInsn = insn.getOriginalRopInsn();
-        Rop opcode = originalRopInsn.getOpcode();
+    private boolean tryReplacingWithConstant(com.duy.dx.ssa.NormalSsaInsn insn) {
+        com.duy.dx.rop.code.Insn originalRopInsn = insn.getOriginalRopInsn();
+        com.duy.dx.rop.code.Rop opcode = originalRopInsn.getOpcode();
         RegisterSpec result = insn.getResult();
 
         if (result != null && !ssaMeth.isRegALocal(result) &&
-                opcode.getOpcode() != RegOps.CONST) {
+                opcode.getOpcode() != com.duy.dx.rop.code.RegOps.CONST) {
             TypeBearer type = insn.getResult().getTypeBearer();
             if (type.isConstant() && type.getBasicType() == Type.BT_INT) {
                 // Replace the instruction with a constant
-                replacePlainInsn(insn, RegisterSpecList.EMPTY,
-                        RegOps.CONST, (Constant) type);
+                replacePlainInsn(insn, com.duy.dx.rop.code.RegisterSpecList.EMPTY,
+                        com.duy.dx.rop.code.RegOps.CONST, (com.duy.dx.rop.cst.Constant) type);
 
                 // Remove the source as well if this is a move-result-pseudo
-                if (opcode.getOpcode() == RegOps.MOVE_RESULT_PSEUDO) {
+                if (opcode.getOpcode() == com.duy.dx.rop.code.RegOps.MOVE_RESULT_PSEUDO) {
                     int pred = insn.getBlock().getPredecessors().nextSetBit(0);
-                    ArrayList<SsaInsn> predInsns =
+                    ArrayList<com.duy.dx.ssa.SsaInsn> predInsns =
                             ssaMeth.getBlocks().get(pred).getInsns();
-                    NormalSsaInsn sourceInsn =
-                            (NormalSsaInsn) predInsns.get(predInsns.size()-1);
-                    replacePlainInsn(sourceInsn, RegisterSpecList.EMPTY,
-                            RegOps.GOTO, null);
+                    com.duy.dx.ssa.NormalSsaInsn sourceInsn =
+                            (com.duy.dx.ssa.NormalSsaInsn) predInsns.get(predInsns.size()-1);
+                    replacePlainInsn(sourceInsn, com.duy.dx.rop.code.RegisterSpecList.EMPTY,
+                            com.duy.dx.rop.code.RegOps.GOTO, null);
                 }
                 return true;
             }
@@ -182,10 +186,10 @@ public class LiteralOpUpgrader {
      * @param newOpcode A RegOp from {@link RegOps}
      * @param cst {@code null-ok;} constant for new instruction, if any
      */
-    private void replacePlainInsn(NormalSsaInsn insn,
-            RegisterSpecList newSources, int newOpcode, Constant cst) {
+    private void replacePlainInsn(com.duy.dx.ssa.NormalSsaInsn insn,
+                                  RegisterSpecList newSources, int newOpcode, Constant cst) {
 
-        Insn originalRopInsn = insn.getOriginalRopInsn();
+        com.duy.dx.rop.code.Insn originalRopInsn = insn.getOriginalRopInsn();
         Rop newRop = Rops.ropFor(newOpcode, insn.getResult(), newSources, cst);
         Insn newRopInsn;
         if (cst == null) {
@@ -195,7 +199,7 @@ public class LiteralOpUpgrader {
             newRopInsn = new PlainCstInsn(newRop, originalRopInsn.getPosition(),
                     insn.getResult(), newSources, cst);
         }
-        NormalSsaInsn newInsn = new NormalSsaInsn(newRopInsn, insn.getBlock());
+        com.duy.dx.ssa.NormalSsaInsn newInsn = new NormalSsaInsn(newRopInsn, insn.getBlock());
 
         List<SsaInsn> insns = insn.getBlock().getInsns();
 

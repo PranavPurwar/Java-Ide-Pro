@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstArray;
-import com.duy.dx .rop.cst.CstLiteralBits;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.cst.Zeroes;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.ByteArrayAnnotatedOutput;
-import com.duy.dx .util.Writers;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstArray;
+import com.duy.dx.rop.cst.CstLiteralBits;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.cst.Zeroes;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.ByteArrayAnnotatedOutput;
+import com.duy.dx.util.Writers;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -41,19 +41,19 @@ public final class ClassDataItem extends OffsettedItem {
     private final CstType thisClass;
 
     /** {@code non-null;} list of static fields */
-    private final ArrayList<EncodedField> staticFields;
+    private final ArrayList<com.duy.dx.dex.file.EncodedField> staticFields;
 
     /** {@code non-null;} list of initial values for static fields */
-    private final HashMap<EncodedField, Constant> staticValues;
+    private final HashMap<com.duy.dx.dex.file.EncodedField, Constant> staticValues;
 
     /** {@code non-null;} list of instance fields */
-    private final ArrayList<EncodedField> instanceFields;
+    private final ArrayList<com.duy.dx.dex.file.EncodedField> instanceFields;
 
     /** {@code non-null;} list of direct methods */
-    private final ArrayList<EncodedMethod> directMethods;
+    private final ArrayList<com.duy.dx.dex.file.EncodedMethod> directMethods;
 
     /** {@code non-null;} list of virtual methods */
-    private final ArrayList<EncodedMethod> virtualMethods;
+    private final ArrayList<com.duy.dx.dex.file.EncodedMethod> virtualMethods;
 
     /** {@code null-ok;} static initializer list; set in {@link #addContents} */
     private CstArray staticValuesConstant;
@@ -79,11 +79,11 @@ public final class ClassDataItem extends OffsettedItem {
         }
 
         this.thisClass = thisClass;
-        this.staticFields = new ArrayList<EncodedField>(20);
-        this.staticValues = new HashMap<EncodedField, Constant>(40);
-        this.instanceFields = new ArrayList<EncodedField>(20);
-        this.directMethods = new ArrayList<EncodedMethod>(20);
-        this.virtualMethods = new ArrayList<EncodedMethod>(20);
+        this.staticFields = new ArrayList<com.duy.dx.dex.file.EncodedField>(20);
+        this.staticValues = new HashMap<com.duy.dx.dex.file.EncodedField, Constant>(40);
+        this.instanceFields = new ArrayList<com.duy.dx.dex.file.EncodedField>(20);
+        this.directMethods = new ArrayList<com.duy.dx.dex.file.EncodedMethod>(20);
+        this.virtualMethods = new ArrayList<com.duy.dx.dex.file.EncodedMethod>(20);
         this.staticValuesConstant = null;
     }
 
@@ -116,7 +116,7 @@ public final class ClassDataItem extends OffsettedItem {
      * @param field {@code non-null;} the field to add
      * @param value {@code null-ok;} initial value for the field, if any
      */
-    public void addStaticField(EncodedField field, Constant value) {
+    public void addStaticField(com.duy.dx.dex.file.EncodedField field, Constant value) {
         if (field == null) {
             throw new NullPointerException("field == null");
         }
@@ -135,7 +135,7 @@ public final class ClassDataItem extends OffsettedItem {
      *
      * @param field {@code non-null;} the field to add
      */
-    public void addInstanceField(EncodedField field) {
+    public void addInstanceField(com.duy.dx.dex.file.EncodedField field) {
         if (field == null) {
             throw new NullPointerException("field == null");
         }
@@ -148,7 +148,7 @@ public final class ClassDataItem extends OffsettedItem {
      *
      * @param method {@code non-null;} the method to add
      */
-    public void addDirectMethod(EncodedMethod method) {
+    public void addDirectMethod(com.duy.dx.dex.file.EncodedMethod method) {
         if (method == null) {
             throw new NullPointerException("method == null");
         }
@@ -161,7 +161,7 @@ public final class ClassDataItem extends OffsettedItem {
      *
      * @param method {@code non-null;} the method to add
      */
-    public void addVirtualMethod(EncodedMethod method) {
+    public void addVirtualMethod(com.duy.dx.dex.file.EncodedMethod method) {
         if (method == null) {
             throw new NullPointerException("method == null");
         }
@@ -176,9 +176,9 @@ public final class ClassDataItem extends OffsettedItem {
      *
      * @return {@code non-null;} list of all methods
      */
-    public ArrayList<EncodedMethod> getMethods() {
+    public ArrayList<com.duy.dx.dex.file.EncodedMethod> getMethods() {
         int sz = directMethods.size() + virtualMethods.size();
-        ArrayList<EncodedMethod> result = new ArrayList<EncodedMethod>(sz);
+        ArrayList<com.duy.dx.dex.file.EncodedMethod> result = new ArrayList<com.duy.dx.dex.file.EncodedMethod>(sz);
 
         result.addAll(directMethods);
         result.addAll(virtualMethods);
@@ -222,24 +222,24 @@ public final class ClassDataItem extends OffsettedItem {
 
     /** {@inheritDoc} */
     @Override
-    public void addContents(DexFile file) {
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
         if (!staticFields.isEmpty()) {
             getStaticValuesConstant(); // Force the fields to be sorted.
-            for (EncodedField field : staticFields) {
+            for (com.duy.dx.dex.file.EncodedField field : staticFields) {
                 field.addContents(file);
             }
         }
 
         if (!instanceFields.isEmpty()) {
             Collections.sort(instanceFields);
-            for (EncodedField field : instanceFields) {
+            for (com.duy.dx.dex.file.EncodedField field : instanceFields) {
                 field.addContents(file);
             }
         }
 
         if (!directMethods.isEmpty()) {
             Collections.sort(directMethods);
-            for (EncodedMethod method : directMethods) {
+            for (com.duy.dx.dex.file.EncodedMethod method : directMethods) {
                 method.addContents(file);
             }
         }
@@ -285,7 +285,7 @@ public final class ClassDataItem extends OffsettedItem {
 
         int size = staticFields.size();
         while (size > 0) {
-            EncodedField field = staticFields.get(size - 1);
+            com.duy.dx.dex.file.EncodedField field = staticFields.get(size - 1);
             Constant cst = staticValues.get(field);
             if (cst instanceof CstLiteralBits) {
                 // Note: CstKnownNull extends CstLiteralBits.
@@ -336,7 +336,7 @@ public final class ClassDataItem extends OffsettedItem {
      * @param file {@code non-null;} file this instance is part of
      * @param out {@code non-null;} where to write to
      */
-    private void encodeOutput(DexFile file, AnnotatedOutput out) {
+    private void encodeOutput(com.duy.dx.dex.file.DexFile file, AnnotatedOutput out) {
         boolean annotates = out.annotates();
 
         if (annotates) {
@@ -368,8 +368,8 @@ public final class ClassDataItem extends OffsettedItem {
      * @param label {@code non-null;} the label for the purposes of annotation
      * @param size {@code >= 0;} the size to write
      */
-    private static void encodeSize(DexFile file, AnnotatedOutput out,
-            String label, int size) {
+    private static void encodeSize(com.duy.dx.dex.file.DexFile file, AnnotatedOutput out,
+                                   String label, int size) {
         if (out.annotates()) {
             out.annotate(String.format("  %-21s %08x", label + "_size:",
                             size));
@@ -388,8 +388,8 @@ public final class ClassDataItem extends OffsettedItem {
      * @param label {@code non-null;} the label for the purposes of annotation
      * @param list {@code non-null;} the list in question
      */
-    private static void encodeList(DexFile file, AnnotatedOutput out,
-            String label, ArrayList<? extends EncodedMember> list) {
+    private static void encodeList(com.duy.dx.dex.file.DexFile file, AnnotatedOutput out,
+                                   String label, ArrayList<? extends EncodedMember> list) {
         int size = list.size();
         int lastIndex = 0;
 

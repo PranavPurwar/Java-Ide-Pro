@@ -1,34 +1,53 @@
-package com.duy.dx .dex.cf;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .cf.attrib.AttAnnotationDefault;
-import com.duy.dx .cf.attrib.AttEnclosingMethod;
-import com.duy.dx .cf.attrib.AttExceptions;
-import com.duy.dx .cf.attrib.AttInnerClasses;
-import com.duy.dx .cf.attrib.AttRuntimeInvisibleAnnotations;
-import com.duy.dx .cf.attrib.AttRuntimeInvisibleParameterAnnotations;
-import com.duy.dx .cf.attrib.AttRuntimeVisibleAnnotations;
-import com.duy.dx .cf.attrib.AttRuntimeVisibleParameterAnnotations;
-import com.duy.dx .cf.attrib.AttSignature;
-import com.duy.dx .cf.attrib.InnerClassList;
-import com.duy.dx .cf.direct.DirectClassFile;
-import com.duy.dx .cf.iface.AttributeList;
-import com.duy.dx .cf.iface.Method;
-import com.duy.dx .cf.iface.MethodList;
-import com.duy.dx .dex.file.AnnotationUtils;
-import com.duy.dx .rop.annotation.Annotation;
-import com.duy.dx .rop.annotation.AnnotationVisibility;
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .rop.annotation.AnnotationsList;
-import com.duy.dx .rop.annotation.NameValuePair;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.Warning;
+package com.duy.dx.dex.cf;
+
+import com.duy.dx.dex.file.AnnotationUtils;
+
 import java.util.ArrayList;
+
+import com.duy.dx.cf.attrib.AttAnnotationDefault;
+import com.duy.dx.cf.attrib.AttEnclosingMethod;
+import com.duy.dx.cf.attrib.AttExceptions;
+import com.duy.dx.cf.attrib.AttInnerClasses;
+import com.duy.dx.cf.attrib.AttRuntimeInvisibleAnnotations;
+import com.duy.dx.cf.attrib.AttRuntimeInvisibleParameterAnnotations;
+import com.duy.dx.cf.attrib.AttRuntimeVisibleAnnotations;
+import com.duy.dx.cf.attrib.AttRuntimeVisibleParameterAnnotations;
+import com.duy.dx.cf.attrib.AttSignature;
+import com.duy.dx.cf.attrib.AttSourceDebugExtension;
+import com.duy.dx.cf.attrib.InnerClassList;
+import com.duy.dx.cf.direct.DirectClassFile;
+import com.duy.dx.cf.iface.AttributeList;
+import com.duy.dx.cf.iface.Method;
+import com.duy.dx.cf.iface.MethodList;
+import com.duy.dx.rop.annotation.Annotation;
+import com.duy.dx.rop.annotation.AnnotationVisibility;
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.rop.annotation.AnnotationsList;
+import com.duy.dx.rop.annotation.NameValuePair;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.Warning;
 
 /**
  * Utility methods that translate various classfile attributes
@@ -48,20 +67,20 @@ import java.util.ArrayList;
      * @param method {@code non-null;} the method in question
      * @return {@code non-null;} the list of thrown exceptions
      */
-    public static TypeList getExceptions(Method method) {
-        AttributeList attribs = method.getAttributes();
-        AttExceptions exceptions = (AttExceptions)
+    public static com.duy.dx.rop.type.TypeList getExceptions(com.duy.dx.cf.iface.Method method) {
+        com.duy.dx.cf.iface.AttributeList attribs = method.getAttributes();
+        com.duy.dx.cf.attrib.AttExceptions exceptions = (com.duy.dx.cf.attrib.AttExceptions)
             attribs.findFirst(AttExceptions.ATTRIBUTE_NAME);
 
         if (exceptions == null) {
-            return StdTypeList.EMPTY;
+            return com.duy.dx.rop.type.StdTypeList.EMPTY;
         }
 
         return exceptions.getExceptions();
     }
 
     /**
-     * Gets the annotations out of a given {@link AttributeList}. This
+     * Gets the annotations out of a given {@link com.duy.dx.cf.iface.AttributeList}. This
      * combines both visible and invisible annotations into a single
      * result set and also adds in a system annotation for the
      * {@code Signature} attribute if present.
@@ -69,12 +88,17 @@ import java.util.ArrayList;
      * @param attribs {@code non-null;} the attributes list to search in
      * @return {@code non-null;} the set of annotations, which may be empty
      */
-    public static Annotations getAnnotations(AttributeList attribs) {
-        Annotations result = getAnnotations0(attribs);
-        Annotation signature = getSignature(attribs);
+    public static com.duy.dx.rop.annotation.Annotations getAnnotations(com.duy.dx.cf.iface.AttributeList attribs) {
+        com.duy.dx.rop.annotation.Annotations result = getAnnotations0(attribs);
+        com.duy.dx.rop.annotation.Annotation signature = getSignature(attribs);
+        com.duy.dx.rop.annotation.Annotation sourceDebugExtension = getSourceDebugExtension(attribs);
 
         if (signature != null) {
-            result = Annotations.combine(result, signature);
+            result = com.duy.dx.rop.annotation.Annotations.combine(result, signature);
+        }
+
+        if (sourceDebugExtension != null) {
+            result = com.duy.dx.rop.annotation.Annotations.combine(result, sourceDebugExtension);
         }
 
         return result;
@@ -93,33 +117,33 @@ import java.util.ArrayList;
      * @param args {@code non-null;} the high-level options
      * @return {@code non-null;} the set of annotations, which may be empty
      */
-    public static Annotations getClassAnnotations(DirectClassFile cf,
-            CfOptions args) {
-        CstType thisClass = cf.getThisClass();
-        AttributeList attribs = cf.getAttributes();
-        Annotations result = getAnnotations(attribs);
-        Annotation enclosingMethod = translateEnclosingMethod(attribs);
+    public static com.duy.dx.rop.annotation.Annotations getClassAnnotations(com.duy.dx.cf.direct.DirectClassFile cf,
+                                                                                     CfOptions args) {
+        com.duy.dx.rop.cst.CstType thisClass = cf.getThisClass();
+        com.duy.dx.cf.iface.AttributeList attribs = cf.getAttributes();
+        com.duy.dx.rop.annotation.Annotations result = getAnnotations(attribs);
+        com.duy.dx.rop.annotation.Annotation enclosingMethod = translateEnclosingMethod(attribs);
 
         try {
-            Annotations innerClassAnnotations =
+            com.duy.dx.rop.annotation.Annotations innerClassAnnotations =
                 translateInnerClasses(thisClass, attribs,
                         enclosingMethod == null);
             if (innerClassAnnotations != null) {
-                result = Annotations.combine(result, innerClassAnnotations);
+                result = com.duy.dx.rop.annotation.Annotations.combine(result, innerClassAnnotations);
             }
-        } catch (Warning warn) {
+        } catch (com.duy.dx.util.Warning warn) {
             args.warn.println("warning: " + warn.getMessage());
         }
 
         if (enclosingMethod != null) {
-            result = Annotations.combine(result, enclosingMethod);
+            result = com.duy.dx.rop.annotation.Annotations.combine(result, enclosingMethod);
         }
 
         if (AccessFlags.isAnnotation(cf.getAccessFlags())) {
-            Annotation annotationDefault =
+            com.duy.dx.rop.annotation.Annotation annotationDefault =
                 translateAnnotationDefaults(cf);
             if (annotationDefault != null) {
-                result = Annotations.combine(result, annotationDefault);
+                result = com.duy.dx.rop.annotation.Annotations.combine(result, annotationDefault);
             }
         }
 
@@ -134,14 +158,14 @@ import java.util.ArrayList;
      * @param method {@code non-null;} the method in question
      * @return {@code non-null;} the set of annotations, which may be empty
      */
-    public static Annotations getMethodAnnotations(Method method) {
-        Annotations result = getAnnotations(method.getAttributes());
+    public static com.duy.dx.rop.annotation.Annotations getMethodAnnotations(com.duy.dx.cf.iface.Method method) {
+        com.duy.dx.rop.annotation.Annotations result = getAnnotations(method.getAttributes());
         TypeList exceptions = getExceptions(method);
 
         if (exceptions.size() != 0) {
-            Annotation throwsAnnotation =
+            com.duy.dx.rop.annotation.Annotation throwsAnnotation =
                 AnnotationUtils.makeThrows(exceptions);
-            result = Annotations.combine(result, throwsAnnotation);
+            result = com.duy.dx.rop.annotation.Annotations.combine(result, throwsAnnotation);
         }
 
         return result;
@@ -154,17 +178,17 @@ import java.util.ArrayList;
      * @param attribs {@code non-null;} the attributes list to search in
      * @return {@code non-null;} the set of annotations, which may be empty
      */
-    private static Annotations getAnnotations0(AttributeList attribs) {
-        AttRuntimeVisibleAnnotations visible =
-            (AttRuntimeVisibleAnnotations)
+    private static com.duy.dx.rop.annotation.Annotations getAnnotations0(com.duy.dx.cf.iface.AttributeList attribs) {
+        com.duy.dx.cf.attrib.AttRuntimeVisibleAnnotations visible =
+            (com.duy.dx.cf.attrib.AttRuntimeVisibleAnnotations)
             attribs.findFirst(AttRuntimeVisibleAnnotations.ATTRIBUTE_NAME);
-        AttRuntimeInvisibleAnnotations invisible =
-            (AttRuntimeInvisibleAnnotations)
+        com.duy.dx.cf.attrib.AttRuntimeInvisibleAnnotations invisible =
+            (com.duy.dx.cf.attrib.AttRuntimeInvisibleAnnotations)
             attribs.findFirst(AttRuntimeInvisibleAnnotations.ATTRIBUTE_NAME);
 
         if (visible == null) {
             if (invisible == null) {
-                return Annotations.EMPTY;
+                return com.duy.dx.rop.annotation.Annotations.EMPTY;
             }
             return invisible.getAnnotations();
         }
@@ -175,20 +199,20 @@ import java.util.ArrayList;
 
         // Both are non-null, so combine them.
 
-        return Annotations.combine(visible.getAnnotations(),
+        return com.duy.dx.rop.annotation.Annotations.combine(visible.getAnnotations(),
                 invisible.getAnnotations());
     }
 
     /**
      * Gets the {@code Signature} attribute out of a given
-     * {@link AttributeList}, if any, translating it to an annotation.
+     * {@link com.duy.dx.cf.iface.AttributeList}, if any, translating it to an annotation.
      *
      * @param attribs {@code non-null;} the attributes list to search in
      * @return {@code null-ok;} the converted {@code Signature} annotation,
      * if there was an attribute to translate
      */
-    private static Annotation getSignature(AttributeList attribs) {
-        AttSignature signature = (AttSignature)
+    private static com.duy.dx.rop.annotation.Annotation getSignature(com.duy.dx.cf.iface.AttributeList attribs) {
+        com.duy.dx.cf.attrib.AttSignature signature = (com.duy.dx.cf.attrib.AttSignature)
             attribs.findFirst(AttSignature.ATTRIBUTE_NAME);
 
         if (signature == null) {
@@ -198,9 +222,21 @@ import java.util.ArrayList;
         return AnnotationUtils.makeSignature(signature.getSignature());
     }
 
+
+    private static com.duy.dx.rop.annotation.Annotation getSourceDebugExtension(com.duy.dx.cf.iface.AttributeList attribs) {
+        com.duy.dx.cf.attrib.AttSourceDebugExtension extension = (com.duy.dx.cf.attrib.AttSourceDebugExtension)
+            attribs.findFirst(AttSourceDebugExtension.ATTRIBUTE_NAME);
+
+        if (extension == null) {
+            return null;
+        }
+
+        return AnnotationUtils.makeSourceDebugExtension(extension.getSmapString());
+    }
+
     /**
      * Gets the {@code EnclosingMethod} attribute out of a given
-     * {@link AttributeList}, if any, translating it to an annotation.
+     * {@link com.duy.dx.cf.iface.AttributeList}, if any, translating it to an annotation.
      * If the class really has an enclosing method, this returns an
      * {@code EnclosingMethod} annotation; if not, this returns
      * an {@code EnclosingClass} annotation.
@@ -210,15 +246,15 @@ import java.util.ArrayList;
      * {@code EnclosingClass} annotation, if there was an
      * attribute to translate
      */
-    private static Annotation translateEnclosingMethod(AttributeList attribs) {
-        AttEnclosingMethod enclosingMethod = (AttEnclosingMethod)
+    private static com.duy.dx.rop.annotation.Annotation translateEnclosingMethod(com.duy.dx.cf.iface.AttributeList attribs) {
+        com.duy.dx.cf.attrib.AttEnclosingMethod enclosingMethod = (com.duy.dx.cf.attrib.AttEnclosingMethod)
             attribs.findFirst(AttEnclosingMethod.ATTRIBUTE_NAME);
 
         if (enclosingMethod == null) {
             return null;
         }
 
-        CstType enclosingClass = enclosingMethod.getEnclosingClass();
+        com.duy.dx.rop.cst.CstType enclosingClass = enclosingMethod.getEnclosingClass();
         CstNat nat = enclosingMethod.getMethod();
 
         if (nat == null) {
@@ -238,7 +274,7 @@ import java.util.ArrayList;
 
     /**
      * Gets the {@code InnerClasses} attribute out of a given
-     * {@link AttributeList}, if any, translating it to one or more of an
+     * {@link com.duy.dx.cf.iface.AttributeList}, if any, translating it to one or more of an
      * {@code InnerClass}, {@code EnclosingClass}, or
      * {@code MemberClasses} annotation.
      *
@@ -250,9 +286,9 @@ import java.util.ArrayList;
      * @return {@code null-ok;} the converted list of annotations, if there
      * was an attribute to translate
      */
-    private static Annotations translateInnerClasses(CstType thisClass,
-            AttributeList attribs, boolean needEnclosingClass) {
-        AttInnerClasses innerClasses = (AttInnerClasses)
+    private static com.duy.dx.rop.annotation.Annotations translateInnerClasses(com.duy.dx.rop.cst.CstType thisClass,
+                                                                                        com.duy.dx.cf.iface.AttributeList attribs, boolean needEnclosingClass) {
+        com.duy.dx.cf.attrib.AttInnerClasses innerClasses = (com.duy.dx.cf.attrib.AttInnerClasses)
             attribs.findFirst(AttInnerClasses.ATTRIBUTE_NAME);
 
         if (innerClasses == null) {
@@ -264,14 +300,14 @@ import java.util.ArrayList;
          * as well as for any named member classes.
          */
 
-        InnerClassList list = innerClasses.getInnerClasses();
+        com.duy.dx.cf.attrib.InnerClassList list = innerClasses.getInnerClasses();
         int size = list.size();
-        InnerClassList.Item foundThisClass = null;
-        ArrayList<Type> membersList = new ArrayList<Type>();
+        com.duy.dx.cf.attrib.InnerClassList.Item foundThisClass = null;
+        ArrayList<com.duy.dx.rop.type.Type> membersList = new ArrayList<Type>();
 
         for (int i = 0; i < size; i++) {
             InnerClassList.Item item = list.get(i);
-            CstType innerClass = item.getInnerClass();
+            com.duy.dx.rop.cst.CstType innerClass = item.getInnerClass();
             if (innerClass.equals(thisClass)) {
                 foundThisClass = item;
             } else if (thisClass.equals(item.getOuterClass())) {
@@ -285,14 +321,14 @@ import java.util.ArrayList;
             return null;
         }
 
-        Annotations result = new Annotations();
+        com.duy.dx.rop.annotation.Annotations result = new Annotations();
 
         if (foundThisClass != null) {
             result.add(AnnotationUtils.makeInnerClass(
                                foundThisClass.getInnerName(),
                                foundThisClass.getAccessFlags()));
             if (needEnclosingClass) {
-                CstType outer = foundThisClass.getOuterClass();
+                com.duy.dx.rop.cst.CstType outer = foundThisClass.getOuterClass();
                 if (outer == null) {
                     throw new Warning(
                             "Ignoring InnerClasses attribute for an " +
@@ -317,7 +353,7 @@ import java.util.ArrayList;
         }
 
         if (membersSize != 0) {
-            StdTypeList typeList = new StdTypeList(membersSize);
+            com.duy.dx.rop.type.StdTypeList typeList = new StdTypeList(membersSize);
             for (int i = 0; i < membersSize; i++) {
                 typeList.set(i, membersList.get(i));
             }
@@ -338,20 +374,20 @@ import java.util.ArrayList;
      * @return {@code non-null;} the list of annotation sets, which may be
      * empty
      */
-    public static AnnotationsList getParameterAnnotations(Method method) {
-        AttributeList attribs = method.getAttributes();
-        AttRuntimeVisibleParameterAnnotations visible =
-            (AttRuntimeVisibleParameterAnnotations)
+    public static com.duy.dx.rop.annotation.AnnotationsList getParameterAnnotations(com.duy.dx.cf.iface.Method method) {
+        com.duy.dx.cf.iface.AttributeList attribs = method.getAttributes();
+        com.duy.dx.cf.attrib.AttRuntimeVisibleParameterAnnotations visible =
+            (com.duy.dx.cf.attrib.AttRuntimeVisibleParameterAnnotations)
             attribs.findFirst(
                     AttRuntimeVisibleParameterAnnotations.ATTRIBUTE_NAME);
-        AttRuntimeInvisibleParameterAnnotations invisible =
-            (AttRuntimeInvisibleParameterAnnotations)
+        com.duy.dx.cf.attrib.AttRuntimeInvisibleParameterAnnotations invisible =
+            (com.duy.dx.cf.attrib.AttRuntimeInvisibleParameterAnnotations)
             attribs.findFirst(
                     AttRuntimeInvisibleParameterAnnotations.ATTRIBUTE_NAME);
 
         if (visible == null) {
             if (invisible == null) {
-                return AnnotationsList.EMPTY;
+                return com.duy.dx.rop.annotation.AnnotationsList.EMPTY;
             }
             return invisible.getParameterAnnotations();
         }
@@ -376,22 +412,22 @@ import java.util.ArrayList;
      * {@code AnnotationDefault} annotation, if there were any
      * annotation defaults in the class, or {@code null} if not
      */
-    private static Annotation translateAnnotationDefaults(DirectClassFile cf) {
+    private static com.duy.dx.rop.annotation.Annotation translateAnnotationDefaults(DirectClassFile cf) {
         CstType thisClass = cf.getThisClass();
         MethodList methods = cf.getMethods();
         int sz = methods.size();
-        Annotation result =
+        com.duy.dx.rop.annotation.Annotation result =
             new Annotation(thisClass, AnnotationVisibility.EMBEDDED);
         boolean any = false;
 
         for (int i = 0; i < sz; i++) {
             Method one = methods.get(i);
             AttributeList attribs = one.getAttributes();
-            AttAnnotationDefault oneDefault = (AttAnnotationDefault)
+            com.duy.dx.cf.attrib.AttAnnotationDefault oneDefault = (com.duy.dx.cf.attrib.AttAnnotationDefault)
                 attribs.findFirst(AttAnnotationDefault.ATTRIBUTE_NAME);
 
             if (oneDefault != null) {
-                NameValuePair pair = new NameValuePair(
+                com.duy.dx.rop.annotation.NameValuePair pair = new NameValuePair(
                         one.getNat().getName(),
                         oneDefault.getValue());
                 result.add(pair);

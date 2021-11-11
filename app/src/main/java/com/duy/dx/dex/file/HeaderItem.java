@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.DexFormat;
 import com.duy.dex.SizeOf;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * File header section of a {@code .dex} file.
@@ -68,12 +68,12 @@ public final class HeaderItem extends IndexedItem {
             out.annotate(4, "checksum");
             out.annotate(20, "signature");
             out.annotate(4, "file_size:       " +
-                         Hex.u4(file.getFileSize()));
-            out.annotate(4, "header_size:     " + Hex.u4(SizeOf.HEADER_ITEM));
-            out.annotate(4, "endian_tag:      " + Hex.u4(DexFormat.ENDIAN_TAG));
+                         com.duy.dx.util.Hex.u4(file.getFileSize()));
+            out.annotate(4, "header_size:     " + com.duy.dx.util.Hex.u4(SizeOf.HEADER_ITEM));
+            out.annotate(4, "endian_tag:      " + com.duy.dx.util.Hex.u4(DexFormat.ENDIAN_TAG));
             out.annotate(4, "link_size:       0");
             out.annotate(4, "link_off:        0");
-            out.annotate(4, "map_off:         " + Hex.u4(mapOff));
+            out.annotate(4, "map_off:         " + com.duy.dx.util.Hex.u4(mapOff));
         }
 
         // Write the magic number.
@@ -105,7 +105,7 @@ public final class HeaderItem extends IndexedItem {
         file.getClassDefs().writeHeaderPart(out);
 
         if (out.annotates()) {
-            out.annotate(4, "data_size:       " + Hex.u4(dataSize));
+            out.annotate(4, "data_size:       " + com.duy.dx.util.Hex.u4(dataSize));
             out.annotate(4, "data_off:        " + Hex.u4(dataOff));
         }
 

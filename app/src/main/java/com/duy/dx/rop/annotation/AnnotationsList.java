@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.annotation;
+package com.duy.dx.rop.annotation;
 
-import com.duy.dx .util.FixedSizeList;
+import com.duy.dx.util.FixedSizeList;
 
 /**
- * List of {@link Annotations} instances.
+ * List of {@link com.duy.dx.rop.annotation.Annotations} instances.
  */
 public final class AnnotationsList
         extends FixedSizeList {
@@ -47,9 +47,9 @@ public final class AnnotationsList
         AnnotationsList result = new AnnotationsList(size);
 
         for (int i = 0; i < size; i++) {
-            Annotations a1 = list1.get(i);
-            Annotations a2 = list2.get(i);
-            result.set(i, Annotations.combine(a1, a2));
+            com.duy.dx.rop.annotation.Annotations a1 = list1.get(i);
+            com.duy.dx.rop.annotation.Annotations a2 = list2.get(i);
+            result.set(i, com.duy.dx.rop.annotation.Annotations.combine(a1, a2));
         }
 
         result.setImmutable();
@@ -73,8 +73,8 @@ public final class AnnotationsList
      * @param n {@code >= 0, < size();} which index
      * @return {@code non-null;} element at that index
      */
-    public Annotations get(int n) {
-        return (Annotations) get0(n);
+    public com.duy.dx.rop.annotation.Annotations get(int n) {
+        return (com.duy.dx.rop.annotation.Annotations) get0(n);
     }
 
     /**

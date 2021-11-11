@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .util.AnnotatedOutput;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeMap;
+
+import com.duy.dx.util.AnnotatedOutput;
 
 /**
  * Statistics about the contents of a file.
@@ -68,7 +69,7 @@ public final class Statistics {
      *
      * @param out {@code non-null;} where to write to
      */
-    public final void writeAnnotation(AnnotatedOutput out) {
+    public final void writeAnnotation(com.duy.dx.util.AnnotatedOutput out) {
         if (dataMap.size() == 0) {
             return;
         }

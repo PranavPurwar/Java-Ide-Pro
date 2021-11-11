@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.CstArray;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.ByteArrayAnnotatedOutput;
+import com.duy.dx.rop.cst.CstArray;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.ByteArrayAnnotatedOutput;
 
 /**
  * Encoded array of constant values.
  */
-public final class EncodedArrayItem extends OffsettedItem {
+public final class EncodedArrayItem extends com.duy.dx.dex.file.OffsettedItem {
     /** the required alignment for instances of this class */
     private static final int ALIGNMENT = 1;
 
     /** {@code non-null;} the array to represent */
-    private final CstArray array;
+    private final com.duy.dx.rop.cst.CstArray array;
 
     /**
      * {@code null-ok;} encoded form, ready for writing to a file; set during
@@ -83,8 +83,9 @@ public final class EncodedArrayItem extends OffsettedItem {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addContents(DexFile file) {
-        ValueEncoder.addContents(file, array);
+        com.duy.dx.dex.file.ValueEncoder.addContents(file, array);
     }
 
     /** {@inheritDoc} */
@@ -92,8 +93,8 @@ public final class EncodedArrayItem extends OffsettedItem {
     protected void place0(Section addedTo, int offset) {
         // Encode the data and note the size.
 
-        ByteArrayAnnotatedOutput out = new ByteArrayAnnotatedOutput();
-        ValueEncoder encoder = new ValueEncoder(addedTo.getFile(), out);
+        com.duy.dx.util.ByteArrayAnnotatedOutput out = new ByteArrayAnnotatedOutput();
+        com.duy.dx.dex.file.ValueEncoder encoder = new com.duy.dx.dex.file.ValueEncoder(addedTo.getFile(), out);
 
         encoder.writeArray(array, false);
         encodedForm = out.toByteArray();
@@ -113,7 +114,7 @@ public final class EncodedArrayItem extends OffsettedItem {
              * done by place0(), except this time annotations will actually
              * get emitted.
              */
-            ValueEncoder encoder = new ValueEncoder(file, out);
+            com.duy.dx.dex.file.ValueEncoder encoder = new ValueEncoder(file, out);
             encoder.writeArray(array, true);
         } else {
             out.write(encodedForm);

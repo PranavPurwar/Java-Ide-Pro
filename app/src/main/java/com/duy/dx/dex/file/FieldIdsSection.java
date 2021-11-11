@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
-
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstFieldRef;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+package com.duy.dx.dex.file;
 
 import java.util.Collection;
 import java.util.TreeMap;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstFieldRef;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Field refs list section of a {@code .dex} file.
@@ -30,9 +30,9 @@ import java.util.TreeMap;
 public final class FieldIdsSection extends MemberIdsSection {
     /**
      * {@code non-null;} map from field constants to {@link
-     * FieldIdItem} instances
+     * com.duy.dx.dex.file.FieldIdItem} instances
      */
-    private final TreeMap<CstFieldRef, FieldIdItem> fieldIds;
+    private final TreeMap<com.duy.dx.rop.cst.CstFieldRef, com.duy.dx.dex.file.FieldIdItem> fieldIds;
 
     /**
      * Constructs an instance. The file offset is initially unknown.
@@ -42,7 +42,7 @@ public final class FieldIdsSection extends MemberIdsSection {
     public FieldIdsSection(DexFile file) {
         super("field_ids", file);
 
-        fieldIds = new TreeMap<CstFieldRef, FieldIdItem>();
+        fieldIds = new TreeMap<com.duy.dx.rop.cst.CstFieldRef, com.duy.dx.dex.file.FieldIdItem>();
     }
 
     /** {@inheritDoc} */
@@ -53,14 +53,14 @@ public final class FieldIdsSection extends MemberIdsSection {
 
     /** {@inheritDoc} */
     @Override
-    public IndexedItem get(Constant cst) {
+    public com.duy.dx.dex.file.IndexedItem get(Constant cst) {
         if (cst == null) {
             throw new NullPointerException("cst == null");
         }
 
         throwIfNotPrepared();
 
-        IndexedItem result = fieldIds.get((CstFieldRef) cst);
+        IndexedItem result = fieldIds.get((com.duy.dx.rop.cst.CstFieldRef) cst);
 
         if (result == null) {
             throw new IllegalArgumentException("not found");
@@ -81,7 +81,7 @@ public final class FieldIdsSection extends MemberIdsSection {
         int offset = (sz == 0) ? 0 : getFileOffset();
 
         if (out.annotates()) {
-            out.annotate(4, "field_ids_size:  " + Hex.u4(sz));
+            out.annotate(4, "field_ids_size:  " + com.duy.dx.util.Hex.u4(sz));
             out.annotate(4, "field_ids_off:   " + Hex.u4(offset));
         }
 
@@ -95,17 +95,17 @@ public final class FieldIdsSection extends MemberIdsSection {
      * @param field {@code non-null;} the reference to intern
      * @return {@code non-null;} the interned reference
      */
-    public synchronized FieldIdItem intern(CstFieldRef field) {
+    public synchronized com.duy.dx.dex.file.FieldIdItem intern(com.duy.dx.rop.cst.CstFieldRef field) {
         if (field == null) {
             throw new NullPointerException("field == null");
         }
 
         throwIfPrepared();
 
-        FieldIdItem result = fieldIds.get(field);
+        com.duy.dx.dex.file.FieldIdItem result = fieldIds.get(field);
 
         if (result == null) {
-            result = new FieldIdItem(field);
+            result = new com.duy.dx.dex.file.FieldIdItem(field);
             fieldIds.put(field, result);
         }
 

@@ -1,25 +1,42 @@
-package com.duy.dx .command.dump;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .cf.code.ConcreteMethod;
-import com.duy.dx .cf.code.Ropper;
-import com.duy.dx .cf.iface.Member;
-import com.duy.dx .cf.iface.Method;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.code.DexTranslationAdvice;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.TranslationAdvice;
-import com.duy.dx .ssa.Optimizer;
-import com.duy.dx .ssa.SsaBasicBlock;
-import com.duy.dx .ssa.SsaInsn;
-import com.duy.dx .ssa.SsaMethod;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
+package com.duy.dx.command.dump;
+
+import com.duy.dx.cf.code.ConcreteMethod;
+import com.duy.dx.cf.code.Ropper;
+import com.duy.dx.cf.iface.Member;
+import com.duy.dx.cf.iface.Method;
+import com.duy.dx.ssa.Optimizer;
+import com.duy.dx.ssa.SsaBasicBlock;
+import com.duy.dx.ssa.SsaInsn;
+import com.duy.dx.ssa.SsaMethod;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.EnumSet;
+
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.code.DexTranslationAdvice;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.TranslationAdvice;
 
 /**
  * Dumper for the SSA-translated blocks of a method.
@@ -66,15 +83,15 @@ public class SsaDumper extends BlockDumper {
             return;
         }
 
-        if ((member.getAccessFlags() & (AccessFlags.ACC_ABSTRACT |
-                AccessFlags.ACC_NATIVE)) != 0) {
+        if ((member.getAccessFlags() & (com.duy.dx.rop.code.AccessFlags.ACC_ABSTRACT |
+                com.duy.dx.rop.code.AccessFlags.ACC_NATIVE)) != 0) {
             return;
         }
 
         ConcreteMethod meth =
             new ConcreteMethod((Method) member, classFile, true, true);
         TranslationAdvice advice = DexTranslationAdvice.THE_ONE;
-        RopMethod rmeth = Ropper.convert(meth, advice, classFile.getMethods());
+        RopMethod rmeth = Ropper.convert(meth, advice, classFile.getMethods(), dexOptions);
         SsaMethod ssaMeth = null;
         boolean isStatic = AccessFlags.isStatic(meth.getAccessFlags());
         int paramWidth = computeParamWidth(meth, isStatic);
@@ -97,7 +114,7 @@ public class SsaDumper extends BlockDumper {
                     rmeth, paramWidth, isStatic,true, advice);
         }
 
-        StringBuffer sb = new StringBuffer(2000);
+        StringBuilder sb = new StringBuilder(2000);
 
         sb.append("first ");
         sb.append(Hex.u2(
@@ -156,7 +173,6 @@ public class SsaDumper extends BlockDumper {
         }
 
         suppressDump = false;
-        setAt(bytes, 0);
         parsed(bytes, 0, bytes.size(), sb.toString());
         suppressDump = true;
     }

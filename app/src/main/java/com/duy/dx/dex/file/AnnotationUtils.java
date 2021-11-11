@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
-
-import static com.duy.dx .rop.annotation.AnnotationVisibility.SYSTEM;
-
-import com.duy.dx .rop.annotation.Annotation;
-import com.duy.dx .rop.annotation.NameValuePair;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstAnnotation;
-import com.duy.dx .rop.cst.CstArray;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstKnownNull;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
+package com.duy.dx.dex.file;
 
 import java.util.ArrayList;
+
+import com.duy.dx.rop.annotation.Annotation;
+import com.duy.dx.rop.annotation.AnnotationVisibility;
+import com.duy.dx.rop.annotation.NameValuePair;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstAnnotation;
+import com.duy.dx.rop.cst.CstArray;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstKnownNull;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
 
 /**
  * Utility class for dealing with annotations.
@@ -39,41 +38,45 @@ import java.util.ArrayList;
 public final class AnnotationUtils {
 
     /** {@code non-null;} type for {@code AnnotationDefault} annotations */
-    private static final CstType ANNOTATION_DEFAULT_TYPE =
-        CstType.intern(Type.intern("Ldalvik/annotation/AnnotationDefault;"));
+    private static final com.duy.dx.rop.cst.CstType ANNOTATION_DEFAULT_TYPE =
+        com.duy.dx.rop.cst.CstType.intern(com.duy.dx.rop.type.Type.intern("Ldalvik/annotation/AnnotationDefault;"));
 
     /** {@code non-null;} type for {@code EnclosingClass} annotations */
-    private static final CstType ENCLOSING_CLASS_TYPE =
-        CstType.intern(Type.intern("Ldalvik/annotation/EnclosingClass;"));
+    private static final com.duy.dx.rop.cst.CstType ENCLOSING_CLASS_TYPE =
+        com.duy.dx.rop.cst.CstType.intern(com.duy.dx.rop.type.Type.intern("Ldalvik/annotation/EnclosingClass;"));
 
     /** {@code non-null;} type for {@code EnclosingMethod} annotations */
-    private static final CstType ENCLOSING_METHOD_TYPE =
-        CstType.intern(Type.intern("Ldalvik/annotation/EnclosingMethod;"));
+    private static final com.duy.dx.rop.cst.CstType ENCLOSING_METHOD_TYPE =
+        com.duy.dx.rop.cst.CstType.intern(com.duy.dx.rop.type.Type.intern("Ldalvik/annotation/EnclosingMethod;"));
 
     /** {@code non-null;} type for {@code InnerClass} annotations */
-    private static final CstType INNER_CLASS_TYPE =
-        CstType.intern(Type.intern("Ldalvik/annotation/InnerClass;"));
+    private static final com.duy.dx.rop.cst.CstType INNER_CLASS_TYPE =
+        com.duy.dx.rop.cst.CstType.intern(com.duy.dx.rop.type.Type.intern("Ldalvik/annotation/InnerClass;"));
 
     /** {@code non-null;} type for {@code MemberClasses} annotations */
-    private static final CstType MEMBER_CLASSES_TYPE =
-        CstType.intern(Type.intern("Ldalvik/annotation/MemberClasses;"));
+    private static final com.duy.dx.rop.cst.CstType MEMBER_CLASSES_TYPE =
+        com.duy.dx.rop.cst.CstType.intern(com.duy.dx.rop.type.Type.intern("Ldalvik/annotation/MemberClasses;"));
 
     /** {@code non-null;} type for {@code Signature} annotations */
-    private static final CstType SIGNATURE_TYPE =
-        CstType.intern(Type.intern("Ldalvik/annotation/Signature;"));
+    private static final com.duy.dx.rop.cst.CstType SIGNATURE_TYPE =
+        com.duy.dx.rop.cst.CstType.intern(com.duy.dx.rop.type.Type.intern("Ldalvik/annotation/Signature;"));
+
+        /** {@code non-null;} type for {@code SourceDebugExtension} annotations */
+    private static final com.duy.dx.rop.cst.CstType SOURCE_DEBUG_EXTENSION_TYPE =
+        com.duy.dx.rop.cst.CstType.intern(com.duy.dx.rop.type.Type.intern("Ldalvik/annotation/SourceDebugExtension;"));
 
     /** {@code non-null;} type for {@code Throws} annotations */
-    private static final CstType THROWS_TYPE =
-        CstType.intern(Type.intern("Ldalvik/annotation/Throws;"));
+    private static final com.duy.dx.rop.cst.CstType THROWS_TYPE =
+        com.duy.dx.rop.cst.CstType.intern(Type.intern("Ldalvik/annotation/Throws;"));
 
     /** {@code non-null;} the UTF-8 constant {@code "accessFlags"} */
-    private static final CstString ACCESS_FLAGS_STRING = new CstString("accessFlags");
+    private static final com.duy.dx.rop.cst.CstString ACCESS_FLAGS_STRING = new com.duy.dx.rop.cst.CstString("accessFlags");
 
     /** {@code non-null;} the UTF-8 constant {@code "name"} */
-    private static final CstString NAME_STRING = new CstString("name");
+    private static final com.duy.dx.rop.cst.CstString NAME_STRING = new com.duy.dx.rop.cst.CstString("name");
 
     /** {@code non-null;} the UTF-8 constant {@code "value"} */
-    private static final CstString VALUE_STRING = new CstString("value");
+    private static final com.duy.dx.rop.cst.CstString VALUE_STRING = new com.duy.dx.rop.cst.CstString("value");
 
     /**
      * This class is uninstantiable.
@@ -88,10 +91,10 @@ public final class AnnotationUtils {
      * @param defaults {@code non-null;} the defaults, itself as an annotation
      * @return {@code non-null;} the constructed annotation
      */
-    public static Annotation makeAnnotationDefault(Annotation defaults) {
-        Annotation result = new Annotation(ANNOTATION_DEFAULT_TYPE, SYSTEM);
+    public static com.duy.dx.rop.annotation.Annotation makeAnnotationDefault(com.duy.dx.rop.annotation.Annotation defaults) {
+        com.duy.dx.rop.annotation.Annotation result = new com.duy.dx.rop.annotation.Annotation(ANNOTATION_DEFAULT_TYPE, AnnotationVisibility.SYSTEM);
 
-        result.put(new NameValuePair(VALUE_STRING, new CstAnnotation(defaults)));
+        result.put(new com.duy.dx.rop.annotation.NameValuePair(VALUE_STRING, new CstAnnotation(defaults)));
         result.setImmutable();
         return result;
     }
@@ -102,10 +105,10 @@ public final class AnnotationUtils {
      * @param clazz {@code non-null;} the enclosing class
      * @return {@code non-null;} the annotation
      */
-    public static Annotation makeEnclosingClass(CstType clazz) {
-        Annotation result = new Annotation(ENCLOSING_CLASS_TYPE, SYSTEM);
+    public static com.duy.dx.rop.annotation.Annotation makeEnclosingClass(com.duy.dx.rop.cst.CstType clazz) {
+        com.duy.dx.rop.annotation.Annotation result = new com.duy.dx.rop.annotation.Annotation(ENCLOSING_CLASS_TYPE, AnnotationVisibility.SYSTEM);
 
-        result.put(new NameValuePair(VALUE_STRING, clazz));
+        result.put(new com.duy.dx.rop.annotation.NameValuePair(VALUE_STRING, clazz));
         result.setImmutable();
         return result;
     }
@@ -116,10 +119,10 @@ public final class AnnotationUtils {
      * @param method {@code non-null;} the enclosing method
      * @return {@code non-null;} the annotation
      */
-    public static Annotation makeEnclosingMethod(CstMethodRef method) {
-        Annotation result = new Annotation(ENCLOSING_METHOD_TYPE, SYSTEM);
+    public static com.duy.dx.rop.annotation.Annotation makeEnclosingMethod(CstMethodRef method) {
+        com.duy.dx.rop.annotation.Annotation result = new com.duy.dx.rop.annotation.Annotation(ENCLOSING_METHOD_TYPE, AnnotationVisibility.SYSTEM);
 
-        result.put(new NameValuePair(VALUE_STRING, method));
+        result.put(new com.duy.dx.rop.annotation.NameValuePair(VALUE_STRING, method));
         result.setImmutable();
         return result;
     }
@@ -132,12 +135,12 @@ public final class AnnotationUtils {
      * @param accessFlags the original access flags
      * @return {@code non-null;} the annotation
      */
-    public static Annotation makeInnerClass(CstString name, int accessFlags) {
-        Annotation result = new Annotation(INNER_CLASS_TYPE, SYSTEM);
+    public static com.duy.dx.rop.annotation.Annotation makeInnerClass(com.duy.dx.rop.cst.CstString name, int accessFlags) {
+        com.duy.dx.rop.annotation.Annotation result = new com.duy.dx.rop.annotation.Annotation(INNER_CLASS_TYPE, AnnotationVisibility.SYSTEM);
         Constant nameCst = (name != null) ? name : CstKnownNull.THE_ONE;
 
-        result.put(new NameValuePair(NAME_STRING, nameCst));
-        result.put(new NameValuePair(ACCESS_FLAGS_STRING,
+        result.put(new com.duy.dx.rop.annotation.NameValuePair(NAME_STRING, nameCst));
+        result.put(new com.duy.dx.rop.annotation.NameValuePair(ACCESS_FLAGS_STRING,
                         CstInteger.make(accessFlags)));
         result.setImmutable();
         return result;
@@ -149,10 +152,10 @@ public final class AnnotationUtils {
      * @param types {@code non-null;} the list of (the types of) the member classes
      * @return {@code non-null;} the annotation
      */
-    public static Annotation makeMemberClasses(TypeList types) {
-        CstArray array = makeCstArray(types);
-        Annotation result = new Annotation(MEMBER_CLASSES_TYPE, SYSTEM);
-        result.put(new NameValuePair(VALUE_STRING, array));
+    public static com.duy.dx.rop.annotation.Annotation makeMemberClasses(com.duy.dx.rop.type.TypeList types) {
+        com.duy.dx.rop.cst.CstArray array = makeCstArray(types);
+        com.duy.dx.rop.annotation.Annotation result = new com.duy.dx.rop.annotation.Annotation(MEMBER_CLASSES_TYPE, AnnotationVisibility.SYSTEM);
+        result.put(new com.duy.dx.rop.annotation.NameValuePair(VALUE_STRING, array));
         result.setImmutable();
         return result;
     }
@@ -163,8 +166,8 @@ public final class AnnotationUtils {
      * @param signature {@code non-null;} the signature string
      * @return {@code non-null;} the annotation
      */
-    public static Annotation makeSignature(CstString signature) {
-        Annotation result = new Annotation(SIGNATURE_TYPE, SYSTEM);
+    public static com.duy.dx.rop.annotation.Annotation makeSignature(com.duy.dx.rop.cst.CstString signature) {
+        com.duy.dx.rop.annotation.Annotation result = new com.duy.dx.rop.annotation.Annotation(SIGNATURE_TYPE, AnnotationVisibility.SYSTEM);
 
         /*
          * Split the string into pieces that are likely to be common
@@ -206,15 +209,29 @@ public final class AnnotationUtils {
         }
 
         int size = pieces.size();
-        CstArray.List list = new CstArray.List(size);
+        com.duy.dx.rop.cst.CstArray.List list = new com.duy.dx.rop.cst.CstArray.List(size);
 
         for (int i = 0; i < size; i++) {
-            list.set(i, new CstString(pieces.get(i)));
+            list.set(i, new com.duy.dx.rop.cst.CstString(pieces.get(i)));
         }
 
         list.setImmutable();
 
-        result.put(new NameValuePair(VALUE_STRING, new CstArray(list)));
+        result.put(new com.duy.dx.rop.annotation.NameValuePair(VALUE_STRING, new com.duy.dx.rop.cst.CstArray(list)));
+        result.setImmutable();
+        return result;
+    }
+
+    /**
+     * Constructs a standard {@code SourceDebugExtension} annotation.
+     *
+     * @param smapString {@code non-null;} the SMAP string associated with
+     * @return {@code non-null;} the annotation
+     */
+    public static com.duy.dx.rop.annotation.Annotation makeSourceDebugExtension(CstString smapString) {
+        com.duy.dx.rop.annotation.Annotation result = new com.duy.dx.rop.annotation.Annotation(SOURCE_DEBUG_EXTENSION_TYPE, AnnotationVisibility.SYSTEM);
+
+        result.put(new com.duy.dx.rop.annotation.NameValuePair(VALUE_STRING, smapString));
         result.setImmutable();
         return result;
     }
@@ -225,23 +242,23 @@ public final class AnnotationUtils {
      * @param types {@code non-null;} the list of thrown types
      * @return {@code non-null;} the annotation
      */
-    public static Annotation makeThrows(TypeList types) {
-        CstArray array = makeCstArray(types);
-        Annotation result = new Annotation(THROWS_TYPE, SYSTEM);
+    public static com.duy.dx.rop.annotation.Annotation makeThrows(com.duy.dx.rop.type.TypeList types) {
+        com.duy.dx.rop.cst.CstArray array = makeCstArray(types);
+        com.duy.dx.rop.annotation.Annotation result = new Annotation(THROWS_TYPE, AnnotationVisibility.SYSTEM);
         result.put(new NameValuePair(VALUE_STRING, array));
         result.setImmutable();
         return result;
     }
 
     /**
-     * Converts a {@link TypeList} to a {@link CstArray}.
+     * Converts a {@link com.duy.dx.rop.type.TypeList} to a {@link com.duy.dx.rop.cst.CstArray}.
      *
      * @param types {@code non-null;} the type list
      * @return {@code non-null;} the corresponding array constant
      */
-    private static CstArray makeCstArray(TypeList types) {
+    private static com.duy.dx.rop.cst.CstArray makeCstArray(TypeList types) {
         int size = types.size();
-        CstArray.List list = new CstArray.List(size);
+        com.duy.dx.rop.cst.CstArray.List list = new com.duy.dx.rop.cst.CstArray.List(size);
 
         for (int i = 0; i < size; i++) {
             list.set(i, CstType.intern(types.getType(i)));

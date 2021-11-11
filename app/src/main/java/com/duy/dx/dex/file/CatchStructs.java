@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .dex.code.CatchHandlerList;
-import com.duy.dx .dex.code.CatchTable;
-import com.duy.dx .dex.code.DalvCode;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.ByteArrayAnnotatedOutput;
-import com.duy.dx .util.Hex;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.duy.dx.dex.code.CatchHandlerList;
+import com.duy.dx.dex.code.CatchTable;
+import com.duy.dx.dex.code.DalvCode;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.ByteArrayAnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * List of exception handlers (tuples of covered range, catch type,
@@ -40,13 +41,13 @@ public final class CatchStructs {
     private static final int TRY_ITEM_WRITE_SIZE = 4 + (2 * 2);
 
     /** {@code non-null;} code that contains the catches */
-    private final DalvCode code;
+    private final com.duy.dx.dex.code.DalvCode code;
 
     /**
      * {@code null-ok;} the underlying table; set in
      * {@link #finishProcessingIfNecessary}
      */
-    private CatchTable table;
+    private com.duy.dx.dex.code.CatchTable table;
 
     /**
      * {@code null-ok;} the encoded handler list, if calculated; set in
@@ -64,7 +65,7 @@ public final class CatchStructs {
      * {@code null-ok;} map from handler lists to byte offsets, if calculated; set in
      * {@link #encode}
      */
-    private TreeMap<CatchHandlerList, Integer> handlerOffsets;
+    private TreeMap<com.duy.dx.dex.code.CatchHandlerList, Integer> handlerOffsets;
 
     /**
      * Constructs an instance.
@@ -119,7 +120,7 @@ public final class CatchStructs {
         TypeIdsSection typeIds = file.getTypeIds();
         int size = table.size();
 
-        handlerOffsets = new TreeMap<CatchHandlerList, Integer>();
+        handlerOffsets = new TreeMap<com.duy.dx.dex.code.CatchHandlerList, Integer>();
 
         /*
          * First add a map entry for each unique list. The tree structure
@@ -134,16 +135,16 @@ public final class CatchStructs {
                     "too many catch handlers");
         }
 
-        ByteArrayAnnotatedOutput out = new ByteArrayAnnotatedOutput();
+        com.duy.dx.util.ByteArrayAnnotatedOutput out = new ByteArrayAnnotatedOutput();
 
         // Write out the handlers "header" consisting of its size in entries.
         encodedHandlerHeaderSize =
             out.writeUleb128(handlerOffsets.size());
 
         // Now write the lists out in order, noting the offset of each.
-        for (Map.Entry<CatchHandlerList, Integer> mapping :
+        for (Map.Entry<com.duy.dx.dex.code.CatchHandlerList, Integer> mapping :
                  handlerOffsets.entrySet()) {
-            CatchHandlerList list = mapping.getKey();
+            com.duy.dx.dex.code.CatchHandlerList list = mapping.getKey();
             int listSize = list.size();
             boolean catchesAll = list.catchesAll();
 
@@ -159,7 +160,7 @@ public final class CatchStructs {
             }
 
             for (int i = 0; i < listSize; i++) {
-                CatchHandlerList.Entry entry = list.get(i);
+                com.duy.dx.dex.code.CatchHandlerList.Entry entry = list.get(i);
                 out.writeUleb128(
                         typeIds.indexOf(entry.getExceptionType()));
                 out.writeUleb128(entry.getHandler());
@@ -189,7 +190,7 @@ public final class CatchStructs {
      * @param file {@code non-null;} file this instance is part of
      * @param out {@code non-null;} where to write to
      */
-    public void writeTo(DexFile file, AnnotatedOutput out) {
+    public void writeTo(DexFile file, com.duy.dx.util.AnnotatedOutput out) {
         finishProcessingIfNecessary();
 
         if (out.annotates()) {
@@ -198,15 +199,15 @@ public final class CatchStructs {
 
         int tableSize = table.size();
         for (int i = 0; i < tableSize; i++) {
-            CatchTable.Entry one = table.get(i);
+            com.duy.dx.dex.code.CatchTable.Entry one = table.get(i);
             int start = one.getStart();
             int end = one.getEnd();
             int insnCount = end - start;
 
             if (insnCount >= 65536) {
                 throw new UnsupportedOperationException(
-                        "bogus exception range: " + Hex.u4(start) + ".." +
-                        Hex.u4(end));
+                        "bogus exception range: " + com.duy.dx.util.Hex.u4(start) + ".." +
+                        com.duy.dx.util.Hex.u4(end));
             }
 
             out.writeInt(start);
@@ -227,7 +228,7 @@ public final class CatchStructs {
      * @param annotateTo {@code null-ok;} where to consume bytes and annotate to
      */
     private void annotateEntries(String prefix, PrintWriter printTo,
-            AnnotatedOutput annotateTo) {
+            com.duy.dx.util.AnnotatedOutput annotateTo) {
         finishProcessingIfNecessary();
 
         boolean consume = (annotateTo != null);
@@ -244,9 +245,9 @@ public final class CatchStructs {
 
         for (int i = 0; i < size; i++) {
             CatchTable.Entry entry = table.get(i);
-            CatchHandlerList handlers = entry.getHandlers();
-            String s1 = subPrefix + "try " + Hex.u2or4(entry.getStart())
-                + ".." + Hex.u2or4(entry.getEnd());
+            com.duy.dx.dex.code.CatchHandlerList handlers = entry.getHandlers();
+            String s1 = subPrefix + "try " + com.duy.dx.util.Hex.u2or4(entry.getStart())
+                + ".." + com.duy.dx.util.Hex.u2or4(entry.getEnd());
             String s2 = handlers.toHuman(subPrefix, "");
 
             if (consume) {
@@ -265,14 +266,14 @@ public final class CatchStructs {
 
         annotateTo.annotate(0, prefix + "handlers:");
         annotateTo.annotate(encodedHandlerHeaderSize,
-                subPrefix + "size: " + Hex.u2(handlerOffsets.size()));
+                subPrefix + "size: " + com.duy.dx.util.Hex.u2(handlerOffsets.size()));
 
         int lastOffset = 0;
-        CatchHandlerList lastList = null;
+        com.duy.dx.dex.code.CatchHandlerList lastList = null;
 
-        for (Map.Entry<CatchHandlerList, Integer> mapping :
+        for (Map.Entry<com.duy.dx.dex.code.CatchHandlerList, Integer> mapping :
                  handlerOffsets.entrySet()) {
-            CatchHandlerList list = mapping.getKey();
+            com.duy.dx.dex.code.CatchHandlerList list = mapping.getKey();
             int offset = mapping.getValue();
 
             if (lastList != null) {
@@ -301,8 +302,8 @@ public final class CatchStructs {
      * @param annotateTo {@code non-null;} where to annotate to
      */
     private static void annotateAndConsumeHandlers(CatchHandlerList handlers,
-            int offset, int size, String prefix, PrintWriter printTo,
-            AnnotatedOutput annotateTo) {
+                                                   int offset, int size, String prefix, PrintWriter printTo,
+                                                   AnnotatedOutput annotateTo) {
         String s = handlers.toHuman(prefix, Hex.u2(offset) + ": ");
 
         if (printTo != null) {

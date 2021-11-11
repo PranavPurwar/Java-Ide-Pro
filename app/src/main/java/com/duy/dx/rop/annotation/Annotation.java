@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.annotation;
+package com.duy.dx.rop.annotation;
 
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .util.MutabilityControl;
-import com.duy.dx .util.ToHuman;
+import com.duy.dx.util.MutabilityControl;
+import com.duy.dx.util.ToHuman;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.TreeMap;
+
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * An annotation on an element of a class. Annotations have an
@@ -33,13 +34,13 @@ import java.util.TreeMap;
 public final class Annotation extends MutabilityControl
         implements Comparable<Annotation>, ToHuman {
     /** {@code non-null;} type of the annotation */
-    private final CstType type;
+    private final com.duy.dx.rop.cst.CstType type;
 
     /** {@code non-null;} the visibility of the annotation */
-    private final AnnotationVisibility visibility;
+    private final com.duy.dx.rop.annotation.AnnotationVisibility visibility;
 
-    /** {@code non-null;} map from names to {@link NameValuePair} instances */
-    private final TreeMap<CstString, NameValuePair> elements;
+    /** {@code non-null;} map from names to {@link com.duy.dx.rop.annotation.NameValuePair} instances */
+    private final TreeMap<com.duy.dx.rop.cst.CstString, com.duy.dx.rop.annotation.NameValuePair> elements;
 
     /**
      * Construct an instance. It initially contains no elements.
@@ -47,7 +48,7 @@ public final class Annotation extends MutabilityControl
      * @param type {@code non-null;} type of the annotation
      * @param visibility {@code non-null;} the visibility of the annotation
      */
-    public Annotation(CstType type, AnnotationVisibility visibility) {
+    public Annotation(com.duy.dx.rop.cst.CstType type, com.duy.dx.rop.annotation.AnnotationVisibility visibility) {
         if (type == null) {
             throw new NullPointerException("type == null");
         }
@@ -58,7 +59,7 @@ public final class Annotation extends MutabilityControl
 
         this.type = type;
         this.visibility = visibility;
-        this.elements = new TreeMap<CstString, NameValuePair>();
+        this.elements = new TreeMap<com.duy.dx.rop.cst.CstString, com.duy.dx.rop.annotation.NameValuePair>();
     }
 
     /** {@inheritDoc} */
@@ -79,6 +80,7 @@ public final class Annotation extends MutabilityControl
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         int hash = type.hashCode();
         hash = (hash * 31) + elements.hashCode();
@@ -87,6 +89,7 @@ public final class Annotation extends MutabilityControl
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(Annotation other) {
         int result = type.compareTo(other.type);
 
@@ -100,12 +103,12 @@ public final class Annotation extends MutabilityControl
             return result;
         }
 
-        Iterator<NameValuePair> thisIter = elements.values().iterator();
-        Iterator<NameValuePair> otherIter = other.elements.values().iterator();
+        Iterator<com.duy.dx.rop.annotation.NameValuePair> thisIter = elements.values().iterator();
+        Iterator<com.duy.dx.rop.annotation.NameValuePair> otherIter = other.elements.values().iterator();
 
         while (thisIter.hasNext() && otherIter.hasNext()) {
-            NameValuePair thisOne = thisIter.next();
-            NameValuePair otherOne = otherIter.next();
+            com.duy.dx.rop.annotation.NameValuePair thisOne = thisIter.next();
+            com.duy.dx.rop.annotation.NameValuePair otherOne = otherIter.next();
 
             result = thisOne.compareTo(otherOne);
             if (result != 0) {
@@ -129,6 +132,7 @@ public final class Annotation extends MutabilityControl
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         StringBuilder sb = new StringBuilder();
 
@@ -138,7 +142,7 @@ public final class Annotation extends MutabilityControl
         sb.append(" {");
 
         boolean first = true;
-        for (NameValuePair pair : elements.values()) {
+        for (com.duy.dx.rop.annotation.NameValuePair pair : elements.values()) {
             if (first) {
                 first = false;
             } else {
@@ -178,7 +182,7 @@ public final class Annotation extends MutabilityControl
      *
      * @param pair {@code non-null;} the (name, value) pair to place into this instance
      */
-    public void put(NameValuePair pair) {
+    public void put(com.duy.dx.rop.annotation.NameValuePair pair) {
         throwIfImmutable();
 
         if (pair == null) {
@@ -195,7 +199,7 @@ public final class Annotation extends MutabilityControl
      *
      * @param pair {@code non-null;} the (name, value) pair to add to this instance
      */
-    public void add(NameValuePair pair) {
+    public void add(com.duy.dx.rop.annotation.NameValuePair pair) {
         throwIfImmutable();
 
         if (pair == null) {

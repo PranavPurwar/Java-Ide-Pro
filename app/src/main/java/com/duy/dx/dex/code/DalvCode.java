@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.type.Type;
 import java.util.HashSet;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.type.Type;
 
 /**
  * Container for all the pieces of a concrete method. Each instance
@@ -27,7 +28,7 @@ import java.util.HashSet;
 public final class DalvCode {
     /**
      * how much position info to preserve; one of the static
-     * constants in {@link PositionList}
+     * constants in {@link com.duy.dx.dex.code.PositionList}
      */
     private final int positionInfo;
 
@@ -35,7 +36,7 @@ public final class DalvCode {
      * {@code null-ok;} the instruction list, ready for final processing;
      * nulled out in {@link #finishProcessingIfNecessary}
      */
-    private OutputFinisher unprocessedInsns;
+    private com.duy.dx.dex.code.OutputFinisher unprocessedInsns;
 
     /**
      * {@code non-null;} unprocessed catch table;
@@ -53,25 +54,25 @@ public final class DalvCode {
      * {@code null-ok;} source positions list; set in
      * {@link #finishProcessingIfNecessary}
      */
-    private PositionList positions;
+    private com.duy.dx.dex.code.PositionList positions;
 
     /**
      * {@code null-ok;} local variable list; set in
      * {@link #finishProcessingIfNecessary}
      */
-    private LocalList locals;
+    private com.duy.dx.dex.code.LocalList locals;
 
     /**
      * {@code null-ok;} the processed instruction list; set in
      * {@link #finishProcessingIfNecessary}
      */
-    private DalvInsnList insns;
+    private com.duy.dx.dex.code.DalvInsnList insns;
 
     /**
      * Constructs an instance.
      *
      * @param positionInfo how much position info to preserve; one of the
-     * static constants in {@link PositionList}
+     * static constants in {@link com.duy.dx.dex.code.PositionList}
      * @param unprocessedInsns {@code non-null;} the instruction list, ready
      * for final processing
      * @param unprocessedCatches {@code non-null;} unprocessed catch
@@ -105,8 +106,8 @@ public final class DalvCode {
         }
 
         insns = unprocessedInsns.finishProcessingAndGetList();
-        positions = PositionList.make(insns, positionInfo);
-        locals = LocalList.make(insns);
+        positions = com.duy.dx.dex.code.PositionList.make(insns, positionInfo);
+        locals = com.duy.dx.dex.code.LocalList.make(insns);
         catches = unprocessedCatches.build();
 
         // Let them be gc'ed.
@@ -132,7 +133,7 @@ public final class DalvCode {
      * data to represent
      */
     public boolean hasPositions() {
-        return (positionInfo != PositionList.NONE)
+        return (positionInfo != com.duy.dx.dex.code.PositionList.NONE)
             && unprocessedInsns.hasAnyPositionInfo();
     }
 
@@ -171,7 +172,7 @@ public final class DalvCode {
      *
      * @return {@code non-null;} the set of constants
      */
-    public HashSet<Constant> getInsnConstants() {
+    public HashSet<com.duy.dx.rop.cst.Constant> getInsnConstants() {
         return unprocessedInsns.getAllConstants();
     }
 

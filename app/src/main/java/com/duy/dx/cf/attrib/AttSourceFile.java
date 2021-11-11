@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.cst.CstString;
+import com.duy.dx.rop.cst.CstString;
 
 /**
  * Attribute class for standard {@code SourceFile} attributes.
@@ -26,14 +26,14 @@ public final class AttSourceFile extends BaseAttribute {
     public static final String ATTRIBUTE_NAME = "SourceFile";
 
     /** {@code non-null;} name of the source file */
-    private final CstString sourceFile;
+    private final com.duy.dx.rop.cst.CstString sourceFile;
 
     /**
      * Constructs an instance.
      *
      * @param sourceFile {@code non-null;} the name of the source file
      */
-    public AttSourceFile(CstString sourceFile) {
+    public AttSourceFile(com.duy.dx.rop.cst.CstString sourceFile) {
         super(ATTRIBUTE_NAME);
 
         if (sourceFile == null) {
@@ -44,6 +44,7 @@ public final class AttSourceFile extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         return 8;
     }

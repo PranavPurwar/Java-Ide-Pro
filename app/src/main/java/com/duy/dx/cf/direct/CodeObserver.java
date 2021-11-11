@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.code.ByteOps;
-import com.duy.dx .cf.code.BytecodeArray;
-import com.duy.dx .cf.code.SwitchList;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstDouble;
-import com.duy.dx .rop.cst.CstFloat;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstKnownNull;
-import com.duy.dx .rop.cst.CstLong;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
 import java.util.ArrayList;
+
+import com.duy.dx.cf.code.ByteOps;
+import com.duy.dx.cf.code.BytecodeArray;
+import com.duy.dx.cf.code.SwitchList;
+import com.duy.dx.cf.iface.ParseObserver;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstDouble;
+import com.duy.dx.rop.cst.CstFloat;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstKnownNull;
+import com.duy.dx.rop.cst.CstLong;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
  * Bytecode visitor to use when "observing" bytecode getting parsed.
  */
 public class CodeObserver implements BytecodeArray.Visitor {
     /** {@code non-null;} actual array of bytecode */
-    private final ByteArray bytes;
+    private final com.duy.dx.util.ByteArray bytes;
 
     /** {@code non-null;} observer to inform of parsing */
-    private final ParseObserver observer;
+    private final com.duy.dx.cf.iface.ParseObserver observer;
 
     /**
      * Constructs an instance.
@@ -62,25 +63,28 @@ public class CodeObserver implements BytecodeArray.Visitor {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitInvalid(int opcode, int offset, int length) {
         observer.parsed(bytes, offset, length, header(offset));
     }
 
     /** {@inheritDoc} */
-    public void visitNoArgs(int opcode, int offset, int length, Type type) {
+    @Override
+    public void visitNoArgs(int opcode, int offset, int length, com.duy.dx.rop.type.Type type) {
         observer.parsed(bytes, offset, length, header(offset));
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitLocal(int opcode, int offset, int length,
-            int idx, Type type, int value) {
-        String idxStr = (length <= 3) ? Hex.u1(idx) : Hex.u2(idx);
+                           int idx, Type type, int value) {
+        String idxStr = (length <= 3) ? com.duy.dx.util.Hex.u1(idx) : com.duy.dx.util.Hex.u2(idx);
         boolean argComment = (length == 1);
         String valueStr = "";
 
-        if (opcode == ByteOps.IINC) {
+        if (opcode == com.duy.dx.cf.code.ByteOps.IINC) {
             valueStr = ", #" +
-                ((length <= 3) ? Hex.s1(value) : Hex.s2(value));
+                ((length <= 3) ? com.duy.dx.util.Hex.s1(value) : com.duy.dx.util.Hex.s2(value));
         }
 
         String catStr = "";
@@ -94,8 +98,9 @@ public class CodeObserver implements BytecodeArray.Visitor {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitConstant(int opcode, int offset, int length,
-            Constant cst, int value) {
+                              com.duy.dx.rop.cst.Constant cst, int value) {
         if (cst instanceof CstKnownNull) {
             // This is aconst_null.
             visitNoArgs(opcode, offset, length, null);
@@ -107,19 +112,19 @@ public class CodeObserver implements BytecodeArray.Visitor {
             return;
         }
 
-        if (cst instanceof CstLong) {
+        if (cst instanceof com.duy.dx.rop.cst.CstLong) {
             visitLiteralLong(opcode, offset, length,
                              ((CstLong) cst).getValue());
             return;
         }
 
-        if (cst instanceof CstFloat) {
+        if (cst instanceof com.duy.dx.rop.cst.CstFloat) {
             visitLiteralFloat(opcode, offset, length,
                               ((CstFloat) cst).getIntBits());
             return;
         }
 
-        if (cst instanceof CstDouble) {
+        if (cst instanceof com.duy.dx.rop.cst.CstDouble) {
             visitLiteralDouble(opcode, offset, length,
                              ((CstDouble) cst).getLongBits());
             return;
@@ -128,10 +133,10 @@ public class CodeObserver implements BytecodeArray.Visitor {
         String valueStr = "";
         if (value != 0) {
             valueStr = ", ";
-            if (opcode == ByteOps.MULTIANEWARRAY) {
-                valueStr += Hex.u1(value);
+            if (opcode == com.duy.dx.cf.code.ByteOps.MULTIANEWARRAY) {
+                valueStr += com.duy.dx.util.Hex.u1(value);
             } else {
-                valueStr += Hex.u2(value);
+                valueStr += com.duy.dx.util.Hex.u2(value);
             }
         }
 
@@ -140,40 +145,43 @@ public class CodeObserver implements BytecodeArray.Visitor {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitBranch(int opcode, int offset, int length,
                             int target) {
-        String targetStr = (length <= 3) ? Hex.u2(target) : Hex.u4(target);
+        String targetStr = (length <= 3) ? com.duy.dx.util.Hex.u2(target) : com.duy.dx.util.Hex.u4(target);
         observer.parsed(bytes, offset, length,
                         header(offset) + " " + targetStr);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitSwitch(int opcode, int offset, int length,
-            SwitchList cases, int padding) {
+                            SwitchList cases, int padding) {
         int sz = cases.size();
-        StringBuffer sb = new StringBuffer(sz * 20 + 100);
+        StringBuilder sb = new StringBuilder(sz * 20 + 100);
 
         sb.append(header(offset));
         if (padding != 0) {
-            sb.append(" // padding: " + Hex.u4(padding));
+            sb.append(" // padding: " + com.duy.dx.util.Hex.u4(padding));
         }
         sb.append('\n');
 
         for (int i = 0; i < sz; i++) {
             sb.append("  ");
-            sb.append(Hex.s4(cases.getValue(i)));
+            sb.append(com.duy.dx.util.Hex.s4(cases.getValue(i)));
             sb.append(": ");
-            sb.append(Hex.u2(cases.getTarget(i)));
+            sb.append(com.duy.dx.util.Hex.u2(cases.getTarget(i)));
             sb.append('\n');
         }
 
         sb.append("  default: ");
-        sb.append(Hex.u2(cases.getDefaultTarget()));
+        sb.append(com.duy.dx.util.Hex.u2(cases.getDefaultTarget()));
 
         observer.parsed(bytes, offset, length, sb.toString());
     }
 
     /** {@inheritDoc} */
+    @Override
     public void visitNewarray(int offset, int length, CstType cst,
             ArrayList<Constant> intVals) {
         String commentOrSpace = (length == 1) ? " // " : " ";
@@ -184,11 +192,13 @@ public class CodeObserver implements BytecodeArray.Visitor {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setPreviousOffset(int offset) {
         // Do nothing
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getPreviousOffset() {
         return -1;
     }
@@ -204,14 +214,14 @@ public class CodeObserver implements BytecodeArray.Visitor {
          * possibly-transformed one.
          */
         int opcode = bytes.getUnsignedByte(offset);
-        String name = ByteOps.opName(opcode);
+        String name = com.duy.dx.cf.code.ByteOps.opName(opcode);
 
-        if (opcode == ByteOps.WIDE) {
+        if (opcode == com.duy.dx.cf.code.ByteOps.WIDE) {
             opcode = bytes.getUnsignedByte(offset + 1);
-            name += " " + ByteOps.opName(opcode);
+            name += " " + com.duy.dx.cf.code.ByteOps.opName(opcode);
         }
 
-        return Hex.u2(offset) + ": " + name;
+        return com.duy.dx.util.Hex.u2(offset) + ": " + name;
     }
 
     /**
@@ -229,12 +239,12 @@ public class CodeObserver implements BytecodeArray.Visitor {
         String valueStr;
 
         opcode = bytes.getUnsignedByte(offset); // Compare with orig op below.
-        if ((length == 1) || (opcode == ByteOps.BIPUSH)) {
-            valueStr = "#" + Hex.s1(value);
+        if ((length == 1) || (opcode == com.duy.dx.cf.code.ByteOps.BIPUSH)) {
+            valueStr = "#" + com.duy.dx.util.Hex.s1(value);
         } else if (opcode == ByteOps.SIPUSH) {
-            valueStr = "#" + Hex.s2(value);
+            valueStr = "#" + com.duy.dx.util.Hex.s2(value);
         } else {
-            valueStr = "#" + Hex.s4(value);
+            valueStr = "#" + com.duy.dx.util.Hex.s4(value);
         }
 
         observer.parsed(bytes, offset, length,
@@ -256,9 +266,9 @@ public class CodeObserver implements BytecodeArray.Visitor {
         String valueStr;
 
         if (length == 1) {
-            valueStr = Hex.s1((int) value);
+            valueStr = com.duy.dx.util.Hex.s1((int) value);
         } else {
-            valueStr = Hex.s8(value);
+            valueStr = com.duy.dx.util.Hex.s8(value);
         }
 
         observer.parsed(bytes, offset, length,
@@ -276,7 +286,7 @@ public class CodeObserver implements BytecodeArray.Visitor {
      */
     private void visitLiteralFloat(int opcode, int offset, int length,
             int bits) {
-        String optArg = (length != 1) ? " #" + Hex.u4(bits) : "";
+        String optArg = (length != 1) ? " #" + com.duy.dx.util.Hex.u4(bits) : "";
 
         observer.parsed(bytes, offset, length,
                         header(offset) + optArg + " // " +

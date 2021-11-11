@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.SizeOf;
-import com.duy.dx .rop.cst.CstMemberRef;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.cst.CstMemberRef;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Representation of a member (field or method) reference inside a
@@ -49,16 +49,16 @@ public abstract class MemberIdItem extends IdItem {
 
     /** {@inheritDoc} */
     @Override
-    public void addContents(DexFile file) {
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
         super.addContents(file);
 
-        StringIdsSection stringIds = file.getStringIds();
+        com.duy.dx.dex.file.StringIdsSection stringIds = file.getStringIds();
         stringIds.intern(getRef().getNat().getName());
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void writeTo(DexFile file, AnnotatedOutput out) {
+    public final void writeTo(com.duy.dx.dex.file.DexFile file, AnnotatedOutput out) {
         TypeIdsSection typeIds = file.getTypeIds();
         StringIdsSection stringIds = file.getStringIds();
         CstNat nat = cst.getNat();

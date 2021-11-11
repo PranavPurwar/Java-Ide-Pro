@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.CstInsn;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.TypedConstant;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
 import java.util.ArrayList;
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.CstInsn;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.TypedConstant;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
 
 /**
  * A small variant of Wegman and Zadeck's Sparse Conditional Constant
@@ -42,41 +43,41 @@ public class SCCP {
     private static final int CONSTANT = 1;
     private static final int VARYING = 2;
     /** method we're processing */
-    private SsaMethod ssaMeth;
+    private final com.duy.dx.ssa.SsaMethod ssaMeth;
     /** ssaMeth.getRegCount() */
-    private int regCount;
+    private final int regCount;
     /** Lattice values for each SSA register */
-    private int[] latticeValues;
+    private final int[] latticeValues;
     /** For those registers that are constant, this is the constant value */
-    private Constant[] latticeConstants;
+    private final com.duy.dx.rop.cst.Constant[] latticeConstants;
     /** Worklist of basic blocks to be processed */
-    private ArrayList<SsaBasicBlock> cfgWorklist;
+    private final ArrayList<com.duy.dx.ssa.SsaBasicBlock> cfgWorklist;
     /** Worklist of executed basic blocks with phis to be processed */
-    private ArrayList<SsaBasicBlock> cfgPhiWorklist;
+    private final ArrayList<com.duy.dx.ssa.SsaBasicBlock> cfgPhiWorklist;
     /** Bitset containing bits for each block that has been found executable */
-    private BitSet executableBlocks;
+    private final BitSet executableBlocks;
     /** Worklist for SSA edges.  This is a list of registers to process */
-    private ArrayList<SsaInsn> ssaWorklist;
+    private final ArrayList<com.duy.dx.ssa.SsaInsn> ssaWorklist;
     /**
      * Worklist for SSA edges that represent varying values.  It makes the
      * algorithm much faster if you move all values to VARYING as fast as
      * possible.
      */
-    private ArrayList<SsaInsn> varyingWorklist;
+    private final ArrayList<com.duy.dx.ssa.SsaInsn> varyingWorklist;
     /** Worklist of potential branches to convert to gotos */
-    private ArrayList<SsaInsn> branchWorklist;
+    private final ArrayList<com.duy.dx.ssa.SsaInsn> branchWorklist;
 
-    private SCCP(SsaMethod ssaMeth) {
+    private SCCP(com.duy.dx.ssa.SsaMethod ssaMeth) {
         this.ssaMeth = ssaMeth;
         this.regCount = ssaMeth.getRegCount();
         this.latticeValues = new int[this.regCount];
-        this.latticeConstants = new Constant[this.regCount];
-        this.cfgWorklist = new ArrayList<SsaBasicBlock>();
-        this.cfgPhiWorklist = new ArrayList<SsaBasicBlock>();
+        this.latticeConstants = new com.duy.dx.rop.cst.Constant[this.regCount];
+        this.cfgWorklist = new ArrayList<com.duy.dx.ssa.SsaBasicBlock>();
+        this.cfgPhiWorklist = new ArrayList<com.duy.dx.ssa.SsaBasicBlock>();
         this.executableBlocks = new BitSet(ssaMeth.getBlocks().size());
-        this.ssaWorklist = new ArrayList<SsaInsn>();
-        this.varyingWorklist = new ArrayList<SsaInsn>();
-        this.branchWorklist = new ArrayList<SsaInsn>();
+        this.ssaWorklist = new ArrayList<com.duy.dx.ssa.SsaInsn>();
+        this.varyingWorklist = new ArrayList<com.duy.dx.ssa.SsaInsn>();
+        this.branchWorklist = new ArrayList<com.duy.dx.ssa.SsaInsn>();
         for (int i = 0; i < this.regCount; i++) {
             latticeValues[i] = TOP;
             latticeConstants[i] = null;
@@ -96,7 +97,7 @@ public class SCCP {
      * to the CFG phi worklist if it's already executed.
      * @param ssaBlock Block to add
      */
-    private void addBlockToWorklist(SsaBasicBlock ssaBlock) {
+    private void addBlockToWorklist(com.duy.dx.ssa.SsaBasicBlock ssaBlock) {
         if (!executableBlocks.get(ssaBlock.getIndex())) {
             cfgWorklist.add(ssaBlock);
             executableBlocks.set(ssaBlock.getIndex());
@@ -112,11 +113,11 @@ public class SCCP {
      */
     private void addUsersToWorklist(int reg, int latticeValue) {
         if (latticeValue == VARYING) {
-            for (SsaInsn insn : ssaMeth.getUseListForRegister(reg)) {
+            for (com.duy.dx.ssa.SsaInsn insn : ssaMeth.getUseListForRegister(reg)) {
                 varyingWorklist.add(insn);
             }
         } else {
-            for (SsaInsn insn : ssaMeth.getUseListForRegister(reg)) {
+            for (com.duy.dx.ssa.SsaInsn insn : ssaMeth.getUseListForRegister(reg)) {
                 ssaWorklist.add(insn);
             }
         }
@@ -129,7 +130,7 @@ public class SCCP {
      * @param cst Constant value (may be null)
      * @return true if the lattice value changed.
      */
-    private boolean setLatticeValueTo(int reg, int value, Constant cst) {
+    private boolean setLatticeValueTo(int reg, int value, com.duy.dx.rop.cst.Constant cst) {
         if (value != CONSTANT) {
             if (latticeValues[reg] != value) {
                 latticeValues[reg] = value;
@@ -163,9 +164,9 @@ public class SCCP {
             return;
         }
 
-        RegisterSpecList sources = insn.getSources();
+        com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
         int phiResultValue = TOP;
-        Constant phiConstant = null;
+        com.duy.dx.rop.cst.Constant phiConstant = null;
         int sourceSize = sources.size();
 
         for (int i = 0; i < sourceSize; i++) {
@@ -199,8 +200,8 @@ public class SCCP {
      * Simulate a block and note the results in the lattice.
      * @param block Block to visit
      */
-    private void simulateBlock(SsaBasicBlock block) {
-        for (SsaInsn insn : block.getInsns()) {
+    private void simulateBlock(com.duy.dx.ssa.SsaBasicBlock block) {
+        for (com.duy.dx.ssa.SsaInsn insn : block.getInsns()) {
             if (insn instanceof PhiInsn) {
                 simulatePhi((PhiInsn) insn);
             } else {
@@ -213,8 +214,8 @@ public class SCCP {
      * Simulate the phis in a block and note the results in the lattice.
      * @param block Block to visit
      */
-    private void simulatePhiBlock(SsaBasicBlock block) {
-        for (SsaInsn insn : block.getInsns()) {
+    private void simulatePhiBlock(com.duy.dx.ssa.SsaBasicBlock block) {
+        for (com.duy.dx.ssa.SsaInsn insn : block.getInsns()) {
             if (insn instanceof PhiInsn) {
                 simulatePhi((PhiInsn) insn);
             } else {
@@ -237,19 +238,19 @@ public class SCCP {
      * to the CFG worklists.
      * @param insn branch to simulate
      */
-    private void simulateBranch(SsaInsn insn) {
-        Rop opcode = insn.getOpcode();
-        RegisterSpecList sources = insn.getSources();
+    private void simulateBranch(com.duy.dx.ssa.SsaInsn insn) {
+        com.duy.dx.rop.code.Rop opcode = insn.getOpcode();
+        com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
 
         boolean constantBranch = false;
         boolean constantSuccessor = false;
 
         // Check if the insn is a branch with a constant condition
-        if (opcode.getBranchingness() == Rop.BRANCH_IF) {
-            Constant cA = null;
-            Constant cB = null;
+        if (opcode.getBranchingness() == com.duy.dx.rop.code.Rop.BRANCH_IF) {
+            com.duy.dx.rop.cst.Constant cA = null;
+            com.duy.dx.rop.cst.Constant cB = null;
 
-            RegisterSpec specA = sources.get(0);
+            com.duy.dx.rop.code.RegisterSpec specA = sources.get(0);
             int regA = specA.getReg();
             if (!ssaMeth.isRegALocal(specA) &&
                     latticeValues[regA] == CONSTANT) {
@@ -257,7 +258,7 @@ public class SCCP {
             }
 
             if (sources.size() == 2) {
-                RegisterSpec specB = sources.get(1);
+                com.duy.dx.rop.code.RegisterSpec specB = sources.get(1);
                 int regB = specB.getReg();
                 if (!ssaMeth.isRegALocal(specB) &&
                         latticeValues[regB] == CONSTANT) {
@@ -267,27 +268,27 @@ public class SCCP {
 
             // Calculate the result of the condition
             if (cA != null && sources.size() == 1) {
-                switch (((TypedConstant) cA).getBasicType()) {
-                    case Type.BT_INT:
+                switch (((com.duy.dx.rop.cst.TypedConstant) cA).getBasicType()) {
+                    case com.duy.dx.rop.type.Type.BT_INT:
                         constantBranch = true;
-                        int vA = ((CstInteger) cA).getValue();
+                        int vA = ((com.duy.dx.rop.cst.CstInteger) cA).getValue();
                         switch (opcode.getOpcode()) {
-                            case RegOps.IF_EQ:
+                            case com.duy.dx.rop.code.RegOps.IF_EQ:
                                 constantSuccessor = (vA == 0);
                                 break;
-                            case RegOps.IF_NE:
+                            case com.duy.dx.rop.code.RegOps.IF_NE:
                                 constantSuccessor = (vA != 0);
                                 break;
-                            case RegOps.IF_LT:
+                            case com.duy.dx.rop.code.RegOps.IF_LT:
                                 constantSuccessor = (vA < 0);
                                 break;
-                            case RegOps.IF_GE:
+                            case com.duy.dx.rop.code.RegOps.IF_GE:
                                 constantSuccessor = (vA >= 0);
                                 break;
-                            case RegOps.IF_LE:
+                            case com.duy.dx.rop.code.RegOps.IF_LE:
                                 constantSuccessor = (vA <= 0);
                                 break;
-                            case RegOps.IF_GT:
+                            case com.duy.dx.rop.code.RegOps.IF_GT:
                                 constantSuccessor = (vA > 0);
                                 break;
                             default:
@@ -298,28 +299,28 @@ public class SCCP {
                         // not yet supported
                 }
             } else if (cA != null && cB != null) {
-                switch (((TypedConstant) cA).getBasicType()) {
-                    case Type.BT_INT:
+                switch (((com.duy.dx.rop.cst.TypedConstant) cA).getBasicType()) {
+                    case com.duy.dx.rop.type.Type.BT_INT:
                         constantBranch = true;
-                        int vA = ((CstInteger) cA).getValue();
-                        int vB = ((CstInteger) cB).getValue();
+                        int vA = ((com.duy.dx.rop.cst.CstInteger) cA).getValue();
+                        int vB = ((com.duy.dx.rop.cst.CstInteger) cB).getValue();
                         switch (opcode.getOpcode()) {
-                            case RegOps.IF_EQ:
+                            case com.duy.dx.rop.code.RegOps.IF_EQ:
                                 constantSuccessor = (vA == vB);
                                 break;
-                            case RegOps.IF_NE:
+                            case com.duy.dx.rop.code.RegOps.IF_NE:
                                 constantSuccessor = (vA != vB);
                                 break;
-                            case RegOps.IF_LT:
+                            case com.duy.dx.rop.code.RegOps.IF_LT:
                                 constantSuccessor = (vA < vB);
                                 break;
-                            case RegOps.IF_GE:
+                            case com.duy.dx.rop.code.RegOps.IF_GE:
                                 constantSuccessor = (vA >= vB);
                                 break;
-                            case RegOps.IF_LE:
+                            case com.duy.dx.rop.code.RegOps.IF_LE:
                                 constantSuccessor = (vA <= vB);
                                 break;
-                            case RegOps.IF_GT:
+                            case com.duy.dx.rop.code.RegOps.IF_GT:
                                 constantSuccessor = (vA > vB);
                                 break;
                             default:
@@ -336,7 +337,7 @@ public class SCCP {
          * If condition is constant, add only the target block to the
          * worklist. Otherwise, add all successors to the worklist.
          */
-        SsaBasicBlock block = insn.getBlock();
+        com.duy.dx.ssa.SsaBasicBlock block = insn.getBlock();
 
         if (constantBranch) {
             int successorBlock;
@@ -362,13 +363,13 @@ public class SCCP {
      * @param resultType basic type of the result
      * @return constant result or null if not simulatable.
      */
-    private Constant simulateMath(SsaInsn insn, int resultType) {
-        Insn ropInsn = insn.getOriginalRopInsn();
+    private com.duy.dx.rop.cst.Constant simulateMath(com.duy.dx.ssa.SsaInsn insn, int resultType) {
+        com.duy.dx.rop.code.Insn ropInsn = insn.getOriginalRopInsn();
         int opcode = insn.getOpcode().getOpcode();
-        RegisterSpecList sources = insn.getSources();
+        com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
         int regA = sources.get(0).getReg();
-        Constant cA;
-        Constant cB;
+        com.duy.dx.rop.cst.Constant cA;
+        com.duy.dx.rop.cst.Constant cB;
 
         if (latticeValues[regA] != CONSTANT) {
             cA = null;
@@ -377,7 +378,7 @@ public class SCCP {
         }
 
         if (sources.size() == 1) {
-            CstInsn cstInsn = (CstInsn) ropInsn;
+            com.duy.dx.rop.code.CstInsn cstInsn = (com.duy.dx.rop.code.CstInsn) ropInsn;
             cB = cstInsn.getConstant();
         } else { /* sources.size() == 2 */
             int regB = sources.get(1).getReg();
@@ -398,14 +399,14 @@ public class SCCP {
                 int vR;
                 boolean skip=false;
 
-                int vA = ((CstInteger) cA).getValue();
-                int vB = ((CstInteger) cB).getValue();
+                int vA = ((com.duy.dx.rop.cst.CstInteger) cA).getValue();
+                int vB = ((com.duy.dx.rop.cst.CstInteger) cB).getValue();
 
                 switch (opcode) {
-                    case RegOps.ADD:
+                    case com.duy.dx.rop.code.RegOps.ADD:
                         vR = vA + vB;
                         break;
-                    case RegOps.SUB:
+                    case com.duy.dx.rop.code.RegOps.SUB:
                         // 1 source for reverse sub, 2 sources for regular sub
                         if (sources.size() == 1) {
                             vR = vB - vA;
@@ -413,10 +414,10 @@ public class SCCP {
                             vR = vA - vB;
                         }
                         break;
-                    case RegOps.MUL:
+                    case com.duy.dx.rop.code.RegOps.MUL:
                         vR = vA * vB;
                         break;
-                    case RegOps.DIV:
+                    case com.duy.dx.rop.code.RegOps.DIV:
                         if (vB == 0) {
                             skip = true;
                             vR = 0; // just to hide a warning
@@ -424,25 +425,25 @@ public class SCCP {
                             vR = vA / vB;
                         }
                         break;
-                    case RegOps.AND:
+                    case com.duy.dx.rop.code.RegOps.AND:
                         vR = vA & vB;
                         break;
-                    case RegOps.OR:
+                    case com.duy.dx.rop.code.RegOps.OR:
                         vR = vA | vB;
                         break;
-                    case RegOps.XOR:
+                    case com.duy.dx.rop.code.RegOps.XOR:
                         vR = vA ^ vB;
                         break;
-                    case RegOps.SHL:
+                    case com.duy.dx.rop.code.RegOps.SHL:
                         vR = vA << vB;
                         break;
-                    case RegOps.SHR:
+                    case com.duy.dx.rop.code.RegOps.SHR:
                         vR = vA >> vB;
                         break;
-                    case RegOps.USHR:
+                    case com.duy.dx.rop.code.RegOps.USHR:
                         vR = vA >>> vB;
                         break;
-                    case RegOps.REM:
+                    case com.duy.dx.rop.code.RegOps.REM:
                         if (vB == 0) {
                             skip = true;
                             vR = 0; // just to hide a warning
@@ -466,20 +467,20 @@ public class SCCP {
      * Simulates a statement and set the result lattice value.
      * @param insn instruction to simulate
      */
-    private void simulateStmt(SsaInsn insn) {
-        Insn ropInsn = insn.getOriginalRopInsn();
+    private void simulateStmt(com.duy.dx.ssa.SsaInsn insn) {
+        com.duy.dx.rop.code.Insn ropInsn = insn.getOriginalRopInsn();
         if (ropInsn.getOpcode().getBranchingness() != Rop.BRANCH_NONE
                 || ropInsn.getOpcode().isCallLike()) {
             simulateBranch(insn);
         }
 
         int opcode = insn.getOpcode().getOpcode();
-        RegisterSpec result = insn.getResult();
+        com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
 
         if (result == null) {
             // Find move-result-pseudo result for int div and int rem
-            if (opcode == RegOps.DIV || opcode == RegOps.REM) {
-                SsaBasicBlock succ = insn.getBlock().getPrimarySuccessor();
+            if (opcode == com.duy.dx.rop.code.RegOps.DIV || opcode == com.duy.dx.rop.code.RegOps.REM) {
+                com.duy.dx.ssa.SsaBasicBlock succ = insn.getBlock().getPrimarySuccessor();
                 result = succ.getInsns().get(0).getResult();
             } else {
                 return;
@@ -491,13 +492,13 @@ public class SCCP {
         Constant resultConstant = null;
 
         switch (opcode) {
-            case RegOps.CONST: {
-                CstInsn cstInsn = (CstInsn)ropInsn;
+            case com.duy.dx.rop.code.RegOps.CONST: {
+                com.duy.dx.rop.code.CstInsn cstInsn = (CstInsn)ropInsn;
                 resultValue = CONSTANT;
                 resultConstant = cstInsn.getConstant();
                 break;
             }
-            case RegOps.MOVE: {
+            case com.duy.dx.rop.code.RegOps.MOVE: {
                 if (insn.getSources().size() == 1) {
                     int sourceReg = insn.getSources().get(0).getReg();
                     resultValue = latticeValues[sourceReg];
@@ -505,17 +506,17 @@ public class SCCP {
                 }
                 break;
             }
-            case RegOps.ADD:
-            case RegOps.SUB:
-            case RegOps.MUL:
-            case RegOps.DIV:
-            case RegOps.AND:
-            case RegOps.OR:
-            case RegOps.XOR:
-            case RegOps.SHL:
-            case RegOps.SHR:
-            case RegOps.USHR:
-            case RegOps.REM: {
+            case com.duy.dx.rop.code.RegOps.ADD:
+            case com.duy.dx.rop.code.RegOps.SUB:
+            case com.duy.dx.rop.code.RegOps.MUL:
+            case com.duy.dx.rop.code.RegOps.DIV:
+            case com.duy.dx.rop.code.RegOps.AND:
+            case com.duy.dx.rop.code.RegOps.OR:
+            case com.duy.dx.rop.code.RegOps.XOR:
+            case com.duy.dx.rop.code.RegOps.SHL:
+            case com.duy.dx.rop.code.RegOps.SHR:
+            case com.duy.dx.rop.code.RegOps.USHR:
+            case com.duy.dx.rop.code.RegOps.REM: {
                 resultConstant = simulateMath(insn, result.getBasicType());
                 if (resultConstant != null) {
                     resultValue = CONSTANT;
@@ -539,7 +540,7 @@ public class SCCP {
     }
 
     private void run() {
-        SsaBasicBlock firstBlock = ssaMeth.getEntryBlock();
+        com.duy.dx.ssa.SsaBasicBlock firstBlock = ssaMeth.getEntryBlock();
         addBlockToWorklist(firstBlock);
 
         /* Empty all the worklists by propagating our values */
@@ -549,19 +550,19 @@ public class SCCP {
                 || !varyingWorklist.isEmpty()) {
             while (!cfgWorklist.isEmpty()) {
                 int listSize = cfgWorklist.size() - 1;
-                SsaBasicBlock block = cfgWorklist.remove(listSize);
+                com.duy.dx.ssa.SsaBasicBlock block = cfgWorklist.remove(listSize);
                 simulateBlock(block);
             }
 
             while (!cfgPhiWorklist.isEmpty()) {
                 int listSize = cfgPhiWorklist.size() - 1;
-                SsaBasicBlock block = cfgPhiWorklist.remove(listSize);
+                com.duy.dx.ssa.SsaBasicBlock block = cfgPhiWorklist.remove(listSize);
                 simulatePhiBlock(block);
             }
 
             while (!varyingWorklist.isEmpty()) {
                 int listSize = varyingWorklist.size() - 1;
-                SsaInsn insn = varyingWorklist.remove(listSize);
+                com.duy.dx.ssa.SsaInsn insn = varyingWorklist.remove(listSize);
 
                 if (!executableBlocks.get(insn.getBlock().getIndex())) {
                     continue;
@@ -575,7 +576,7 @@ public class SCCP {
             }
             while (!ssaWorklist.isEmpty()) {
                 int listSize = ssaWorklist.size() - 1;
-                SsaInsn insn = ssaWorklist.remove(listSize);
+                com.duy.dx.ssa.SsaInsn insn = ssaWorklist.remove(listSize);
 
                 if (!executableBlocks.get(insn.getBlock().getIndex())) {
                     continue;
@@ -603,12 +604,12 @@ public class SCCP {
             if (latticeValues[reg] != CONSTANT) {
                 continue;
             }
-            if (!(latticeConstants[reg] instanceof TypedConstant)) {
+            if (!(latticeConstants[reg] instanceof com.duy.dx.rop.cst.TypedConstant)) {
                 // We can't do much with these
                 continue;
             }
 
-            SsaInsn defn = ssaMeth.getDefinitionForRegister(reg);
+            com.duy.dx.ssa.SsaInsn defn = ssaMeth.getDefinitionForRegister(reg);
             TypeBearer typeBearer = defn.getResult().getTypeBearer();
 
             if (typeBearer.isConstant()) {
@@ -620,26 +621,26 @@ public class SCCP {
             }
 
             // Update the destination RegisterSpec with the constant value
-            RegisterSpec dest = defn.getResult();
-            RegisterSpec newDest
-                    = dest.withType((TypedConstant)latticeConstants[reg]);
+            com.duy.dx.rop.code.RegisterSpec dest = defn.getResult();
+            com.duy.dx.rop.code.RegisterSpec newDest
+                    = dest.withType((com.duy.dx.rop.cst.TypedConstant)latticeConstants[reg]);
             defn.setResult(newDest);
 
             /*
              * Update the sources RegisterSpec's of all non-move uses.
              * These will be used in later steps.
              */
-            for (SsaInsn insn : ssaMeth.getUseListForRegister(reg)) {
+            for (com.duy.dx.ssa.SsaInsn insn : ssaMeth.getUseListForRegister(reg)) {
                 if (insn.isPhiOrMove()) {
                     continue;
                 }
 
                 NormalSsaInsn nInsn = (NormalSsaInsn) insn;
-                RegisterSpecList sources = insn.getSources();
+                com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
 
                 int index = sources.indexOfRegister(reg);
 
-                RegisterSpec spec = sources.get(index);
+                com.duy.dx.rop.code.RegisterSpec spec = sources.get(index);
                 RegisterSpec newSpec
                         = spec.withType((TypedConstant)latticeConstants[reg]);
 

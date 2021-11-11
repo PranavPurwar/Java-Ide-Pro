@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.FixedSizeList;
-import com.duy.dx .util.IntList;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.FixedSizeList;
+import com.duy.dx.util.IntList;
 
 /**
  * List of catch entries, that is, the elements of an "exception table,"
@@ -86,7 +86,7 @@ public final class ByteCatchList extends FixedSizeList {
      * {@code null} to catch all exceptions with this handler
      */
     public void set(int n, int startPc, int endPc, int handlerPc,
-            CstType exceptionClass) {
+            com.duy.dx.rop.cst.CstType exceptionClass) {
         set0(n, new Item(startPc, endPc, handlerPc, exceptionClass));
     }
 
@@ -136,11 +136,11 @@ public final class ByteCatchList extends FixedSizeList {
      * @return {@code true} iff the exception type is <i>not</i> found
      */
     private static boolean typeNotFound(Item item, Item[] arr, int count) {
-        CstType type = item.getExceptionClass();
+        com.duy.dx.rop.cst.CstType type = item.getExceptionClass();
 
         for (int i = 0; i < count; i++) {
-            CstType one = arr[i].getExceptionClass();
-            if ((one == type) || (one == CstType.OBJECT)) {
+            com.duy.dx.rop.cst.CstType one = arr[i].getExceptionClass();
+            if ((one == type) || (one == com.duy.dx.rop.cst.CstType.OBJECT)) {
                 return false;
             }
         }
@@ -159,7 +159,7 @@ public final class ByteCatchList extends FixedSizeList {
      * @return {@code non-null;} list of exception targets, with
      * {@code noException} appended if necessary
      */
-    public IntList toTargetList(int noException) {
+    public com.duy.dx.util.IntList toTargetList(int noException) {
         if (noException < -1) {
             throw new IllegalArgumentException("noException < -1");
         }
@@ -173,16 +173,16 @@ public final class ByteCatchList extends FixedSizeList {
                  * The list is empty, but there is a no-exception
                  * address; so, the result is just that address.
                  */
-                return IntList.makeImmutable(noException);
+                return com.duy.dx.util.IntList.makeImmutable(noException);
             }
             /*
              * The list is empty and there isn't even a no-exception
              * address.
              */
-            return IntList.EMPTY;
+            return com.duy.dx.util.IntList.EMPTY;
         }
 
-        IntList result = new IntList(sz + (hasDefault ? 1 : 0));
+        com.duy.dx.util.IntList result = new IntList(sz + (hasDefault ? 1 : 0));
 
         for (int i = 0; i < sz; i++) {
             result.add(get(i).getHandlerPc());
@@ -204,10 +204,10 @@ public final class ByteCatchList extends FixedSizeList {
     public TypeList toRopCatchList() {
         int sz = size();
         if (sz == 0) {
-            return StdTypeList.EMPTY;
+            return com.duy.dx.rop.type.StdTypeList.EMPTY;
         }
 
-        StdTypeList result = new StdTypeList(sz);
+        com.duy.dx.rop.type.StdTypeList result = new StdTypeList(sz);
 
         for (int i = 0; i < sz; i++) {
             result.set(i, get(i).getExceptionClass().getClassType());
@@ -232,7 +232,7 @@ public final class ByteCatchList extends FixedSizeList {
 
         /** {@code null-ok;} the exception class or {@code null} to catch all
          * exceptions with this handler */
-        private final CstType exceptionClass;
+        private final com.duy.dx.rop.cst.CstType exceptionClass;
 
         /**
          * Constructs an instance.
@@ -246,7 +246,7 @@ public final class ByteCatchList extends FixedSizeList {
          * {@code null} to catch all exceptions with this handler
          */
         public Item(int startPc, int endPc, int handlerPc,
-                CstType exceptionClass) {
+                com.duy.dx.rop.cst.CstType exceptionClass) {
             if (startPc < 0) {
                 throw new IllegalArgumentException("startPc < 0");
             }
@@ -296,10 +296,10 @@ public final class ByteCatchList extends FixedSizeList {
         /**
          * Gets the class of exception handled.
          *
-         * @return {@code non-null;} the exception class; {@link CstType#OBJECT}
+         * @return {@code non-null;} the exception class; {@link com.duy.dx.rop.cst.CstType#OBJECT}
          * if this entry handles all possible exceptions
          */
-        public CstType getExceptionClass() {
+        public com.duy.dx.rop.cst.CstType getExceptionClass() {
             return (exceptionClass != null) ?
                 exceptionClass : CstType.OBJECT;
         }

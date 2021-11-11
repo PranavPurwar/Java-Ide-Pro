@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .util.FixedSizeList;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.util.FixedSizeList;
 
 /**
  * List of source position entries. This class includes a utility
@@ -70,8 +70,8 @@ public final class PositionList extends FixedSizeList {
             }
         }
 
-        SourcePosition noInfo = SourcePosition.NO_INFO;
-        SourcePosition cur = noInfo;
+        com.duy.dx.rop.code.SourcePosition noInfo = com.duy.dx.rop.code.SourcePosition.NO_INFO;
+        com.duy.dx.rop.code.SourcePosition cur = noInfo;
         int sz = insns.size();
         PositionList.Entry[] arr = new PositionList.Entry[sz];
         boolean lastWasTarget = false;
@@ -85,7 +85,7 @@ public final class PositionList extends FixedSizeList {
                 continue;
             }
 
-            SourcePosition pos = insn.getPosition();
+            com.duy.dx.rop.code.SourcePosition pos = insn.getPosition();
 
             if (pos.equals(noInfo) || pos.sameLine(cur)) {
                 continue;
@@ -150,7 +150,7 @@ public final class PositionList extends FixedSizeList {
         private final int address;
 
         /** {@code non-null;} corresponding source position information */
-        private final SourcePosition position;
+        private final com.duy.dx.rop.code.SourcePosition position;
 
         /**
          * Constructs an instance.
@@ -158,7 +158,7 @@ public final class PositionList extends FixedSizeList {
          * @param address {@code >= 0;} address of this entry
          * @param position {@code non-null;} corresponding source position information
          */
-        public Entry (int address, SourcePosition position) {
+        public Entry (int address, com.duy.dx.rop.code.SourcePosition position) {
             if (address < 0) {
                 throw new IllegalArgumentException("address < 0");
             }

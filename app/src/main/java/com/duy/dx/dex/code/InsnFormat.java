@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstKnownNull;
-import com.duy.dx .rop.cst.CstLiteral64;
-import com.duy.dx .rop.cst.CstLiteralBits;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstKnownNull;
+import com.duy.dx.rop.cst.CstLiteral64;
+import com.duy.dx.rop.cst.CstLiteralBits;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Base class for all instruction format handlers. Instruction format
- * handlers know how to translate {@link DalvInsn} instances into
+ * handlers know how to translate {@link com.duy.dx.dex.code.DalvInsn} instances into
  * streams of code units, as well as human-oriented listing strings
  * representing such translations.
  */
@@ -40,7 +39,7 @@ public abstract class InsnFormat {
      * temporary measure until VM support for the salient opcodes is
      * added. TODO: Remove this declaration when the VM can deal.
      */
-    public static boolean ALLOW_EXTENDED_OPCODES = true;
+    public static final boolean ALLOW_EXTENDED_OPCODES = true;
 
     /**
      * Returns the string form, suitable for inclusion in a listing
@@ -52,7 +51,7 @@ public abstract class InsnFormat {
      * constant pool indices
      * @return {@code non-null;} the string form
      */
-    public final String listingString(DalvInsn insn, boolean noteIndices) {
+    public final String listingString(com.duy.dx.dex.code.DalvInsn insn, boolean noteIndices) {
         String op = insn.getOpcode().getName();
         String arg = insnArgString(insn);
         String comment = insnCommentString(insn, noteIndices);
@@ -84,7 +83,7 @@ public abstract class InsnFormat {
      * @param insn {@code non-null;} the instruction
      * @return {@code non-null;} the string form
      */
-    public abstract String insnArgString(DalvInsn insn);
+    public abstract String insnArgString(com.duy.dx.dex.code.DalvInsn insn);
 
     /**
      * Returns the associated comment for the given instruction, if any.
@@ -99,8 +98,8 @@ public abstract class InsnFormat {
      * constant pool indices
      * @return {@code non-null;} the string form
      */
-    public abstract String insnCommentString(DalvInsn insn,
-            boolean noteIndices);
+    public abstract String insnCommentString(com.duy.dx.dex.code.DalvInsn insn,
+                                             boolean noteIndices);
 
     /**
      * Gets the code size of instructions that use this format. The
@@ -126,7 +125,7 @@ public abstract class InsnFormat {
      * @return {@code true} iff the instruction's arguments are
      * appropriate for this instance, or {@code false} if not
      */
-    public abstract boolean isCompatible(DalvInsn insn);
+    public abstract boolean isCompatible(com.duy.dx.dex.code.DalvInsn insn);
 
     /**
      * Returns which of a given instruction's registers will fit in
@@ -140,7 +139,7 @@ public abstract class InsnFormat {
      * @return {@code non-null;} a BitSet flagging registers in the
      * register list that are compatible to this format
      */
-    public BitSet compatibleRegs(DalvInsn insn) {
+    public BitSet compatibleRegs(com.duy.dx.dex.code.DalvInsn insn) {
         return new BitSet();
     }
 
@@ -157,7 +156,7 @@ public abstract class InsnFormat {
      * @return {@code true} iff the instruction's branch offset is
      * appropriate for this instance, or {@code false} if not
      */
-    public boolean branchFits(TargetInsn insn) {
+    public boolean branchFits(com.duy.dx.dex.code.TargetInsn insn) {
         return false;
     }
 
@@ -170,7 +169,7 @@ public abstract class InsnFormat {
      * @param out {@code non-null;} the output destination to write to
      * @param insn {@code non-null;} the instruction to write
      */
-    public abstract void writeTo(AnnotatedOutput out, DalvInsn insn);
+    public abstract void writeTo(com.duy.dx.util.AnnotatedOutput out, com.duy.dx.dex.code.DalvInsn insn);
 
     /**
      * Helper method to return a register list string.
@@ -178,9 +177,9 @@ public abstract class InsnFormat {
      * @param list {@code non-null;} the list of registers
      * @return {@code non-null;} the string form
      */
-    protected static String regListString(RegisterSpecList list) {
+    protected static String regListString(com.duy.dx.rop.code.RegisterSpecList list) {
         int sz = list.size();
-        StringBuffer sb = new StringBuffer(sz * 5 + 2);
+        StringBuilder sb = new StringBuilder(sz * 5 + 2);
 
         sb.append('{');
 
@@ -203,7 +202,7 @@ public abstract class InsnFormat {
      * sequential)
      * @return {@code non-null;} the string form
      */
-    protected static String regRangeString(RegisterSpecList list) {
+    protected static String regRangeString(com.duy.dx.rop.code.RegisterSpecList list) {
         int size = list.size();
         StringBuilder sb = new StringBuilder(30);
 
@@ -219,7 +218,7 @@ public abstract class InsnFormat {
                 break;
             }
             default: {
-                RegisterSpec lastReg = list.get(size - 1);
+                com.duy.dx.rop.code.RegisterSpec lastReg = list.get(size - 1);
                 if (lastReg.getCategory() == 2) {
                     /*
                      * Add one to properly represent a list-final
@@ -245,8 +244,8 @@ public abstract class InsnFormat {
      * @param value the value
      * @return {@code non-null;} the string form
      */
-    protected static String literalBitsString(CstLiteralBits value) {
-        StringBuffer sb = new StringBuffer(100);
+    protected static String literalBitsString(com.duy.dx.rop.cst.CstLiteralBits value) {
+        StringBuilder sb = new StringBuilder(100);
 
         sb.append('#');
 
@@ -270,25 +269,25 @@ public abstract class InsnFormat {
      * @return {@code non-null;} the comment
      */
     protected static String literalBitsComment(CstLiteralBits value,
-            int width) {
-        StringBuffer sb = new StringBuffer(20);
+                                               int width) {
+        StringBuilder sb = new StringBuilder(20);
 
         sb.append("#");
 
         long bits;
 
-        if (value instanceof CstLiteral64) {
+        if (value instanceof com.duy.dx.rop.cst.CstLiteral64) {
             bits = ((CstLiteral64) value).getLongBits();
         } else {
             bits = value.getIntBits();
         }
 
         switch (width) {
-            case 4:  sb.append(Hex.uNibble((int) bits)); break;
-            case 8:  sb.append(Hex.u1((int) bits));      break;
-            case 16: sb.append(Hex.u2((int) bits));      break;
-            case 32: sb.append(Hex.u4((int) bits));      break;
-            case 64: sb.append(Hex.u8(bits));            break;
+            case 4:  sb.append(com.duy.dx.util.Hex.uNibble((int) bits)); break;
+            case 8:  sb.append(com.duy.dx.util.Hex.u1((int) bits));      break;
+            case 16: sb.append(com.duy.dx.util.Hex.u2((int) bits));      break;
+            case 32: sb.append(com.duy.dx.util.Hex.u4((int) bits));      break;
+            case 64: sb.append(com.duy.dx.util.Hex.u8(bits));            break;
             default: {
                 throw new RuntimeException("shouldn't happen");
             }
@@ -304,11 +303,11 @@ public abstract class InsnFormat {
      * @return {@code non-null;} the string form of the instruction's
      * branch target
      */
-    protected static String branchString(DalvInsn insn) {
-        TargetInsn ti = (TargetInsn) insn;
+    protected static String branchString(com.duy.dx.dex.code.DalvInsn insn) {
+        com.duy.dx.dex.code.TargetInsn ti = (com.duy.dx.dex.code.TargetInsn) insn;
         int address = ti.getTargetAddress();
 
-        return (address == (char) address) ? Hex.u2(address) : Hex.u4(address);
+        return (address == (char) address) ? com.duy.dx.util.Hex.u2(address) : com.duy.dx.util.Hex.u4(address);
     }
 
     /**
@@ -317,54 +316,11 @@ public abstract class InsnFormat {
      * @param insn {@code non-null;} the instruction in question
      * @return {@code non-null;} the comment
      */
-    protected static String branchComment(DalvInsn insn) {
-        TargetInsn ti = (TargetInsn) insn;
+    protected static String branchComment(com.duy.dx.dex.code.DalvInsn insn) {
+        com.duy.dx.dex.code.TargetInsn ti = (TargetInsn) insn;
         int offset = ti.getTargetOffset();
 
-        return (offset == (short) offset) ? Hex.s2(offset) : Hex.s4(offset);
-    }
-
-    /**
-     * Helper method to return the constant string for a {@link CstInsn}
-     * in human form.
-     *
-     * @param insn {@code non-null;} a constant-bearing instruction
-     * @return {@code non-null;} the human string form of the contained
-     * constant
-     */
-    protected static String cstString(DalvInsn insn) {
-        CstInsn ci = (CstInsn) insn;
-        Constant cst = ci.getConstant();
-
-        return cst instanceof CstString ? ((CstString) cst).toQuoted() : cst.toHuman();
-    }
-
-    /**
-     * Helper method to return an instruction comment for a constant.
-     *
-     * @param insn {@code non-null;} a constant-bearing instruction
-     * @return {@code non-null;} comment string representing the constant
-     */
-    protected static String cstComment(DalvInsn insn) {
-        CstInsn ci = (CstInsn) insn;
-
-        if (! ci.hasIndex()) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder(20);
-        int index = ci.getIndex();
-
-        sb.append(ci.getConstant().typeName());
-        sb.append('@');
-
-        if (index < 65536) {
-            sb.append(Hex.u2(index));
-        } else {
-            sb.append(Hex.u4(index));
-        }
-
-        return sb.toString();
+        return (offset == (short) offset) ? com.duy.dx.util.Hex.s2(offset) : Hex.s4(offset);
     }
 
     /**
@@ -462,7 +418,7 @@ public abstract class InsnFormat {
      * @param insn {@code non-null;} the instruction
      * @return {@code >= 0;} the callout argument index
      */
-    protected static int argIndex(DalvInsn insn) {
+    protected static int argIndex(com.duy.dx.dex.code.DalvInsn insn) {
         int arg = ((CstInteger) ((CstInsn) insn).getConstant()).getValue();
 
         if (arg < 0) {
@@ -480,7 +436,7 @@ public abstract class InsnFormat {
      * @param arg {@code 0..255;} arbitrary other byte value
      * @return combined value
      */
-    protected static short opcodeUnit(DalvInsn insn, int arg) {
+    protected static short opcodeUnit(com.duy.dx.dex.code.DalvInsn insn, int arg) {
         if ((arg & 0xff) != arg) {
             throw new IllegalArgumentException("arg out of range 0..255");
         }
@@ -586,7 +542,7 @@ public abstract class InsnFormat {
      * @param out {@code non-null;} where to write to
      * @param c0 code unit to write
      */
-    protected static void write(AnnotatedOutput out, short c0) {
+    protected static void write(com.duy.dx.util.AnnotatedOutput out, short c0) {
         out.writeShort(c0);
     }
 
@@ -597,7 +553,7 @@ public abstract class InsnFormat {
      * @param c0 code unit to write
      * @param c1 code unit to write
      */
-    protected static void write(AnnotatedOutput out, short c0, short c1) {
+    protected static void write(com.duy.dx.util.AnnotatedOutput out, short c0, short c1) {
         out.writeShort(c0);
         out.writeShort(c1);
     }
@@ -610,8 +566,8 @@ public abstract class InsnFormat {
      * @param c1 code unit to write
      * @param c2 code unit to write
      */
-    protected static void write(AnnotatedOutput out, short c0, short c1,
-            short c2) {
+    protected static void write(com.duy.dx.util.AnnotatedOutput out, short c0, short c1,
+                                short c2) {
         out.writeShort(c0);
         out.writeShort(c1);
         out.writeShort(c2);
@@ -626,8 +582,8 @@ public abstract class InsnFormat {
      * @param c2 code unit to write
      * @param c3 code unit to write
      */
-    protected static void write(AnnotatedOutput out, short c0, short c1,
-            short c2, short c3) {
+    protected static void write(com.duy.dx.util.AnnotatedOutput out, short c0, short c1,
+                                short c2, short c3) {
         out.writeShort(c0);
         out.writeShort(c1);
         out.writeShort(c2);
@@ -644,8 +600,8 @@ public abstract class InsnFormat {
      * @param c3 code unit to write
      * @param c4 code unit to write
      */
-    protected static void write(AnnotatedOutput out, short c0, short c1,
-            short c2, short c3, short c4) {
+    protected static void write(com.duy.dx.util.AnnotatedOutput out, short c0, short c1,
+                                short c2, short c3, short c4) {
         out.writeShort(c0);
         out.writeShort(c1);
         out.writeShort(c2);
@@ -662,7 +618,7 @@ public abstract class InsnFormat {
      * @param c0 code unit to write
      * @param c1c2 code unit pair to write
      */
-    protected static void write(AnnotatedOutput out, short c0, int c1c2) {
+    protected static void write(com.duy.dx.util.AnnotatedOutput out, short c0, int c1c2) {
         write(out, c0, (short) c1c2, (short) (c1c2 >> 16));
     }
 
@@ -676,8 +632,8 @@ public abstract class InsnFormat {
      * @param c1c2 code unit pair to write
      * @param c3 code unit to write
      */
-    protected static void write(AnnotatedOutput out, short c0, int c1c2,
-            short c3) {
+    protected static void write(com.duy.dx.util.AnnotatedOutput out, short c0, int c1c2,
+                                short c3) {
         write(out, c0, (short) c1c2, (short) (c1c2 >> 16), c3);
     }
 
@@ -692,8 +648,8 @@ public abstract class InsnFormat {
      * @param c3 code unit to write
      * @param c4 code unit to write
      */
-    protected static void write(AnnotatedOutput out, short c0, int c1c2,
-            short c3, short c4) {
+    protected static void write(com.duy.dx.util.AnnotatedOutput out, short c0, int c1c2,
+                                short c3, short c4) {
         write(out, c0, (short) c1c2, (short) (c1c2 >> 16), c3, c4);
     }
 

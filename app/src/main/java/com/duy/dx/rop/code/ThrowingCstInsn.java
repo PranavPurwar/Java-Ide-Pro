@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstString;
 
 /**
  * Instruction which contains an explicit reference to a constant
@@ -39,13 +39,13 @@ public final class ThrowingCstInsn
      * @param catches {@code non-null;} list of exceptions caught
      * @param cst {@code non-null;} the constant
      */
-    public ThrowingCstInsn(Rop opcode, SourcePosition position,
-                           RegisterSpecList sources,
-                           TypeList catches, Constant cst) {
+    public ThrowingCstInsn(com.duy.dx.rop.code.Rop opcode, SourcePosition position,
+                           com.duy.dx.rop.code.RegisterSpecList sources,
+                           TypeList catches, com.duy.dx.rop.cst.Constant cst) {
         super(opcode, position, null, sources, cst);
 
         if (opcode.getBranchingness() != Rop.BRANCH_THROW) {
-            throw new IllegalArgumentException("bogus branchingness");
+            throw new IllegalArgumentException("opcode with invalid branchingness: " + opcode.getBranchingness());
         }
 
         if (catches == null) {
@@ -60,7 +60,7 @@ public final class ThrowingCstInsn
     public String getInlineString() {
         Constant cst = getConstant();
         String constantString = cst.toHuman();
-        if (cst instanceof CstString) {
+        if (cst instanceof com.duy.dx.rop.cst.CstString) {
             constantString = ((CstString) cst).toQuoted();
         }
         return constantString + " " + ThrowingInsn.toCatchString(catches);
@@ -80,7 +80,7 @@ public final class ThrowingCstInsn
 
     /** {@inheritDoc} */
     @Override
-    public Insn withAddedCatch(Type type) {
+    public com.duy.dx.rop.code.Insn withAddedCatch(Type type) {
         return new ThrowingCstInsn(getOpcode(), getPosition(),
                                    getSources(), catches.withAddedType(type),
                                    getConstant());
@@ -88,7 +88,7 @@ public final class ThrowingCstInsn
 
     /** {@inheritDoc} */
     @Override
-    public Insn withRegisterOffset(int delta) {
+    public com.duy.dx.rop.code.Insn withRegisterOffset(int delta) {
         return new ThrowingCstInsn(getOpcode(), getPosition(),
                                    getSources().withOffset(delta),
                                    catches,
@@ -98,7 +98,7 @@ public final class ThrowingCstInsn
     /** {@inheritDoc} */
     @Override
     public Insn withNewRegisters(RegisterSpec result,
-            RegisterSpecList sources) {
+                                 RegisterSpecList sources) {
 
         return new ThrowingCstInsn(getOpcode(), getPosition(),
                                    sources,

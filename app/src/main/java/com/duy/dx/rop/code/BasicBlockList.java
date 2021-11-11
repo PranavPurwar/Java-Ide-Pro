@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
-import com.duy.dx .util.LabeledList;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
+import com.duy.dx.util.LabeledList;
 
 /**
- * List of {@link BasicBlock} instances.
+ * List of {@link com.duy.dx.rop.code.BasicBlock} instances.
  */
 public final class BasicBlockList extends LabeledList {
     /**
@@ -63,8 +63,8 @@ public final class BasicBlockList extends LabeledList {
      * @param n {@code >= 0, < size();} which index
      * @return {@code non-null;} element at that index
      */
-    public BasicBlock get(int n) {
-        return (BasicBlock) get0(n);
+    public com.duy.dx.rop.code.BasicBlock get(int n) {
+        return (com.duy.dx.rop.code.BasicBlock) get0(n);
     }
 
     /**
@@ -73,7 +73,7 @@ public final class BasicBlockList extends LabeledList {
      * @param n {@code >= 0, < size();} which index
      * @param bb {@code null-ok;} the element to set at {@code n}
      */
-    public void set(int n, BasicBlock bb) {
+    public void set(int n, com.duy.dx.rop.code.BasicBlock bb) {
         super.set(n, bb);
 
         // Reset regCount, since it will need to be recalculated.
@@ -83,7 +83,7 @@ public final class BasicBlockList extends LabeledList {
     /**
      * Returns how many registers this method requires. This is simply
      * the maximum of register-number-plus-category referred to by this
-     * instance's instructions (indirectly through {@link BasicBlock}
+     * instance's instructions (indirectly through {@link com.duy.dx.rop.code.BasicBlock}
      * instances).
      *
      * @return {@code >= 0;} the register count
@@ -109,7 +109,7 @@ public final class BasicBlockList extends LabeledList {
         int result = 0;
 
         for (int i = 0; i < sz; i++) {
-            BasicBlock one = (BasicBlock) getOrNull0(i);
+            com.duy.dx.rop.code.BasicBlock one = (com.duy.dx.rop.code.BasicBlock) getOrNull0(i);
             if (one != null) {
                 result += one.getInsns().size();
             }
@@ -129,13 +129,13 @@ public final class BasicBlockList extends LabeledList {
         int result = 0;
 
         for (int i = 0; i < sz; i++) {
-            BasicBlock one = (BasicBlock) getOrNull0(i);
+            com.duy.dx.rop.code.BasicBlock one = (com.duy.dx.rop.code.BasicBlock) getOrNull0(i);
             if (one != null) {
-                InsnList insns = one.getInsns();
+                com.duy.dx.rop.code.InsnList insns = one.getInsns();
                 int insnsSz = insns.size();
 
                 for (int j = 0; j < insnsSz; j++) {
-                    Insn insn = insns.get(j);
+                    com.duy.dx.rop.code.Insn insn = insns.get(j);
 
                     if (insn.getOpcode().getOpcode() != RegOps.MARK_LOCAL) {
                         result++;
@@ -150,11 +150,11 @@ public final class BasicBlockList extends LabeledList {
     /**
      * Gets the first block in the list with the given label, if any.
      *
-     * @param label {@code >= 0;} the label to look for
+     * @param label {@code label >= 0;} the label to look for
      * @return {@code non-null;} the so-labelled block
      * @throws IllegalArgumentException thrown if the label isn't found
      */
-    public BasicBlock labelToBlock(int label) {
+    public com.duy.dx.rop.code.BasicBlock labelToBlock(int label) {
         int idx = indexOfLabel(label);
 
         if (idx < 0) {
@@ -170,11 +170,11 @@ public final class BasicBlockList extends LabeledList {
      *
      * @param visitor {@code non-null;} visitor to use
      */
-    public void forEachInsn(Insn.Visitor visitor) {
+    public void forEachInsn(com.duy.dx.rop.code.Insn.Visitor visitor) {
         int sz = size();
 
         for (int i = 0; i < sz; i++) {
-            BasicBlock one = get(i);
+            com.duy.dx.rop.code.BasicBlock one = get(i);
             InsnList insns = one.getInsns();
             insns.forEach(visitor);
         }
@@ -194,7 +194,7 @@ public final class BasicBlockList extends LabeledList {
         BasicBlockList result = new BasicBlockList(sz);
 
         for (int i = 0; i < sz; i++) {
-            BasicBlock one = (BasicBlock) get0(i);
+            com.duy.dx.rop.code.BasicBlock one = (com.duy.dx.rop.code.BasicBlock) get0(i);
             if (one != null) {
                 result.set(i, one.withRegisterOffset(delta));
             }
@@ -226,7 +226,7 @@ public final class BasicBlockList extends LabeledList {
      * @param block {@code non-null;} the block in question
      * @return {@code null-ok;} the preferred successor, if any
      */
-    public BasicBlock preferredSuccessorOf(BasicBlock block) {
+    public com.duy.dx.rop.code.BasicBlock preferredSuccessorOf(com.duy.dx.rop.code.BasicBlock block) {
         int primarySuccessor = block.getPrimarySuccessor();
         IntList successors = block.getSuccessors();
         int succSize = successors.size();
@@ -256,7 +256,7 @@ public final class BasicBlockList extends LabeledList {
      * @return {@code true} if the two blocks' non-primary successors
      * are identical
      */
-    public boolean catchesEqual(BasicBlock block1, BasicBlock block2) {
+    public boolean catchesEqual(com.duy.dx.rop.code.BasicBlock block1, BasicBlock block2) {
         TypeList catches1 = block1.getExceptionHandlerTypes();
         TypeList catches2 = block2.getExceptionHandlerTypes();
 
@@ -310,7 +310,7 @@ public final class BasicBlockList extends LabeledList {
      * Instruction visitor class for counting registers used.
      */
     private static class RegCountVisitor
-            implements Insn.Visitor {
+            implements com.duy.dx.rop.code.Insn.Visitor {
         /** {@code >= 0;} register count in-progress */
         private int regCount;
 
@@ -331,32 +331,44 @@ public final class BasicBlockList extends LabeledList {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitPlainInsn(PlainInsn insn) {
             visit(insn);
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitPlainCstInsn(PlainCstInsn insn) {
             visit(insn);
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitSwitchInsn(SwitchInsn insn) {
             visit(insn);
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitThrowingCstInsn(ThrowingCstInsn insn) {
             visit(insn);
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitThrowingInsn(ThrowingInsn insn) {
             visit(insn);
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitFillArrayDataInsn(FillArrayDataInsn insn) {
+            visit(insn);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void visitInvokePolymorphicInsn(InvokePolymorphicInsn insn) {
             visit(insn);
         }
 
@@ -366,7 +378,7 @@ public final class BasicBlockList extends LabeledList {
          * @param insn {@code non-null;} instruction being visited
          */
         private void visit(Insn insn) {
-            RegisterSpec result = insn.getResult();
+            com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
 
             if (result != null) {
                 processReg(result);

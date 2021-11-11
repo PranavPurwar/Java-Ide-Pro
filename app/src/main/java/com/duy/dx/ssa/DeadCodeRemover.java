@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
 
 /**
  * A variation on Appel Algorithm 19.12 "Dead code elimination in SSA form".
@@ -30,7 +31,7 @@ import java.util.HashSet;
  */
 public class DeadCodeRemover {
     /** method we're processing */
-    private final SsaMethod ssaMeth;
+    private final com.duy.dx.ssa.SsaMethod ssaMeth;
 
     /** ssaMeth.getRegCount() */
     private final int regCount;
@@ -42,14 +43,14 @@ public class DeadCodeRemover {
     private final BitSet worklist;
 
     /** use list indexed by register; modified during operation */
-    private final ArrayList<SsaInsn>[] useList;
+    private final ArrayList<com.duy.dx.ssa.SsaInsn>[] useList;
 
     /**
      * Process a method with the dead-code remver
      *
      * @param ssaMethod method to process
      */
-    public static void process(SsaMethod ssaMethod) {
+    public static void process(com.duy.dx.ssa.SsaMethod ssaMethod) {
         DeadCodeRemover dc = new DeadCodeRemover(ssaMethod);
         dc.run();
     }
@@ -73,7 +74,7 @@ public class DeadCodeRemover {
     private void run() {
         pruneDeadInstructions();
 
-        HashSet<SsaInsn> deletedInsns = new HashSet<SsaInsn>();
+        HashSet<com.duy.dx.ssa.SsaInsn> deletedInsns = new HashSet<com.duy.dx.ssa.SsaInsn>();
 
         ssaMeth.forEachInsn(new NoSideEffectVisitor(worklist));
 
@@ -85,19 +86,19 @@ public class DeadCodeRemover {
             if (useList[regV].size() == 0
                     || isCircularNoSideEffect(regV, null)) {
 
-                SsaInsn insnS = ssaMeth.getDefinitionForRegister(regV);
+                com.duy.dx.ssa.SsaInsn insnS = ssaMeth.getDefinitionForRegister(regV);
 
                 // This insn has already been deleted.
                 if (deletedInsns.contains(insnS)) {
                     continue;
                 }
 
-                RegisterSpecList sources = insnS.getSources();
+                com.duy.dx.rop.code.RegisterSpecList sources = insnS.getSources();
 
                 int sz = sources.size();
                 for (int i = 0; i < sz; i++) {
                     // Delete this insn from all usage lists.
-                    RegisterSpec source = sources.get(i);
+                    com.duy.dx.rop.code.RegisterSpec source = sources.get(i);
                     useList[source.getReg()].remove(insnS);
 
                     if (!hasSideEffect(
@@ -123,16 +124,19 @@ public class DeadCodeRemover {
      * Removes all instructions from every unreachable block.
      */
     private void pruneDeadInstructions() {
-        HashSet<SsaInsn> deletedInsns = new HashSet<SsaInsn>();
+        HashSet<com.duy.dx.ssa.SsaInsn> deletedInsns = new HashSet<com.duy.dx.ssa.SsaInsn>();
 
-        ssaMeth.computeReachability();
+        BitSet reachable = ssaMeth.computeReachability();
+        ArrayList<com.duy.dx.ssa.SsaBasicBlock> blocks = ssaMeth.getBlocks();
+        int blockIndex = 0;
 
-        for (SsaBasicBlock block : ssaMeth.getBlocks()) {
-            if (block.isReachable()) continue;
+        while ((blockIndex = reachable.nextClearBit(blockIndex)) < blocks.size()) {
+            SsaBasicBlock block = blocks.get(blockIndex);
+            blockIndex++;
 
             // Prune instructions from unreachable blocks
             for (int i = 0; i < block.getInsns().size(); i++) {
-                SsaInsn insn = block.getInsns().get(i);
+                com.duy.dx.ssa.SsaInsn insn = block.getInsns().get(i);
                 RegisterSpecList sources = insn.getSources();
                 int sourcesSize = sources.size();
 
@@ -143,16 +147,16 @@ public class DeadCodeRemover {
 
                 // Delete this instruction from all usage lists.
                 for (int j = 0; j < sourcesSize; j++) {
-                    RegisterSpec source = sources.get(j);
+                    com.duy.dx.rop.code.RegisterSpec source = sources.get(j);
                     useList[source.getReg()].remove(insn);
                 }
 
                 // Remove this instruction result from the sources of any phis
-                RegisterSpec result = insn.getResult();
+                com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
                 if (result == null) continue;
-                for (SsaInsn use : useList[result.getReg()]) {
-                    if (use instanceof PhiInsn) {
-                        PhiInsn phiUse = (PhiInsn) use;
+                for (com.duy.dx.ssa.SsaInsn use : useList[result.getReg()]) {
+                    if (use instanceof com.duy.dx.ssa.PhiInsn) {
+                        com.duy.dx.ssa.PhiInsn phiUse = (com.duy.dx.ssa.PhiInsn) use;
                         phiUse.removePhiRegister(result);
                     }
                 }
@@ -177,7 +181,7 @@ public class DeadCodeRemover {
             return true;
         }
 
-        for (SsaInsn use : useList[regV]) {
+        for (com.duy.dx.ssa.SsaInsn use : useList[regV]) {
             if (hasSideEffect(use)) {
                 return false;
             }
@@ -190,8 +194,8 @@ public class DeadCodeRemover {
         // This register is only used in operations that have no side effect.
         set.set(regV);
 
-        for (SsaInsn use : useList[regV]) {
-            RegisterSpec result = use.getResult();
+        for (com.duy.dx.ssa.SsaInsn use : useList[regV]) {
+            com.duy.dx.rop.code.RegisterSpec result = use.getResult();
 
             if (result == null
                     || !isCircularNoSideEffect(result.getReg(), set)) {
@@ -209,7 +213,7 @@ public class DeadCodeRemover {
      * @param insn {@code null-ok;} instruction in question
      * @return true if it has a side-effect
      */
-    private static boolean hasSideEffect(SsaInsn insn) {
+    private static boolean hasSideEffect(com.duy.dx.ssa.SsaInsn insn) {
         if (insn == null) {
             /* While false would seem to make more sense here, true
              * prevents us from adding this back to a worklist unnecessarally.
@@ -239,6 +243,7 @@ public class DeadCodeRemover {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitMoveInsn (NormalSsaInsn insn) {
             // If we're tracking local vars, some moves have side effects.
             if (!hasSideEffect(insn)) {
@@ -247,6 +252,7 @@ public class DeadCodeRemover {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitPhiInsn (PhiInsn phi) {
             // If we're tracking local vars, then some phis have side effects.
             if (!hasSideEffect(phi)) {
@@ -255,6 +261,7 @@ public class DeadCodeRemover {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void visitNonMoveInsn (NormalSsaInsn insn) {
             RegisterSpec result = insn.getResult();
             if (!hasSideEffect(insn) && result != null) {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
 
 /**
  * Instruction which has a single branch target.
@@ -38,8 +38,8 @@ public final class TargetInsn extends FixedSizeInsn {
      * ins or outs)
      * @param target {@code non-null;} the branch target
      */
-    public TargetInsn(Dop opcode, SourcePosition position,
-                      RegisterSpecList registers, CodeAddress target) {
+    public TargetInsn(com.duy.dx.dex.code.Dop opcode, SourcePosition position,
+                      com.duy.dx.rop.code.RegisterSpecList registers, CodeAddress target) {
         super(opcode, position, registers);
 
         if (target == null) {
@@ -51,7 +51,7 @@ public final class TargetInsn extends FixedSizeInsn {
 
     /** {@inheritDoc} */
     @Override
-    public DalvInsn withOpcode(Dop opcode) {
+    public com.duy.dx.dex.code.DalvInsn withOpcode(com.duy.dx.dex.code.Dop opcode) {
         return new TargetInsn(opcode, getPosition(), getRegisters(), target);
     }
 

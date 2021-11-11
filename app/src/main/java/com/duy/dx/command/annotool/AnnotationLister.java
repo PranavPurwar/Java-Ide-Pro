@@ -1,18 +1,35 @@
-package com.duy.dx .command.annotool;
+/*
+ * Copyright (C) 2008 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .cf.attrib.AttRuntimeInvisibleAnnotations;
-import com.duy.dx .cf.attrib.AttRuntimeVisibleAnnotations;
-import com.duy.dx .cf.attrib.BaseAnnotations;
-import com.duy.dx .cf.direct.ClassPathOpener;
-import com.duy.dx .cf.direct.DirectClassFile;
-import com.duy.dx .cf.direct.StdAttributeFactory;
-import com.duy.dx .cf.iface.Attribute;
-import com.duy.dx .cf.iface.AttributeList;
-import com.duy.dx .rop.annotation.Annotation;
-import com.duy.dx .util.ByteArray;
+package com.duy.dx.command.annotool;
+
+import com.duy.dx.cf.attrib.AttRuntimeInvisibleAnnotations;
+import com.duy.dx.cf.attrib.AttRuntimeVisibleAnnotations;
+import com.duy.dx.cf.attrib.BaseAnnotations;
+import com.duy.dx.cf.direct.ClassPathOpener;
+import com.duy.dx.cf.direct.DirectClassFile;
+import com.duy.dx.cf.direct.StdAttributeFactory;
+import com.duy.dx.cf.iface.Attribute;
+import com.duy.dx.cf.iface.AttributeList;
+import com.duy.dx.util.ByteArray;
 import java.io.File;
 import java.lang.annotation.ElementType;
 import java.util.HashSet;
+
+import com.duy.dx.rop.annotation.Annotation;
 
 /**
  * Greps annotations on a set of class files and prints matching elements
@@ -27,7 +44,7 @@ class AnnotationLister {
     private static final String PACKAGE_INFO = "package-info";
 
     /** current match configuration */
-    private final Main.Arguments args;
+    private final com.duy.dx.command.annotool.Main.Arguments args;
 
     /** Set of classes whose inner classes should be considered matched */
     HashSet<String> matchInnerClassesOf = new HashSet<String>();
@@ -35,7 +52,7 @@ class AnnotationLister {
     /** set of packages whose classes should be considered matched */
     HashSet<String> matchPackages = new HashSet<String>();
 
-    AnnotationLister (Main.Arguments args) {
+    AnnotationLister (com.duy.dx.command.annotool.Main.Arguments args) {
         this.args = args;
     }
 
@@ -46,6 +63,7 @@ class AnnotationLister {
 
             opener = new ClassPathOpener(path, true,
                     new ClassPathOpener.Consumer() {
+                @Override
                 public boolean processFileBytes(String name, long lastModified, byte[] bytes) {
                     if (!name.endsWith(".class")) {
                         return true;
@@ -102,10 +120,12 @@ class AnnotationLister {
                     return true;
                 }
 
+                @Override
                 public void onException(Exception ex) {
                     throw new RuntimeException(ex);
                 }
 
+                @Override
                 public void onProcessArchiveStart(File file) {
 
                 }
@@ -129,7 +149,7 @@ class AnnotationLister {
             return;
         }
 
-        for (Annotation anAnn : ann.getAnnotations().getAnnotations()) {
+        for (com.duy.dx.rop.annotation.Annotation anAnn : ann.getAnnotations().getAnnotations()) {
             String annClassName
                     = anAnn.getType().getClassType().getClassName();
             if (args.aclass.equals(annClassName)) {
@@ -180,7 +200,7 @@ class AnnotationLister {
      * @param packageName {@code non-null;} name of package
      */
     private void printMatchPackage(String packageName) {
-        for (Main.PrintType pt : args.printTypes) {
+        for (com.duy.dx.command.annotool.Main.PrintType pt : args.printTypes) {
             switch (pt) {
                 case CLASS:
                 case INNERCLASS:

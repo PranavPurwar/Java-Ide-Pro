@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecSet;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.FixedSizeList;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecSet;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.FixedSizeList;
 
 /**
  * List of local variables. Each local variable entry indicates a
@@ -124,10 +125,10 @@ public final class LocalList extends FixedSizeList {
         private final Disposition disposition;
 
         /** {@code non-null;} register spec representing the variable */
-        private final RegisterSpec spec;
+        private final com.duy.dx.rop.code.RegisterSpec spec;
 
         /** {@code non-null;} variable type (derived from {@code spec}) */
-        private final CstType type;
+        private final com.duy.dx.rop.cst.CstType type;
 
         /**
          * Constructs an instance.
@@ -137,7 +138,7 @@ public final class LocalList extends FixedSizeList {
          * @param spec {@code non-null;} register spec representing
          * the variable
          */
-        public Entry(int address, Disposition disposition, RegisterSpec spec) {
+        public Entry(int address, Disposition disposition, com.duy.dx.rop.code.RegisterSpec spec) {
             if (address < 0) {
                 throw new IllegalArgumentException("address < 0");
             }
@@ -159,16 +160,18 @@ public final class LocalList extends FixedSizeList {
             this.address = address;
             this.disposition = disposition;
             this.spec = spec;
-            this.type = CstType.intern(spec.getType());
+            this.type = com.duy.dx.rop.cst.CstType.intern(spec.getType());
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return Integer.toHexString(address) + " " + disposition + " " +
                 spec;
         }
 
         /** {@inheritDoc} */
+        @Override
         public boolean equals(Object other) {
             if (!(other instanceof Entry)) {
                 return false;
@@ -185,6 +188,7 @@ public final class LocalList extends FixedSizeList {
          * @param other {@code non-null;} entry to compare to
          * @return {@code -1..1;} standard result of comparison
          */
+        @Override
         public int compareTo(Entry other) {
             if (address < other.address) {
                 return -1;
@@ -235,7 +239,7 @@ public final class LocalList extends FixedSizeList {
          *
          * @return {@code null-ok;} the variable name
          */
-        public CstString getName() {
+        public com.duy.dx.rop.cst.CstString getName() {
             return spec.getLocalItem().getName();
         }
 
@@ -272,7 +276,7 @@ public final class LocalList extends FixedSizeList {
          *
          * @return {@code non-null;} RegisterSpec of the holding register.
          */
-        public RegisterSpec getRegisterSpec() {
+        public com.duy.dx.rop.code.RegisterSpec getRegisterSpec() {
             return spec;
         }
 
@@ -283,7 +287,7 @@ public final class LocalList extends FixedSizeList {
          * @return {@code true} iff this instance matches
          * {@code spec}
          */
-        public boolean matches(RegisterSpec otherSpec) {
+        public boolean matches(com.duy.dx.rop.code.RegisterSpec otherSpec) {
             return spec.equalsUsingSimpleType(otherSpec);
         }
 
@@ -346,12 +350,12 @@ public final class LocalList extends FixedSizeList {
         for (int i = 0; i < sz; i++) {
             DalvInsn insn = insns.get(i);
 
-            if (insn instanceof LocalSnapshot) {
-                RegisterSpecSet snapshot =
+            if (insn instanceof com.duy.dx.dex.code.LocalSnapshot) {
+                com.duy.dx.rop.code.RegisterSpecSet snapshot =
                     ((LocalSnapshot) insn).getLocals();
                 state.snapshot(insn.getAddress(), snapshot);
             } else if (insn instanceof LocalStart) {
-                RegisterSpec local = ((LocalStart) insn).getLocal();
+                com.duy.dx.rop.code.RegisterSpec local = ((LocalStart) insn).getLocal();
                 state.startLocal(insn.getAddress(), local);
             }
         }
@@ -461,13 +465,13 @@ public final class LocalList extends FixedSizeList {
         private int nullResultCount;
 
         /** {@code null-ok;} current register mappings */
-        private RegisterSpecSet regs;
+        private com.duy.dx.rop.code.RegisterSpecSet regs;
 
         /** {@code null-ok;} result indices where local ends are stored */
         private int[] endIndices;
 
         /** {@code >= 0;} last address seen */
-        private int lastAddress;
+        private final int lastAddress;
 
         /**
          * Constructs an instance.
@@ -506,7 +510,7 @@ public final class LocalList extends FixedSizeList {
                  * it happening in test cases, never in "real" code.)
                  */
                 int newSz = reg + 1;
-                RegisterSpecSet newRegs = new RegisterSpecSet(newSz);
+                com.duy.dx.rop.code.RegisterSpecSet newRegs = new com.duy.dx.rop.code.RegisterSpecSet(newSz);
                 int[] newEnds = new int[newSz];
                 Arrays.fill(newEnds, -1);
 
@@ -538,8 +542,8 @@ public final class LocalList extends FixedSizeList {
             aboutToProcess(address, sz - 1);
 
             for (int i = 0; i < sz; i++) {
-                RegisterSpec oldSpec = regs.get(i);
-                RegisterSpec newSpec = filterSpec(specs.get(i));
+                com.duy.dx.rop.code.RegisterSpec oldSpec = regs.get(i);
+                com.duy.dx.rop.code.RegisterSpec newSpec = filterSpec(specs.get(i));
 
                 if (oldSpec == null) {
                     if (newSpec != null) {
@@ -565,7 +569,7 @@ public final class LocalList extends FixedSizeList {
          * @param startedLocal {@code non-null;} spec representing the
          * started local
          */
-        public void startLocal(int address, RegisterSpec startedLocal) {
+        public void startLocal(int address, com.duy.dx.rop.code.RegisterSpec startedLocal) {
             if (DEBUG) {
                 System.err.printf("%04x start %s\n", address, startedLocal);
             }
@@ -575,14 +579,14 @@ public final class LocalList extends FixedSizeList {
             startedLocal = filterSpec(startedLocal);
             aboutToProcess(address, regNum);
 
-            RegisterSpec existingLocal = regs.get(regNum);
+            com.duy.dx.rop.code.RegisterSpec existingLocal = regs.get(regNum);
 
             if (startedLocal.equalsUsingSimpleType(existingLocal)) {
                 // Silently ignore a redundant start.
                 return;
             }
 
-            RegisterSpec movedLocal = regs.findMatchingLocal(startedLocal);
+            com.duy.dx.rop.code.RegisterSpec movedLocal = regs.findMatchingLocal(startedLocal);
             if (movedLocal != null) {
                 /*
                  * The same variable was moved from one register to another.
@@ -649,7 +653,7 @@ public final class LocalList extends FixedSizeList {
              * is of category-2, then it is ended by this new start.
              */
             if (regNum > 0) {
-                RegisterSpec justBelow = regs.get(regNum - 1);
+                com.duy.dx.rop.code.RegisterSpec justBelow = regs.get(regNum - 1);
                 if ((justBelow != null) && justBelow.isCategory2()) {
                     addOrUpdateEnd(address,
                             Disposition.END_CLOBBERED_BY_NEXT,
@@ -663,7 +667,7 @@ public final class LocalList extends FixedSizeList {
              * emitted.
              */
             if (startedLocal.isCategory2()) {
-                RegisterSpec justAbove = regs.get(regNum + 1);
+                com.duy.dx.rop.code.RegisterSpec justAbove = regs.get(regNum + 1);
                 if (justAbove != null) {
                     addOrUpdateEnd(address,
                             Disposition.END_CLOBBERED_BY_PREV,
@@ -688,7 +692,7 @@ public final class LocalList extends FixedSizeList {
          * @param endedLocal {@code non-null;} spec representing the
          * local being ended
          */
-        public void endLocal(int address, RegisterSpec endedLocal) {
+        public void endLocal(int address, com.duy.dx.rop.code.RegisterSpec endedLocal) {
             endLocal(address, endedLocal, Disposition.END_SIMPLY);
         }
 
@@ -700,7 +704,7 @@ public final class LocalList extends FixedSizeList {
          * local being ended
          * @param disposition reason for the end
          */
-        public void endLocal(int address, RegisterSpec endedLocal,
+        public void endLocal(int address, com.duy.dx.rop.code.RegisterSpec endedLocal,
                 Disposition disposition) {
             if (DEBUG) {
                 System.err.printf("%04x end %s\n", address, endedLocal);
@@ -745,7 +749,7 @@ public final class LocalList extends FixedSizeList {
          * and adjusted things accordingly
          */
         private boolean checkForEmptyRange(int address,
-                RegisterSpec endedLocal) {
+                com.duy.dx.rop.code.RegisterSpec endedLocal) {
             int at = result.size() - 1;
             Entry entry;
 
@@ -826,8 +830,8 @@ public final class LocalList extends FixedSizeList {
          * @return {@code null-ok;} an appropriately modified spec, or the
          * original if nothing needs to be done
          */
-        private static RegisterSpec filterSpec(RegisterSpec orig) {
-            if ((orig != null) && (orig.getType() == Type.KNOWN_NULL)) {
+        private static com.duy.dx.rop.code.RegisterSpec filterSpec(com.duy.dx.rop.code.RegisterSpec orig) {
+            if ((orig != null) && (orig.getType() == com.duy.dx.rop.type.Type.KNOWN_NULL)) {
                 return orig.withType(Type.OBJECT);
             }
 
@@ -843,7 +847,7 @@ public final class LocalList extends FixedSizeList {
          * @param spec {@code non-null;} spec representing the local
          */
         private void add(int address, Disposition disposition,
-                RegisterSpec spec) {
+                com.duy.dx.rop.code.RegisterSpec spec) {
             int regNum = spec.getReg();
 
             result.add(new Entry(address, disposition, spec));

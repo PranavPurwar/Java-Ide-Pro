@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.RegisterSpecSet;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.RegisterSpecSet;
 
 /**
  * Represents a mapping between two register numbering schemes.
@@ -30,7 +30,7 @@ public abstract class RegisterMapper {
     /**
      * Gets the count of registers (really, the total register width, since
      * category width is counted) in the new namespace.
-     * @return >= 0 width of new namespace.
+     * @return &ge; 0 width of new namespace.
      */
     public abstract int getNewRegisterCount();
 
@@ -38,16 +38,16 @@ public abstract class RegisterMapper {
      * @param registerSpec old register
      * @return register in new space
      */
-    public abstract RegisterSpec map(RegisterSpec registerSpec);
+    public abstract com.duy.dx.rop.code.RegisterSpec map(com.duy.dx.rop.code.RegisterSpec registerSpec);
 
     /**
      *
      * @param sources old register list
      * @return new mapped register list, or old if nothing has changed.
      */
-    public final RegisterSpecList map(RegisterSpecList sources) {
+    public final com.duy.dx.rop.code.RegisterSpecList map(com.duy.dx.rop.code.RegisterSpecList sources) {
         int sz = sources.size();
-        RegisterSpecList newSources = new RegisterSpecList(sz);
+        com.duy.dx.rop.code.RegisterSpecList newSources = new RegisterSpecList(sz);
 
         for (int i = 0; i < sz; i++) {
             newSources.set(i, map(sources.get(i)));
@@ -64,9 +64,9 @@ public abstract class RegisterMapper {
      * @param sources old register set
      * @return new mapped register set, or old if nothing has changed.
      */
-    public final RegisterSpecSet map(RegisterSpecSet sources) {
+    public final com.duy.dx.rop.code.RegisterSpecSet map(com.duy.dx.rop.code.RegisterSpecSet sources) {
         int sz = sources.getMaxSize();
-        RegisterSpecSet newSources = new RegisterSpecSet(getNewRegisterCount());
+        com.duy.dx.rop.code.RegisterSpecSet newSources = new RegisterSpecSet(getNewRegisterCount());
 
         for (int i = 0; i < sz; i++) {
             RegisterSpec registerSpec = sources.get(i);

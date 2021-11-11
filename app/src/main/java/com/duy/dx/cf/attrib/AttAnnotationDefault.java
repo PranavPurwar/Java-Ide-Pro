@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.cst.Constant;
+import com.duy.dx.rop.cst.Constant;
 
 /**
  * Attribute class for {@code AnnotationDefault} attributes.
  */
-public final class AttAnnotationDefault extends com.duy.dx .cf.attrib.BaseAttribute {
+public final class AttAnnotationDefault extends BaseAttribute {
     /** {@code non-null;} attribute name for attributes of this type */
     public static final String ATTRIBUTE_NAME = "AnnotationDefault";
 
     /** {@code non-null;} the annotation default value */
-    private final Constant value;
+    private final com.duy.dx.rop.cst.Constant value;
 
     /** {@code >= 0;} attribute data length in the original classfile (not
      * including the attribute header) */
@@ -39,7 +39,7 @@ public final class AttAnnotationDefault extends com.duy.dx .cf.attrib.BaseAttrib
      * @param byteLength {@code >= 0;} attribute data length in the original
      * classfile (not including the attribute header)
      */
-    public AttAnnotationDefault(Constant value, int byteLength) {
+    public AttAnnotationDefault(com.duy.dx.rop.cst.Constant value, int byteLength) {
         super(ATTRIBUTE_NAME);
 
         if (value == null) {
@@ -51,6 +51,7 @@ public final class AttAnnotationDefault extends com.duy.dx .cf.attrib.BaseAttrib
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         // Add six for the standard attribute header.
         return byteLength + 6;

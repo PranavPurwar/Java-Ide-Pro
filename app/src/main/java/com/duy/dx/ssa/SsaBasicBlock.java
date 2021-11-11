@@ -14,27 +14,28 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.BasicBlock;
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.InsnList;
-import com.duy.dx .rop.code.PlainInsn;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.Rops;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
-import com.duy.dx .util.IntSet;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
+import com.duy.dx.util.IntSet;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import com.duy.dx.rop.code.BasicBlock;
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.InsnList;
+import com.duy.dx.rop.code.PlainInsn;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.Rops;
+import com.duy.dx.rop.code.SourcePosition;
 
 /**
  * An SSA representation of a basic block.
@@ -48,7 +49,7 @@ public final class SsaBasicBlock {
         new LabelComparator();
 
     /** {@code non-null;} insn list associated with this instance */
-    private ArrayList<SsaInsn> insns;
+    private final ArrayList<SsaInsn> insns;
 
     /** {@code non-null;} predecessor set (by block list index) */
     private BitSet predecessors;
@@ -69,13 +70,13 @@ public final class SsaBasicBlock {
     private int primarySuccessor = -1;
 
     /** label of block in rop form */
-    private int ropLabel;
+    private final int ropLabel;
 
     /** {@code non-null;} method we belong to */
-    private SsaMethod parent;
+    private final SsaMethod parent;
 
     /** our index into parent.getBlock() */
-    private int index;
+    private final int index;
 
     /** list of dom children */
     private final ArrayList<SsaBasicBlock> domChildren;
@@ -91,12 +92,6 @@ public final class SsaBasicBlock {
      * phi-removal process. Retained for subsequent move scheduling.
      */
     private int movesFromPhisAtBeginning = 0;
-
-    /**
-     * contains last computed value of reachability of this block, or -1
-     * if reachability hasn't been calculated yet
-     */
-    private int reachable = -1;
 
     /**
      * {@code null-ok;} indexed by reg: the regs that are live-in at
@@ -141,7 +136,7 @@ public final class SsaBasicBlock {
      * @return new instance
      */
     public static SsaBasicBlock newFromRop(RopMethod rmeth,
-            int basicBlockIndex, final SsaMethod parent) {
+                                           int basicBlockIndex, final SsaMethod parent) {
         BasicBlockList ropBlocks = rmeth.getBlocks();
         BasicBlock bb = ropBlocks.get(basicBlockIndex);
         SsaBasicBlock result =
@@ -211,7 +206,7 @@ public final class SsaBasicBlock {
      *
      * @param resultSpec {@code non-null;} reg
      */
-    public void addPhiInsnForReg(RegisterSpec resultSpec) {
+    public void addPhiInsnForReg(com.duy.dx.rop.code.RegisterSpec resultSpec) {
         insns.add(0, new PhiInsn(resultSpec, this));
     }
 
@@ -221,7 +216,7 @@ public final class SsaBasicBlock {
      *
      * @param insn {@code non-null;} rop-form insn to add
      */
-    public void addInsnToHead(Insn insn) {
+    public void addInsnToHead(com.duy.dx.rop.code.Insn insn) {
         SsaInsn newInsn = SsaInsn.makeFromRop(insn, this);
         insns.add(getCountPhiInsns(), newInsn);
         parent.onInsnAdded(newInsn);
@@ -541,7 +536,7 @@ public final class SsaBasicBlock {
     /**
      * Attaches block to an exit block if necessary. If this block
      * is not an exit predecessor or is the exit block, this block does
-     * nothing. For use by {@link com.duy.dx .ssa.SsaMethod#makeExitBlock}
+     * nothing. For use by {@link SsaMethod#makeExitBlock}
      *
      * @param exitBlock {@code non-null;} exit block
      */
@@ -571,7 +566,14 @@ public final class SsaBasicBlock {
      * @param result move destination
      * @param source move source
      */
-    public void addMoveToEnd(RegisterSpec result, RegisterSpec source) {
+    public void addMoveToEnd(com.duy.dx.rop.code.RegisterSpec result, com.duy.dx.rop.code.RegisterSpec source) {
+        /*
+         * Check that there are no other successors otherwise we may
+         * insert a move that affects those (b/69128828).
+         */
+        if (successors.cardinality() > 1) {
+            throw new IllegalStateException("Inserting a move to a block with multiple successors");
+        }
 
         if (result.getReg() == source.getReg()) {
             // Sometimes we end up with no-op moves. Ignore them here.
@@ -611,10 +613,10 @@ public final class SsaBasicBlock {
              * before the last instruction, because the final insn does
              * not assign to anything.
              */
-            RegisterSpecList sources = RegisterSpecList.make(source);
+            com.duy.dx.rop.code.RegisterSpecList sources = com.duy.dx.rop.code.RegisterSpecList.make(source);
             NormalSsaInsn toAdd = new NormalSsaInsn(
-                    new PlainInsn(Rops.opMove(result.getType()),
-                            SourcePosition.NO_INFO, result, sources), this);
+                    new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMove(result.getType()),
+                            com.duy.dx.rop.code.SourcePosition.NO_INFO, result, sources), this);
 
             insns.add(insns.size() - 1, toAdd);
 
@@ -628,16 +630,16 @@ public final class SsaBasicBlock {
      * @param result move destination
      * @param source move source
      */
-    public void addMoveToBeginning (RegisterSpec result, RegisterSpec source) {
+    public void addMoveToBeginning (com.duy.dx.rop.code.RegisterSpec result, com.duy.dx.rop.code.RegisterSpec source) {
         if (result.getReg() == source.getReg()) {
             // Sometimes we end up with no-op moves. Ignore them here.
             return;
         }
 
-        RegisterSpecList sources = RegisterSpecList.make(source);
+        com.duy.dx.rop.code.RegisterSpecList sources = com.duy.dx.rop.code.RegisterSpecList.make(source);
         NormalSsaInsn toAdd = new NormalSsaInsn(
-                new PlainInsn(Rops.opMove(result.getType()),
-                        SourcePosition.NO_INFO, result, sources), this);
+                new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMove(result.getType()),
+                        com.duy.dx.rop.code.SourcePosition.NO_INFO, result, sources), this);
 
         insns.add(getCountPhiInsns(), toAdd);
         movesFromPhisAtBeginning++;
@@ -650,7 +652,7 @@ public final class SsaBasicBlock {
      * @param regsUsed set, indexed by register number
      * @param rs register to mark as used
      */
-    private static void setRegsUsed (BitSet regsUsed, RegisterSpec rs) {
+    private static void setRegsUsed (BitSet regsUsed, com.duy.dx.rop.code.RegisterSpec rs) {
         regsUsed.set(rs.getReg());
         if (rs.getCategory() > 1) {
             regsUsed.set(rs.getReg() + 1);
@@ -666,7 +668,7 @@ public final class SsaBasicBlock {
      * @return true if register is fully or partially (for the case of wide
      * registers) used.
      */
-    private static boolean checkRegUsed (BitSet regsUsed, RegisterSpec rs) {
+    private static boolean checkRegUsed (BitSet regsUsed, com.duy.dx.rop.code.RegisterSpec rs) {
         int reg = rs.getReg();
         int category = rs.getCategory();
 
@@ -750,23 +752,23 @@ public final class SsaBasicBlock {
 
                 // At least one insn will be set above.
 
-                RegisterSpec result = insnToSplit.getResult();
-                RegisterSpec tempSpec = result.withReg(
+                com.duy.dx.rop.code.RegisterSpec result = insnToSplit.getResult();
+                com.duy.dx.rop.code.RegisterSpec tempSpec = result.withReg(
                         parent.borrowSpareRegister(result.getCategory()));
 
                 NormalSsaInsn toAdd = new NormalSsaInsn(
-                        new PlainInsn(Rops.opMove(result.getType()),
-                                SourcePosition.NO_INFO,
+                        new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMove(result.getType()),
+                                com.duy.dx.rop.code.SourcePosition.NO_INFO,
                                 tempSpec,
                                 insnToSplit.getSources()), this);
 
                 toSchedule.add(insertPlace++, toAdd);
 
-                RegisterSpecList newSources = RegisterSpecList.make(tempSpec);
+                com.duy.dx.rop.code.RegisterSpecList newSources = com.duy.dx.rop.code.RegisterSpecList.make(tempSpec);
 
                 NormalSsaInsn toReplace = new NormalSsaInsn(
-                        new PlainInsn(Rops.opMove(result.getType()),
-                                SourcePosition.NO_INFO,
+                        new com.duy.dx.rop.code.PlainInsn(com.duy.dx.rop.code.Rops.opMove(result.getType()),
+                                com.duy.dx.rop.code.SourcePosition.NO_INFO,
                                 result,
                                 newSources), this);
 
@@ -843,28 +845,6 @@ public final class SsaBasicBlock {
     }
 
     /**
-     * Returns true if this block was last calculated to be reachable.
-     * Recalculates reachability if value has never been computed.
-     *
-     * @return {@code true} if reachable
-     */
-    public boolean isReachable() {
-        if (reachable == -1) {
-            parent.computeReachability();
-        }
-        return (reachable == 1);
-    }
-
-    /**
-     * Sets reachability of block to specified value
-     *
-     * @param reach new value of reachability for block
-     */
-    public void setReachable(int reach) {
-        reachable = reach;
-    }
-
-    /**
      * Sorts move instructions added via {@code addMoveToEnd} during
      * phi removal so that results don't overwrite sources that are used.
      * For use after all phis have been removed and all calls to
@@ -932,7 +912,7 @@ public final class SsaBasicBlock {
                          * We need to move the result to a spare reg
                          * and move it back.
                          */
-                        RegisterSpec originalResultSpec
+                        com.duy.dx.rop.code.RegisterSpec originalResultSpec
                             = firstNonPhiMoveInsn.getResult();
                         int spareRegister = parent.borrowSpareRegister(
                                 originalResultSpec.getCategory());
@@ -1015,6 +995,7 @@ public final class SsaBasicBlock {
     public static final class LabelComparator
             implements Comparator<SsaBasicBlock> {
         /** {@inheritDoc} */
+        @Override
         public int compare(SsaBasicBlock b1, SsaBasicBlock b2) {
             int label1 = b1.ropLabel;
             int label2 = b2.ropLabel;

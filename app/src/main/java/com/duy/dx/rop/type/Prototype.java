@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.type;
+package com.duy.dx.rop.type;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Representation of a method descriptor. Instances of this class are
@@ -24,21 +25,25 @@ import java.util.HashMap;
  * using {@code ==}.
  */
 public final class Prototype implements Comparable<Prototype> {
-    /** {@code non-null;} intern table mapping string descriptors to instances */
-    private static final HashMap<String, Prototype> internTable =
-        new HashMap<String, Prototype>(500);
+    /**
+     * Intern table for instances.
+     *
+     * <p>The initial capacity is based on a medium-size project.
+     */
+    private static final ConcurrentMap<String, Prototype> internTable =
+            new ConcurrentHashMap<>(10_000, 0.75f);
 
     /** {@code non-null;} method descriptor */
     private final String descriptor;
 
     /** {@code non-null;} return type */
-    private final Type returnType;
+    private final com.duy.dx.rop.type.Type returnType;
 
     /** {@code non-null;} list of parameter types */
-    private final StdTypeList parameterTypes;
+    private final com.duy.dx.rop.type.StdTypeList parameterTypes;
 
     /** {@code null-ok;} list of parameter frame types, if calculated */
-    private StdTypeList parameterFrameTypes;
+    private com.duy.dx.rop.type.StdTypeList parameterFrameTypes;
 
     /**
      * Returns the unique instance corresponding to the
@@ -55,15 +60,34 @@ public final class Prototype implements Comparable<Prototype> {
             throw new NullPointerException("descriptor == null");
         }
 
-        Prototype result;
-        synchronized (internTable) {
-            result = internTable.get(descriptor);
-        }
+        Prototype result = internTable.get(descriptor);
         if (result != null) {
             return result;
         }
 
-        Type[] params = makeParameterArray(descriptor);
+        result = fromDescriptor(descriptor);
+        return putIntern(result);
+    }
+
+    /**
+     * Returns a prototype for a method descriptor.
+     *
+     * The {@code Prototype} returned will be the interned value if present,
+     * or a new instance otherwise. If a new instance is created, it is not
+     * placed in the intern table.
+     *
+     * @param descriptor {@code non-null;} the descriptor
+     * @return {@code non-null;} the corresponding instance
+     * @throws IllegalArgumentException thrown if the descriptor has
+     * invalid syntax
+     */
+    public static Prototype fromDescriptor(String descriptor) {
+        Prototype result = internTable.get(descriptor);
+        if (result != null) {
+            return result;
+        }
+
+        com.duy.dx.rop.type.Type[] params = makeParameterArray(descriptor);
         int paramCount = 0;
         int at = 1;
 
@@ -93,19 +117,22 @@ public final class Prototype implements Comparable<Prototype> {
             }
 
             params[paramCount] =
-                Type.intern(descriptor.substring(startAt, at));
+                com.duy.dx.rop.type.Type.intern(descriptor.substring(startAt, at));
             paramCount++;
         }
 
-        Type returnType = Type.internReturnType(descriptor.substring(at));
-        StdTypeList parameterTypes = new StdTypeList(paramCount);
+        com.duy.dx.rop.type.Type returnType = com.duy.dx.rop.type.Type.internReturnType(descriptor.substring(at));
+        com.duy.dx.rop.type.StdTypeList parameterTypes = new com.duy.dx.rop.type.StdTypeList(paramCount);
 
         for (int i = 0; i < paramCount; i++) {
             parameterTypes.set(i, params[i]);
         }
 
-        result = new Prototype(descriptor, returnType, parameterTypes);
-        return putIntern(result);
+        return new Prototype(descriptor, returnType, parameterTypes);
+    }
+
+    public static void clearInternTable() {
+        internTable.clear();
     }
 
     /**
@@ -118,7 +145,7 @@ public final class Prototype implements Comparable<Prototype> {
      * @return {@code non-null;} array large enough to hold all parsed parameter
      * types, but which is likely actually larger than needed
      */
-    private static Type[] makeParameterArray(String descriptor) {
+    private static com.duy.dx.rop.type.Type[] makeParameterArray(String descriptor) {
         int length = descriptor.length();
 
         if (descriptor.charAt(0) != '(') {
@@ -150,7 +177,7 @@ public final class Prototype implements Comparable<Prototype> {
             throw new IllegalArgumentException("bad descriptor");
         }
 
-        return new Type[maxParams];
+        return new com.duy.dx.rop.type.Type[maxParams];
     }
 
     /**
@@ -165,7 +192,7 @@ public final class Prototype implements Comparable<Prototype> {
      * @param isInit whether this is an init method
      * @return {@code non-null;} the interned instance
      */
-    public static Prototype intern(String descriptor, Type definer,
+    public static Prototype intern(String descriptor, com.duy.dx.rop.type.Type definer,
             boolean isStatic, boolean isInit) {
         Prototype base = intern(descriptor);
 
@@ -188,10 +215,10 @@ public final class Prototype implements Comparable<Prototype> {
      * @param count {@code > 0;} the number of elements in the prototype
      * @return {@code non-null;} the interned instance
      */
-    public static Prototype internInts(Type returnType, int count) {
+    public static Prototype internInts(com.duy.dx.rop.type.Type returnType, int count) {
         // Make the descriptor...
 
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         sb.append('(');
 
@@ -212,8 +239,8 @@ public final class Prototype implements Comparable<Prototype> {
      *
      * @param descriptor {@code non-null;} the descriptor string
      */
-    private Prototype(String descriptor, Type returnType,
-            StdTypeList parameterTypes) {
+    private Prototype(String descriptor, com.duy.dx.rop.type.Type returnType,
+            com.duy.dx.rop.type.StdTypeList parameterTypes) {
         if (descriptor == null) {
             throw new NullPointerException("descriptor == null");
         }
@@ -257,6 +284,7 @@ public final class Prototype implements Comparable<Prototype> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(Prototype other) {
         if (this == other) {
             return 0;
@@ -279,8 +307,8 @@ public final class Prototype implements Comparable<Prototype> {
         int size = Math.min(thisSize, otherSize);
 
         for (int i = 0; i < size; i++) {
-            Type thisType = parameterTypes.get(i);
-            Type otherType = other.parameterTypes.get(i);
+            com.duy.dx.rop.type.Type thisType = parameterTypes.get(i);
+            com.duy.dx.rop.type.Type otherType = other.parameterTypes.get(i);
 
             result = thisType.compareTo(otherType);
 
@@ -318,7 +346,7 @@ public final class Prototype implements Comparable<Prototype> {
      *
      * @return {@code non-null;} the return type
      */
-    public Type getReturnType() {
+    public com.duy.dx.rop.type.Type getReturnType() {
         return returnType;
     }
 
@@ -327,28 +355,28 @@ public final class Prototype implements Comparable<Prototype> {
      *
      * @return {@code non-null;} the list of parameter types
      */
-    public StdTypeList getParameterTypes() {
+    public com.duy.dx.rop.type.StdTypeList getParameterTypes() {
         return parameterTypes;
     }
 
     /**
      * Gets the list of frame types corresponding to the list of parameter
      * types. The difference between the two lists (if any) is that all
-     * "intlike" types (see {@link Type#isIntlike}) are replaced by
-     * {@link Type#INT}.
+     * "intlike" types (see {@link com.duy.dx.rop.type.Type#isIntlike}) are replaced by
+     * {@link com.duy.dx.rop.type.Type#INT}.
      *
      * @return {@code non-null;} the list of parameter frame types
      */
-    public StdTypeList getParameterFrameTypes() {
+    public com.duy.dx.rop.type.StdTypeList getParameterFrameTypes() {
         if (parameterFrameTypes == null) {
             int sz = parameterTypes.size();
-            StdTypeList list = new StdTypeList(sz);
+            com.duy.dx.rop.type.StdTypeList list = new com.duy.dx.rop.type.StdTypeList(sz);
             boolean any = false;
             for (int i = 0; i < sz; i++) {
-                Type one = parameterTypes.get(i);
+                com.duy.dx.rop.type.Type one = parameterTypes.get(i);
                 if (one.isIntlike()) {
                     any = true;
-                    one = Type.INT;
+                    one = com.duy.dx.rop.type.Type.INT;
                 }
                 list.set(i, one);
             }
@@ -387,14 +415,7 @@ public final class Prototype implements Comparable<Prototype> {
      * @return {@code non-null;} the actual interned object
      */
     private static Prototype putIntern(Prototype desc) {
-        synchronized (internTable) {
-            String descriptor = desc.getDescriptor();
-            Prototype already = internTable.get(descriptor);
-            if (already != null) {
-                return already;
-            }
-            internTable.put(descriptor, desc);
-            return desc;
-        }
+        Prototype result = internTable.putIfAbsent(desc.getDescriptor(), desc);
+        return result != null ? result : desc;
     }
 }

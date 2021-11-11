@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.MutabilityException;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.MutabilityException;
 
 /**
  * Attribute class for standard {@code Exceptions} attributes.
@@ -27,7 +27,7 @@ public final class AttExceptions extends BaseAttribute {
     public static final String ATTRIBUTE_NAME = "Exceptions";
 
     /** {@code non-null;} list of exception classes */
-    private final TypeList exceptions;
+    private final com.duy.dx.rop.type.TypeList exceptions;
 
     /**
      * Constructs an instance.
@@ -35,7 +35,7 @@ public final class AttExceptions extends BaseAttribute {
      * @param exceptions {@code non-null;} list of classes, presumed but not
      * verified to be subclasses of {@code Throwable}
      */
-    public AttExceptions(TypeList exceptions) {
+    public AttExceptions(com.duy.dx.rop.type.TypeList exceptions) {
         super(ATTRIBUTE_NAME);
 
         try {
@@ -51,6 +51,7 @@ public final class AttExceptions extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         return 8 + exceptions.size() * 2;
     }

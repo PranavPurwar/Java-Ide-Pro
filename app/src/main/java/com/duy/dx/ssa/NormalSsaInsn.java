@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
 
 /**
  * A "normal" (non-phi) instruction in SSA form. Always wraps a rop insn.
  */
 public final class NormalSsaInsn extends SsaInsn implements Cloneable {
     /** {@code non-null;} rop insn that we're wrapping */
-    private Insn insn;
+    private com.duy.dx.rop.code.Insn insn;
 
     /**
      * Creates an instance.
@@ -36,7 +36,7 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
      * @param insn Rop insn to wrap
      * @param block block that contains this insn
      */
-    NormalSsaInsn(final Insn insn, final SsaBasicBlock block) {
+    NormalSsaInsn(final com.duy.dx.rop.code.Insn insn, final SsaBasicBlock block) {
         super(insn.getResult(), block);
         this.insn = insn;
     }
@@ -44,8 +44,8 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
     /** {@inheritDoc} */
     @Override
     public final void mapSourceRegisters(RegisterMapper mapper) {
-        RegisterSpecList oldSources = insn.getSources();
-        RegisterSpecList newSources = mapper.map(oldSources);
+        com.duy.dx.rop.code.RegisterSpecList oldSources = insn.getSources();
+        com.duy.dx.rop.code.RegisterSpecList newSources = mapper.map(oldSources);
 
         if (newSources != oldSources) {
             insn = insn.withNewRegisters(getResult(), newSources);
@@ -60,10 +60,10 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
      * @param index {@code >=0;} index of source to change
      * @param newSpec spec for new source
      */
-    public final void changeOneSource(int index, RegisterSpec newSpec) {
-        RegisterSpecList origSources = insn.getSources();
+    public final void changeOneSource(int index, com.duy.dx.rop.code.RegisterSpec newSpec) {
+        com.duy.dx.rop.code.RegisterSpecList origSources = insn.getSources();
         int sz = origSources.size();
-        RegisterSpecList newSources = new RegisterSpecList(sz);
+        com.duy.dx.rop.code.RegisterSpecList newSources = new com.duy.dx.rop.code.RegisterSpecList(sz);
 
         for (int i = 0; i < sz; i++) {
             newSources.set(i, i == index ? newSpec : origSources.get(i));
@@ -71,7 +71,7 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
 
         newSources.setImmutable();
 
-        RegisterSpec origSpec = origSources.get(index);
+        com.duy.dx.rop.code.RegisterSpec origSpec = origSources.get(index);
         if (origSpec.getReg() != newSpec.getReg()) {
             /*
              * If the register remains unchanged, we're only changing
@@ -89,8 +89,8 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
      *
      * @param newSources non-null new sources list.
      */
-    public final void setNewSources (RegisterSpecList newSources) {
-        RegisterSpecList origSources = insn.getSources();
+    public final void setNewSources (com.duy.dx.rop.code.RegisterSpecList newSources) {
+        com.duy.dx.rop.code.RegisterSpecList origSources = insn.getSources();
 
         if (origSources.size() != newSources.size()) {
             throw new RuntimeException("Sources counts don't match");
@@ -111,18 +111,19 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
      * @return {@code null-ok;} sources list
      */
     @Override
-    public RegisterSpecList getSources() {
+    public com.duy.dx.rop.code.RegisterSpecList getSources() {
         return insn.getSources();
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         return toRopInsn().toHuman();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Insn toRopInsn() {
+    public com.duy.dx.rop.code.Insn toRopInsn() {
         return insn.withNewRegisters(getResult(), insn.getSources());
     }
 
@@ -130,22 +131,22 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
      * @return the Rop opcode for this insn
      */
     @Override
-    public Rop getOpcode() {
+    public com.duy.dx.rop.code.Rop getOpcode() {
         return insn.getOpcode();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Insn getOriginalRopInsn() {
+    public com.duy.dx.rop.code.Insn getOriginalRopInsn() {
         return insn;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RegisterSpec getLocalAssignment() {
+    public com.duy.dx.rop.code.RegisterSpec getLocalAssignment() {
         RegisterSpec assignment;
 
-        if (insn.getOpcode().getOpcode() == RegOps.MARK_LOCAL) {
+        if (insn.getOpcode().getOpcode() == com.duy.dx.rop.code.RegOps.MARK_LOCAL) {
             assignment = insn.getSources().get(0);
         } else {
             assignment = getResult();
@@ -182,13 +183,13 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
      */
     @Override
     public boolean isNormalMoveInsn() {
-        return insn.getOpcode().getOpcode() == RegOps.MOVE;
+        return insn.getOpcode().getOpcode() == com.duy.dx.rop.code.RegOps.MOVE;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isMoveException() {
-        return insn.getOpcode().getOpcode() == RegOps.MOVE_EXCEPTION;
+        return insn.getOpcode().getOpcode() == com.duy.dx.rop.code.RegOps.MOVE_EXCEPTION;
     }
 
     /** {@inheritDoc} */
@@ -220,7 +221,7 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
      */
     @Override
     public boolean hasSideEffect() {
-        Rop opcode = getOpcode();
+        com.duy.dx.rop.code.Rop opcode = getOpcode();
 
         if (opcode.getBranchingness() != Rop.BRANCH_NONE) {
             return true;
@@ -230,8 +231,8 @@ public final class NormalSsaInsn extends SsaInsn implements Cloneable {
             = Optimizer.getPreserveLocals() && getLocalAssignment() != null;
 
         switch (opcode.getOpcode()) {
-            case RegOps.MOVE_RESULT:
-            case RegOps.MOVE:
+            case com.duy.dx.rop.code.RegOps.MOVE_RESULT:
+            case com.duy.dx.rop.code.RegOps.MOVE:
             case RegOps.CONST:
                 return hasLocalSideEffect;
             default:

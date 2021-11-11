@@ -14,51 +14,52 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.type.Prototype;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
 import java.util.ArrayList;
 
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.type.Prototype;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+
 /**
- * Base implementation of {@link Machine}.
+ * Base implementation of {@link com.duy.dx.cf.code.Machine}.
  *
  * <p><b>Note:</b> For the most part, the documentation for this class
- * ignores the distinction between {@link Type} and {@link
- * TypeBearer}.</p>
+ * ignores the distinction between {@link com.duy.dx.rop.type.Type} and {@link
+ * com.duy.dx.rop.type.TypeBearer}.</p>
  */
 public abstract class BaseMachine implements Machine {
     /* {@code non-null;} the prototype for the associated method */
-    private final Prototype prototype;
+    private final com.duy.dx.rop.type.Prototype prototype;
 
     /** {@code non-null;} primary arguments */
-    private TypeBearer[] args;
+    private com.duy.dx.rop.type.TypeBearer[] args;
 
     /** {@code >= 0;} number of primary arguments */
     private int argCount;
 
     /** {@code null-ok;} type of the operation, if salient */
-    private Type auxType;
+    private com.duy.dx.rop.type.Type auxType;
 
     /** auxiliary {@code int} argument */
     private int auxInt;
 
     /** {@code null-ok;} auxiliary constant argument */
-    private Constant auxCst;
+    private com.duy.dx.rop.cst.Constant auxCst;
 
     /** auxiliary branch target argument */
     private int auxTarget;
 
     /** {@code null-ok;} auxiliary switch cases argument */
-    private SwitchList auxCases;
+    private com.duy.dx.cf.code.SwitchList auxCases;
 
     /** {@code null-ok;} auxiliary initial value list for newarray */
-    private ArrayList<Constant> auxInitValues;
+    private ArrayList<com.duy.dx.rop.cst.Constant> auxInitValues;
 
     /** {@code >= -1;} last local accessed */
     private int localIndex;
@@ -67,10 +68,10 @@ public abstract class BaseMachine implements Machine {
     private boolean localInfo;
 
     /** {@code null-ok;} local target spec, if salient and calculated */
-    private RegisterSpec localTarget;
+    private com.duy.dx.rop.code.RegisterSpec localTarget;
 
     /** {@code non-null;} results */
-    private TypeBearer[] results;
+    private com.duy.dx.rop.type.TypeBearer[] results;
 
     /**
      * {@code >= -1;} count of the results, or {@code -1} if no results
@@ -84,23 +85,25 @@ public abstract class BaseMachine implements Machine {
      * @param prototype {@code non-null;} the prototype for the
      * associated method
      */
-    public BaseMachine(Prototype prototype) {
+    public BaseMachine(com.duy.dx.rop.type.Prototype prototype) {
         if (prototype == null) {
             throw new NullPointerException("prototype == null");
         }
 
         this.prototype = prototype;
-        args = new TypeBearer[10];
-        results = new TypeBearer[6];
+        args = new com.duy.dx.rop.type.TypeBearer[10];
+        results = new com.duy.dx.rop.type.TypeBearer[6];
         clearArgs();
     }
 
     /** {@inheritDoc} */
-    public Prototype getPrototype() {
+    @Override
+    public com.duy.dx.rop.type.Prototype getPrototype() {
         return prototype;
     }
 
     /** {@inheritDoc} */
+    @Override
     public final void clearArgs() {
         argCount = 0;
         auxType = null;
@@ -116,14 +119,15 @@ public abstract class BaseMachine implements Machine {
     }
 
     /** {@inheritDoc} */
-    public final void popArgs(Frame frame, int count) {
-        ExecutionStack stack = frame.getStack();
+    @Override
+    public final void popArgs(com.duy.dx.cf.code.Frame frame, int count) {
+        com.duy.dx.cf.code.ExecutionStack stack = frame.getStack();
 
         clearArgs();
 
         if (count > args.length) {
             // Grow args, and add a little extra room to grow even more.
-            args = new TypeBearer[count + 10];
+            args = new com.duy.dx.rop.type.TypeBearer[count + 10];
         }
 
         for (int i = count - 1; i >= 0; i--) {
@@ -134,7 +138,8 @@ public abstract class BaseMachine implements Machine {
     }
 
     /** {@inheritDoc} */
-    public void popArgs(Frame frame, Prototype prototype) {
+    @Override
+    public void popArgs(com.duy.dx.cf.code.Frame frame, Prototype prototype) {
         StdTypeList types = prototype.getParameterTypes();
         int size = types.size();
 
@@ -144,7 +149,7 @@ public abstract class BaseMachine implements Machine {
         // ...and then verify the popped types.
 
         for (int i = 0; i < size; i++) {
-            if (! Merger.isPossiblyAssignableFrom(types.getType(i), args[i])) {
+            if (! com.duy.dx.cf.code.Merger.isPossiblyAssignableFrom(types.getType(i), args[i])) {
                 throw new SimException("at stack depth " + (size - 1 - i) +
                         ", expected type " + types.getType(i).toHuman() +
                         " but found " + args[i].getType().toHuman());
@@ -152,61 +157,65 @@ public abstract class BaseMachine implements Machine {
         }
     }
 
-    public final void popArgs(Frame frame, Type type) {
+    @Override
+    public final void popArgs(com.duy.dx.cf.code.Frame frame, com.duy.dx.rop.type.Type type) {
         // Use the above method to do the actual popping...
         popArgs(frame, 1);
 
         // ...and then verify the popped type.
-        if (! Merger.isPossiblyAssignableFrom(type, args[0])) {
+        if (! com.duy.dx.cf.code.Merger.isPossiblyAssignableFrom(type, args[0])) {
             throw new SimException("expected type " + type.toHuman() +
                     " but found " + args[0].getType().toHuman());
         }
     }
 
     /** {@inheritDoc} */
-    public final void popArgs(Frame frame, Type type1, Type type2) {
+    @Override
+    public final void popArgs(com.duy.dx.cf.code.Frame frame, com.duy.dx.rop.type.Type type1, com.duy.dx.rop.type.Type type2) {
         // Use the above method to do the actual popping...
         popArgs(frame, 2);
 
         // ...and then verify the popped types.
 
-        if (! Merger.isPossiblyAssignableFrom(type1, args[0])) {
+        if (! com.duy.dx.cf.code.Merger.isPossiblyAssignableFrom(type1, args[0])) {
             throw new SimException("expected type " + type1.toHuman() +
                     " but found " + args[0].getType().toHuman());
         }
 
-        if (! Merger.isPossiblyAssignableFrom(type2, args[1])) {
+        if (! com.duy.dx.cf.code.Merger.isPossiblyAssignableFrom(type2, args[1])) {
             throw new SimException("expected type " + type2.toHuman() +
                     " but found " + args[1].getType().toHuman());
         }
     }
 
     /** {@inheritDoc} */
-    public final void popArgs(Frame frame, Type type1, Type type2,
-            Type type3) {
+    @Override
+    public final void popArgs(com.duy.dx.cf.code.Frame frame, com.duy.dx.rop.type.Type type1, com.duy.dx.rop.type.Type type2,
+                              com.duy.dx.rop.type.Type type3) {
         // Use the above method to do the actual popping...
         popArgs(frame, 3);
 
         // ...and then verify the popped types.
 
-        if (! Merger.isPossiblyAssignableFrom(type1, args[0])) {
+        if (! com.duy.dx.cf.code.Merger.isPossiblyAssignableFrom(type1, args[0])) {
             throw new SimException("expected type " + type1.toHuman() +
                     " but found " + args[0].getType().toHuman());
         }
 
-        if (! Merger.isPossiblyAssignableFrom(type2, args[1])) {
+        if (! com.duy.dx.cf.code.Merger.isPossiblyAssignableFrom(type2, args[1])) {
             throw new SimException("expected type " + type2.toHuman() +
                     " but found " + args[1].getType().toHuman());
         }
 
-        if (! Merger.isPossiblyAssignableFrom(type3, args[2])) {
+        if (! com.duy.dx.cf.code.Merger.isPossiblyAssignableFrom(type3, args[2])) {
             throw new SimException("expected type " + type3.toHuman() +
                     " but found " + args[2].getType().toHuman());
         }
     }
 
     /** {@inheritDoc} */
-    public final void localArg(Frame frame, int idx) {
+    @Override
+    public final void localArg(com.duy.dx.cf.code.Frame frame, int idx) {
         clearArgs();
         args[0] = frame.getLocals().get(idx);
         argCount = 1;
@@ -214,22 +223,26 @@ public abstract class BaseMachine implements Machine {
     }
 
     /** {@inheritDoc} */
+    @Override
     public final void localInfo(boolean local) {
         localInfo = local;
     }
 
     /** {@inheritDoc} */
-    public final void auxType(Type type) {
+    @Override
+    public final void auxType(com.duy.dx.rop.type.Type type) {
         auxType = type;
     }
 
     /** {@inheritDoc} */
+    @Override
     public final void auxIntArg(int value) {
         auxInt = value;
     }
 
     /** {@inheritDoc} */
-    public final void auxCstArg(Constant cst) {
+    @Override
+    public final void auxCstArg(com.duy.dx.rop.cst.Constant cst) {
         if (cst == null) {
             throw new NullPointerException("cst == null");
         }
@@ -238,12 +251,14 @@ public abstract class BaseMachine implements Machine {
     }
 
     /** {@inheritDoc} */
+    @Override
     public final void auxTargetArg(int target) {
         auxTarget = target;
     }
 
     /** {@inheritDoc} */
-    public final void auxSwitchArg(SwitchList cases) {
+    @Override
+    public final void auxSwitchArg(com.duy.dx.cf.code.SwitchList cases) {
         if (cases == null) {
             throw new NullPointerException("cases == null");
         }
@@ -252,13 +267,15 @@ public abstract class BaseMachine implements Machine {
     }
 
     /** {@inheritDoc} */
-    public final void auxInitValues(ArrayList<Constant> initValues) {
+    @Override
+    public final void auxInitValues(ArrayList<com.duy.dx.rop.cst.Constant> initValues) {
         auxInitValues = initValues;
     }
 
     /** {@inheritDoc} */
-    public final void localTarget(int idx, Type type, LocalItem local) {
-        localTarget = RegisterSpec.makeLocalOptional(idx, type, local);
+    @Override
+    public final void localTarget(int idx, com.duy.dx.rop.type.Type type, LocalItem local) {
+        localTarget = com.duy.dx.rop.code.RegisterSpec.makeLocalOptional(idx, type, local);
     }
 
     /**
@@ -292,7 +309,7 @@ public abstract class BaseMachine implements Machine {
      * @param n {@code >= 0, < argCount();} which argument
      * @return {@code non-null;} the indicated argument
      */
-    protected final TypeBearer arg(int n) {
+    protected final com.duy.dx.rop.type.TypeBearer arg(int n) {
         if (n >= argCount) {
             throw new IllegalArgumentException("n >= argCount");
         }
@@ -310,7 +327,7 @@ public abstract class BaseMachine implements Machine {
      *
      * @return {@code null-ok;} the salient type
      */
-    protected final Type getAuxType() {
+    protected final com.duy.dx.rop.type.Type getAuxType() {
         return auxType;
     }
 
@@ -328,7 +345,7 @@ public abstract class BaseMachine implements Machine {
      *
      * @return {@code null-ok;} the argument value
      */
-    protected final Constant getAuxCst() {
+    protected final com.duy.dx.rop.cst.Constant getAuxCst() {
         return auxCst;
     }
 
@@ -401,9 +418,9 @@ public abstract class BaseMachine implements Machine {
                     ((resultCount == 0) ? "no" : "multiple") + " results");
         }
 
-        TypeBearer result = results[0];
-        Type resultType = result.getType();
-        Type localType = localTarget.getType();
+        com.duy.dx.rop.type.TypeBearer result = results[0];
+        com.duy.dx.rop.type.Type resultType = result.getType();
+        com.duy.dx.rop.type.Type localType = localTarget.getType();
 
         if (resultType == localType) {
             /*
@@ -450,7 +467,7 @@ public abstract class BaseMachine implements Machine {
      *
      * @param result {@code non-null;} result value
      */
-    protected final void setResult(TypeBearer result) {
+    protected final void setResult(com.duy.dx.rop.type.TypeBearer result) {
         if (result == null) {
             throw new NullPointerException("result == null");
         }
@@ -466,7 +483,7 @@ public abstract class BaseMachine implements Machine {
      *
      * @param result {@code non-null;} result value
      */
-    protected final void addResult(TypeBearer result) {
+    protected final void addResult(com.duy.dx.rop.type.TypeBearer result) {
         if (result == null) {
             throw new NullPointerException("result == null");
         }
@@ -511,7 +528,7 @@ public abstract class BaseMachine implements Machine {
      * @param n {@code >= 0, < resultCount();} which result
      * @return {@code non-null;} the indicated result value
      */
-    protected final TypeBearer result(int n) {
+    protected final com.duy.dx.rop.type.TypeBearer result(int n) {
         if (n >= resultCount) {
             throw new IllegalArgumentException("n >= resultCount");
         }
@@ -566,8 +583,8 @@ public abstract class BaseMachine implements Machine {
      * @param found {@code non-null;} the encountered type
      * @param local {@code non-null;} the local variable's claimed type
      */
-    public static void throwLocalMismatch(TypeBearer found,
-            TypeBearer local) {
+    public static void throwLocalMismatch(com.duy.dx.rop.type.TypeBearer found,
+                                          TypeBearer local) {
         throw new SimException("local variable type mismatch: " +
                 "attempt to set or access a value of type " +
                 found.toHuman() +

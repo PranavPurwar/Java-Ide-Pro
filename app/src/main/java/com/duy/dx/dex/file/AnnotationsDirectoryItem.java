@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .rop.annotation.AnnotationsList;
-import com.duy.dx .rop.cst.CstFieldRef;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
-
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.rop.annotation.AnnotationsList;
+import com.duy.dx.rop.cst.CstFieldRef;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +29,7 @@ import java.util.Collections;
 /**
  * Per-class directory of annotations.
  */
-public final class AnnotationsDirectoryItem extends OffsettedItem {
+public final class AnnotationsDirectoryItem extends com.duy.dx.dex.file.OffsettedItem {
     /** the required alignment for instances of this class */
     private static final int ALIGNMENT = 4;
 
@@ -41,16 +40,16 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
     private static final int ELEMENT_SIZE = 8;
 
     /** {@code null-ok;} the class-level annotations, if any */
-    private AnnotationSetItem classAnnotations;
+    private com.duy.dx.dex.file.AnnotationSetItem classAnnotations;
 
     /** {@code null-ok;} the annotated fields, if any */
-    private ArrayList<FieldAnnotationStruct> fieldAnnotations;
+    private ArrayList<com.duy.dx.dex.file.FieldAnnotationStruct> fieldAnnotations;
 
     /** {@code null-ok;} the annotated methods, if any */
-    private ArrayList<MethodAnnotationStruct> methodAnnotations;
+    private ArrayList<com.duy.dx.dex.file.MethodAnnotationStruct> methodAnnotations;
 
     /** {@code null-ok;} the annotated parameters, if any */
-    private ArrayList<ParameterAnnotationStruct> parameterAnnotations;
+    private ArrayList<com.duy.dx.dex.file.ParameterAnnotationStruct> parameterAnnotations;
 
     /**
      * Constructs an empty instance.
@@ -117,7 +116,7 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
      * @see #isInternable
      */
     @Override
-    public int compareTo0(OffsettedItem other) {
+    public int compareTo0(com.duy.dx.dex.file.OffsettedItem other) {
         if (! isInternable()) {
             throw new UnsupportedOperationException("uninternable instance");
         }
@@ -135,7 +134,7 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
      * @param annotations {@code non-null;} annotations to set for this class
      * @param dexFile {@code non-null;} dex output
      */
-    public void setClassAnnotations(Annotations annotations, DexFile dexFile) {
+    public void setClassAnnotations(Annotations annotations, com.duy.dx.dex.file.DexFile dexFile) {
         if (annotations == null) {
             throw new NullPointerException("annotations == null");
         }
@@ -145,7 +144,7 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
                     "class annotations already set");
         }
 
-        classAnnotations = new AnnotationSetItem(annotations, dexFile);
+        classAnnotations = new com.duy.dx.dex.file.AnnotationSetItem(annotations, dexFile);
     }
 
     /**
@@ -156,13 +155,13 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
      * @param dexFile {@code non-null;} dex output
      */
     public void addFieldAnnotations(CstFieldRef field,
-            Annotations annotations, DexFile dexFile) {
+            Annotations annotations, com.duy.dx.dex.file.DexFile dexFile) {
         if (fieldAnnotations == null) {
-            fieldAnnotations = new ArrayList<FieldAnnotationStruct>();
+            fieldAnnotations = new ArrayList<com.duy.dx.dex.file.FieldAnnotationStruct>();
         }
 
-        fieldAnnotations.add(new FieldAnnotationStruct(field,
-                        new AnnotationSetItem(annotations, dexFile)));
+        fieldAnnotations.add(new com.duy.dx.dex.file.FieldAnnotationStruct(field,
+                        new com.duy.dx.dex.file.AnnotationSetItem(annotations, dexFile)));
     }
 
     /**
@@ -173,12 +172,12 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
      * @param dexFile {@code non-null;} dex output
      */
     public void addMethodAnnotations(CstMethodRef method,
-            Annotations annotations, DexFile dexFile) {
+            Annotations annotations, com.duy.dx.dex.file.DexFile dexFile) {
         if (methodAnnotations == null) {
-            methodAnnotations = new ArrayList<MethodAnnotationStruct>();
+            methodAnnotations = new ArrayList<com.duy.dx.dex.file.MethodAnnotationStruct>();
         }
 
-        methodAnnotations.add(new MethodAnnotationStruct(method,
+        methodAnnotations.add(new com.duy.dx.dex.file.MethodAnnotationStruct(method,
                         new AnnotationSetItem(annotations, dexFile)));
     }
 
@@ -190,12 +189,12 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
      * @param dexFile {@code non-null;} dex output
      */
     public void addParameterAnnotations(CstMethodRef method,
-            AnnotationsList list, DexFile dexFile) {
+            AnnotationsList list, com.duy.dx.dex.file.DexFile dexFile) {
         if (parameterAnnotations == null) {
-            parameterAnnotations = new ArrayList<ParameterAnnotationStruct>();
+            parameterAnnotations = new ArrayList<com.duy.dx.dex.file.ParameterAnnotationStruct>();
         }
 
-        parameterAnnotations.add(new ParameterAnnotationStruct(method, list, dexFile));
+        parameterAnnotations.add(new com.duy.dx.dex.file.ParameterAnnotationStruct(method, list, dexFile));
     }
 
     /**
@@ -210,7 +209,7 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
             return null;
         }
 
-        for (MethodAnnotationStruct item : methodAnnotations) {
+        for (com.duy.dx.dex.file.MethodAnnotationStruct item : methodAnnotations) {
             if (item.getMethod().equals(method)) {
                 return item.getAnnotations();
             }
@@ -231,7 +230,7 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
             return null;
         }
 
-        for (ParameterAnnotationStruct item : parameterAnnotations) {
+        for (com.duy.dx.dex.file.ParameterAnnotationStruct item : parameterAnnotations) {
             if (item.getMethod().equals(method)) {
                 return item.getAnnotationsList();
             }
@@ -241,7 +240,8 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
     }
 
     /** {@inheritDoc} */
-    public void addContents(DexFile file) {
+    @Override
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
         MixedItemSection wordData = file.getWordData();
 
         if (classAnnotations != null) {
@@ -249,19 +249,19 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
         }
 
         if (fieldAnnotations != null) {
-            for (FieldAnnotationStruct item : fieldAnnotations) {
+            for (com.duy.dx.dex.file.FieldAnnotationStruct item : fieldAnnotations) {
                 item.addContents(file);
             }
         }
 
         if (methodAnnotations != null) {
-            for (MethodAnnotationStruct item : methodAnnotations) {
+            for (com.duy.dx.dex.file.MethodAnnotationStruct item : methodAnnotations) {
                 item.addContents(file);
             }
         }
 
         if (parameterAnnotations != null) {
-            for (ParameterAnnotationStruct item : parameterAnnotations) {
+            for (com.duy.dx.dex.file.ParameterAnnotationStruct item : parameterAnnotations) {
                 item.addContents(file);
             }
         }
@@ -313,7 +313,7 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
             if (annotates) {
                 out.annotate(0, "  fields:");
             }
-            for (FieldAnnotationStruct item : fieldAnnotations) {
+            for (com.duy.dx.dex.file.FieldAnnotationStruct item : fieldAnnotations) {
                 item.writeTo(file, out);
             }
         }
@@ -323,7 +323,7 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
             if (annotates) {
                 out.annotate(0, "  methods:");
             }
-            for (MethodAnnotationStruct item : methodAnnotations) {
+            for (com.duy.dx.dex.file.MethodAnnotationStruct item : methodAnnotations) {
                 item.writeTo(file, out);
             }
         }
@@ -333,7 +333,7 @@ public final class AnnotationsDirectoryItem extends OffsettedItem {
             if (annotates) {
                 out.annotate(0, "  parameters:");
             }
-            for (ParameterAnnotationStruct item : parameterAnnotations) {
+            for (com.duy.dx.dex.file.ParameterAnnotationStruct item : parameterAnnotations) {
                 item.writeTo(file, out);
             }
         }

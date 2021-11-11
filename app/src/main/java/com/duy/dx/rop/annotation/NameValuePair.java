@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.annotation;
+package com.duy.dx.rop.annotation;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstString;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstString;
 
 /**
  * A (name, value) pair. These are used as the contents of an annotation.
  */
 public final class NameValuePair implements Comparable<NameValuePair> {
     /** {@code non-null;} the name */
-    private final CstString name;
+    private final com.duy.dx.rop.cst.CstString name;
 
     /** {@code non-null;} the value */
-    private final Constant value;
+    private final com.duy.dx.rop.cst.Constant value;
 
     /**
      * Construct an instance.
@@ -35,7 +35,7 @@ public final class NameValuePair implements Comparable<NameValuePair> {
      * @param name {@code non-null;} the name
      * @param value {@code non-null;} the value
      */
-    public NameValuePair(CstString name, Constant value) {
+    public NameValuePair(com.duy.dx.rop.cst.CstString name, com.duy.dx.rop.cst.Constant value) {
         if (name == null) {
             throw new NullPointerException("name == null");
         }
@@ -49,16 +49,19 @@ public final class NameValuePair implements Comparable<NameValuePair> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return name.toHuman() + ":" + value;
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return name.hashCode() * 31 + value.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (! (other instanceof NameValuePair)) {
             return false;
@@ -76,6 +79,7 @@ public final class NameValuePair implements Comparable<NameValuePair> {
      * <p>Instances of this class compare in name-major and value-minor
      * order.</p>
      */
+    @Override
     public int compareTo(NameValuePair other) {
         int result = name.compareTo(other.name);
 

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .io.instructions;
+package com.duy.dx.io.instructions;
 
 /**
  * A decoded Dalvik instruction which contains the payload for
  * a {@code packed-switch} instruction.
  */
 public final class FillArrayDataPayloadDecodedInstruction
-        extends DecodedInstruction {
+        extends com.duy.dx.io.instructions.DecodedInstruction {
     /** data array */
     private final Object data;
 
@@ -35,8 +35,8 @@ public final class FillArrayDataPayloadDecodedInstruction
      * Constructs an instance. This private instance doesn't check the
      * type of the data array.
      */
-    private FillArrayDataPayloadDecodedInstruction(InstructionCodec format,
-            int opcode, Object data, int size, int elementWidth) {
+    private FillArrayDataPayloadDecodedInstruction(com.duy.dx.io.instructions.InstructionCodec format,
+                                                   int opcode, Object data, int size, int elementWidth) {
         super(format, opcode, 0, null, 0, 0L);
 
         this.data = data;
@@ -47,24 +47,24 @@ public final class FillArrayDataPayloadDecodedInstruction
     /**
      * Constructs an instance.
      */
-    public FillArrayDataPayloadDecodedInstruction(InstructionCodec format,
-            int opcode, byte[] data) {
+    public FillArrayDataPayloadDecodedInstruction(com.duy.dx.io.instructions.InstructionCodec format,
+                                                  int opcode, byte[] data) {
         this(format, opcode, data, data.length, 1);
     }
 
     /**
      * Constructs an instance.
      */
-    public FillArrayDataPayloadDecodedInstruction(InstructionCodec format,
-            int opcode, short[] data) {
+    public FillArrayDataPayloadDecodedInstruction(com.duy.dx.io.instructions.InstructionCodec format,
+                                                  int opcode, short[] data) {
         this(format, opcode, data, data.length, 2);
     }
 
     /**
      * Constructs an instance.
      */
-    public FillArrayDataPayloadDecodedInstruction(InstructionCodec format,
-            int opcode, int[] data) {
+    public FillArrayDataPayloadDecodedInstruction(com.duy.dx.io.instructions.InstructionCodec format,
+                                                  int opcode, int[] data) {
         this(format, opcode, data, data.length, 4);
     }
 
@@ -72,11 +72,12 @@ public final class FillArrayDataPayloadDecodedInstruction
      * Constructs an instance.
      */
     public FillArrayDataPayloadDecodedInstruction(InstructionCodec format,
-            int opcode, long[] data) {
+                                                  int opcode, long[] data) {
         this(format, opcode, data, data.length, 8);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public int getRegisterCount() {
         return 0;
     }
@@ -93,7 +94,8 @@ public final class FillArrayDataPayloadDecodedInstruction
         return data;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
+    @Override
     public DecodedInstruction withIndex(int newIndex) {
         throw new UnsupportedOperationException("no index in instruction");
     }

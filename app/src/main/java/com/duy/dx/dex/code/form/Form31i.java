@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code.form;
+package com.duy.dx.dex.code.form;
 
-import com.duy.dx .dex.code.CstInsn;
-import com.duy.dx .dex.code.DalvInsn;
-import com.duy.dx .dex.code.InsnFormat;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstLiteralBits;
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.dex.code.CstInsn;
+import com.duy.dx.dex.code.DalvInsn;
+import com.duy.dx.dex.code.InsnFormat;
+import com.duy.dx.util.AnnotatedOutput;
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstLiteralBits;
 
 /**
  * Instruction format {@code 31i}. See the instruction format spec
@@ -44,8 +45,8 @@ public final class Form31i extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public String insnArgString(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
-        CstLiteralBits value = (CstLiteralBits) ((CstInsn) insn).getConstant();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.cst.CstLiteralBits value = (com.duy.dx.rop.cst.CstLiteralBits) ((CstInsn) insn).getConstant();
 
         return regs.get(0).regString() + ", " + literalBitsString(value);
     }
@@ -53,7 +54,7 @@ public final class Form31i extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public String insnCommentString(DalvInsn insn, boolean noteIndices) {
-        CstLiteralBits value = (CstLiteralBits) ((CstInsn) insn).getConstant();
+        com.duy.dx.rop.cst.CstLiteralBits value = (com.duy.dx.rop.cst.CstLiteralBits) ((CstInsn) insn).getConstant();
         return literalBitsComment(value, 32);
     }
 
@@ -66,7 +67,7 @@ public final class Form31i extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public boolean isCompatible(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
         if (!((insn instanceof CstInsn) &&
               (regs.size() == 1) &&
               unsignedFitsInByte(regs.get(0).getReg()))) {
@@ -76,17 +77,17 @@ public final class Form31i extends InsnFormat {
         CstInsn ci = (CstInsn) insn;
         Constant cst = ci.getConstant();
 
-        if (!(cst instanceof CstLiteralBits)) {
+        if (!(cst instanceof com.duy.dx.rop.cst.CstLiteralBits)) {
             return false;
         }
 
-        return ((CstLiteralBits) cst).fitsInInt();
+        return ((com.duy.dx.rop.cst.CstLiteralBits) cst).fitsInInt();
     }
 
     /** {@inheritDoc} */
     @Override
     public BitSet compatibleRegs(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
         BitSet bits = new BitSet(1);
 
         bits.set(0, unsignedFitsInByte(regs.get(0).getReg()));

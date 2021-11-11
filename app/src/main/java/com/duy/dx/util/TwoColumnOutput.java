@@ -1,4 +1,20 @@
-package com.duy.dx .util;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.duy.dx.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,10 +41,10 @@ public final class TwoColumnOutput {
     private final StringBuffer rightBuf;
 
     /** {@code non-null;} left column writer */
-    private final IndentingWriter leftColumn;
+    private final com.duy.dx.util.IndentingWriter leftColumn;
 
     /** {@code non-null;} right column writer */
-    private final IndentingWriter rightColumn;
+    private final com.duy.dx.util.IndentingWriter rightColumn;
 
     /**
      * Turns the given two strings (with widths) and spacer into a formatted
@@ -94,7 +110,7 @@ public final class TwoColumnOutput {
         this.leftWidth = leftWidth;
         this.leftBuf = leftWriter.getBuffer();
         this.rightBuf = rightWriter.getBuffer();
-        this.leftColumn = new IndentingWriter(leftWriter, leftWidth);
+        this.leftColumn = new com.duy.dx.util.IndentingWriter(leftWriter, leftWidth);
         this.rightColumn =
             new IndentingWriter(rightWriter, rightWidth, spacer);
     }

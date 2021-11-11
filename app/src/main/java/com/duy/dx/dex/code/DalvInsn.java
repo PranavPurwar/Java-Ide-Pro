@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
-
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .ssa.RegisterMapper;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.TwoColumnOutput;
+package com.duy.dx.dex.code;
 
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.ssa.RegisterMapper;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.TwoColumnOutput;
 
 /**
  * Base class for Dalvik instructions.
@@ -37,13 +37,13 @@ public abstract class DalvInsn {
     private int address;
 
     /** the opcode; one of the constants from {@link Dops} */
-    private final Dop opcode;
+    private final com.duy.dx.dex.code.Dop opcode;
 
     /** {@code non-null;} source position */
-    private final SourcePosition position;
+    private final com.duy.dx.rop.code.SourcePosition position;
 
     /** {@code non-null;} list of register arguments */
-    private final RegisterSpecList registers;
+    private final com.duy.dx.rop.code.RegisterSpecList registers;
 
     /**
      * Makes a move instruction, appropriate and ideal for the given arguments.
@@ -53,13 +53,13 @@ public abstract class DalvInsn {
      * @param src {@code non-null;} source register
      * @return {@code non-null;} an appropriately-constructed instance
      */
-    public static SimpleInsn makeMove(SourcePosition position,
-            RegisterSpec dest, RegisterSpec src) {
+    public static SimpleInsn makeMove(com.duy.dx.rop.code.SourcePosition position,
+                                      com.duy.dx.rop.code.RegisterSpec dest, com.duy.dx.rop.code.RegisterSpec src) {
         boolean category1 = dest.getCategory() == 1;
         boolean reference = dest.getType().isReference();
         int destReg = dest.getReg();
         int srcReg = src.getReg();
-        Dop opcode;
+        com.duy.dx.dex.code.Dop opcode;
 
         if ((srcReg | destReg) < 16) {
             opcode = reference ? Dops.MOVE_OBJECT :
@@ -73,7 +73,7 @@ public abstract class DalvInsn {
         }
 
         return new SimpleInsn(opcode, position,
-                              RegisterSpecList.make(dest, src));
+                              com.duy.dx.rop.code.RegisterSpecList.make(dest, src));
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class DalvInsn {
      * absolutely no registers (e.g., a {@code nop} or a
      * no-argument no-result static method call), then the given
      * register list may be passed as {@link
-     * RegisterSpecList#EMPTY}.</p>
+     * com.duy.dx.rop.code.RegisterSpecList#EMPTY}.</p>
      *
      * @param opcode the opcode; one of the constants from {@link Dops}
      * @param position {@code non-null;} source position
@@ -92,8 +92,8 @@ public abstract class DalvInsn {
      * result register if appropriate (that is, registers may be either
      * ins and outs)
      */
-    public DalvInsn(Dop opcode, SourcePosition position,
-                    RegisterSpecList registers) {
+    public DalvInsn(com.duy.dx.dex.code.Dop opcode, com.duy.dx.rop.code.SourcePosition position,
+                    com.duy.dx.rop.code.RegisterSpecList registers) {
         if (opcode == null) {
             throw new NullPointerException("opcode == null");
         }
@@ -115,7 +115,7 @@ public abstract class DalvInsn {
     /** {@inheritDoc} */
     @Override
     public final String toString() {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         sb.append(identifierString());
         sb.append(' ');
@@ -173,7 +173,7 @@ public abstract class DalvInsn {
      *
      * @return {@code non-null;} the opcode
      */
-    public final Dop getOpcode() {
+    public final com.duy.dx.dex.code.Dop getOpcode() {
         return opcode;
     }
 
@@ -191,7 +191,7 @@ public abstract class DalvInsn {
      *
      * @return {@code non-null;} the registers
      */
-    public final RegisterSpecList getRegisters() {
+    public final com.duy.dx.rop.code.RegisterSpecList getRegisters() {
         return registers;
     }
 
@@ -245,7 +245,7 @@ public abstract class DalvInsn {
      * @return {@code non-null;} the replacement
      */
     public DalvInsn getLowRegVersion() {
-        RegisterSpecList regs =
+        com.duy.dx.rop.code.RegisterSpecList regs =
             registers.withExpandedRegisters(0, hasResult(), null);
         return withRegisters(regs);
     }
@@ -261,7 +261,7 @@ public abstract class DalvInsn {
      * @return {@code null-ok;} the prefix, if any
      */
     public DalvInsn expandedPrefix(BitSet compatRegs) {
-        RegisterSpecList regs = registers;
+        com.duy.dx.rop.code.RegisterSpecList regs = registers;
         boolean firstBit = compatRegs.get(0);
 
         if (hasResult()) compatRegs.set(0);
@@ -309,7 +309,7 @@ public abstract class DalvInsn {
      * @return {@code non-null;} the replacement
      */
     public DalvInsn expandedVersion(BitSet compatRegs) {
-        RegisterSpecList regs =
+        com.duy.dx.rop.code.RegisterSpecList regs =
             registers.withExpandedRegisters(0, hasResult(), compatRegs);
         return withRegisters(regs);
     }
@@ -335,7 +335,7 @@ public abstract class DalvInsn {
      *
      * @param prefix {@code non-null;} prefix before the address; each follow-on
      * line will be indented to match as well
-     * @param width {@code >= 0;} the width of the output or {@code 0} for
+     * @param width {@code width >= 0;} the width of the output or {@code 0} for
      * unlimited width
      * @param noteIndices whether to include an explicit notation of
      * constant pool indices
@@ -360,7 +360,7 @@ public abstract class DalvInsn {
     /**
      * Sets the output address.
      *
-     * @param address {@code >= 0;} the output address
+     * @param address {@code address >= 0;} the output address
      */
     public final void setAddress(int address) {
         if (address < 0) {
@@ -459,4 +459,30 @@ public abstract class DalvInsn {
      * @return {@code null-ok;} the listing string
      */
     protected abstract String listingString0(boolean noteIndices);
+
+    /**
+     * Helper which returns the string form of the associated constants
+     * for inclusion in a human oriented listing dump.
+     *
+     * This method is only implemented for instructions with one or more
+     * constants.
+     *
+     * @return the constant as a string.
+     */
+    public String cstString() {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    /**
+     * Helper which returns the comment form of the associated constants
+     * for inclusion in a human oriented listing dump.
+     *
+     * This method is only implemented for instructions with one or more
+     * constants.
+     *
+     * @return the comment as a string.
+     */
+    public String cstComment() {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 }

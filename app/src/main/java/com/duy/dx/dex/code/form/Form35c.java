@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code.form;
+package com.duy.dx.dex.code.form;
 
-import com.duy.dx .dex.code.CstInsn;
-import com.duy.dx .dex.code.DalvInsn;
-import com.duy.dx .dex.code.InsnFormat;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.dex.code.CstInsn;
+import com.duy.dx.dex.code.DalvInsn;
+import com.duy.dx.dex.code.InsnFormat;
+import com.duy.dx.util.AnnotatedOutput;
 import java.util.BitSet;
+
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstCallSiteRef;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
 
 /**
  * Instruction format {@code 35c}. See the instruction format spec
@@ -50,15 +52,15 @@ public final class Form35c extends InsnFormat {
     /** {@inheritDoc} */
     @Override
     public String insnArgString(DalvInsn insn) {
-        RegisterSpecList regs = explicitize(insn.getRegisters());
-        return regListString(regs) + ", " + cstString(insn);
+        com.duy.dx.rop.code.RegisterSpecList regs = explicitize(insn.getRegisters());
+        return regListString(regs) + ", " + insn.cstString();
     }
 
     /** {@inheritDoc} */
     @Override
     public String insnCommentString(DalvInsn insn, boolean noteIndices) {
         if (noteIndices) {
-            return cstComment(insn);
+            return insn.cstComment();
         } else {
             return "";
         }
@@ -86,23 +88,24 @@ public final class Form35c extends InsnFormat {
 
         Constant cst = ci.getConstant();
         if (!((cst instanceof CstMethodRef) ||
-              (cst instanceof CstType))) {
+              (cst instanceof CstType) ||
+              (cst instanceof CstCallSiteRef))) {
             return false;
         }
 
-        RegisterSpecList regs = ci.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = ci.getRegisters();
         return (wordCount(regs) >= 0);
     }
 
     /** {@inheritDoc} */
     @Override
     public BitSet compatibleRegs(DalvInsn insn) {
-        RegisterSpecList regs = insn.getRegisters();
+        com.duy.dx.rop.code.RegisterSpecList regs = insn.getRegisters();
         int sz = regs.size();
         BitSet bits = new BitSet(sz);
 
         for (int i = 0; i < sz; i++) {
-            RegisterSpec reg = regs.get(i);
+            com.duy.dx.rop.code.RegisterSpec reg = regs.get(i);
             /*
              * The check below adds (category - 1) to the register, to
              * account for the fact that the second half of a
@@ -120,7 +123,7 @@ public final class Form35c extends InsnFormat {
     @Override
     public void writeTo(AnnotatedOutput out, DalvInsn insn) {
         int cpi = ((CstInsn) insn).getIndex();
-        RegisterSpecList regs = explicitize(insn.getRegisters());
+        com.duy.dx.rop.code.RegisterSpecList regs = explicitize(insn.getRegisters());
         int sz = regs.size();
         int r0 = (sz > 0) ? regs.get(0).getReg() : 0;
         int r1 = (sz > 1) ? regs.get(1).getReg() : 0;
@@ -145,7 +148,7 @@ public final class Form35c extends InsnFormat {
      * @return {@code >= -1;} the number of words required, or {@code -1}
      * if the list couldn't possibly fit in this format
      */
-    private static int wordCount(RegisterSpecList regs) {
+    private static int wordCount(com.duy.dx.rop.code.RegisterSpecList regs) {
         int sz = regs.size();
 
         if (sz > MAX_NUM_OPS) {
@@ -156,7 +159,7 @@ public final class Form35c extends InsnFormat {
         int result = 0;
 
         for (int i = 0; i < sz; i++) {
-            RegisterSpec one = regs.get(i);
+            com.duy.dx.rop.code.RegisterSpec one = regs.get(i);
             result += one.getCategory();
             /*
              * The check below adds (category - 1) to the register, to
@@ -181,7 +184,7 @@ public final class Form35c extends InsnFormat {
      * @param orig {@code non-null;} the original list
      * @return {@code non-null;} the list with the described transformation
      */
-    private static RegisterSpecList explicitize(RegisterSpecList orig) {
+    private static com.duy.dx.rop.code.RegisterSpecList explicitize(com.duy.dx.rop.code.RegisterSpecList orig) {
         int wordCount = wordCount(orig);
         int sz = orig.size();
 
@@ -189,11 +192,11 @@ public final class Form35c extends InsnFormat {
             return orig;
         }
 
-        RegisterSpecList result = new RegisterSpecList(wordCount);
+        com.duy.dx.rop.code.RegisterSpecList result = new RegisterSpecList(wordCount);
         int wordAt = 0;
 
         for (int i = 0; i < sz; i++) {
-            RegisterSpec one = orig.get(i);
+            com.duy.dx.rop.code.RegisterSpec one = orig.get(i);
             result.set(wordAt, one);
             if (one.getCategory() == 2) {
                 result.set(wordAt + 1,

@@ -14,31 +14,34 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.EncodedValueCodec;
-import com.duy.dx .rop.annotation.Annotation;
-import com.duy.dx .rop.annotation.NameValuePair;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstAnnotation;
-import com.duy.dx .rop.cst.CstArray;
-import com.duy.dx .rop.cst.CstBoolean;
-import com.duy.dx .rop.cst.CstByte;
-import com.duy.dx .rop.cst.CstChar;
-import com.duy.dx .rop.cst.CstDouble;
-import com.duy.dx .rop.cst.CstEnumRef;
-import com.duy.dx .rop.cst.CstFieldRef;
-import com.duy.dx .rop.cst.CstFloat;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .rop.cst.CstKnownNull;
-import com.duy.dx .rop.cst.CstLiteralBits;
-import com.duy.dx .rop.cst.CstLong;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstShort;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.annotation.Annotation;
+import com.duy.dx.rop.annotation.NameValuePair;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstAnnotation;
+import com.duy.dx.rop.cst.CstArray;
+import com.duy.dx.rop.cst.CstBoolean;
+import com.duy.dx.rop.cst.CstByte;
+import com.duy.dx.rop.cst.CstChar;
+import com.duy.dx.rop.cst.CstDouble;
+import com.duy.dx.rop.cst.CstEnumRef;
+import com.duy.dx.rop.cst.CstFieldRef;
+import com.duy.dx.rop.cst.CstFloat;
+import com.duy.dx.rop.cst.CstInteger;
+import com.duy.dx.rop.cst.CstKnownNull;
+import com.duy.dx.rop.cst.CstLiteralBits;
+import com.duy.dx.rop.cst.CstLong;
+import com.duy.dx.rop.cst.CstMethodHandle;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstProtoRef;
+import com.duy.dx.rop.cst.CstShort;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+
 import java.util.Collection;
 
 /**
@@ -66,6 +69,12 @@ public final class ValueEncoder {
 
     /** annotation value type constant: {@code double} */
     private static final int VALUE_DOUBLE = 0x11;
+
+    /** annotation value type constant: {@code method type} */
+    private static final int VALUE_METHOD_TYPE = 0x15;
+
+    /** annotation value type constant: {@code method handle} */
+    private static final int VALUE_METHOD_HANDLE = 0x16;
 
     /** annotation value type constant: {@code string} */
     private static final int VALUE_STRING = 0x17;
@@ -98,7 +107,7 @@ public final class ValueEncoder {
     private final DexFile file;
 
     /** {@code non-null;} output stream to write to */
-    private final AnnotatedOutput out;
+    private final com.duy.dx.util.AnnotatedOutput out;
 
     /**
      * Construct an instance.
@@ -124,7 +133,7 @@ public final class ValueEncoder {
      *
      * @param cst {@code non-null;} the constant to write
      */
-    public void writeConstant(Constant cst) {
+    public void writeConstant(com.duy.dx.rop.cst.Constant cst) {
         int type = constantToValueType(cst);
         int arg;
 
@@ -133,7 +142,7 @@ public final class ValueEncoder {
             case VALUE_SHORT:
             case VALUE_INT:
             case VALUE_LONG: {
-                long value = ((CstLiteralBits) cst).getLongBits();
+                long value = ((com.duy.dx.rop.cst.CstLiteralBits) cst).getLongBits();
                 EncodedValueCodec.writeSignedIntegralValue(out, type, value);
                 break;
             }
@@ -144,49 +153,59 @@ public final class ValueEncoder {
             }
             case VALUE_FLOAT: {
                 // Shift value left 32 so that right-zero-extension works.
-                long value = ((CstFloat) cst).getLongBits() << 32;
+                long value = ((com.duy.dx.rop.cst.CstFloat) cst).getLongBits() << 32;
                 EncodedValueCodec.writeRightZeroExtendedValue(out, type, value);
                 break;
             }
             case VALUE_DOUBLE: {
-                long value = ((CstDouble) cst).getLongBits();
+                long value = ((com.duy.dx.rop.cst.CstDouble) cst).getLongBits();
                 EncodedValueCodec.writeRightZeroExtendedValue(out, type, value);
                 break;
             }
+            case VALUE_METHOD_TYPE: {
+                int index = file.getProtoIds().indexOf(((com.duy.dx.rop.cst.CstProtoRef) cst).getPrototype());
+                EncodedValueCodec.writeUnsignedIntegralValue(out, type, (long) index);
+                break;
+            }
+            case VALUE_METHOD_HANDLE: {
+                int index = file.getMethodHandles().indexOf((com.duy.dx.rop.cst.CstMethodHandle) cst);
+                EncodedValueCodec.writeUnsignedIntegralValue(out, type, (long) index);
+                break;
+            }
             case VALUE_STRING: {
-                int index = file.getStringIds().indexOf((CstString) cst);
+                int index = file.getStringIds().indexOf((com.duy.dx.rop.cst.CstString) cst);
                 EncodedValueCodec.writeUnsignedIntegralValue(out, type, (long) index);
                 break;
             }
             case VALUE_TYPE: {
-                int index = file.getTypeIds().indexOf((CstType) cst);
+                int index = file.getTypeIds().indexOf((com.duy.dx.rop.cst.CstType) cst);
                 EncodedValueCodec.writeUnsignedIntegralValue(out, type, (long) index);
                 break;
             }
             case VALUE_FIELD: {
-                int index = file.getFieldIds().indexOf((CstFieldRef) cst);
+                int index = file.getFieldIds().indexOf((com.duy.dx.rop.cst.CstFieldRef) cst);
                 EncodedValueCodec.writeUnsignedIntegralValue(out, type, (long) index);
                 break;
             }
             case VALUE_METHOD: {
-                int index = file.getMethodIds().indexOf((CstMethodRef) cst);
+                int index = file.getMethodIds().indexOf((com.duy.dx.rop.cst.CstMethodRef) cst);
                 EncodedValueCodec.writeUnsignedIntegralValue(out, type, (long) index);
                 break;
             }
             case VALUE_ENUM: {
-                CstFieldRef fieldRef = ((CstEnumRef) cst).getFieldRef();
+                com.duy.dx.rop.cst.CstFieldRef fieldRef = ((com.duy.dx.rop.cst.CstEnumRef) cst).getFieldRef();
                 int index = file.getFieldIds().indexOf(fieldRef);
                 EncodedValueCodec.writeUnsignedIntegralValue(out, type, (long) index);
                 break;
             }
             case VALUE_ARRAY: {
                 out.writeByte(type);
-                writeArray((CstArray) cst, false);
+                writeArray((com.duy.dx.rop.cst.CstArray) cst, false);
                 break;
             }
             case VALUE_ANNOTATION: {
                 out.writeByte(type);
-                writeAnnotation(((CstAnnotation) cst).getAnnotation(),
+                writeAnnotation(((com.duy.dx.rop.cst.CstAnnotation) cst).getAnnotation(),
                         false);
                 break;
             }
@@ -195,7 +214,7 @@ public final class ValueEncoder {
                 break;
             }
             case VALUE_BOOLEAN: {
-                int value = ((CstBoolean) cst).getIntBits();
+                int value = ((com.duy.dx.rop.cst.CstBoolean) cst).getIntBits();
                 out.writeByte(type | (value << 5));
                 break;
             }
@@ -212,7 +231,7 @@ public final class ValueEncoder {
      * @return the value type; one of the {@code VALUE_*} constants
      * defined by this class
      */
-    private static int constantToValueType(Constant cst) {
+    private static int constantToValueType(com.duy.dx.rop.cst.Constant cst) {
         /*
          * TODO: Constant should probable have an associated enum, so this
          * can be a switch().
@@ -231,9 +250,13 @@ public final class ValueEncoder {
             return VALUE_FLOAT;
         } else if (cst instanceof CstDouble) {
             return VALUE_DOUBLE;
-        } else if (cst instanceof CstString) {
+        } else if (cst instanceof CstProtoRef) {
+            return VALUE_METHOD_TYPE;
+        } else if (cst instanceof CstMethodHandle) {
+           return VALUE_METHOD_HANDLE;
+        } else if (cst instanceof com.duy.dx.rop.cst.CstString) {
             return VALUE_STRING;
-        } else if (cst instanceof CstType) {
+        } else if (cst instanceof com.duy.dx.rop.cst.CstType) {
             return VALUE_TYPE;
         } else if (cst instanceof CstFieldRef) {
             return VALUE_FIELD;
@@ -241,9 +264,9 @@ public final class ValueEncoder {
             return VALUE_METHOD;
         } else if (cst instanceof CstEnumRef) {
             return VALUE_ENUM;
-        } else if (cst instanceof CstArray) {
+        } else if (cst instanceof com.duy.dx.rop.cst.CstArray) {
             return VALUE_ARRAY;
-        } else if (cst instanceof CstAnnotation) {
+        } else if (cst instanceof com.duy.dx.rop.cst.CstAnnotation) {
             return VALUE_ANNOTATION;
         } else if (cst instanceof CstKnownNull) {
             return VALUE_NULL;
@@ -267,19 +290,19 @@ public final class ValueEncoder {
      * top-level annotation or {@code false} if it is a sub-annotation
      * of some other annotation
      */
-    public void writeArray(CstArray array, boolean topLevel) {
+    public void writeArray(com.duy.dx.rop.cst.CstArray array, boolean topLevel) {
         boolean annotates = topLevel && out.annotates();
-        CstArray.List list = ((CstArray) array).getList();
+        com.duy.dx.rop.cst.CstArray.List list = ((com.duy.dx.rop.cst.CstArray) array).getList();
         int size = list.size();
 
         if (annotates) {
-            out.annotate("  size: " + Hex.u4(size));
+            out.annotate("  size: " + com.duy.dx.util.Hex.u4(size));
         }
 
         out.writeUleb128(size);
 
         for (int i = 0; i < size; i++) {
-            Constant cst = list.get(i);
+            com.duy.dx.rop.cst.Constant cst = list.get(i);
             if (annotates) {
                 out.annotate("  [" + Integer.toHexString(i) + "] " +
                         constantToHuman(cst));
@@ -305,35 +328,35 @@ public final class ValueEncoder {
      * top-level annotation or {@code false} if it is a sub-annotation
      * of some other annotation
      */
-    public void writeAnnotation(Annotation annotation, boolean topLevel) {
+    public void writeAnnotation(com.duy.dx.rop.annotation.Annotation annotation, boolean topLevel) {
         boolean annotates = topLevel && out.annotates();
-        StringIdsSection stringIds = file.getStringIds();
+        com.duy.dx.dex.file.StringIdsSection stringIds = file.getStringIds();
         TypeIdsSection typeIds = file.getTypeIds();
 
         CstType type = annotation.getType();
         int typeIdx = typeIds.indexOf(type);
 
         if (annotates) {
-            out.annotate("  type_idx: " + Hex.u4(typeIdx) + " // " +
+            out.annotate("  type_idx: " + com.duy.dx.util.Hex.u4(typeIdx) + " // " +
                     type.toHuman());
         }
 
         out.writeUleb128(typeIds.indexOf(annotation.getType()));
 
-        Collection<NameValuePair> pairs = annotation.getNameValuePairs();
+        Collection<com.duy.dx.rop.annotation.NameValuePair> pairs = annotation.getNameValuePairs();
         int size = pairs.size();
 
         if (annotates) {
-            out.annotate("  size: " + Hex.u4(size));
+            out.annotate("  size: " + com.duy.dx.util.Hex.u4(size));
         }
 
         out.writeUleb128(size);
 
         int at = 0;
-        for (NameValuePair pair : pairs) {
+        for (com.duy.dx.rop.annotation.NameValuePair pair : pairs) {
             CstString name = pair.getName();
             int nameIdx = stringIds.indexOf(name);
-            Constant value = pair.getValue();
+            com.duy.dx.rop.cst.Constant value = pair.getValue();
 
             if (annotates) {
                 out.annotate(0, "  elements[" + at + "]:");
@@ -363,7 +386,7 @@ public final class ValueEncoder {
      * @param cst {@code non-null;} the constant
      * @return {@code non-null;} its type name and human form
      */
-    public static String constantToHuman(Constant cst) {
+    public static String constantToHuman(com.duy.dx.rop.cst.Constant cst) {
         int type = constantToValueType(cst);
 
         if (type == VALUE_NULL) {
@@ -381,13 +404,13 @@ public final class ValueEncoder {
 
     /**
      * Helper for {@code addContents()} methods, which adds
-     * contents for a particular {@link Annotation}, calling itself
+     * contents for a particular {@link com.duy.dx.rop.annotation.Annotation}, calling itself
      * recursively should it encounter a nested annotation.
      *
      * @param file {@code non-null;} the file to add to
      * @param annotation {@code non-null;} the annotation to add contents for
      */
-    public static void addContents(DexFile file, Annotation annotation) {
+    public static void addContents(DexFile file, com.duy.dx.rop.annotation.Annotation annotation) {
         TypeIdsSection typeIds = file.getTypeIds();
         StringIdsSection stringIds = file.getStringIds();
 
@@ -402,18 +425,18 @@ public final class ValueEncoder {
     /**
      * Helper for {@code addContents()} methods, which adds
      * contents for a particular constant, calling itself recursively
-     * should it encounter a {@link CstArray} and calling {@link
-     * #addContents(DexFile,Annotation)} recursively should it
-     * encounter a {@link CstAnnotation}.
+     * should it encounter a {@link com.duy.dx.rop.cst.CstArray} and calling {@link
+     * #addContents(DexFile, Annotation)} recursively should it
+     * encounter a {@link com.duy.dx.rop.cst.CstAnnotation}.
      *
      * @param file {@code non-null;} the file to add to
      * @param cst {@code non-null;} the constant to add contents for
      */
     public static void addContents(DexFile file, Constant cst) {
-        if (cst instanceof CstAnnotation) {
+        if (cst instanceof com.duy.dx.rop.cst.CstAnnotation) {
             addContents(file, ((CstAnnotation) cst).getAnnotation());
-        } else if (cst instanceof CstArray) {
-            CstArray.List list = ((CstArray) cst).getList();
+        } else if (cst instanceof com.duy.dx.rop.cst.CstArray) {
+            com.duy.dx.rop.cst.CstArray.List list = ((CstArray) cst).getList();
             int size = list.size();
             for (int i = 0; i < size; i++) {
                 addContents(file, list.get(i));

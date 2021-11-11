@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .util.Hex;
+import com.duy.dx.util.Hex;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
 
 /**
  * A Phi instruction (magical post-control-flow-merge) instruction
  * in SSA form. Will be converted to moves in predecessor blocks before
  * conversion back to ROP form.
  */
-public final class PhiInsn extends SsaInsn {
+public final class PhiInsn extends com.duy.dx.ssa.SsaInsn {
     /**
      * result register. The original result register of the phi insn
      * is needed during the renaming process after the new result
@@ -48,7 +49,7 @@ public final class PhiInsn extends SsaInsn {
     private final ArrayList<Operand> operands = new ArrayList<Operand>();
 
     /** {@code null-ok;} source registers; constructed lazily */
-    private RegisterSpecList sources;
+    private com.duy.dx.rop.code.RegisterSpecList sources;
 
     /**
      * Constructs a new phi insn with no operands.
@@ -56,7 +57,7 @@ public final class PhiInsn extends SsaInsn {
      * @param resultReg the result reg for this phi insn
      * @param block block containing this insn.
      */
-    public PhiInsn(RegisterSpec resultReg, SsaBasicBlock block) {
+    public PhiInsn(com.duy.dx.rop.code.RegisterSpec resultReg, com.duy.dx.ssa.SsaBasicBlock block) {
         super(resultReg, block);
         ropResultReg = resultReg.getReg();
     }
@@ -67,12 +68,12 @@ public final class PhiInsn extends SsaInsn {
      * @param resultReg the result register for this phi insn.
      * @param block block containing this insn.
      */
-    public PhiInsn(final int resultReg, final SsaBasicBlock block) {
+    public PhiInsn(final int resultReg, final com.duy.dx.ssa.SsaBasicBlock block) {
         /*
          * The result type here is bogus: The type depends on the
          * operand and will be derived later.
          */
-        super(RegisterSpec.make(resultReg, Type.VOID), block);
+        super(com.duy.dx.rop.code.RegisterSpec.make(resultReg, Type.VOID), block);
         ropResultReg = resultReg;
     }
 
@@ -91,9 +92,9 @@ public final class PhiInsn extends SsaInsn {
      *
      * @param ssaMeth method that contains this insn
      */
-    public void updateSourcesToDefinitions(SsaMethod ssaMeth) {
+    public void updateSourcesToDefinitions(com.duy.dx.ssa.SsaMethod ssaMeth) {
         for (Operand o : operands) {
-            RegisterSpec def
+            com.duy.dx.rop.code.RegisterSpec def
                 = ssaMeth.getDefinitionForRegister(
                     o.regSpec.getReg()).getResult();
 
@@ -110,7 +111,7 @@ public final class PhiInsn extends SsaInsn {
      * @param local {@code null-ok;} new local info, if available
      */
     public void changeResultType(TypeBearer type, LocalItem local) {
-        setResult(RegisterSpec.makeLocalOptional(
+        setResult(com.duy.dx.rop.code.RegisterSpec.makeLocalOptional(
                           getResult().getReg(), type, local));
     }
 
@@ -129,8 +130,8 @@ public final class PhiInsn extends SsaInsn {
      * @param registerSpec register spec, including type and reg of operand
      * @param predBlock predecessor block to be associated with this operand
      */
-    public void addPhiOperand(RegisterSpec registerSpec,
-            SsaBasicBlock predBlock) {
+    public void addPhiOperand(com.duy.dx.rop.code.RegisterSpec registerSpec,
+                              com.duy.dx.ssa.SsaBasicBlock predBlock) {
         operands.add(new Operand(registerSpec, predBlock.getIndex(),
                 predBlock.getRopLabel()));
 
@@ -143,7 +144,7 @@ public final class PhiInsn extends SsaInsn {
      *
      * @param registerSpec register spec, including type and reg of operand
      */
-    public void removePhiRegister(RegisterSpec registerSpec) {
+    public void removePhiRegister(com.duy.dx.rop.code.RegisterSpec registerSpec) {
         ArrayList<Operand> operandsToRemove = new ArrayList<Operand>();
         for (Operand o : operands) {
             if (o.regSpec.getReg() == registerSpec.getReg()) {
@@ -184,7 +185,7 @@ public final class PhiInsn extends SsaInsn {
      * Always returns null for {@code PhiInsn}s.
      */
     @Override
-    public Insn getOriginalRopInsn() {
+    public com.duy.dx.rop.code.Insn getOriginalRopInsn() {
         return null;
     }
 
@@ -205,14 +206,14 @@ public final class PhiInsn extends SsaInsn {
      * @return {@code non-null;} sources list
      */
     @Override
-    public RegisterSpecList getSources() {
+    public com.duy.dx.rop.code.RegisterSpecList getSources() {
         if (sources != null) {
             return sources;
         }
 
         if (operands.size() == 0) {
             // How'd this happen? A phi insn with no operand?
-            return RegisterSpecList.EMPTY;
+            return com.duy.dx.rop.code.RegisterSpecList.EMPTY;
         }
 
         int szSources = operands.size();
@@ -268,7 +269,7 @@ public final class PhiInsn extends SsaInsn {
     @Override
     public final void mapSourceRegisters(RegisterMapper mapper) {
         for (Operand o : operands) {
-            RegisterSpec old = o.regSpec;
+            com.duy.dx.rop.code.RegisterSpec old = o.regSpec;
             o.regSpec = mapper.map(old);
             if (old != o.regSpec) {
                 getBlock().getParent().onSourceChanged(this, old, o.regSpec);
@@ -297,8 +298,8 @@ public final class PhiInsn extends SsaInsn {
      * @param ssaMeth method we're operating on
      * @return list of predecessor blocks, empty if none
      */
-    public List<SsaBasicBlock> predBlocksForReg(int reg, SsaMethod ssaMeth) {
-        ArrayList<SsaBasicBlock> ret = new ArrayList<SsaBasicBlock>();
+    public List<com.duy.dx.ssa.SsaBasicBlock> predBlocksForReg(int reg, SsaMethod ssaMeth) {
+        ArrayList<com.duy.dx.ssa.SsaBasicBlock> ret = new ArrayList<SsaBasicBlock>();
 
         for (Operand o : operands) {
             if (o.regSpec.getReg() == reg) {
@@ -328,6 +329,7 @@ public final class PhiInsn extends SsaInsn {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         return toHumanWithInline(null);
     }
@@ -340,7 +342,7 @@ public final class PhiInsn extends SsaInsn {
      * @return human-readable string for listing dumps
      */
     protected final String toHumanWithInline(String extra) {
-        StringBuffer sb = new StringBuffer(80);
+        StringBuilder sb = new StringBuilder(80);
 
         sb.append(SourcePosition.NO_INFO);
         sb.append(": phi");
@@ -351,7 +353,7 @@ public final class PhiInsn extends SsaInsn {
             sb.append(")");
         }
 
-        RegisterSpec result = getResult();
+        com.duy.dx.rop.code.RegisterSpec result = getResult();
 
         if (result == null) {
             sb.append(" .");
@@ -382,7 +384,7 @@ public final class PhiInsn extends SsaInsn {
      * for move.
      */
     private static class Operand {
-        public RegisterSpec regSpec;
+        public com.duy.dx.rop.code.RegisterSpec regSpec;
         public final int blockIndex;
         public final int ropLabel;       // only used for debugging
 

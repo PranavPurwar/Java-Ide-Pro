@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
 import com.duy.dex.Leb128;
-import com.duy.dx .dex.code.DalvCode;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
+import com.duy.dx.dex.code.DalvCode;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+
 import java.io.PrintWriter;
 
 /**
@@ -32,7 +33,7 @@ import java.io.PrintWriter;
 public final class EncodedMethod extends EncodedMember
         implements Comparable<EncodedMethod> {
     /** {@code non-null;} constant for the method */
-    private final CstMethodRef method;
+    private final com.duy.dx.rop.cst.CstMethodRef method;
 
     /**
      * {@code null-ok;} code for the method, if the method is neither
@@ -50,8 +51,8 @@ public final class EncodedMethod extends EncodedMember
      * @param throwsList {@code non-null;} list of possibly-thrown exceptions,
      * just used in generating debugging output (listings)
      */
-    public EncodedMethod(CstMethodRef method, int accessFlags,
-            DalvCode code, TypeList throwsList) {
+    public EncodedMethod(com.duy.dx.rop.cst.CstMethodRef method, int accessFlags,
+                         DalvCode code, TypeList throwsList) {
         super(accessFlags);
 
         if (method == null) {
@@ -63,12 +64,13 @@ public final class EncodedMethod extends EncodedMember
         if (code == null) {
             this.code = null;
         } else {
-            boolean isStatic = (accessFlags & AccessFlags.ACC_STATIC) != 0;
+            boolean isStatic = (accessFlags & com.duy.dx.rop.code.AccessFlags.ACC_STATIC) != 0;
             this.code = new CodeItem(method, code, isStatic, throwsList);
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (! (other instanceof EncodedMethod)) {
             return false;
@@ -85,6 +87,7 @@ public final class EncodedMethod extends EncodedMember
      * case that two different items with the same method constant
      * ever appear in the same list (or same file, even).</p>
      */
+    @Override
     public int compareTo(EncodedMethod other) {
         return method.compareTo(other.method);
     }
@@ -92,11 +95,11 @@ public final class EncodedMethod extends EncodedMember
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(100);
+        StringBuilder sb = new StringBuilder(100);
 
         sb.append(getClass().getName());
         sb.append('{');
-        sb.append(Hex.u2(getAccessFlags()));
+        sb.append(com.duy.dx.util.Hex.u2(getAccessFlags()));
         sb.append(' ');
         sb.append(method);
 
@@ -124,6 +127,7 @@ public final class EncodedMethod extends EncodedMember
     }
 
     /** {@inheritDoc} */
+    @Override
     public final String toHuman() {
         return method.toHuman();
     }
@@ -163,7 +167,7 @@ public final class EncodedMethod extends EncodedMember
         int codeOff = OffsettedItem.getAbsoluteOffsetOr0(code);
         boolean hasCode = (codeOff != 0);
         boolean shouldHaveCode = (accessFlags &
-                (AccessFlags.ACC_ABSTRACT | AccessFlags.ACC_NATIVE)) == 0;
+                (com.duy.dx.rop.code.AccessFlags.ACC_ABSTRACT | com.duy.dx.rop.code.AccessFlags.ACC_NATIVE)) == 0;
 
         /*
          * Verify that code appears if and only if a method is
@@ -178,7 +182,7 @@ public final class EncodedMethod extends EncodedMember
             out.annotate(0, String.format("  [%x] %s", dumpSeq,
                             method.toHuman()));
             out.annotate(Leb128.unsignedLeb128Size(diff),
-                    "    method_idx:   " + Hex.u4(methodIdx));
+                    "    method_idx:   " + com.duy.dx.util.Hex.u4(methodIdx));
             out.annotate(Leb128.unsignedLeb128Size(accessFlags),
                     "    access_flags: " +
                     AccessFlags.methodString(accessFlags));

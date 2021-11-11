@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .util.AnnotatedOutput;
+import com.duy.dx.util.AnnotatedOutput;
 import java.util.Collection;
 
 /**
@@ -28,7 +28,7 @@ public abstract class Section {
     private final String name;
 
     /** {@code non-null;} file that this instance is part of */
-    private final DexFile file;
+    private final com.duy.dx.dex.file.DexFile file;
 
     /** {@code > 0;} alignment requirement for the final output;
      * must be a power of 2 */
@@ -65,7 +65,7 @@ public abstract class Section {
      * @param alignment {@code > 0;} alignment requirement for the final output;
      * must be a power of 2
      */
-    public Section(String name, DexFile file, int alignment) {
+    public Section(String name, com.duy.dx.dex.file.DexFile file, int alignment) {
         if (file == null) {
             throw new NullPointerException("file == null");
         }

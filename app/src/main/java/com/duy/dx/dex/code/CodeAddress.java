@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.SourcePosition;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.SourcePosition;
 
 /**
  * Pseudo-instruction which is used to track an address within a code
@@ -36,7 +36,7 @@ public final class CodeAddress extends ZeroSizeInsn {
      *
      * @param position {@code non-null;} source position
      */
-    public CodeAddress(SourcePosition position) {
+    public CodeAddress(com.duy.dx.rop.code.SourcePosition position) {
         this(position, false);
     }
 

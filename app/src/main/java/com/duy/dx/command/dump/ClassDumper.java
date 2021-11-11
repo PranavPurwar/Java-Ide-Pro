@@ -1,8 +1,24 @@
-package com.duy.dx .command.dump;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .cf.direct.DirectClassFile;
-import com.duy.dx .cf.direct.StdAttributeFactory;
-import com.duy.dx .util.ByteArray;
+package com.duy.dx.command.dump;
+
+import com.duy.dx.cf.direct.DirectClassFile;
+import com.duy.dx.cf.direct.StdAttributeFactory;
+import com.duy.dx.util.ByteArray;
 import java.io.PrintStream;
 
 /**
@@ -49,9 +65,9 @@ public final class ClassDumper
         cf.setObserver(this);
         cf.getMagic(); // Force parsing to happen.
 
-        int at = getAt();
-        if (at != bytes.length) {
-            parsed(ba, at, bytes.length - at, "<extra data at end of file>");
+        int readBytes = getReadBytes();
+        if (readBytes != bytes.length) {
+            parsed(ba, readBytes, bytes.length - readBytes, "<extra data at end of file>");
         }
     }
 }

@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeMap;
+
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
 
 /**
  * Class definitions list section of a {@code .dex} file.
@@ -34,7 +35,7 @@ public final class ClassDefsSection extends UniformItemSection {
      * {@code non-null;} map from type constants for classes to {@link
      * ClassDefItem} instances that define those classes
      */
-    private final TreeMap<Type, ClassDefItem> classDefs;
+    private final TreeMap<com.duy.dx.rop.type.Type, ClassDefItem> classDefs;
 
     /** {@code null-ok;} ordered list of classes; set in {@link #orderItems} */
     private ArrayList<ClassDefItem> orderedDefs;
@@ -47,7 +48,7 @@ public final class ClassDefsSection extends UniformItemSection {
     public ClassDefsSection(DexFile file) {
         super("class_defs", file, 4);
 
-        classDefs = new TreeMap<Type, ClassDefItem>();
+        classDefs = new TreeMap<com.duy.dx.rop.type.Type, ClassDefItem>();
         orderedDefs = null;
     }
 
@@ -70,7 +71,7 @@ public final class ClassDefsSection extends UniformItemSection {
 
         throwIfNotPrepared();
 
-        Type type = ((CstType) cst).getClassType();
+        com.duy.dx.rop.type.Type type = ((com.duy.dx.rop.cst.CstType) cst).getClassType();
         IndexedItem result = classDefs.get(type);
 
         if (result == null) {
@@ -92,7 +93,7 @@ public final class ClassDefsSection extends UniformItemSection {
         int offset = (sz == 0) ? 0 : getFileOffset();
 
         if (out.annotates()) {
-            out.annotate(4, "class_defs_size: " + Hex.u4(sz));
+            out.annotate(4, "class_defs_size: " + com.duy.dx.util.Hex.u4(sz));
             out.annotate(4, "class_defs_off:  " + Hex.u4(offset));
         }
 
@@ -107,7 +108,7 @@ public final class ClassDefsSection extends UniformItemSection {
      * @param clazz {@code non-null;} the class def to add
      */
     public void add(ClassDefItem clazz) {
-        Type type;
+        com.duy.dx.rop.type.Type type;
 
         try {
             type = clazz.getThisClass().getClassType();
@@ -139,7 +140,7 @@ public final class ClassDefsSection extends UniformItemSection {
          * already been assigned by the time this (top-level)
          * iteration reaches them.
          */
-        for (Type type : classDefs.keySet()) {
+        for (com.duy.dx.rop.type.Type type : classDefs.keySet()) {
             idx = orderItems0(type, idx, sz - idx);
         }
     }
@@ -154,7 +155,7 @@ public final class ClassDefsSection extends UniformItemSection {
      * throw an exception indicating class definition circularity
      * @return {@code >= 0;} the next index to assign
      */
-    private int orderItems0(Type type, int idx, int maxDepth) {
+    private int orderItems0(com.duy.dx.rop.type.Type type, int idx, int maxDepth) {
         ClassDefItem c = classDefs.get(type);
 
         if ((c == null) || (c.hasIndex())) {

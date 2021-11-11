@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .cf.iface.Attribute;
+import com.duy.dx.cf.iface.Attribute;
 
 /**
- * Base implementation of {@link Attribute}, which directly stores
+ * Base implementation of {@link com.duy.dx.cf.iface.Attribute}, which directly stores
  * the attribute name but leaves the rest up to subclasses.
  */
 public abstract class BaseAttribute implements Attribute {
@@ -40,6 +40,7 @@ public abstract class BaseAttribute implements Attribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getName() {
         return name;
     }

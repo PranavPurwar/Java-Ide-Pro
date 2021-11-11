@@ -1,13 +1,29 @@
-package com.duy.dx .command.findusages;
+/*
+ * Copyright (C) 2011 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.duy.dx.command.findusages;
 
 import com.duy.dex.ClassData;
 import com.duy.dex.ClassDef;
 import com.duy.dex.Dex;
 import com.duy.dex.FieldId;
 import com.duy.dex.MethodId;
-import com.duy.dx .io.CodeReader;
-import com.duy.dx .io.OpcodeInfo;
-import com.duy.dx .io.instructions.DecodedInstruction;
+import com.duy.dx.io.CodeReader;
+import com.duy.dx.io.OpcodeInfo;
+import com.duy.dx.io.instructions.DecodedInstruction;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashSet;
@@ -60,6 +76,7 @@ public final class FindUsages {
         }
 
         codeReader.setFieldVisitor(new CodeReader.Visitor() {
+            @Override
             public void visit(DecodedInstruction[] all,
                     DecodedInstruction one) {
                 int fieldId = one.getIndex();
@@ -71,6 +88,7 @@ public final class FindUsages {
         });
 
         codeReader.setMethodVisitor(new CodeReader.Visitor() {
+            @Override
             public void visit(DecodedInstruction[] all, DecodedInstruction one) {
                 int methodId = one.getIndex();
                 if (methodIds.contains(methodId)) {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.attrib;
+package com.duy.dx.cf.attrib;
 
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstType;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstType;
 
 /**
  * Attribute class for standards-track {@code EnclosingMethod}
@@ -28,10 +28,10 @@ public final class AttEnclosingMethod extends BaseAttribute {
     public static final String ATTRIBUTE_NAME = "EnclosingMethod";
 
     /** {@code non-null;} the innermost enclosing class */
-    private final CstType type;
+    private final com.duy.dx.rop.cst.CstType type;
 
     /** {@code null-ok;} the name-and-type of the innermost enclosing method, if any */
-    private final CstNat method;
+    private final com.duy.dx.rop.cst.CstNat method;
 
     /**
      * Constructs an instance.
@@ -40,7 +40,7 @@ public final class AttEnclosingMethod extends BaseAttribute {
      * @param method {@code null-ok;} the name-and-type of the innermost enclosing
      * method, if any
      */
-    public AttEnclosingMethod(CstType type, CstNat method) {
+    public AttEnclosingMethod(com.duy.dx.rop.cst.CstType type, com.duy.dx.rop.cst.CstNat method) {
         super(ATTRIBUTE_NAME);
 
         if (type == null) {
@@ -52,6 +52,7 @@ public final class AttEnclosingMethod extends BaseAttribute {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int byteLength() {
         return 10;
     }

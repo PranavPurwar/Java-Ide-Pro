@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecSet;
-import com.duy.dx .util.IntList;
+import com.duy.dx.util.IntList;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecSet;
+
 /**
  * Code to figure out which local variables are active at which points in
  * a method. Stolen and retrofitted from
- * com.duy.dx .rop.code.LocalVariableExtractor
+ * LocalVariableExtractor
  *
  * TODO remove this. Allow Rop-form LocalVariableInfo to be passed in,
  * converted, and adapted through edge-splitting.
  */
 public class LocalVariableExtractor {
     /** {@code non-null;} method being extracted from */
-    private final SsaMethod method;
+    private final com.duy.dx.ssa.SsaMethod method;
 
     /** {@code non-null;} block list for the method */
-    private final ArrayList<SsaBasicBlock> blocks;
+    private final ArrayList<com.duy.dx.ssa.SsaBasicBlock> blocks;
 
     /** {@code non-null;} result in-progress */
     private final LocalVariableInfo resultInfo;
@@ -50,7 +51,7 @@ public class LocalVariableExtractor {
      * @param method {@code non-null;} the method to extract from
      * @return {@code non-null;} the extracted information
      */
-    public static LocalVariableInfo extract(SsaMethod method) {
+    public static LocalVariableInfo extract(com.duy.dx.ssa.SsaMethod method) {
         LocalVariableExtractor lve = new LocalVariableExtractor(method);
         return lve.doit();
     }
@@ -65,7 +66,7 @@ public class LocalVariableExtractor {
             throw new NullPointerException("method == null");
         }
 
-        ArrayList<SsaBasicBlock> blocks = method.getBlocks();
+        ArrayList<com.duy.dx.ssa.SsaBasicBlock> blocks = method.getBlocks();
 
         this.method = method;
         this.blocks = blocks;
@@ -100,10 +101,10 @@ public class LocalVariableExtractor {
      * @param blockIndex {@code >= 0;} block index of the block to process
      */
     private void processBlock(int blockIndex) {
-        RegisterSpecSet primaryState
+        com.duy.dx.rop.code.RegisterSpecSet primaryState
                 = resultInfo.mutableCopyOfStarts(blockIndex);
         SsaBasicBlock block = blocks.get(blockIndex);
-        List<SsaInsn> insns = block.getInsns();
+        List<com.duy.dx.ssa.SsaInsn> insns = block.getInsns();
         int insnSz = insns.size();
 
         // The exit block has no insns and no successors
@@ -118,13 +119,13 @@ public class LocalVariableExtractor {
          * state *before* executing it to be what is merged into
          * exception targets.
          */
-        SsaInsn lastInsn = insns.get(insnSz - 1);
+        com.duy.dx.ssa.SsaInsn lastInsn = insns.get(insnSz - 1);
         boolean hasExceptionHandlers
                 = lastInsn.getOriginalRopInsn().getCatches().size() !=0 ;
         boolean canThrowDuringLastInsn = hasExceptionHandlers
                 && (lastInsn.getResult() != null);
         int freezeSecondaryStateAt = insnSz - 1;
-        RegisterSpecSet secondaryState = primaryState;
+        com.duy.dx.rop.code.RegisterSpecSet secondaryState = primaryState;
 
         /*
          * Iterate over the instructions, adding information for each place
@@ -139,7 +140,7 @@ public class LocalVariableExtractor {
             }
 
             SsaInsn insn = insns.get(i);
-            RegisterSpec result;
+            com.duy.dx.rop.code.RegisterSpec result;
 
             result = insn.getLocalAssignment();
 
@@ -156,7 +157,7 @@ public class LocalVariableExtractor {
 
             result = result.withSimpleType();
 
-            RegisterSpec already = primaryState.get(result);
+            com.duy.dx.rop.code.RegisterSpec already = primaryState.get(result);
             /*
              * The equals() check ensures we only add new info if
              * the instruction causes a change to the set of

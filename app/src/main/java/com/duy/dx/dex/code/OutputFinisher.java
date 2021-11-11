@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
-
-import com.duy.dx .dex.DexOptions;
-import com.duy.dx .io.Opcodes;
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.RegisterSpecSet;
-import com.duy.dx .rop.code.SourcePosition;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstMemberRef;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .ssa.BasicRegisterMapper;
+package com.duy.dx.dex.code;
 
 import com.duy.dex.DexException;
+import com.duy.dx.dex.DexOptions;
+import com.duy.dx.io.Opcodes;
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.RegisterSpecSet;
+import com.duy.dx.rop.code.SourcePosition;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstMemberRef;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.ssa.BasicRegisterMapper;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
@@ -42,7 +42,7 @@ import java.util.HashSet;
  */
 public final class OutputFinisher {
     /** {@code non-null;} options for dex output */
-    private final DexOptions dexOptions;
+    private final com.duy.dx.dex.DexOptions dexOptions;
 
     /**
      * {@code >= 0;} register count for the method, not including any extra
@@ -51,7 +51,7 @@ public final class OutputFinisher {
     private final int unreservedRegCount;
 
     /** {@code non-null;} the list of instructions, per se */
-    private ArrayList<DalvInsn> insns;
+    private ArrayList<com.duy.dx.dex.code.DalvInsn> insns;
 
     /** whether any instruction has position info */
     private boolean hasAnyPositionInfo;
@@ -89,7 +89,7 @@ public final class OutputFinisher {
     public OutputFinisher(DexOptions dexOptions, int initialCapacity, int regCount, int paramSize) {
         this.dexOptions = dexOptions;
         this.unreservedRegCount = regCount;
-        this.insns = new ArrayList<DalvInsn>(initialCapacity);
+        this.insns = new ArrayList<com.duy.dx.dex.code.DalvInsn>(initialCapacity);
         this.reservedCount = -1;
         this.hasAnyPositionInfo = false;
         this.hasAnyLocalInfo = false;
@@ -124,9 +124,9 @@ public final class OutputFinisher {
      * @return {@code true} iff the instruction refers to any
      * named locals
      */
-    private static boolean hasLocalInfo(DalvInsn insn) {
-        if (insn instanceof LocalSnapshot) {
-            RegisterSpecSet specs = ((LocalSnapshot) insn).getLocals();
+    private static boolean hasLocalInfo(com.duy.dx.dex.code.DalvInsn insn) {
+        if (insn instanceof com.duy.dx.dex.code.LocalSnapshot) {
+            com.duy.dx.rop.code.RegisterSpecSet specs = ((com.duy.dx.dex.code.LocalSnapshot) insn).getLocals();
             int size = specs.size();
             for (int i = 0; i < size; i++) {
                 if (hasLocalInfo(specs.get(i))) {
@@ -134,7 +134,7 @@ public final class OutputFinisher {
                 }
             }
         } else if (insn instanceof LocalStart) {
-            RegisterSpec spec = ((LocalStart) insn).getLocal();
+            com.duy.dx.rop.code.RegisterSpec spec = ((LocalStart) insn).getLocal();
             if (hasLocalInfo(spec)) {
                 return true;
             }
@@ -151,7 +151,7 @@ public final class OutputFinisher {
      * @return {@code true} iff the spec refers to any
      * named locals
      */
-    private static boolean hasLocalInfo(RegisterSpec spec) {
+    private static boolean hasLocalInfo(com.duy.dx.rop.code.RegisterSpec spec) {
         return (spec != null)
             && (spec.getLocalItem().getName() != null);
     }
@@ -162,10 +162,10 @@ public final class OutputFinisher {
      *
      * @return {@code non-null;} the set of constants
      */
-    public HashSet<Constant> getAllConstants() {
-        HashSet<Constant> result = new HashSet<Constant>(20);
+    public HashSet<com.duy.dx.rop.cst.Constant> getAllConstants() {
+        HashSet<com.duy.dx.rop.cst.Constant> result = new HashSet<com.duy.dx.rop.cst.Constant>(20);
 
-        for (DalvInsn insn : insns) {
+        for (com.duy.dx.dex.code.DalvInsn insn : insns) {
             addConstants(result, insn);
         }
 
@@ -179,19 +179,24 @@ public final class OutputFinisher {
      * @param result {@code non-null;} result set to add to
      * @param insn {@code non-null;} instruction to scrutinize
      */
-    private static void addConstants(HashSet<Constant> result,
-            DalvInsn insn) {
-        if (insn instanceof CstInsn) {
-            Constant cst = ((CstInsn) insn).getConstant();
+    private static void addConstants(HashSet<com.duy.dx.rop.cst.Constant> result,
+            com.duy.dx.dex.code.DalvInsn insn) {
+        if (insn instanceof com.duy.dx.dex.code.CstInsn) {
+            com.duy.dx.rop.cst.Constant cst = ((com.duy.dx.dex.code.CstInsn) insn).getConstant();
             result.add(cst);
-        } else if (insn instanceof LocalSnapshot) {
+        } else if (insn instanceof MultiCstInsn) {
+            MultiCstInsn m = (MultiCstInsn) insn;
+            for (int i = 0; i < m.getNumberOfConstants(); i++) {
+                result.add(m.getConstant(i));
+            }
+        } else if (insn instanceof com.duy.dx.dex.code.LocalSnapshot) {
             RegisterSpecSet specs = ((LocalSnapshot) insn).getLocals();
             int size = specs.size();
             for (int i = 0; i < size; i++) {
                 addConstants(result, specs.get(i));
             }
         } else if (insn instanceof LocalStart) {
-            RegisterSpec spec = ((LocalStart) insn).getLocal();
+            com.duy.dx.rop.code.RegisterSpec spec = ((LocalStart) insn).getLocal();
             addConstants(result, spec);
         }
     }
@@ -203,19 +208,23 @@ public final class OutputFinisher {
      * @param result {@code non-null;} result set to add to
      * @param spec {@code null-ok;} register spec to add
      */
-    private static void addConstants(HashSet<Constant> result,
-            RegisterSpec spec) {
+    private static void addConstants(HashSet<com.duy.dx.rop.cst.Constant> result,
+            com.duy.dx.rop.code.RegisterSpec spec) {
         if (spec == null) {
             return;
         }
 
         LocalItem local = spec.getLocalItem();
-        CstString name = local.getName();
+        com.duy.dx.rop.cst.CstString name = local.getName();
         CstString signature = local.getSignature();
-        Type type = spec.getType();
+        com.duy.dx.rop.type.Type type = spec.getType();
 
-        if (type != Type.KNOWN_NULL) {
-            result.add(CstType.intern(type));
+        if (type != com.duy.dx.rop.type.Type.KNOWN_NULL) {
+            result.add(com.duy.dx.rop.cst.CstType.intern(type));
+        } else {
+            /* If this a "known null", let's use "Object" because that's going to be the
+             * resulting type in {@link LocalList.MakeState#filterSpec} */
+            result.add(com.duy.dx.rop.cst.CstType.intern(Type.OBJECT));
         }
 
         if (name != null) {
@@ -232,7 +241,7 @@ public final class OutputFinisher {
      *
      * @param insn {@code non-null;} the instruction to add
      */
-    public void add(DalvInsn insn) {
+    public void add(com.duy.dx.dex.code.DalvInsn insn) {
         insns.add(insn);
         updateInfo(insn);
     }
@@ -240,12 +249,20 @@ public final class OutputFinisher {
     /**
      * Inserts an instruction in the output at the given offset.
      *
-     * @param at {@code >= 0;} what index to insert at
+     * @param at {@code at >= 0;} what index to insert at
      * @param insn {@code non-null;} the instruction to insert
      */
-    public void insert(int at, DalvInsn insn) {
+    public void insert(int at, com.duy.dx.dex.code.DalvInsn insn) {
         insns.add(at, insn);
         updateInfo(insn);
+    }
+
+    public com.duy.dx.dex.code.DalvInsn get(int at) {
+        return insns.get(at);
+    }
+
+    public int size() {
+        return insns.size();
     }
 
     /**
@@ -254,7 +271,7 @@ public final class OutputFinisher {
      *
      * @param insn {@code non-null;} an instruction that was just introduced
      */
-    private void updateInfo(DalvInsn insn) {
+    private void updateInfo(com.duy.dx.dex.code.DalvInsn insn) {
         if (! hasAnyPositionInfo) {
             SourcePosition pos = insn.getPosition();
             if (pos.getLine() >= 0) {
@@ -280,13 +297,13 @@ public final class OutputFinisher {
      * @param newTarget {@code non-null;} the new target for the
      * reversed branch
      */
-    public void reverseBranch(int which, CodeAddress newTarget) {
+    public void reverseBranch(int which, com.duy.dx.dex.code.CodeAddress newTarget) {
         int size = insns.size();
         int index = size - which - 1;
-        TargetInsn targetInsn;
+        com.duy.dx.dex.code.TargetInsn targetInsn;
 
         try {
-            targetInsn = (TargetInsn) insns.get(index);
+            targetInsn = (com.duy.dx.dex.code.TargetInsn) insns.get(index);
         } catch (IndexOutOfBoundsException ex) {
             // Translate the exception.
             throw new IllegalArgumentException("too few instructions");
@@ -310,9 +327,11 @@ public final class OutputFinisher {
      * @param callback {@code non-null;} callback object
      */
     public void assignIndices(DalvCode.AssignIndicesCallback callback) {
-        for (DalvInsn insn : insns) {
-            if (insn instanceof CstInsn) {
-                assignIndices((CstInsn) insn, callback);
+        for (com.duy.dx.dex.code.DalvInsn insn : insns) {
+            if (insn instanceof com.duy.dx.dex.code.CstInsn) {
+                assignIndices((com.duy.dx.dex.code.CstInsn) insn, callback);
+            } else if (insn instanceof MultiCstInsn) {
+                assignIndices((MultiCstInsn) insn, callback);
             }
         }
     }
@@ -325,19 +344,42 @@ public final class OutputFinisher {
      * @param callback {@code non-null;} the callback
      */
     private static void assignIndices(CstInsn insn,
-            DalvCode.AssignIndicesCallback callback) {
-        Constant cst = insn.getConstant();
+                                      DalvCode.AssignIndicesCallback callback) {
+        com.duy.dx.rop.cst.Constant cst = insn.getConstant();
         int index = callback.getIndex(cst);
 
         if (index >= 0) {
             insn.setIndex(index);
         }
 
-        if (cst instanceof CstMemberRef) {
-            CstMemberRef member = (CstMemberRef) cst;
-            CstType definer = member.getDefiningClass();
+        if (cst instanceof com.duy.dx.rop.cst.CstMemberRef) {
+            com.duy.dx.rop.cst.CstMemberRef member = (com.duy.dx.rop.cst.CstMemberRef) cst;
+            com.duy.dx.rop.cst.CstType definer = member.getDefiningClass();
             index = callback.getIndex(definer);
+            // TODO(oth): what scenarios is this guard valid under? Is it not just an error?
             if (index >= 0) {
+                insn.setClassIndex(index);
+            }
+        }
+    }
+
+    /**
+     * Helper for {@link #assignIndices} which does assignment for one
+     * instruction.
+     *
+     * @param insn {@code non-null;} the instruction
+     * @param callback {@code non-null;} the callback
+     */
+    private static void assignIndices(MultiCstInsn insn, DalvCode.AssignIndicesCallback callback) {
+        for (int i = 0; i < insn.getNumberOfConstants(); ++i) {
+            Constant cst = insn.getConstant(i);
+            int index = callback.getIndex(cst);
+            insn.setIndex(i, index);
+
+            if (cst instanceof com.duy.dx.rop.cst.CstMemberRef) {
+                com.duy.dx.rop.cst.CstMemberRef member = (CstMemberRef) cst;
+                CstType definer = member.getDefiningClass();
+                index = callback.getIndex(definer);
                 insn.setClassIndex(index);
             }
         }
@@ -368,7 +410,7 @@ public final class OutputFinisher {
             throw new UnsupportedOperationException("already processed");
         }
 
-        Dop[] opcodes = makeOpcodesArray();
+        com.duy.dx.dex.code.Dop[] opcodes = makeOpcodesArray();
         reserveRegisters(opcodes);
         if (dexOptions.ALIGN_64BIT_REGS_IN_OUTPUT_FINISHER) {
           align64bits(opcodes);
@@ -387,12 +429,13 @@ public final class OutputFinisher {
      *
      * @return {@code non-null;} the array of opcodes
      */
-    private Dop[] makeOpcodesArray() {
+    private com.duy.dx.dex.code.Dop[] makeOpcodesArray() {
         int size = insns.size();
-        Dop[] result = new Dop[size];
+        com.duy.dx.dex.code.Dop[] result = new com.duy.dx.dex.code.Dop[size];
 
         for (int i = 0; i < size; i++) {
-            result[i] = insns.get(i).getOpcode();
+            com.duy.dx.dex.code.DalvInsn insn = insns.get(i);
+            result[i] = insn.getOpcode();
         }
 
         return result;
@@ -409,7 +452,7 @@ public final class OutputFinisher {
      * opcode selections
      * @return true if reservedCount is expanded, false otherwise
      */
-    private boolean reserveRegisters(Dop[] opcodes) {
+    private boolean reserveRegisters(com.duy.dx.dex.code.Dop[] opcodes) {
         boolean reservedCountExpanded = false;
         int oldReservedCount = (reservedCount < 0) ? 0 : reservedCount;
 
@@ -436,8 +479,8 @@ public final class OutputFinisher {
                  * have registers in any case. Hence, the instanceof
                  * test below.
                  */
-                DalvInsn insn = insns.get(i);
-                if (!(insn instanceof CodeAddress)) {
+                com.duy.dx.dex.code.DalvInsn insn = insns.get(i);
+                if (!(insn instanceof com.duy.dx.dex.code.CodeAddress)) {
                     /*
                      * No need to call this.set() since the format and
                      * other info are the same.
@@ -465,7 +508,7 @@ public final class OutputFinisher {
      * opcode selections
      * @return {@code >= 0;} the count of reserved registers
      */
-    private int calculateReservedCount(Dop[] opcodes) {
+    private int calculateReservedCount(com.duy.dx.dex.code.Dop[] opcodes) {
         int size = insns.size();
 
         /*
@@ -477,16 +520,16 @@ public final class OutputFinisher {
         int newReservedCount = reservedCount;
 
         for (int i = 0; i < size; i++) {
-            DalvInsn insn = insns.get(i);
-            Dop originalOpcode = opcodes[i];
-            Dop newOpcode = findOpcodeForInsn(insn, originalOpcode);
+            com.duy.dx.dex.code.DalvInsn insn = insns.get(i);
+            com.duy.dx.dex.code.Dop originalOpcode = opcodes[i];
+            com.duy.dx.dex.code.Dop newOpcode = findOpcodeForInsn(insn, originalOpcode);
 
             if (newOpcode == null) {
                 /*
                  * The instruction will need to be expanded, so find the
                  * expanded opcode and reserve registers for it.
                  */
-                Dop expandedOp = findExpandedOpcodeForInsn(insn);
+                com.duy.dx.dex.code.Dop expandedOp = findExpandedOpcodeForInsn(insn);
                 BitSet compatRegs = expandedOp.getFormat().compatibleRegs(insn);
                 int reserve = insn.getMinimumRegisterRequirement(compatRegs);
                 if (reserve > newReservedCount) {
@@ -517,7 +560,7 @@ public final class OutputFinisher {
      * {@code non-null} good fit or {@code null} to indicate that no
      * simple opcode fits
      */
-    private Dop findOpcodeForInsn(DalvInsn insn, Dop guess) {
+    private com.duy.dx.dex.code.Dop findOpcodeForInsn(com.duy.dx.dex.code.DalvInsn insn, com.duy.dx.dex.code.Dop guess) {
         /*
          * Note: The initial guess might be null, meaning that an
          * earlier call to this method already determined that there
@@ -531,12 +574,12 @@ public final class OutputFinisher {
                  * when option is enabled.
                  */
                 if (!dexOptions.forceJumbo ||
-                    guess.getOpcode() != Opcodes.CONST_STRING) {
+                    guess.getOpcode() != com.duy.dx.io.Opcodes.CONST_STRING) {
                     break;
                 }
             }
 
-            guess = Dops.getNextOrNull(guess, dexOptions);
+            guess = com.duy.dx.dex.code.Dops.getNextOrNull(guess, dexOptions);
         }
 
         return guess;
@@ -549,8 +592,8 @@ public final class OutputFinisher {
      * @param insn {@code non-null;} the instruction in question
      * @return {@code non-null;} the opcode that fits
      */
-    private Dop findExpandedOpcodeForInsn(DalvInsn insn) {
-        Dop result = findOpcodeForInsn(insn.getLowRegVersion(), insn.getOpcode());
+    private com.duy.dx.dex.code.Dop findExpandedOpcodeForInsn(com.duy.dx.dex.code.DalvInsn insn) {
+        com.duy.dx.dex.code.Dop result = findOpcodeForInsn(insn.getLowRegVersion(), insn.getOpcode());
         if (result == null) {
             throw new DexException("No expanded opcode for " + insn);
         }
@@ -579,7 +622,7 @@ public final class OutputFinisher {
      * @param opcodes {@code non-null;} array of per-instruction
      * opcode selections
      */
-    private void massageInstructions(Dop[] opcodes) {
+    private void massageInstructions(com.duy.dx.dex.code.Dop[] opcodes) {
         if (reservedCount == 0) {
             /*
              * The easy common case: No registers were reserved, so we
@@ -591,9 +634,9 @@ public final class OutputFinisher {
             int size = insns.size();
 
             for (int i = 0; i < size; i++) {
-                DalvInsn insn = insns.get(i);
-                Dop originalOpcode = insn.getOpcode();
-                Dop currentOpcode = opcodes[i];
+                com.duy.dx.dex.code.DalvInsn insn = insns.get(i);
+                com.duy.dx.dex.code.Dop originalOpcode = insn.getOpcode();
+                com.duy.dx.dex.code.Dop currentOpcode = opcodes[i];
 
                 if (originalOpcode != currentOpcode) {
                     insns.set(i, insn.withOpcode(currentOpcode));
@@ -619,18 +662,18 @@ public final class OutputFinisher {
      * opcode selections
      * @return {@code non-null;} the replacement list
      */
-    private ArrayList<DalvInsn> performExpansion(Dop[] opcodes) {
+    private ArrayList<com.duy.dx.dex.code.DalvInsn> performExpansion(com.duy.dx.dex.code.Dop[] opcodes) {
         int size = insns.size();
-        ArrayList<DalvInsn> result = new ArrayList<DalvInsn>(size * 2);
+        ArrayList<com.duy.dx.dex.code.DalvInsn> result = new ArrayList<com.duy.dx.dex.code.DalvInsn>(size * 2);
 
-        ArrayList<CodeAddress> closelyBoundAddresses = new ArrayList<CodeAddress>();
+        ArrayList<com.duy.dx.dex.code.CodeAddress> closelyBoundAddresses = new ArrayList<com.duy.dx.dex.code.CodeAddress>();
 
         for (int i = 0; i < size; i++) {
-            DalvInsn insn = insns.get(i);
-            Dop originalOpcode = insn.getOpcode();
-            Dop currentOpcode = opcodes[i];
-            DalvInsn prefix;
-            DalvInsn suffix;
+            com.duy.dx.dex.code.DalvInsn insn = insns.get(i);
+            com.duy.dx.dex.code.Dop originalOpcode = insn.getOpcode();
+            com.duy.dx.dex.code.Dop currentOpcode = opcodes[i];
+            com.duy.dx.dex.code.DalvInsn prefix;
+            com.duy.dx.dex.code.DalvInsn suffix;
 
             if (currentOpcode != null) {
                 // No expansion is necessary.
@@ -648,12 +691,12 @@ public final class OutputFinisher {
                 insn = insn.expandedVersion(compatRegs);
             }
 
-            if (insn instanceof CodeAddress) {
+            if (insn instanceof com.duy.dx.dex.code.CodeAddress) {
                 // If we have a closely bound address, don't add it yet,
                 // because we need to add it after the prefix for the
                 // instruction it is bound to.
-                if (((CodeAddress) insn).getBindsClosely()) {
-                    closelyBoundAddresses.add((CodeAddress)insn);
+                if (((com.duy.dx.dex.code.CodeAddress) insn).getBindsClosely()) {
+                    closelyBoundAddresses.add((com.duy.dx.dex.code.CodeAddress)insn);
                     continue;
                 }
             }
@@ -664,7 +707,7 @@ public final class OutputFinisher {
 
             // Add any pending closely bound addresses
             if (!(insn instanceof ZeroSizeInsn) && closelyBoundAddresses.size() > 0) {
-                for (CodeAddress codeAddress: closelyBoundAddresses) {
+                for (com.duy.dx.dex.code.CodeAddress codeAddress: closelyBoundAddresses) {
                     result.add(codeAddress);
                 }
                 closelyBoundAddresses.clear();
@@ -707,7 +750,7 @@ public final class OutputFinisher {
         int size = insns.size();
 
         for (int i = 0; i < size; i++) {
-            DalvInsn insn = insns.get(i);
+            com.duy.dx.dex.code.DalvInsn insn = insns.get(i);
             insn.setAddress(address);
             address += insn.codeSize();
         }
@@ -729,14 +772,14 @@ public final class OutputFinisher {
         boolean anyFixed = false;
 
         for (int i = 0; i < size; i++) {
-            DalvInsn insn = insns.get(i);
-            if (!(insn instanceof TargetInsn)) {
+            com.duy.dx.dex.code.DalvInsn insn = insns.get(i);
+            if (!(insn instanceof com.duy.dx.dex.code.TargetInsn)) {
                 // This loop only needs to inspect TargetInsns.
                 continue;
             }
 
-            Dop opcode = insn.getOpcode();
-            TargetInsn target = (TargetInsn) insn;
+            com.duy.dx.dex.code.Dop opcode = insn.getOpcode();
+            com.duy.dx.dex.code.TargetInsn target = (com.duy.dx.dex.code.TargetInsn) insn;
 
             if (opcode.getFormat().branchFits(target)) {
                 continue;
@@ -772,9 +815,9 @@ public final class OutputFinisher {
                  * and changed elements will be inspected by a repeat
                  * call to this method after this invocation returns.
                  */
-                CodeAddress newTarget;
+                com.duy.dx.dex.code.CodeAddress newTarget;
                 try {
-                    newTarget = (CodeAddress) insns.get(i + 1);
+                    newTarget = (com.duy.dx.dex.code.CodeAddress) insns.get(i + 1);
                 } catch (IndexOutOfBoundsException ex) {
                     // The TargetInsn / CodeAddress invariant was violated.
                     throw new IllegalStateException(
@@ -783,9 +826,9 @@ public final class OutputFinisher {
                     // The TargetInsn / CodeAddress invariant was violated.
                     throw new IllegalStateException("unpaired TargetInsn");
                 }
-                TargetInsn gotoInsn =
+                com.duy.dx.dex.code.TargetInsn gotoInsn =
                     new TargetInsn(Dops.GOTO, target.getPosition(),
-                            RegisterSpecList.EMPTY, target.getTarget());
+                            com.duy.dx.rop.code.RegisterSpecList.EMPTY, target.getTarget());
                 insns.set(i, gotoInsn);
                 insns.add(i, target.withNewTargetAndReversed(newTarget));
                 size++;
@@ -808,7 +851,7 @@ public final class OutputFinisher {
         int firstParameter = lastParameter - paramSize;
 
         // Collects the number of time that 64-bit registers are accessed aligned or not.
-        for (DalvInsn insn : insns) {
+        for (com.duy.dx.dex.code.DalvInsn insn : insns) {
           RegisterSpecList regs = insn.getRegisters();
           for (int usedRegIdx = 0; usedRegIdx < regs.size(); usedRegIdx++) {
             RegisterSpec reg = regs.get(usedRegIdx);
@@ -869,10 +912,10 @@ public final class OutputFinisher {
       int insnSize = insns.size();
 
       for (int i = 0; i < insnSize; i++) {
-        DalvInsn insn = insns.get(i);
+        com.duy.dx.dex.code.DalvInsn insn = insns.get(i);
         // Since there is no need to replace CodeAddress since it does not use registers, skips it to
         // avoid to update all TargetInsn that contain a reference to CodeAddress
-        if (!(insn instanceof CodeAddress)) {
+        if (!(insn instanceof com.duy.dx.dex.code.CodeAddress)) {
           insns.set(i, insn.withRegisterOffset(delta));
         }
       }
@@ -883,7 +926,7 @@ public final class OutputFinisher {
       int lastParameter = unreservedRegCount + reservedCount + reservedParameterCount;
       int firstParameter = lastParameter - paramSize;
 
-      BasicRegisterMapper mapper = new BasicRegisterMapper(lastParameter);
+      com.duy.dx.ssa.BasicRegisterMapper mapper = new BasicRegisterMapper(lastParameter);
       for (int i = 0; i < lastParameter; i++) {
         if (i >= firstParameter) {
           mapper.addMapping(i, i + delta, 1);

@@ -1,22 +1,40 @@
-package com.duy.dx .command.dump;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .cf.code.ConcreteMethod;
-import com.duy.dx .cf.code.Ropper;
-import com.duy.dx .cf.direct.DirectClassFile;
-import com.duy.dx .cf.direct.StdAttributeFactory;
-import com.duy.dx .cf.iface.Member;
-import com.duy.dx .cf.iface.Method;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.code.BasicBlock;
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.DexTranslationAdvice;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.TranslationAdvice;
-import com.duy.dx .ssa.Optimizer;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.IntList;
+package com.duy.dx.command.dump;
+
+import com.duy.dx.cf.code.ConcreteMethod;
+import com.duy.dx.cf.code.Ropper;
+import com.duy.dx.cf.direct.DirectClassFile;
+import com.duy.dx.cf.direct.StdAttributeFactory;
+import com.duy.dx.cf.iface.Member;
+import com.duy.dx.cf.iface.Method;
+import com.duy.dx.cf.iface.ParseObserver;
+
+import com.duy.dx.dex.DexOptions;
+import com.duy.dx.ssa.Optimizer;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.IntList;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.code.BasicBlock;
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.DexTranslationAdvice;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.TranslationAdvice;
 
 /**
  * Dumps the pred/succ graph of methods into a format compatible
@@ -29,18 +47,20 @@ public class DotDumper implements ParseObserver {
     private final String filePath;
     private final boolean strictParse;
     private final boolean optimize;
-    private final Args args;
+    private final com.duy.dx.command.dump.Args args;
+    private final DexOptions dexOptions;
 
-    static void dump(byte[] bytes, String filePath, Args args) {
+    static void dump(byte[] bytes, String filePath, com.duy.dx.command.dump.Args args) {
         new DotDumper(bytes, filePath, args).run();
     }
 
-    DotDumper(byte[] bytes, String filePath, Args args) {
+    DotDumper(byte[] bytes, String filePath, com.duy.dx.command.dump.Args args) {
         this.bytes = bytes;
         this.filePath = filePath;
         this.strictParse = args.strictParse;
         this.optimize = args.optimize;
         this.args = args;
+        this.dexOptions = new DexOptions();
     }
 
     private void run() {
@@ -70,20 +90,24 @@ public class DotDumper implements ParseObserver {
         return args.method == null || args.method.equals(name);
     }
 
+    @Override
     public void changeIndent(int indentDelta) {
         // This space intentionally left blank.
     }
 
+    @Override
     public void parsed(ByteArray bytes, int offset, int len, String human) {
         // This space intentionally left blank.
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startParsingMember(ByteArray bytes, int offset, String name,
                                    String descriptor) {
         // This space intentionally left blank.
     }
 
+    @Override
     public void endParsingMember(ByteArray bytes, int offset, String name,
                                  String descriptor, Member member) {
         if (!(member instanceof Method)) {
@@ -99,7 +123,7 @@ public class DotDumper implements ParseObserver {
 
         TranslationAdvice advice = DexTranslationAdvice.THE_ONE;
         RopMethod rmeth =
-            Ropper.convert(meth, advice, classFile.getMethods());
+            Ropper.convert(meth, advice, classFile.getMethods(), dexOptions);
 
         if (optimize) {
             boolean isStatic = AccessFlags.isStatic(meth.getAccessFlags());

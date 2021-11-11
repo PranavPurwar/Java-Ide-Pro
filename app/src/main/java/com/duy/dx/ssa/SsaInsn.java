@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.duy.dx .ssa;
+package com.duy.dx.ssa;
 
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .util.ToHuman;
+import com.duy.dx.util.ToHuman;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
 
 /**
  * An instruction in SSA form
  */
 public abstract class SsaInsn implements ToHuman, Cloneable {
     /** {@code non-null;} the block that contains this instance */
-    private final SsaBasicBlock block;
+    private final com.duy.dx.ssa.SsaBasicBlock block;
 
     /** {@code null-ok;} result register */
-    private RegisterSpec result;
+    private com.duy.dx.rop.code.RegisterSpec result;
 
     /**
      * Constructs an instance.
@@ -40,7 +40,7 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
      * @param block {@code non-null;} block containing this insn. Can
      * never change.
      */
-    protected SsaInsn(RegisterSpec result, SsaBasicBlock block) {
+    protected SsaInsn(com.duy.dx.rop.code.RegisterSpec result, com.duy.dx.ssa.SsaBasicBlock block) {
         if (block == null) {
             throw new NullPointerException("block == null");
         }
@@ -56,7 +56,7 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
      * @param block {@code non-null;} owning block
      * @return {@code non-null;} an appropriately constructed instance
      */
-    public static SsaInsn makeFromRop(Insn insn, SsaBasicBlock block) {
+    public static SsaInsn makeFromRop(com.duy.dx.rop.code.Insn insn, com.duy.dx.ssa.SsaBasicBlock block) {
         return new NormalSsaInsn(insn, block);
     }
 
@@ -71,11 +71,11 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
     }
 
     /**
-     * Like {@link com.duy.dx .rop.code.Insn getResult()}.
+     * Like {@link com.duy.dx.rop.code.Insn getResult()}.
      *
      * @return result register
      */
-    public RegisterSpec getResult() {
+    public com.duy.dx.rop.code.RegisterSpec getResult() {
         return result;
     }
 
@@ -84,7 +84,7 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
      *
      * @param result {@code non-null;} the new result register
      */
-    protected void setResult(RegisterSpec result) {
+    protected void setResult(com.duy.dx.rop.code.RegisterSpec result) {
         if (result == null) {
             throw new NullPointerException("result == null");
         }
@@ -93,7 +93,7 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
     }
 
     /**
-     * Like {@link com.duy.dx .rop.code.Insn getSources()}.
+     * Like {@link com.duy.dx.rop.code.Insn getSources()}.
      *
      * @return {@code non-null;} sources list
      */
@@ -138,12 +138,12 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
      *
      * @param local {@code null-ok;} new debug/local variable info
      */
-    public final void setResultLocal(LocalItem local) {
+    public final void setResultLocal(com.duy.dx.rop.code.LocalItem local) {
         LocalItem oldItem = result.getLocalItem();
 
         if (local != oldItem && (local == null
                 || !local.equals(result.getLocalItem()))) {
-            result = RegisterSpec.makeLocalOptional(
+            result = com.duy.dx.rop.code.RegisterSpec.makeLocalOptional(
                     result.getReg(), result.getType(), local);
         }
     }
@@ -153,8 +153,8 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
      *
      * @param mapper {@code non-null;} mapping from old to new registers
      */
-    public final void mapRegisters(RegisterMapper mapper) {
-        RegisterSpec oldResult = result;
+    public final void mapRegisters(com.duy.dx.ssa.RegisterMapper mapper) {
+        com.duy.dx.rop.code.RegisterSpec oldResult = result;
 
         result = mapper.map(result);
         block.getParent().updateOneDefinition(this, oldResult);
@@ -185,7 +185,7 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
      *
      * @return {@code null-ok;} Rop insn if there is one.
      */
-    abstract public Insn getOriginalRopInsn();
+    abstract public com.duy.dx.rop.code.Insn getOriginalRopInsn();
 
     /**
      * Gets the spec of a local variable assignment that occurs at this
@@ -193,7 +193,7 @@ public abstract class SsaInsn implements ToHuman, Cloneable {
      * may be the result register, or for {@code mark-local} insns
      * it may be the source.
      *
-     * @see com.duy.dx .rop.code.Insn#getLocalAssignment()
+     * @see com.duy.dx.rop.code.Insn#getLocalAssignment()
      *
      * @return {@code null-ok;} a local-associated register spec or null
      */

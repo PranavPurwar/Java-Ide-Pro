@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .util.ToHuman;
+import com.duy.dx.util.ToHuman;
 
 /**
  * Enumeration of all the top-level item types.
@@ -29,6 +29,8 @@ public enum ItemType implements ToHuman {
     TYPE_FIELD_ID_ITEM(             0x0004, "field_id_item"),
     TYPE_METHOD_ID_ITEM(            0x0005, "method_id_item"),
     TYPE_CLASS_DEF_ITEM(            0x0006, "class_def_item"),
+    TYPE_CALL_SITE_ID_ITEM(         0x0007, "call_site_id_item"),
+    TYPE_METHOD_HANDLE_ITEM(        0x0008, "method_handle_item"),
     TYPE_MAP_LIST(                  0x1000, "map_list"),
     TYPE_TYPE_LIST(                 0x1001, "type_list"),
     TYPE_ANNOTATION_SET_REF_LIST(   0x1002, "annotation_set_ref_list"),
@@ -45,7 +47,7 @@ public enum ItemType implements ToHuman {
     TYPE_EXCEPTION_HANDLER_ITEM(    -1,     "exception_handler_item"),
     TYPE_ANNOTATION_SET_REF_ITEM(   -1,     "annotation_set_ref_item");
 
-    /** value when represented in a {@link MapItem} */
+    /** value when represented in a {@link com.duy.dx.dex.file.MapItem} */
     private final int mapValue;
 
     /** {@code non-null;} name of the type */
@@ -91,6 +93,7 @@ public enum ItemType implements ToHuman {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         return humanName;
     }

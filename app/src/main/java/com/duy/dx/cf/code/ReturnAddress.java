@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeBearer;
-import com.duy.dx .util.Hex;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeBearer;
+import com.duy.dx.util.Hex;
 
 /**
  * Representation of a subroutine return address. In Java verification,
@@ -27,7 +27,7 @@ import com.duy.dx .util.Hex;
  * being returned from, not the address being returned <i>to</i>, so that's
  * what instances of this class hang onto.
  */
-public final class ReturnAddress implements TypeBearer {
+public final class ReturnAddress implements com.duy.dx.rop.type.TypeBearer {
     /** {@code >= 0;} the start address of the subroutine being returned from */
     private final int subroutineAddress;
 
@@ -52,31 +52,37 @@ public final class ReturnAddress implements TypeBearer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         return toString();
     }
 
     /** {@inheritDoc} */
-    public Type getType() {
-        return Type.RETURN_ADDRESS;
+    @Override
+    public com.duy.dx.rop.type.Type getType() {
+        return com.duy.dx.rop.type.Type.RETURN_ADDRESS;
     }
 
     /** {@inheritDoc} */
+    @Override
     public TypeBearer getFrameType() {
         return this;
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getBasicType() {
-        return Type.RETURN_ADDRESS.getBasicType();
+        return com.duy.dx.rop.type.Type.RETURN_ADDRESS.getBasicType();
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getBasicFrameType() {
         return Type.RETURN_ADDRESS.getBasicFrameType();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isConstant() {
         return false;
     }

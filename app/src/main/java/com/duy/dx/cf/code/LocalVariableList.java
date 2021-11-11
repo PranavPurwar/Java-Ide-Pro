@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.code;
+package com.duy.dx.cf.code;
 
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .util.FixedSizeList;
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.util.FixedSizeList;
 
 /**
  * List of "local variable" entries, which are the contents of
@@ -84,7 +84,7 @@ public final class LocalVariableList extends FixedSizeList {
             Item item = descriptorList.get(i);
             Item signatureItem = signatureList.itemToLocal(item);
             if (signatureItem != null) {
-                CstString signature = signatureItem.getSignature();
+                com.duy.dx.rop.cst.CstString signature = signatureItem.getSignature();
                 item = item.withSignature(signature);
             }
             result.set(i, item);
@@ -142,14 +142,14 @@ public final class LocalVariableList extends FixedSizeList {
      * @param signature {@code null-ok;} the variable's type signature
      * @param index {@code >= 0;} the variable's local index
      */
-    public void set(int n, int startPc, int length, CstString name,
-            CstString descriptor, CstString signature, int index) {
+    public void set(int n, int startPc, int length, com.duy.dx.rop.cst.CstString name,
+                    com.duy.dx.rop.cst.CstString descriptor, com.duy.dx.rop.cst.CstString signature, int index) {
         set0(n, new Item(startPc, length, name, descriptor, signature, index));
     }
 
     /**
      * Gets the local variable information in this instance which matches
-     * the given {@link com.duy.dx .cf.code.LocalVariableList.Item}
+     * the given {@link LocalVariableList.Item}
      * in all respects but the type descriptor and signature, if any.
      *
      * @param item {@code non-null;} local variable information to match
@@ -207,13 +207,13 @@ public final class LocalVariableList extends FixedSizeList {
         private final int length;
 
         /** {@code non-null;} the variable's name */
-        private final CstString name;
+        private final com.duy.dx.rop.cst.CstString name;
 
         /** {@code null-ok;} the variable's type descriptor */
-        private final CstString descriptor;
+        private final com.duy.dx.rop.cst.CstString descriptor;
 
         /** {@code null-ok;} the variable's type signature */
-        private final CstString signature;
+        private final com.duy.dx.rop.cst.CstString signature;
 
         /** {@code >= 0;} the variable's local index */
         private final int index;
@@ -232,8 +232,8 @@ public final class LocalVariableList extends FixedSizeList {
          * @param signature {@code null-ok;} the variable's type signature
          * @param index {@code >= 0;} the variable's local index
          */
-        public Item(int startPc, int length, CstString name,
-                CstString descriptor, CstString signature, int index) {
+        public Item(int startPc, int length, com.duy.dx.rop.cst.CstString name,
+                    com.duy.dx.rop.cst.CstString descriptor, com.duy.dx.rop.cst.CstString signature, int index) {
             if (startPc < 0) {
                 throw new IllegalArgumentException("startPc < 0");
             }
@@ -286,7 +286,7 @@ public final class LocalVariableList extends FixedSizeList {
          *
          * @return {@code null-ok;} the variable's type descriptor
          */
-        public CstString getDescriptor() {
+        public com.duy.dx.rop.cst.CstString getDescriptor() {
             return descriptor;
         }
 
@@ -295,7 +295,7 @@ public final class LocalVariableList extends FixedSizeList {
          *
          * @return {@code null-ok;} the variable's type descriptor
          */
-        public LocalItem getLocalItem() {
+        public com.duy.dx.rop.code.LocalItem getLocalItem() {
             return LocalItem.make(name, signature);
         }
 
@@ -305,7 +305,7 @@ public final class LocalVariableList extends FixedSizeList {
          *
          * @return {@code null-ok;} the variable's type signature
          */
-        private CstString getSignature() {
+        private com.duy.dx.rop.cst.CstString getSignature() {
             return signature;
         }
 
@@ -324,7 +324,7 @@ public final class LocalVariableList extends FixedSizeList {
          *
          * @return {@code non-null;} the variable's type
          */
-        public Type getType() {
+        public com.duy.dx.rop.type.Type getType() {
             return Type.intern(descriptor.getString());
         }
 

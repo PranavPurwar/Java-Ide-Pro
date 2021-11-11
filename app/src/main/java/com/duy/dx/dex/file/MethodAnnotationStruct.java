@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
+package com.duy.dx.dex.file;
 
-import com.duy.dx .rop.annotation.Annotations;
-import com.duy.dx .rop.cst.CstMethodRef;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.Hex;
-import com.duy.dx .util.ToHuman;
+import com.duy.dx.rop.annotation.Annotations;
+import com.duy.dx.rop.cst.CstMethodRef;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.Hex;
+import com.duy.dx.util.ToHuman;
 
 /**
  * Association of a method and its annotations.
@@ -31,7 +31,7 @@ public final class MethodAnnotationStruct
     private final CstMethodRef method;
 
     /** {@code non-null;} the associated annotations */
-    private AnnotationSetItem annotations;
+    private com.duy.dx.dex.file.AnnotationSetItem annotations;
 
     /**
      * Constructs an instance.
@@ -54,11 +54,13 @@ public final class MethodAnnotationStruct
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return method.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object other) {
         if (! (other instanceof MethodAnnotationStruct)) {
             return false;
@@ -68,12 +70,13 @@ public final class MethodAnnotationStruct
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compareTo(MethodAnnotationStruct other) {
         return method.compareTo(other.method);
     }
 
     /** {@inheritDoc} */
-    public void addContents(DexFile file) {
+    public void addContents(com.duy.dx.dex.file.DexFile file) {
         MethodIdsSection methodIds = file.getMethodIds();
         MixedItemSection wordData = file.getWordData();
 
@@ -98,6 +101,7 @@ public final class MethodAnnotationStruct
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toHuman() {
         return method.toHuman() + ": " + annotations;
     }

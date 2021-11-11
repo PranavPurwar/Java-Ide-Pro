@@ -1,27 +1,44 @@
-package com.duy.dx .ssa.back;
+/*
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.duy.dx .dex.DexOptions;
-import com.duy.dx .rop.code.CstInsn;
-import com.duy.dx .rop.code.LocalItem;
-import com.duy.dx .rop.code.RegOps;
-import com.duy.dx .rop.code.RegisterSpec;
-import com.duy.dx .rop.code.RegisterSpecList;
-import com.duy.dx .rop.code.Rop;
-import com.duy.dx .rop.cst.CstInteger;
-import com.duy.dx .ssa.InterferenceRegisterMapper;
-import com.duy.dx .ssa.NormalSsaInsn;
-import com.duy.dx .ssa.Optimizer;
-import com.duy.dx .ssa.PhiInsn;
-import com.duy.dx .ssa.RegisterMapper;
-import com.duy.dx .ssa.SsaBasicBlock;
-import com.duy.dx .ssa.SsaInsn;
-import com.duy.dx .ssa.SsaMethod;
-import com.duy.dx .util.IntIterator;
-import com.duy.dx .util.IntSet;
+package com.duy.dx.ssa.back;
+
+import com.duy.dx.dex.DexOptions;
+import com.duy.dx.ssa.InterferenceRegisterMapper;
+import com.duy.dx.ssa.NormalSsaInsn;
+import com.duy.dx.ssa.Optimizer;
+import com.duy.dx.ssa.PhiInsn;
+import com.duy.dx.ssa.RegisterMapper;
+import com.duy.dx.ssa.SsaBasicBlock;
+import com.duy.dx.ssa.SsaInsn;
+import com.duy.dx.ssa.SsaMethod;
+import com.duy.dx.util.IntIterator;
+import com.duy.dx.util.IntSet;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.duy.dx.rop.code.CstInsn;
+import com.duy.dx.rop.code.LocalItem;
+import com.duy.dx.rop.code.RegOps;
+import com.duy.dx.rop.code.RegisterSpec;
+import com.duy.dx.rop.code.RegisterSpecList;
+import com.duy.dx.rop.code.Rop;
+import com.duy.dx.rop.cst.CstInteger;
 
 /**
  * Allocates registers in a first-fit fashion, with the bottom reserved for
@@ -76,7 +93,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
     private static final boolean DEBUG = false;
 
     /** maps local variable to a list of associated SSA registers */
-    private final Map<LocalItem, ArrayList<RegisterSpec>> localVariables;
+    private final Map<com.duy.dx.rop.code.LocalItem, ArrayList<com.duy.dx.rop.code.RegisterSpec>> localVariables;
 
     /** list of move-result-pesudo instructions seen in this method */
     private final ArrayList<NormalSsaInsn> moveResultPseudoInsns;
@@ -136,7 +153,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
         reservedRopRegs = new BitSet(paramRangeEnd * 2);
         reservedRopRegs.set(0, paramRangeEnd);
         usedRopRegs = new BitSet(paramRangeEnd * 2);
-        localVariables = new TreeMap<LocalItem, ArrayList<RegisterSpec>>();
+        localVariables = new TreeMap<com.duy.dx.rop.code.LocalItem, ArrayList<com.duy.dx.rop.code.RegisterSpec>>();
         moveResultPseudoInsns = new ArrayList<NormalSsaInsn>();
         invokeRangeInsns = new ArrayList<NormalSsaInsn>();
         phiInsns = new ArrayList<PhiInsn>();
@@ -189,13 +206,13 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      */
     private void printLocalVars() {
         System.out.println("Printing local vars");
-        for (Map.Entry<LocalItem, ArrayList<RegisterSpec>> e :
+        for (Map.Entry<com.duy.dx.rop.code.LocalItem, ArrayList<com.duy.dx.rop.code.RegisterSpec>> e :
                 localVariables.entrySet()) {
             StringBuilder regs = new StringBuilder();
 
             regs.append('{');
             regs.append(' ');
-            for (RegisterSpec reg : e.getValue()) {
+            for (com.duy.dx.rop.code.RegisterSpec reg : e.getValue()) {
                 regs.append('v');
                 regs.append(reg.getReg());
                 regs.append(' ');
@@ -209,14 +226,14 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * Maps all local-associated parameters to rop registers.
      */
     private void handleLocalAssociatedParams() {
-        for (ArrayList<RegisterSpec> ssaRegs : localVariables.values()) {
+        for (ArrayList<com.duy.dx.rop.code.RegisterSpec> ssaRegs : localVariables.values()) {
             int sz = ssaRegs.size();
             int paramIndex = -1;
             int paramCategory = 0;
 
             // First, find out if this local variable is a parameter.
             for (int i = 0; i < sz; i++) {
-                RegisterSpec ssaSpec = ssaRegs.get(i);
+                com.duy.dx.rop.code.RegisterSpec ssaSpec = ssaRegs.get(i);
                 int ssaReg = ssaSpec.getReg();
 
                 paramIndex = getParameterIndexForReg(ssaReg);
@@ -254,8 +271,8 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
         Rop opcode = defInsn.getOpcode();
 
         // opcode == null for phi insns.
-        if (opcode != null && opcode.getOpcode() == RegOps.MOVE_PARAM) {
-            CstInsn origInsn = (CstInsn) defInsn.getOriginalRopInsn();
+        if (opcode != null && opcode.getOpcode() == com.duy.dx.rop.code.RegOps.MOVE_PARAM) {
+            com.duy.dx.rop.code.CstInsn origInsn = (CstInsn) defInsn.getOriginalRopInsn();
             return  ((CstInteger) origInsn.getConstant()).getValue();
         }
 
@@ -270,7 +287,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * have been fit.
      */
     private void handleLocalAssociatedOther() {
-        for (ArrayList<RegisterSpec> specs : localVariables.values()) {
+        for (ArrayList<com.duy.dx.rop.code.RegisterSpec> specs : localVariables.values()) {
             int ropReg = paramRangeEnd;
 
             boolean done = false;
@@ -280,7 +297,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
                 // Compute max category for remaining unmapped registers.
                 int sz = specs.size();
                 for (int i = 0; i < sz; i++) {
-                    RegisterSpec ssaSpec = specs.get(i);
+                    com.duy.dx.rop.code.RegisterSpec ssaSpec = specs.get(i);
                     int category = ssaSpec.getCategory();
                     if (!ssaRegsMapped.get(ssaSpec.getReg())
                             && category > maxCategory) {
@@ -313,10 +330,10 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * if some remain unmapped
      */
     private boolean tryMapRegs(
-            ArrayList<RegisterSpec> specs, int ropReg,
+            ArrayList<com.duy.dx.rop.code.RegisterSpec> specs, int ropReg,
             int maxAllowedCategory, boolean markReserved) {
         boolean remaining = false;
-        for (RegisterSpec spec : specs) {
+        for (com.duy.dx.rop.code.RegisterSpec spec : specs) {
             if (ssaRegsMapped.get(spec.getReg())) {
                 continue;
             }
@@ -342,8 +359,8 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * that the SSA register is allowed to be
      * @return {@code true} if map succeeded, {@code false} if not
      */
-    private boolean tryMapReg(RegisterSpec ssaSpec, int ropReg,
-            int maxAllowedCategory) {
+    private boolean tryMapReg(com.duy.dx.rop.code.RegisterSpec ssaSpec, int ropReg,
+                              int maxAllowedCategory) {
         if (ssaSpec.getCategory() <= maxAllowedCategory
                 && !ssaRegsMapped.get(ssaSpec.getReg())
                 && canMapReg(ssaSpec, ropReg)) {
@@ -495,7 +512,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
 
             int paramIndex = getParameterIndexForReg(ssaReg);
 
-            RegisterSpec ssaSpec = getDefinitionSpecForSsaReg(ssaReg);
+            com.duy.dx.rop.code.RegisterSpec ssaSpec = getDefinitionSpecForSsaReg(ssaReg);
             if (paramIndex >= 0) {
                 addMapping(ssaSpec, paramIndex);
             }
@@ -518,7 +535,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      */
     private void handleCheckCastResults() {
         for (NormalSsaInsn insn : moveResultPseudoInsns) {
-            RegisterSpec moveRegSpec = insn.getResult();
+            com.duy.dx.rop.code.RegisterSpec moveRegSpec = insn.getResult();
             int moveReg = moveRegSpec.getReg();
             BitSet predBlocks = insn.getBlock().getPredecessors();
 
@@ -536,11 +553,11 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
              * instruction
              */
             SsaInsn checkCastInsn = insnList.get(insnList.size() - 1);
-            if (checkCastInsn.getOpcode().getOpcode() != RegOps.CHECK_CAST) {
+            if (checkCastInsn.getOpcode().getOpcode() != com.duy.dx.rop.code.RegOps.CHECK_CAST) {
                 continue;
             }
 
-            RegisterSpec checkRegSpec = checkCastInsn.getSources().get(0);
+            com.duy.dx.rop.code.RegisterSpec checkRegSpec = checkCastInsn.getSources().get(0);
             int checkReg = checkRegSpec.getReg();
 
             /**
@@ -563,8 +580,8 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
             // Map any unmapped registers to anything available
             if (!moveMapped || !checkMapped) {
                 int ropReg = findNextUnreservedRopReg(paramRangeEnd, category);
-                ArrayList<RegisterSpec> ssaRegs =
-                    new ArrayList<RegisterSpec>(2);
+                ArrayList<com.duy.dx.rop.code.RegisterSpec> ssaRegs =
+                    new ArrayList<com.duy.dx.rop.code.RegisterSpec>(2);
                 ssaRegs.add(moveRegSpec);
                 ssaRegs.add(checkRegSpec);
 
@@ -611,7 +628,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
                 continue;
             }
 
-            RegisterSpec ssaSpec = getDefinitionSpecForSsaReg(ssaReg);
+            com.duy.dx.rop.code.RegisterSpec ssaSpec = getDefinitionSpecForSsaReg(ssaReg);
 
             if (ssaSpec == null) continue;
 
@@ -636,8 +653,8 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * @param ropReg {@code >=0;} rop register to check mapping to
      * @return {@code true} if all unmapped registers can be mapped
      */
-    private boolean canMapRegs(ArrayList<RegisterSpec> specs, int ropReg) {
-        for (RegisterSpec spec : specs) {
+    private boolean canMapRegs(ArrayList<com.duy.dx.rop.code.RegisterSpec> specs, int ropReg) {
+        for (com.duy.dx.rop.code.RegisterSpec spec : specs) {
             if (ssaRegsMapped.get(spec.getReg())) continue;
             if (!canMapReg(spec, ropReg)) return false;
         }
@@ -653,7 +670,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * @param ropReg prosepctive new-namespace reg
      * @return {@code true} if mapping is possible
      */
-    private boolean canMapReg(RegisterSpec ssaSpec, int ropReg) {
+    private boolean canMapReg(com.duy.dx.rop.code.RegisterSpec ssaSpec, int ropReg) {
         int category = ssaSpec.getCategory();
         return !(spansParamRange(ropReg, category)
                 || mapper.interferes(ssaSpec, ropReg));
@@ -682,16 +699,19 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
     private void analyzeInstructions() {
         ssaMeth.forEachInsn(new SsaInsn.Visitor() {
             /** {@inheritDoc} */
+            @Override
             public void visitMoveInsn(NormalSsaInsn insn) {
                 processInsn(insn);
             }
 
             /** {@inheritDoc} */
+            @Override
             public void visitPhiInsn(PhiInsn insn) {
                 processInsn(insn);
             }
 
             /** {@inheritDoc} */
+            @Override
             public void visitNonMoveInsn(NormalSsaInsn insn) {
                 processInsn(insn);
             }
@@ -710,17 +730,17 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
              * local variable assignment
              */
             private void processInsn(SsaInsn insn) {
-                RegisterSpec assignment;
+                com.duy.dx.rop.code.RegisterSpec assignment;
                 assignment = insn.getLocalAssignment();
 
                 if (assignment != null) {
-                    LocalItem local = assignment.getLocalItem();
+                    com.duy.dx.rop.code.LocalItem local = assignment.getLocalItem();
 
-                    ArrayList<RegisterSpec> regList
+                    ArrayList<com.duy.dx.rop.code.RegisterSpec> regList
                         = localVariables.get(local);
 
                     if (regList == null) {
-                        regList = new ArrayList<RegisterSpec>();
+                        regList = new ArrayList<com.duy.dx.rop.code.RegisterSpec>();
                         localVariables.put(local, regList);
                     }
 
@@ -751,7 +771,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * @param ssaSpec {@code non-null;} SSA register to map from
      * @param ropReg {@code >=0;} rop register to map to
      */
-    private void addMapping(RegisterSpec ssaSpec, int ropReg) {
+    private void addMapping(com.duy.dx.rop.code.RegisterSpec ssaSpec, int ropReg) {
         int ssaReg = ssaSpec.getReg();
 
         // An assertion.
@@ -782,12 +802,12 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
     private void adjustAndMapSourceRangeRange(NormalSsaInsn insn) {
         int newRegStart = findRangeAndAdjust(insn);
 
-        RegisterSpecList sources = insn.getSources();
+        com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
         int szSources = sources.size();
         int nextRopReg = newRegStart;
 
         for (int i = 0; i < szSources; i++) {
-            RegisterSpec source = sources.get(i);
+            com.duy.dx.rop.code.RegisterSpec source = sources.get(i);
             int sourceReg = source.getReg();
             int category = source.getCategory();
             int curRopReg = nextRopReg;
@@ -797,12 +817,12 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
                 continue;
             }
 
-            LocalItem localItem = getLocalItemForReg(sourceReg);
+            com.duy.dx.rop.code.LocalItem localItem = getLocalItemForReg(sourceReg);
             addMapping(source, curRopReg);
 
             if (localItem != null) {
                 markReserved(curRopReg, category);
-                ArrayList<RegisterSpec> similarRegisters
+                ArrayList<com.duy.dx.rop.code.RegisterSpec> similarRegisters
                         = localVariables.get(localItem);
 
                 int szSimilar = similarRegisters.size();
@@ -812,7 +832,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
                  * this local.
                  */
                 for (int j = 0; j < szSimilar; j++) {
-                    RegisterSpec similarSpec = similarRegisters.get(j);
+                    com.duy.dx.rop.code.RegisterSpec similarSpec = similarRegisters.get(j);
                     int similarReg = similarSpec.getReg();
 
                     // Don't map anything that's also a source.
@@ -838,7 +858,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * @return {@code >= 0;} rop register of start of range
      */
     private int findRangeAndAdjust(NormalSsaInsn insn) {
-        RegisterSpecList sources = insn.getSources();
+        com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
         int szSources = sources.size();
         // the category for each source index
         int categoriesForIndex[] = new int[szSources];
@@ -1011,17 +1031,17 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      */
     private int fitPlanForRange(int ropReg, NormalSsaInsn insn,
             int[] categoriesForIndex, BitSet outMovesRequired) {
-        RegisterSpecList sources = insn.getSources();
+        com.duy.dx.rop.code.RegisterSpecList sources = insn.getSources();
         int szSources = sources.size();
         int fitWidth = 0;
         IntSet liveOut = insn.getBlock().getLiveOutRegs();
-        RegisterSpecList liveOutSpecs = ssaSetToSpecs(liveOut);
+        com.duy.dx.rop.code.RegisterSpecList liveOutSpecs = ssaSetToSpecs(liveOut);
 
         // An SSA reg may only be mapped into a range once.
         BitSet seen = new BitSet(ssaMeth.getRegCount());
 
         for (int i = 0; i < szSources ; i++) {
-            RegisterSpec ssaSpec = sources.get(i);
+            com.duy.dx.rop.code.RegisterSpec ssaSpec = sources.get(i);
             int ssaReg = ssaSpec.getReg();
             int category = categoriesForIndex[i];
 
@@ -1073,8 +1093,8 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * @param ssaSet {@code non-null;} set of SSA registers
      * @return list of RegisterSpecs as noted above
      */
-    RegisterSpecList ssaSetToSpecs(IntSet ssaSet) {
-        RegisterSpecList result = new RegisterSpecList(ssaSet.elements());
+    com.duy.dx.rop.code.RegisterSpecList ssaSetToSpecs(IntSet ssaSet) {
+        com.duy.dx.rop.code.RegisterSpecList result = new com.duy.dx.rop.code.RegisterSpecList(ssaSet.elements());
 
         IntIterator iter = ssaSet.iterator();
 
@@ -1092,10 +1112,10 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * @param ssaReg {@code >= 0;} SSA register
      * @return {@code null-ok;} associated local item or null
      */
-    private LocalItem getLocalItemForReg(int ssaReg) {
-        for (Map.Entry<LocalItem, ArrayList<RegisterSpec>> entry :
+    private com.duy.dx.rop.code.LocalItem getLocalItemForReg(int ssaReg) {
+        for (Map.Entry<LocalItem, ArrayList<com.duy.dx.rop.code.RegisterSpec>> entry :
                  localVariables.entrySet()) {
-            for (RegisterSpec spec : entry.getValue()) {
+            for (com.duy.dx.rop.code.RegisterSpec spec : entry.getValue()) {
                 if (spec.getReg() == ssaReg) {
                     return entry.getKey();
                 }
@@ -1111,7 +1131,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
      * of the registers have mappings yet, a new mapping is created.
      */
     private void processPhiInsn(PhiInsn insn) {
-        RegisterSpec result = insn.getResult();
+        com.duy.dx.rop.code.RegisterSpec result = insn.getResult();
         int resultReg = result.getReg();
         int category = result.getCategory();
 
@@ -1119,7 +1139,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
         int sourcesSize = sources.size();
 
         // List of phi sources / result that need mapping
-        ArrayList<RegisterSpec> ssaRegs = new ArrayList<RegisterSpec>();
+        ArrayList<com.duy.dx.rop.code.RegisterSpec> ssaRegs = new ArrayList<com.duy.dx.rop.code.RegisterSpec>();
 
         // Track how many times a particular mapping is found
         Multiset mapSet = new Multiset(sourcesSize + 1);
@@ -1135,7 +1155,7 @@ public class FirstFitLocalCombiningAllocator extends RegisterAllocator {
         }
 
         for (int i = 0; i < sourcesSize; i++) {
-            RegisterSpec source = sources.get(i);
+            com.duy.dx.rop.code.RegisterSpec source = sources.get(i);
             SsaInsn def = ssaMeth.getDefinitionForRegister(source.getReg());
             RegisterSpec sourceDef = def.getResult();
             int sourceReg = sourceDef.getReg();

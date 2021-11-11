@@ -14,45 +14,45 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.code;
+package com.duy.dx.dex.code;
 
-import com.duy.dx .rop.code.BasicBlock;
-import com.duy.dx .rop.code.BasicBlockList;
-import com.duy.dx .rop.code.Insn;
-import com.duy.dx .rop.code.RopMethod;
-import com.duy.dx .rop.code.SourcePosition;
+import com.duy.dx.rop.code.BasicBlock;
+import com.duy.dx.rop.code.BasicBlockList;
+import com.duy.dx.rop.code.Insn;
+import com.duy.dx.rop.code.RopMethod;
+import com.duy.dx.rop.code.SourcePosition;
 
 /**
- * Container for the set of {@link CodeAddress} instances associated with
+ * Container for the set of {@link com.duy.dx.dex.code.CodeAddress} instances associated with
  * the blocks of a particular method. Each block has a corresponding
  * start address, end address, and last instruction address.
  */
 public final class BlockAddresses {
     /** {@code non-null;} array containing addresses for the start of each basic
      * block (indexed by basic block label) */
-    private final CodeAddress[] starts;
+    private final com.duy.dx.dex.code.CodeAddress[] starts;
 
     /** {@code non-null;} array containing addresses for the final instruction
      * of each basic block (indexed by basic block label) */
-    private final CodeAddress[] lasts;
+    private final com.duy.dx.dex.code.CodeAddress[] lasts;
 
     /** {@code non-null;} array containing addresses for the end (just past the
      * final instruction) of each basic block (indexed by basic block
      * label) */
-    private final CodeAddress[] ends;
+    private final com.duy.dx.dex.code.CodeAddress[] ends;
 
     /**
      * Constructs an instance.
      *
      * @param method {@code non-null;} the method to have block addresses for
      */
-    public BlockAddresses(RopMethod method) {
-        BasicBlockList blocks = method.getBlocks();
+    public BlockAddresses(com.duy.dx.rop.code.RopMethod method) {
+        com.duy.dx.rop.code.BasicBlockList blocks = method.getBlocks();
         int maxLabel = blocks.getMaxLabel();
 
-        this.starts = new CodeAddress[maxLabel];
-        this.lasts = new CodeAddress[maxLabel];
-        this.ends = new CodeAddress[maxLabel];
+        this.starts = new com.duy.dx.dex.code.CodeAddress[maxLabel];
+        this.lasts = new com.duy.dx.dex.code.CodeAddress[maxLabel];
+        this.ends = new com.duy.dx.dex.code.CodeAddress[maxLabel];
 
         setupArrays(method);
     }
@@ -63,7 +63,7 @@ public final class BlockAddresses {
      * @param block {@code non-null;} the block in question
      * @return {@code non-null;} the appropriate instance
      */
-    public CodeAddress getStart(BasicBlock block) {
+    public com.duy.dx.dex.code.CodeAddress getStart(com.duy.dx.rop.code.BasicBlock block) {
         return starts[block.getLabel()];
     }
 
@@ -73,7 +73,7 @@ public final class BlockAddresses {
      * @param label {@code non-null;} the label of the block in question
      * @return {@code non-null;} the appropriate instance
      */
-    public CodeAddress getStart(int label) {
+    public com.duy.dx.dex.code.CodeAddress getStart(int label) {
         return starts[label];
     }
 
@@ -83,7 +83,7 @@ public final class BlockAddresses {
      * @param block {@code non-null;} the block in question
      * @return {@code non-null;} the appropriate instance
      */
-    public CodeAddress getLast(BasicBlock block) {
+    public com.duy.dx.dex.code.CodeAddress getLast(com.duy.dx.rop.code.BasicBlock block) {
         return lasts[block.getLabel()];
     }
 
@@ -94,7 +94,7 @@ public final class BlockAddresses {
      * @param label {@code non-null;} the label of the block in question
      * @return {@code non-null;} the appropriate instance
      */
-    public CodeAddress getLast(int label) {
+    public com.duy.dx.dex.code.CodeAddress getLast(int label) {
         return lasts[label];
     }
 
@@ -105,7 +105,7 @@ public final class BlockAddresses {
      * @param block {@code non-null;} the block in question
      * @return {@code non-null;} the appropriate instance
      */
-    public CodeAddress getEnd(BasicBlock block) {
+    public com.duy.dx.dex.code.CodeAddress getEnd(com.duy.dx.rop.code.BasicBlock block) {
         return ends[block.getLabel()];
     }
 
@@ -116,7 +116,7 @@ public final class BlockAddresses {
      * @param label {@code non-null;} the label of the block in question
      * @return {@code non-null;} the appropriate instance
      */
-    public CodeAddress getEnd(int label) {
+    public com.duy.dx.dex.code.CodeAddress getEnd(int label) {
         return ends[label];
     }
 
@@ -132,11 +132,11 @@ public final class BlockAddresses {
             int label = one.getLabel();
             Insn insn = one.getInsns().get(0);
 
-            starts[label] = new CodeAddress(insn.getPosition());
+            starts[label] = new com.duy.dx.dex.code.CodeAddress(insn.getPosition());
 
             SourcePosition pos = one.getLastInsn().getPosition();
 
-            lasts[label] = new CodeAddress(pos);
+            lasts[label] = new com.duy.dx.dex.code.CodeAddress(pos);
             ends[label] = new CodeAddress(pos);
         }
     }

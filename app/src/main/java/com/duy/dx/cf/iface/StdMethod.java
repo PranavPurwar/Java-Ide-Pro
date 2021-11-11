@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.iface;
+package com.duy.dx.cf.iface;
 
-import com.duy.dx .rop.code.AccessFlags;
-import com.duy.dx .rop.cst.CstNat;
-import com.duy.dx .rop.cst.CstType;
-import com.duy.dx .rop.type.Prototype;
+import com.duy.dx.rop.code.AccessFlags;
+import com.duy.dx.rop.cst.CstNat;
+import com.duy.dx.rop.cst.CstType;
+import com.duy.dx.rop.type.Prototype;
 
 /**
- * Standard implementation of {@link Method}, which directly stores
+ * Standard implementation of {@link com.duy.dx.cf.iface.Method}, which directly stores
  * all the associated data.
  */
 public final class StdMethod extends StdMember implements Method {
     /** {@code non-null;} the effective method descriptor */
-    private final Prototype effectiveDescriptor;
+    private final com.duy.dx.rop.type.Prototype effectiveDescriptor;
 
     /**
      * Constructs an instance.
@@ -38,17 +38,18 @@ public final class StdMethod extends StdMember implements Method {
      * @param attributes {@code non-null;} list of associated attributes
      */
     public StdMethod(CstType definingClass, int accessFlags, CstNat nat,
-            AttributeList attributes) {
+                     AttributeList attributes) {
         super(definingClass, accessFlags, nat, attributes);
 
         String descStr = getDescriptor().getString();
         effectiveDescriptor =
-            Prototype.intern(descStr, definingClass.getClassType(),
+            com.duy.dx.rop.type.Prototype.intern(descStr, definingClass.getClassType(),
                                     AccessFlags.isStatic(accessFlags),
                                     nat.isInstanceInit());
     }
 
     /** {@inheritDoc} */
+    @Override
     public Prototype getEffectiveDescriptor() {
         return effectiveDescriptor;
     }

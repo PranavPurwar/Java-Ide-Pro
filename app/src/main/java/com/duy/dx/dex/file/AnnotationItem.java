@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.duy.dx .dex.file;
-
-import com.duy.dx .rop.annotation.Annotation;
-import com.duy.dx .rop.annotation.AnnotationVisibility;
-import com.duy.dx .rop.annotation.NameValuePair;
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .util.AnnotatedOutput;
-import com.duy.dx .util.ByteArrayAnnotatedOutput;
+package com.duy.dx.dex.file;
 
 import java.util.Arrays;
 import java.util.Comparator;
+
+import com.duy.dx.rop.annotation.Annotation;
+import com.duy.dx.rop.annotation.AnnotationVisibility;
+import com.duy.dx.rop.annotation.NameValuePair;
+import com.duy.dx.rop.cst.Constant;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.util.AnnotatedOutput;
+import com.duy.dx.util.ByteArrayAnnotatedOutput;
 
 /**
  * Single annotation, which consists of a type and a set of name-value
  * element pairs.
  */
-public final class AnnotationItem extends OffsettedItem {
+public final class AnnotationItem extends com.duy.dx.dex.file.OffsettedItem {
     /** annotation visibility constant: visible at build time only */
     private static final int VISIBILITY_BUILD = 0;
 
@@ -44,11 +44,12 @@ public final class AnnotationItem extends OffsettedItem {
     /** the required alignment for instances of this class */
     private static final int ALIGNMENT = 1;
 
-    /** {@code non-null;} unique instance of {@link #TypeIdSorter} */
+    /** {@code non-null;} unique instance of
+     * {@link AnnotationItem.TypeIdSorter} */
     private static final TypeIdSorter TYPE_ID_SORTER = new TypeIdSorter();
 
     /** {@code non-null;} the annotation to represent */
-    private final Annotation annotation;
+    private final com.duy.dx.rop.annotation.Annotation annotation;
 
     /**
      * {@code null-ok;} type reference for the annotation type; set during
@@ -67,6 +68,7 @@ public final class AnnotationItem extends OffsettedItem {
      */
     private static class TypeIdSorter implements Comparator<AnnotationItem> {
         /** {@inheritDoc} */
+        @Override
         public int compare(AnnotationItem item1, AnnotationItem item2) {
             int index1 = item1.type.getIndex();
             int index2 = item2.type.getIndex();
@@ -142,6 +144,7 @@ public final class AnnotationItem extends OffsettedItem {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addContents(DexFile file) {
         type = file.getTypeIds().intern(annotation.getType());
         ValueEncoder.addContents(file, annotation);
@@ -152,7 +155,7 @@ public final class AnnotationItem extends OffsettedItem {
     protected void place0(Section addedTo, int offset) {
         // Encode the data and note the size.
 
-        ByteArrayAnnotatedOutput out = new ByteArrayAnnotatedOutput();
+        com.duy.dx.util.ByteArrayAnnotatedOutput out = new ByteArrayAnnotatedOutput();
         ValueEncoder encoder = new ValueEncoder(addedTo.getFile(), out);
 
         encoder.writeAnnotation(annotation, false);
@@ -170,7 +173,7 @@ public final class AnnotationItem extends OffsettedItem {
      * @param out {@code non-null;} where to output to
      * @param prefix {@code non-null;} prefix for each line of output
      */
-    public void annotateTo(AnnotatedOutput out, String prefix) {
+    public void annotateTo(com.duy.dx.util.AnnotatedOutput out, String prefix) {
         out.annotate(0, prefix + "visibility: " +
                 annotation.getVisibility().toHuman());
         out.annotate(0, prefix + "type: " + annotation.getType().toHuman());

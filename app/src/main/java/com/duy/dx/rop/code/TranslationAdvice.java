@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
 /**
  * Interface for "advice" passed from the late stage of translation back
@@ -36,8 +36,8 @@ public interface TranslationAdvice {
      * @return {@code true} iff the target can represent the operation
      * using a constant for the last argument
      */
-    public boolean hasConstantOperation(Rop opcode,
-            RegisterSpec sourceA, RegisterSpec sourceB);
+    public boolean hasConstantOperation(com.duy.dx.rop.code.Rop opcode,
+                                        com.duy.dx.rop.code.RegisterSpec sourceA, RegisterSpec sourceB);
 
     /**
      * Returns true if the translation target requires the sources of the

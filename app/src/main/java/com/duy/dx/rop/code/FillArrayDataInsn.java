@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.duy.dx .rop.code;
+package com.duy.dx.rop.code;
 
-import com.duy.dx .rop.cst.Constant;
-import com.duy.dx .rop.type.StdTypeList;
-import com.duy.dx .rop.type.Type;
-import com.duy.dx .rop.type.TypeList;
+import com.duy.dx.rop.type.StdTypeList;
+import com.duy.dx.rop.type.Type;
+import com.duy.dx.rop.type.TypeList;
 import java.util.ArrayList;
+
+import com.duy.dx.rop.cst.Constant;
 
 /**
  * Instruction which fills a newly created array with a predefined list of
@@ -30,13 +31,13 @@ public final class FillArrayDataInsn
         extends Insn {
 
     /** non-null: initial values to fill the newly created array */
-    private final ArrayList<Constant> initValues;
+    private final ArrayList<com.duy.dx.rop.cst.Constant> initValues;
 
     /**
      * non-null: type of the array. Will be used to determine the width of
      * elements in the array-data table.
      */
-    private final Constant arrayType;
+    private final com.duy.dx.rop.cst.Constant arrayType;
 
     /**
      * Constructs an instance.
@@ -48,13 +49,13 @@ public final class FillArrayDataInsn
      * @param cst {@code non-null;} type of the new array
      */
     public FillArrayDataInsn(Rop opcode, SourcePosition position,
-                             RegisterSpecList sources,
-                             ArrayList<Constant> initValues,
-                             Constant cst) {
+                             com.duy.dx.rop.code.RegisterSpecList sources,
+                             ArrayList<com.duy.dx.rop.cst.Constant> initValues,
+                             com.duy.dx.rop.cst.Constant cst) {
         super(opcode, position, null, sources);
 
         if (opcode.getBranchingness() != Rop.BRANCH_NONE) {
-            throw new IllegalArgumentException("bogus branchingness");
+            throw new IllegalArgumentException("opcode with invalid branchingness: " + opcode.getBranchingness());
         }
 
         this.initValues = initValues;
@@ -72,7 +73,7 @@ public final class FillArrayDataInsn
      * Return the list of init values
      * @return {@code non-null;} list of init values
      */
-    public ArrayList<Constant> getInitValues() {
+    public ArrayList<com.duy.dx.rop.cst.Constant> getInitValues() {
         return initValues;
     }
 

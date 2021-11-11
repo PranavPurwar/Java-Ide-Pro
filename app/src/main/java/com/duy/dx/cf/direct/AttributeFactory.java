@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.duy.dx .cf.direct;
+package com.duy.dx.cf.direct;
 
-import com.duy.dx .cf.attrib.RawAttribute;
-import com.duy.dx .cf.iface.Attribute;
-import com.duy.dx .cf.iface.ParseException;
-import com.duy.dx .cf.iface.ParseObserver;
-import com.duy.dx .rop.cst.ConstantPool;
-import com.duy.dx .rop.cst.CstString;
-import com.duy.dx .util.ByteArray;
-import com.duy.dx .util.Hex;
+import com.duy.dx.cf.attrib.RawAttribute;
+import com.duy.dx.cf.iface.Attribute;
+import com.duy.dx.cf.iface.ParseException;
+import com.duy.dx.cf.iface.ParseObserver;
+import com.duy.dx.rop.cst.ConstantPool;
+import com.duy.dx.rop.cst.CstString;
+import com.duy.dx.util.ByteArray;
+import com.duy.dx.util.Hex;
 
 /**
- * Factory capable of instantiating various {@link Attribute} subclasses
+ * Factory capable of instantiating various {@link com.duy.dx.cf.iface.Attribute} subclasses
  * depending on the context and name.
  */
 public class AttributeFactory {
@@ -64,10 +64,10 @@ public class AttributeFactory {
      * @param offset offset into {@code dcf}'s {@code bytes}
      * to start parsing at
      * @param observer {@code null-ok;} parse observer to report to, if any
-     * @return {@code non-null;} an appropriately-constructed {@link Attribute}
+     * @return {@code non-null;} an appropriately-constructed {@link com.duy.dx.cf.iface.Attribute}
      */
-    public final Attribute parse(DirectClassFile cf, int context, int offset,
-                                 ParseObserver observer) {
+    public final com.duy.dx.cf.iface.Attribute parse(DirectClassFile cf, int context, int offset,
+                                                              com.duy.dx.cf.iface.ParseObserver observer) {
         if (cf == null) {
             throw new NullPointerException("cf == null");
         }
@@ -76,11 +76,11 @@ public class AttributeFactory {
             throw new IllegalArgumentException("bad context");
         }
 
-        CstString name = null;
+        com.duy.dx.rop.cst.CstString name = null;
 
         try {
-            ByteArray bytes = cf.getBytes();
-            ConstantPool pool = cf.getConstantPool();
+            com.duy.dx.util.ByteArray bytes = cf.getBytes();
+            com.duy.dx.rop.cst.ConstantPool pool = cf.getConstantPool();
             int nameIdx = bytes.getUnsignedShort(offset);
             int length = bytes.getInt(offset + 2);
 
@@ -90,7 +90,7 @@ public class AttributeFactory {
                 observer.parsed(bytes, offset, 2,
                                 "name: " + name.toHuman());
                 observer.parsed(bytes, offset + 2, 4,
-                                "length: " + Hex.u4(length));
+                                "length: " + com.duy.dx.util.Hex.u4(length));
             }
 
             return parse0(cf, context, name.getString(), offset + 6, length,
@@ -105,7 +105,7 @@ public class AttributeFactory {
 
     /**
      * Parses attribute content. The base class implements this by constructing
-     * an instance of {@link RawAttribute}. Subclasses are expected to
+     * an instance of {@link com.duy.dx.cf.attrib.RawAttribute}. Subclasses are expected to
      * override this to do something better in most cases.
      *
      * @param cf {@code non-null;} class file to parse from
@@ -116,11 +116,11 @@ public class AttributeFactory {
      * is the offset to the start of attribute data, not to the header
      * @param length the length of the attribute data
      * @param observer {@code null-ok;} parse observer to report to, if any
-     * @return {@code non-null;} an appropriately-constructed {@link Attribute}
+     * @return {@code non-null;} an appropriately-constructed {@link com.duy.dx.cf.iface.Attribute}
      */
-    protected Attribute parse0(DirectClassFile cf, int context, String name,
-                               int offset, int length,
-                               ParseObserver observer) {
+    protected com.duy.dx.cf.iface.Attribute parse0(DirectClassFile cf, int context, String name,
+                                                            int offset, int length,
+                                                            ParseObserver observer) {
         ByteArray bytes = cf.getBytes();
         ConstantPool pool = cf.getConstantPool();
         Attribute result = new RawAttribute(name, bytes, offset, length, pool);
