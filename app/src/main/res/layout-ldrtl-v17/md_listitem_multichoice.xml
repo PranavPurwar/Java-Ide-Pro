@@ -5,7 +5,7 @@
     android:paddingLeft="@dimen/md_dialog_frame_margin"
     android:paddingRight="@dimen/md_dialog_frame_margin"
     android:descendantFocusability="blocksDescendants"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/md_listitem_height"
     android:paddingStart="@dimen/md_dialog_frame_margin"
@@ -19,7 +19,7 @@
         android:paddingRight="@dimen/md_listitem_control_margin"
         android:paddingBottom="@dimen/md_listitem_vertical_margin_choice"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:paddingEnd="@dimen/md_listitem_control_margin" />
     <android.support.v7.widget.AppCompatCheckBox
         android:gravity="center_vertical"
@@ -28,6 +28,6 @@
         android:focusable="false"
         android:clickable="false"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:minHeight="@dimen/md_listitem_height" />
 </LinearLayout>

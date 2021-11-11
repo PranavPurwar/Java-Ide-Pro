@@ -1115,7 +1115,7 @@
     <style name="MD_ActionButtonStacked" parent="@style/MD_ActionButton">
         <item name="android:paddingLeft">@dimen/md_button_padding_horizontal_internalexternal</item>
         <item name="android:paddingRight">@dimen/md_button_padding_horizontal_internalexternal</item>
-        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
     <style name="MD_Dark" parent="@style/Theme.AppCompat.Dialog.Alert">
         <item name="android:windowAnimationStyle">@style/MD_WindowAnimation</item>
@@ -1154,11 +1154,11 @@
         <item name="android:paddingLeft">@dimen/search_icon_padding</item>
         <item name="android:paddingRight">@dimen/search_icon_padding</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
     <style name="PickerEditText">
         <item name="android:textSize">22.0sp</item>
-        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">4.0dip</item>
         <item name="android:singleLine">true</item>
@@ -1610,8 +1610,8 @@
     <style name="ThemeOverlay.AppCompat.Light" parent="@style/Base.ThemeOverlay.AppCompat.Light" />
     <style name="TreeNodeStyleCustom">
         <item name="android:paddingLeft">12.0dip</item>
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
     <style name="Widget.AppCompat.ActionBar" parent="@style/Base.Widget.AppCompat.ActionBar" />
     <style name="Widget.AppCompat.ActionBar.Solid" parent="@style/Base.Widget.AppCompat.ActionBar.Solid" />

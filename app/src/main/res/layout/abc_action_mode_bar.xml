@@ -2,7 +2,7 @@
 <android.support.v7.widget.ActionBarContextView
     android:theme="?actionBarTheme"
     android:visibility="gone"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     style="?actionModeStyle"
     xmlns:android="http://schemas.android.com/apk/res/android" />

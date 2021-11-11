@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="58.0dip"
     style="@style/RtlOverlay.Widget.AppCompat.Search.DropDown"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -39,7 +39,7 @@
         android:id="@android:id/text2"
         android:paddingBottom="4.0dip"
         android:visibility="gone"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="29.0dip"
         android:singleLine="true"
         android:layout_alignParentBottom="true"
@@ -48,7 +48,7 @@
     <TextView
         android:textAppearance="?textAppearanceSearchResultTitle"
         android:id="@android:id/text1"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:layout_above="@android:id/text2"

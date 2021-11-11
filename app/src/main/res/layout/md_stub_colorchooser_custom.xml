@@ -4,17 +4,17 @@
     android:id="@id/md_colorChooserCustomFrame"
     android:paddingTop="@dimen/md_title_frame_margin_bottom"
     android:paddingBottom="@dimen/md_title_frame_margin_bottom"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <View
         android:id="@id/md_colorIndicator"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="120.0dip" />
     <LinearLayout
         android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/md_title_frame_margin_bottom">
         <TextView
@@ -38,7 +38,7 @@
     <RelativeLayout
         android:paddingLeft="@dimen/md_dialog_frame_margin"
         android:paddingRight="@dimen/md_dialog_frame_margin"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/md_title_frame_margin_bottom">
         <TextView
@@ -54,7 +54,7 @@
         <SeekBar
             android:id="@id/md_colorA"
             android:focusable="true"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/md_title_frame_margin_bottom"
             android:max="255"
@@ -86,7 +86,7 @@
         <SeekBar
             android:id="@id/md_colorR"
             android:focusable="true"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/md_title_frame_margin_bottom"
             android:max="255"
@@ -119,7 +119,7 @@
         <SeekBar
             android:id="@id/md_colorG"
             android:focusable="true"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/md_title_frame_margin_bottom"
             android:max="255"
@@ -151,7 +151,7 @@
             android:layout_alignBottom="@id/md_colorB" />
         <SeekBar
             android:id="@id/md_colorB"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/md_title_frame_margin_bottom"
             android:max="255"

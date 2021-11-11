@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/md_dialog_frame_margin"
     android:paddingRight="@dimen/md_dialog_frame_margin"
     android:focusable="true"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/md_simpleitem_height"
     xmlns:android="http://schemas.android.com/apk/res/android">

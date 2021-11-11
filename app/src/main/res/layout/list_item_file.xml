@@ -2,7 +2,7 @@
 <RelativeLayout
     android:paddingTop="2.0dip"
     android:paddingBottom="2.0dip"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:selectableItemBackground"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,7 +11,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:id="@id/linearLayout"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/buttonsContainer">
         <android.support.v7.widget.AppCompatImageView
@@ -30,7 +30,7 @@
             android:textColor="@color/dark.color_folder"
             android:gravity="center_vertical"
             android:id="@id/node_value"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout

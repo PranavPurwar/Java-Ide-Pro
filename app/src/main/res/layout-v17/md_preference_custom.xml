@@ -3,7 +3,7 @@
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingRight="?android:scrollbarSize"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:minHeight="?android:listPreferredItemHeight"
@@ -58,5 +58,5 @@
         android:orientation="vertical"
         android:id="@android:id/widget_frame"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent" />
+        android:layout_height="match_parent" />
 </LinearLayout>

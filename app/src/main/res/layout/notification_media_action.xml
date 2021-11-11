@@ -3,7 +3,7 @@
     android:gravity="center"
     android:id="@id/action0"
     android:layout_width="48.0dip"
-    android:layout_height="fill_parent"
+    android:layout_height="match_parent"
     android:layout_marginLeft="2.0dip"
     android:layout_marginRight="2.0dip"
     android:layout_weight="1.0"

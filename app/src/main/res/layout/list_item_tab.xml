@@ -3,7 +3,7 @@
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
+    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.v7.widget.AppCompatTextView
@@ -17,7 +17,7 @@
         android:focusable="true"
         android:clickable="true"
         android:layout_width="0.0dip"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:foreground="?android:selectableItemBackground"
         android:scrollHorizontally="true"
         android:singleLine="true"
@@ -31,7 +31,7 @@
         android:focusable="true"
         android:clickable="true"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:foreground="?android:selectableItemBackground"
         android:tint="@color/white"
         android:contentDescription="@string/close"

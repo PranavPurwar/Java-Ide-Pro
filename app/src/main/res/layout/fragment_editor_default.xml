@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <com.duy.ide.editor.view.GutterView
         android:id="@id/gutter_view"
         android:layout_width="0.0dip"
-        android:layout_height="fill_parent" />
+        android:layout_height="match_parent" />
     <com.duy.ide.editor.view.CodeEditor
         android:typeface="monospace"
         android:gravity="start|center|top"
@@ -15,7 +15,7 @@
         android:background="#ffffffff"
         android:padding="0.0dip"
         android:scrollbars="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:inputType="textMultiLine" />
 </LinearLayout>
