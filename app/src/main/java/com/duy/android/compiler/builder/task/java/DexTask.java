@@ -6,12 +6,18 @@ import android.util.Log;
 import com.duy.android.compiler.builder.IBuilder;
 import com.duy.android.compiler.builder.task.Task;
 import com.duy.android.compiler.builder.util.MD5Hash;
+import com.duy.android.compiler.builder.util.Argument;
 import com.duy.android.compiler.project.JavaProject;
 import com.duy.dex.Dex;
 import com.duy.dx.merge.CollisionPolicy;
 import com.duy.dx.merge.DexMerger;
+import com.duy.dx.command.dexer.DxContext;
+import com.duy.dx.command.dexer.Main;
 
+import java.lang.reflect.Method;
 import java.io.File;
+import java.util.List;
+import java.util.Arrays;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,15 +65,24 @@ public class DexTask extends Task<JavaProject> {
                 continue;
             }
 
-            String[] args = {"--verbose",
-                    "--no-strict",
-                    "--no-files",
-                    "--output=" + dexLib.getAbsolutePath(), //output
-                    jarLib.getAbsolutePath() //input
-            };
+            List<String> args = Arrays.asList(
+			                           "--debug",
+									   "--verbose",
+									   "--output=" + dexLib.getAbsolutePath(),
+									   jarLib.getAbsolutePath()
+			);
+
             mBuilder.stdout("Dexing library " + jarLib.getPath() + " => " + dexLib.getAbsolutePath());
-            int resultCode = com.duy.dx.command.dexer.Main.main(args);
-            if (resultCode != 0) {
+            try {
+                Main.clearInternTables();
+                Main.Arguments arguments = new Main.Arguments();
+                Method parseMethod = Main.Arguments.class.getDeclaredMethod("parse", String[].class);
+                parseMethod.setAccessible(true);
+                parseMethod.invoke(arguments, (Object) args.toArray(new String[0]));
+
+                Main.run(arguments);
+            } catch (Exception e) {
+                mBuilder.stdout(e.getMessage());
                 return false;
             }
             mBuilder.stdout("Dexed library " + dexLib.getAbsolutePath());
@@ -83,15 +98,27 @@ public class DexTask extends Task<JavaProject> {
     private boolean dexBuildClasses(@NonNull JavaProject project) throws IOException {
         mBuilder.stdout("Merging build classes");
 
-        File buildClasseDir = project.getDirBuildClasses();
-        String[] args = new String[]{
-                "--verbose", "--no-strict",
-                "--output=" + project.getDexFile().getAbsolutePath(), //output dex file
-                buildClasseDir.getAbsolutePath() //input files
-        };
-        int resultCode = com.duy.dx.command.dexer.Main.main(args);
+		List<String> args = Arrays.asList(
+		                        "--debug",
+								"--verbose",
+								"--output=" + project.getDexFile().getAbsolutePath(),
+								project.getDirBuildClasses().getAbsolutePath()
+		);
+
+        try {
+            Main.clearInternTables();
+            Main.Arguments arguments = new Main.Arguments();
+            Method parseMethod = Main.Arguments.class.getDeclaredMethod("parse", String[].class);
+            parseMethod.setAccessible(true);
+            parseMethod.invoke(arguments, (Object) args.toArray(new String[0]));
+
+            Main.run(arguments);
+        } catch (Exception e) {
+            mBuilder.stdout(e.getMessage());
+            return false;
+        }
         mBuilder.stdout("Merged build classes " + project.getDexFile().getName());
-        return resultCode == 0;
+        return true;
     }
 
     private boolean dexMerge(@NonNull JavaProject projectFile) throws IOException {
@@ -104,10 +131,9 @@ public class DexTask extends Task<JavaProject> {
         });
         if (dexedLibs.length >= 1) {
             for (File dexedLib : dexedLibs) {
-                Dex[] toBeMerge = {new Dex(projectFile.getDexFile()), new Dex(dexedLib)};
-                DexMerger dexMerger = new DexMerger(toBeMerge, CollisionPolicy.FAIL);
-                Dex merged = dexMerger.merge();
-                merged.writeTo(projectFile.getDexFile());
+                Dex[] toBeMerged = {new Dex(projectFile.getDexFile()), new Dex(dexedLib)};
+                DexMerger dexMerger = new DexMerger(toBeMerged, CollisionPolicy.KEEP_FIRST, new DxContext());
+                dexMerger.merge().writeTo(projectFile.getDexFile());
             }
         }
         mBuilder.stdout("Merged all dexed files");
