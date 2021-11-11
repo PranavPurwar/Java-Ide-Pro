@@ -128,7 +128,6 @@ public class JavaClassManager implements IClassManager {
 
     @Override
     public void update(IClass value) {
-        if (DLog.DEBUG) DLog.d(TAG, "update() called with: value = [" + value + "]");
         String fullClassName = value.getFullClassName();
         if (mLoaded.containsKey(fullClassName)) {
             mLoaded.put(fullClassName, value);

@@ -220,7 +220,11 @@ public class JsonDatabase implements ITabDatabase {
    }
 
    private JSONObject getRecentFileDatabase() {
-      return this.readFromFile(this.RECENT_FILES_DATABASE_NAME);
+      if (new File(mContext.getFilesDir(), "database" + File.separator + RECENT_FILES_DATABASE_NAME).exists()) {
+         return this.readFromFile(RECENT_FILES_DATABASE_NAME);
+      } else {
+         return new JSONObject();
+      }
    }
 
    private class RecentFileJsonHelper {

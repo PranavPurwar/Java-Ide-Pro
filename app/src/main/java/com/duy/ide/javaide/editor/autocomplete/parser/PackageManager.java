@@ -21,13 +21,14 @@ public class PackageManager {
     }
 
     public void init(JavaProject projectFile, JavaClassManager classReader) {
-        Log.d(TAG, "init() called with: classReader = [" + classReader + "]");
+		try {
+			Log.d(TAG, "init() called with: classReader = [" + classReader + "]");
 
-        ArrayList<IClass> classes = classReader.getAllClasses();
-        for (IClass clazz : classes) {
-            root.put(clazz.getFullClassName());
-        }
-        // TODO: 16-Aug-17 file watcher
+            ArrayList<IClass> classes = classReader.getAllClasses();
+            for (IClass clazz : classes) {
+                root.put(clazz.getFullClassName());
+            }
+// TODO: 16-Aug-17 file watcher
 //        final String parentPath = projectFile.getDirSrcJava().getPath();
 //        fileObserver = new FileObserver(parentPath) {
 //            @Override
@@ -37,6 +38,7 @@ public class PackageManager {
 //            }
 //        };
 //        fileObserver.startWatching();
+        } catch (Exception ignored) {}
     }
 
     private void add(String child, String parent) {

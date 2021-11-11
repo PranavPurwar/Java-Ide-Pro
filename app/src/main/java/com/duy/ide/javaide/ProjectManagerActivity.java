@@ -30,6 +30,7 @@ import com.duy.ide.javaide.projectview.dialog.DialogNewJavaProject.OnCreateProje
 import com.duy.ide.javaide.projectview.dialog.DialogSelectType.OnFileTypeSelectListener;
 import com.duy.ide.javaide.projectview.view.fragments.FolderStructureFragment;
 import com.duy.ide.javaide.utils.FileUtils;
+import com.duy.ide.R;
 import java.io.File;
 import java.io.IOException;
 
@@ -149,7 +150,7 @@ public abstract class ProjectManagerActivity extends IdeActivity implements File
    }
 
    protected int getRootLayoutId() {
-      return 2131427357;
+      return R.layout.activity_default_ide;
    }
 
    public int getThemeId() {

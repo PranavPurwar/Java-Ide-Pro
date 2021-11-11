@@ -201,7 +201,7 @@ public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigC
 			this.mCompileProgress.setVisibility(0);
 		}
 		
-		this.mDiagnosticPresenter.setCurrentItem(1);
+		this.mDiagnosticPresenter.setCurrentItem(0);
 		this.mDiagnosticPresenter.showPanel();
 		this.mDiagnosticPresenter.clear();
 	}
