@@ -112,11 +112,11 @@ public class DialogNewAndroidProject extends AppCompatDialogFragment implements 
                 if (listener != null) listener.onProjectCreated(project);
                 this.dismiss();
             } catch (Exception e) {
-                if (!e.getMessage().isEmpty()) {
+				if (!e.getMessage().isEmpty()) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Can not create project. Error " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
-                }
+				}
             }
         }
     }

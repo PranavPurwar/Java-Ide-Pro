@@ -54,7 +54,7 @@ public class AndroidProjectManager implements IAndroidProjectManager {
         File path = new File(Environment.getSdkAppDir(), projectName);
         if (path.exists() && path.isDirectory()) {
             Toast.makeText(context, "A project with this name already exists.", Toast.LENGTH_SHORT).show();
-            throw new IOException("");
+			throw new IOException("");
         }
         String activityClass = String.format("%s.%s", packageName, activityName);
         File projectDir = new File(dir, projectName);

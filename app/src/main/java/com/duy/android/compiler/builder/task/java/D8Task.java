@@ -7,12 +7,14 @@ import com.duy.android.compiler.builder.IBuilder;
 import com.duy.android.compiler.builder.task.Task;
 import com.duy.android.compiler.builder.util.MD5Hash;
 import com.duy.android.compiler.builder.util.Argument;
+import com.duy.android.compiler.env.Environment;
 import com.duy.android.compiler.project.JavaProject;
 import com.duy.dex.Dex;
 import com.duy.dx.merge.CollisionPolicy;
 import com.duy.dx.merge.DexMerger;
 import com.duy.dx.command.dexer.DxContext;
 import com.duy.dx.command.dexer.Main;
+import com.android.tools.r8.D8;
 
 import java.lang.reflect.Method;
 import java.io.File;
@@ -22,23 +24,23 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class DexTask extends Task<JavaProject> {
+public class D8Task extends Task<JavaProject> {
     private static final String TAG = "Dexer";
 
-    public DexTask(IBuilder<? extends JavaProject> builder) {
+    public D8Task(IBuilder<? extends JavaProject> builder) {
         super(builder);
     }
 
     @Override
     public String getTaskName() {
-        return "Dx";
+        return "D8";
     }
 
     @Override
     public boolean doFullTaskAction() throws Exception {
         Log.d(TAG, "convertToDexFormat() called with: projectFile = [" + mProject + "]");
 
-        mBuilder.stdout("Android dx");
+        mBuilder.stdout("Android D8");
 
         if (!dexLibs(mProject)) {
             return false;
@@ -69,19 +71,14 @@ public class DexTask extends Task<JavaProject> {
 			                           "--debug",
 									   "--verbose",
 									   "--output=" + dexLib.getAbsolutePath(),
-									   jarLib.getAbsolutePath()
+									   jarLib.getAbsolutePath(),
+									   "--lib" + Environment.getClasspathFile(context)
 			);
 
             mBuilder.stdout("Dexing library " + jarLib.getPath() + " => " + dexLib.getAbsolutePath());
             try {
-                Main.clearInternTables();
-                Main.Arguments arguments = new Main.Arguments();
-                Method parseMethod = Main.Arguments.class.getDeclaredMethod("parse", String[].class);
-                parseMethod.setAccessible(true);
-                parseMethod.invoke(arguments, (Object) args.toArray(new String[0]));
-
-                Main.run(arguments);
-            } catch (Exception e) {
+                D8.main(args.toArray(new String[0]));
+            } catch (Throwable e) {
                 mBuilder.stdout(e.getMessage());
                 return false;
             }
@@ -96,28 +93,23 @@ public class DexTask extends Task<JavaProject> {
      * Merge all classed has been build by {@link CompileJavaTask} to a single file .dex
      */
     private boolean dexBuildClasses(@NonNull JavaProject project) throws IOException {
-        mBuilder.stdout("Merging build classes");
+        mBuilder.stdout("Dexing build classes");
 
 		List<String> args = Arrays.asList(
 		                        "--debug",
 								"--verbose",
 								"--output=" + project.getDexFile().getAbsolutePath(),
-								project.getDirBuildClasses().getAbsolutePath()
+								project.getDirBuildClasses().getAbsolutePath(),
+								"--lib" + Environment.getClasspathFile(context)
 		);
 
         try {
-            Main.clearInternTables();
-            Main.Arguments arguments = new Main.Arguments();
-            Method parseMethod = Main.Arguments.class.getDeclaredMethod("parse", String[].class);
-            parseMethod.setAccessible(true);
-            parseMethod.invoke(arguments, (Object) args.toArray(new String[0]));
-
-            Main.run(arguments);
-        } catch (Exception e) {
+            D8.main(args.toArray(new String[0]));
+        } catch (Throwable e) {
             mBuilder.stdout(e.getMessage());
             return false;
         }
-        mBuilder.stdout("Merged build classes " + project.getDexFile().getName());
+        mBuilder.stdout("Dexed build classes " + project.getDexFile().getName());
         return true;
     }
 
