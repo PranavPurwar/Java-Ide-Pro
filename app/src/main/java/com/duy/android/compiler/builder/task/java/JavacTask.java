@@ -94,8 +94,8 @@ public class JavacTask extends Task<JavaProject> {
         argument.add(sourceFiles);
 
         System.out.println(TAG + ": Compiler arguments " + argument);
-		int n = Javac.compile(argument.toArray(), errWriter);
-		return n == 0;
+        int n = Javac.compile(argument.toArray(), errWriter);
+        return n == 0;
     }
 
     private String[] getAllSourceFiles(JavaProject project) {

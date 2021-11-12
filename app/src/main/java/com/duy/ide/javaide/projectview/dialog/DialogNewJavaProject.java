@@ -100,7 +100,7 @@ public class DialogNewJavaProject extends AppCompatDialogFragment implements Vie
 
                 File dir = new File(Environment.getSdkAppDir(), projectName);
                 if (dir.exists() && dir.isDirectory()) {
-					Toast.makeText(getContext(), "A project with this name already exists.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "A project with this name already exists.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 JavaProjectManager manager = new JavaProjectManager(getContext());

@@ -43,7 +43,7 @@ public class StatementParser {
 
     /**
      * set string literal empty, remove comments, trim begining or ending spaces
-     * case: ' 	sb. /* block comment"/ append( "stringliteral" ) // comment '
+     * case: '     sb. /* block comment"/ append( "stringliteral" ) // comment '
      * return 'sb.append("")'
      */
     private static String cleanStatement(String code) {

@@ -18,10 +18,10 @@ class JavaErrorParser extends AbstractJavaOutputParser {
    public static int n = 0;
    public boolean parse(@NonNull String var1, @NonNull OutputLineReader var2, @NonNull List<Message> var3, @NonNull ILogger var4) throws ParsingFailedException {
       try {
-		  if (this.n != 0) {
-		      this.n--;
-		      return true;
-		  }
+          if (this.n != 0) {
+              this.n--;
+              return true;
+          }
          Matcher var12 = PATTERN.matcher(var1);
          if (!var12.find()) {
             return false;
@@ -35,7 +35,7 @@ class JavaErrorParser extends AbstractJavaOutputParser {
             SourceFilePosition var7 = new SourceFilePosition(var8, this.parseLineNumber(var5));
             Message var6 = new Message(var13, var1, var7, new SourceFilePosition[0]);
             var3.add(var6);
-			n = 2;
+            n = 2;
             return true;
          }
       } catch (Exception var10) {

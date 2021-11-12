@@ -66,11 +66,11 @@ public class DexTask extends Task<JavaProject> {
             }
 
             List<String> args = Arrays.asList(
-			                           "--debug",
-									   "--verbose",
-									   "--output=" + dexLib.getAbsolutePath(),
-									   jarLib.getAbsolutePath()
-			);
+                                       "--debug",
+                                       "--verbose",
+                                       "--output=" + dexLib.getAbsolutePath(),
+                                       jarLib.getAbsolutePath()
+            );
 
             mBuilder.stdout("Dexing library " + jarLib.getPath() + " => " + dexLib.getAbsolutePath());
             try {
@@ -98,12 +98,12 @@ public class DexTask extends Task<JavaProject> {
     private boolean dexBuildClasses(@NonNull JavaProject project) throws IOException {
         mBuilder.stdout("Merging build classes");
 
-		List<String> args = Arrays.asList(
-		                        "--debug",
-								"--verbose",
-								"--output=" + project.getDexFile().getAbsolutePath(),
-								project.getDirBuildClasses().getAbsolutePath()
-		);
+        List<String> args = Arrays.asList(
+                                "--debug",
+                                "--verbose",
+                                "--output=" + project.getDexFile().getAbsolutePath(),
+                                project.getDirBuildClasses().getAbsolutePath()
+        );
 
         try {
             Main.clearInternTables();

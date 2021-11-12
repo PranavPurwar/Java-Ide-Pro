@@ -68,12 +68,12 @@ public class D8Task extends Task<JavaProject> {
             }
 
             List<String> args = Arrays.asList(
-			                           "--debug",
-									   "--verbose",
-									   "--output=" + dexLib.getAbsolutePath(),
-									   jarLib.getAbsolutePath(),
-									   "--lib" + Environment.getClasspathFile(context)
-			);
+                                       "--debug",
+                                       "--verbose",
+                                       "--output=" + dexLib.getAbsolutePath(),
+                                       jarLib.getAbsolutePath(),
+                                       "--lib" + Environment.getClasspathFile(context)
+            );
 
             mBuilder.stdout("Dexing library " + jarLib.getPath() + " => " + dexLib.getAbsolutePath());
             try {
@@ -95,13 +95,13 @@ public class D8Task extends Task<JavaProject> {
     private boolean dexBuildClasses(@NonNull JavaProject project) throws IOException {
         mBuilder.stdout("Dexing build classes");
 
-		List<String> args = Arrays.asList(
-		                        "--debug",
-								"--verbose",
-								"--output=" + project.getDexFile().getAbsolutePath(),
-								project.getDirBuildClasses().getAbsolutePath(),
-								"--lib" + Environment.getClasspathFile(context)
-		);
+        List<String> args = Arrays.asList(
+                                "--debug",
+                                "--verbose",
+                                "--output=" + project.getDexFile().getAbsolutePath(),
+                                project.getDirBuildClasses().getAbsolutePath(),
+                                "--lib" + Environment.getClasspathFile(context)
+        );
 
         try {
             D8.main(args.toArray(new String[0]));

@@ -21,8 +21,8 @@ public class PackageManager {
     }
 
     public void init(JavaProject projectFile, JavaClassManager classReader) {
-		try {
-			Log.d(TAG, "init() called with: classReader = [" + classReader + "]");
+        try {
+            Log.d(TAG, "init() called with: classReader = [" + classReader + "]");
 
             ArrayList<IClass> classes = classReader.getAllClasses();
             for (IClass clazz : classes) {
