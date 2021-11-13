@@ -9,10 +9,6 @@ import com.duy.android.compiler.builder.util.MD5Hash;
 import com.duy.android.compiler.builder.util.Argument;
 import com.duy.android.compiler.env.Environment;
 import com.duy.android.compiler.project.JavaProject;
-import com.duy.dex.Dex;
-import com.duy.dx.merge.CollisionPolicy;
-import com.duy.dx.merge.DexMerger;
-import com.duy.dx.command.dexer.DxContext;
 import com.android.tools.r8.D8;
 
 import java.lang.reflect.Method;
@@ -114,9 +110,9 @@ public class D8Task extends Task<JavaProject> {
         return true;
     }
 
-    private boolean dexMerge(@NonNull JavaProject projectFile) throws IOException {
+    private boolean dexMerge(@NonNull JavaProject project) throws IOException {
         mBuilder.stdout("Merging dex files");
-        File[] dexedLibs = projectFile.getDirBuildDexedLibs().listFiles(new FileFilter() {
+        File[] dexedLibs = project.getDirBuildDexedLibs().listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pathname.isFile() && pathname.getName().endsWith(".dex");
@@ -124,9 +120,12 @@ public class D8Task extends Task<JavaProject> {
         });
         if (dexedLibs.length >= 1) {
             for (File dexedLib : dexedLibs) {
-                Dex[] toBeMerged = {new Dex(projectFile.getDexFile()), new Dex(dexedLib)};
-                DexMerger dexMerger = new DexMerger(toBeMerged, CollisionPolicy.KEEP_FIRST, new DxContext());
-                dexMerger.merge().writeTo(projectFile.getDexFile());
+                List<String> args = Arrays.asList(
+				                       dexedLib.getAbsolutePath(),
+									   project.getDexFile().getAbsolutePath(),
+									   "--output",
+									   project.getDexFile().getAbsolutePath()
+				);
             }
         }
         mBuilder.stdout("Merged all dexed files");
