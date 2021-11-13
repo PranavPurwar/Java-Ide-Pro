@@ -6,7 +6,7 @@ import com.duy.android.compiler.builder.model.BuildType;
 import com.duy.android.compiler.builder.task.CleanTask;
 import com.duy.android.compiler.builder.task.Task;
 import com.duy.android.compiler.builder.task.java.CompileJavaTask;
-import com.duy.android.compiler.builder.task.java.DexTask;
+import com.duy.android.compiler.builder.task.java.D8Task;
 import com.duy.android.compiler.builder.task.java.JarTask;
 import com.duy.android.compiler.project.JavaProject;
 
@@ -43,7 +43,7 @@ public class JavaBuilder extends BuilderImpl<JavaProject> {
 
         tasks.add(new JarTask(this));
 
-        tasks.add(new DexTask(this));
+        tasks.add(new D8Task(this));
 
         return runTasks(tasks);
     }

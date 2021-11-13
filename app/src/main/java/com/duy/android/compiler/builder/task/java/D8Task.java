@@ -13,7 +13,6 @@ import com.duy.dex.Dex;
 import com.duy.dx.merge.CollisionPolicy;
 import com.duy.dx.merge.DexMerger;
 import com.duy.dx.command.dexer.DxContext;
-import com.duy.dx.command.dexer.Main;
 import com.android.tools.r8.D8;
 
 import java.lang.reflect.Method;
@@ -68,11 +67,12 @@ public class D8Task extends Task<JavaProject> {
             }
 
             List<String> args = Arrays.asList(
-                                       "--debug",
-                                       "--verbose",
-                                       "--output=" + dexLib.getAbsolutePath(),
-                                       jarLib.getAbsolutePath(),
-                                       "--lib" + Environment.getClasspathFile(context)
+                                       "--lib",
+                                       Environment.getClasspathFile(context).getAbsolutePath(),
+                                       "--release",
+                                       "--output",
+                                       dexLib.getAbsolutePath(),
+                                       jarLib.getAbsolutePath()
             );
 
             mBuilder.stdout("Dexing library " + jarLib.getPath() + " => " + dexLib.getAbsolutePath());
@@ -96,11 +96,12 @@ public class D8Task extends Task<JavaProject> {
         mBuilder.stdout("Dexing build classes");
 
         List<String> args = Arrays.asList(
-                                "--debug",
-                                "--verbose",
-                                "--output=" + project.getDexFile().getAbsolutePath(),
-                                project.getDirBuildClasses().getAbsolutePath(),
-                                "--lib" + Environment.getClasspathFile(context)
+                                "--lib",
+                                Environment.getClasspathFile(context).getAbsolutePath(),
+                                "--release",
+                                "--output",
+                                project.getDexFile().getAbsolutePath(),
+                                project.getDirBuildClasses().getAbsolutePath()
         );
 
         try {
