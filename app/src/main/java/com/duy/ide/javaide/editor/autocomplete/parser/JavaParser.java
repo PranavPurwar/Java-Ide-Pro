@@ -104,7 +104,7 @@ public class JavaParser {
     }
 
     private IClass parseClass(JCCompilationUnit unit, JCClassDecl classDecl) {
-        final String className = unit.getPackageName() + DOT + classDecl.getSimpleName();
+        final String className = (unit.getPackageName() + DOT + classDecl.getSimpleName()).replace("$", ".");
         final int modifiers = JavaUtil.toJavaModifiers(classDecl.getModifiers().getFlags());
 
         ClassDescription clazz = new ClassDescription(
@@ -170,7 +170,7 @@ public class JavaParser {
 
         if (member.getName().toString().equals(CONSTRUCTOR_NAME)) {
             ConstructorDescription constructor = new ConstructorDescription(
-                    clazz.getFullClassName(),
+                    clazz.getFullClassName().replace("$", "."),
                     methodParameters);
             clazz.addConstructor(constructor);
         } else {

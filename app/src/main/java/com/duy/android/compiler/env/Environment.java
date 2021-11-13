@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.duy.javacompiler.R;
+import com.duy.android.compiler.utils.Zip;
 
 import java.io.File;
 import java.io.IOException;

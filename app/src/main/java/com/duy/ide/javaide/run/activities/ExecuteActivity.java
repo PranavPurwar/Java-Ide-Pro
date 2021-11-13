@@ -6,130 +6,150 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
+
+import com.android.annotations.NonNull;
 import com.duy.android.compiler.java.Java;
 import com.duy.common.io.IOUtils;
+import com.duy.ide.R;
 import com.duy.ide.javaide.JavaApplication;
 import com.duy.ide.javaide.activities.BaseActivity;
 import com.duy.ide.javaide.editor.autocomplete.parser.JavaParser;
 import com.duy.ide.javaide.run.view.ConsoleEditText;
-import com.sun.tools.javac.tree.JCTree.JCExpression;
+import com.sun.tools.javac.tree.JCTree;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Created by Duy on 30-Jul-17.
+ */
+
 public class ExecuteActivity extends BaseActivity {
-   public static final String DEX_FILE = "DEX_FILE";
-   public static final String MAIN_CLASS_FILE = "MAIN_CLASS_FILE";
-   private static final String TAG = "ExecuteActivity";
-   private ConsoleEditText mConsoleEditText;
-   private File mDexFile;
-   private final Handler mHandler = new Handler();
-   private File mMainClass;
+    public static final String DEX_FILE = "DEX_FILE";
+    public static final String MAIN_CLASS_FILE = "MAIN_CLASS_FILE";
 
-   private void bindView() {
-      this.mConsoleEditText = (ConsoleEditText)this.findViewById(2131296384);
-   }
+    private static final String TAG = "ExecuteActivity";
+    private final Handler mHandler = new Handler();
+    private ConsoleEditText mConsoleEditText;
+    @NonNull
+    private File mDexFile;
+    private File mMainClass;
 
-   @WorkerThread
-   private void consoleStopped() {
-      this.mHandler.post(new Runnable() {
-         public void run() {
-            ExecuteActivity.this.getSupportActionBar().setSubtitle(2131689586);
-            ExecuteActivity.this.removeIOFilter();
-         }
-      });
-   }
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_exec);
+        setupToolbar();
 
-   @WorkerThread
-   private void exec(File var1) throws Throwable {
-      String var4 = this.resolveMainClass(var1);
-      InputStream var2 = this.mConsoleEditText.getInputStream();
-      File var3 = this.getDir("dex", 0);
-      this.executeDex(var2, this.mDexFile, var3, var4);
-   }
+        bindView();
+        initInOutStream();
+        final Intent intent = getIntent();
+        if (intent == null) {
+            finish();
+            return;
+        }
 
-   private void executeDex(InputStream var1, File var2, File var3, String var4) throws Throwable {
-      if (var2 == null) {
-         throw new RuntimeException("Dex file must be not null");
-      } else if (var4 == null) {
-         throw new RuntimeException("Main class must be not null");
-      } else {
-         String var5 = var2.getPath();
-         String var6 = var3.getPath();
-         Java.run(new String[]{"-jar", var5, var4}, var6, var1);
-      }
-   }
+        mDexFile = (File) intent.getSerializableExtra(DEX_FILE);
+        if (mDexFile == null) {
+            finish();
+            return;
+        }
+        mMainClass = (File) getIntent().getSerializableExtra(MAIN_CLASS_FILE);
+        if (mMainClass == null) {
+            finish();
+            return;
+        }
 
-   private void initInOutStream() {
-      JavaApplication var1 = (JavaApplication)this.getApplication();
-      var1.addStdErr(this.mConsoleEditText.getErrorStream());
-      var1.addStdOut(this.mConsoleEditText.getOutputStream());
-   }
+        setTitle(mMainClass.getName());
+        getSupportActionBar().setSubtitle(R.string.console_running);
 
-   private void removeIOFilter() {
-      this.mConsoleEditText.stop();
-      JavaApplication var1 = (JavaApplication)this.getApplication();
-      var1.removeErrStream(this.mConsoleEditText.getErrorStream());
-      var1.removeOutStream(this.mConsoleEditText.getOutputStream());
-   }
-
-   private String resolveMainClass(File var1) throws IOException {
-      if (!var1.getName().endsWith(".java")) {
-         return null;
-      } else {
-         JCExpression var2 = (new JavaParser()).parse(IOUtils.toString(var1)).getPackageName();
-         String var3 = var1.getName().substring(0, var1.getName().indexOf("."));
-         return var2 + "." + var3;
-      }
-   }
-
-   protected void onCreate(@Nullable Bundle var1) {
-      super.onCreate(var1);
-      this.setContentView(2131427361);
-      this.setupToolbar();
-      this.bindView();
-      this.initInOutStream();
-      Intent var2 = this.getIntent();
-      if (var2 == null) {
-         this.finish();
-      } else {
-         this.mDexFile = (File)var2.getSerializableExtra("DEX_FILE");
-         if (this.mDexFile == null) {
-            this.finish();
-         } else {
-            this.mMainClass = (File)this.getIntent().getSerializableExtra("MAIN_CLASS_FILE");
-            if (this.mMainClass == null) {
-               this.finish();
-            } else {
-               this.setTitle(this.mMainClass.getName());
-               this.getSupportActionBar().setSubtitle(2131689585);
-               (new Thread(new Runnable() {
-                  public void run() {
-                     try {
-                        ExecuteActivity.this.exec(ExecuteActivity.this.mMainClass);
-                     } catch (Error var2) {
-                        var2.printStackTrace(ExecuteActivity.this.mConsoleEditText.getErrorStream());
-                     } catch (Exception var3) {
-                        var3.printStackTrace(ExecuteActivity.this.mConsoleEditText.getErrorStream());
-                     } catch (Throwable var4) {
-                        var4.printStackTrace(ExecuteActivity.this.mConsoleEditText.getErrorStream());
-                     }
-
-                     ExecuteActivity.this.consoleStopped();
-                  }
-               })).start();
+        Thread runThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    exec(mMainClass);
+                } catch (Error error) {
+                    error.printStackTrace(mConsoleEditText.getErrorStream());
+                } catch (Exception e) {
+                    e.printStackTrace(mConsoleEditText.getErrorStream());
+                } catch (Throwable e) {
+                    e.printStackTrace(mConsoleEditText.getErrorStream());
+                }
+                consoleStopped();
             }
-         }
-      }
-   }
+        });
+        runThread.start();
+    }
 
-   protected void onDestroy() {
-      super.onDestroy();
-   }
+    @WorkerThread
+    private void consoleStopped() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                getSupportActionBar().setSubtitle(R.string.console_stopped);
+                removeIOFilter();
+            }
+        });
+    }
 
-   protected void onStop() {
-      super.onStop();
-      Log.d("ExecuteActivity", "onStop() called");
-      this.removeIOFilter();
-   }
+    private void initInOutStream() {
+        JavaApplication application = (JavaApplication) getApplication();
+        application.addStdErr(mConsoleEditText.getErrorStream());
+        application.addStdOut(mConsoleEditText.getOutputStream());
+    }
+
+    @WorkerThread
+    private void exec(File mainClassFile) throws Throwable {
+        String mainClass = resolveMainClass(mainClassFile);
+        InputStream stdin = mConsoleEditText.getInputStream();
+        File tempDir = getDir("dex", MODE_PRIVATE);
+        executeDex(stdin, mDexFile, tempDir, mainClass);
+    }
+
+    private String resolveMainClass(File mainClassFile) throws IOException {
+        if (!mainClassFile.getName().endsWith(".java")) {
+            return null;
+        }
+
+        JavaParser parser = new JavaParser();
+        JCTree.JCCompilationUnit unit = parser.parse(IOUtils.toString(mainClassFile));
+        JCTree.JCExpression packageName = unit.getPackageName();
+        String simpleName = mainClassFile.getName().substring(0, mainClassFile.getName().indexOf("."));
+        return packageName + "." + simpleName;
+    }
+
+    private void executeDex(InputStream in, File dex, File tempDir, String mainClass) throws Throwable {
+        if (dex == null) {
+            throw new RuntimeException("Dex file must be not null");
+        }
+        if (mainClass == null) {
+            throw new RuntimeException("Main class must be not null");
+        }
+        String[] args = new String[]{"-jar", dex.getPath(), mainClass};
+        Java.run(args, tempDir.getPath(), in);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop() called");
+        removeIOFilter();
+    }
+
+    private void removeIOFilter() {
+        mConsoleEditText.stop();
+        JavaApplication application = (JavaApplication) getApplication();
+        application.removeErrStream(mConsoleEditText.getErrorStream());
+        application.removeOutStream(mConsoleEditText.getOutputStream());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    private void bindView() {
+        mConsoleEditText = findViewById(R.id.console_view);
+    }
 }

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.regex.Pattern;
+import android.widget.Toast;
 
 /**
  * $ aapt
@@ -190,20 +191,11 @@ public class ProcessAndroidResourceTask extends Task<AndroidAppProject> {
         // Get the correct AAPT binary for this processor architecture
         switch (arch) {
             case "x86":
-                if (usePie) {
-                    aaptName = "aapt-x86-pie";
-                } else {
-                    aaptName = "aapt-x86";
-                }
+                aaptName = "aapt-x86";
                 break;
             case "arm":
             default:
-                // Default to ARM, just in case
-                if (usePie) {
-                    aaptName = "aapt-arm-pie";
-                } else {
-                    aaptName = "aapt-arm";
-                }
+                aaptName = "aapt-arm";
                 break;
         }
         return new File(Environment.getBinDir(context), aaptName);

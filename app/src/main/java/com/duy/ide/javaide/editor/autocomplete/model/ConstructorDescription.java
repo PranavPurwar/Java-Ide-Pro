@@ -29,7 +29,7 @@ public class ConstructorDescription extends JavaSuggestItemImpl {
     }
 
     public ConstructorDescription(String name, List<IClass> paramTypes) {
-        mConstructorName = name;
+        mConstructorName = name.replace(";", "").replace("$", ".");
         mParameterTypes.addAll(paramTypes);
     }
 

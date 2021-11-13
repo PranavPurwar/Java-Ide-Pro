@@ -1,45 +1,61 @@
+/*
+ * Copyright (C) 2018 Tran Le Duy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.duy.ide.javaide.diagnostic.parser.java;
 
 import android.support.annotation.NonNull;
+
 import com.duy.ide.diagnostic.model.Message;
 import com.duy.ide.diagnostic.model.SourceFile;
 import com.duy.ide.diagnostic.model.SourceFilePosition;
-import com.duy.ide.diagnostic.model.Message.Kind;
 import com.duy.ide.diagnostic.parser.ParsingFailedException;
 import com.duy.ide.diagnostic.util.OutputLineReader;
 import com.duy.ide.logging.ILogger;
+
 import java.io.File;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class JavaErrorParser extends AbstractJavaOutputParser {
-   private static final Pattern PATTERN = Pattern.compile("(\\S+):([0-9]+): (error:)(.*)");
-   public static int n = 0;
-   public boolean parse(@NonNull String var1, @NonNull OutputLineReader var2, @NonNull List<Message> var3, @NonNull ILogger var4) throws ParsingFailedException {
-      try {
-          if (this.n != 0) {
-              this.n--;
-              return true;
-          }
-         Matcher var12 = PATTERN.matcher(var1);
-         if (!var12.find()) {
-            return false;
-         } else {
-            String var11 = var12.group(1);
-            var1 = var12.group(4);
-            String var5 = var12.group(2);
-            Kind var13 = Kind.ERROR;
-            File var9 = new File(var11);
-            SourceFile var8 = new SourceFile(var9);
-            SourceFilePosition var7 = new SourceFilePosition(var8, this.parseLineNumber(var5));
-            Message var6 = new Message(var13, var1, var7, new SourceFilePosition[0]);
-            var3.add(var6);
-            n = 2;
+
+    /**
+     * android/SmartImageDownloadActivity.java:37: error: Header cannot be resolved to a type
+     */
+    private static final Pattern PATTERN = Pattern.compile("(\\S+):([0-9]+): (error:)(.*)");
+
+    @Override
+    public boolean parse(@NonNull String line, @NonNull OutputLineReader reader,
+                         @NonNull List<Message> messages, @NonNull ILogger logger)
+            throws ParsingFailedException {
+        try {
+            Matcher matcher = PATTERN.matcher(line);
+            if (!matcher.find()) {
+                return false;
+            }
+            String sourcePath = matcher.group(1);
+            String text = matcher.group(4);
+            String lineNumber = matcher.group(2);
+            Message message = new Message(Message.Kind.ERROR, text,
+                    new SourceFilePosition(new SourceFile(new File(sourcePath)), parseLineNumber(lineNumber)));
+            messages.add(message);
             return true;
-         }
-      } catch (Exception var10) {
-         return false;
-      }
-   }
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
