@@ -15,16 +15,16 @@ import javax.lang.model.element.Modifier;
 public class JavaUtil {
     public static String getSimpleName(String className) {
         if (className.contains(".")) {
-            return className.substring(className.lastIndexOf(".") + 1);
+            return className.substring(className.lastIndexOf(".") + 1).replace("$", ".");
         } else {
-            return className;
+            return className.replace("$", ".");
         }
     }
 
     @NonNull
     public static String getPackageName(String classname) {
         if (classname.contains(".")) {
-            return classname.substring(0, classname.lastIndexOf("."));
+            return classname.replace("$", ".").substring(0, classname.lastIndexOf("."));
         } else {
             return "";
         }
@@ -36,7 +36,7 @@ public class JavaUtil {
         for (String s : split) {
             result = s + result;
         }
-        return result;
+        return result.replace("$", ".");
     }
 
 
@@ -54,7 +54,7 @@ public class JavaUtil {
             if (filename.endsWith(".java")) {
                 filename = filename.substring(0, filename.lastIndexOf(".java"));
             }
-            return filename;
+            return filename.replace("$", ".");
         } else {
             return null;
         }

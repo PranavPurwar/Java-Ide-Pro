@@ -1,6 +1,7 @@
 package com.duy.android.compiler.builder;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.android.annotations.NonNull;
 import com.android.ide.common.process.ProcessExecutor;
@@ -16,6 +17,7 @@ import com.duy.android.compiler.builder.task.android.ProcessAndroidResourceTask;
 import com.duy.android.compiler.builder.task.android.SignApkTask;
 import com.duy.android.compiler.builder.task.android.InstallTask;
 import com.duy.android.compiler.builder.task.java.CompileJavaTask;
+import com.duy.android.compiler.builder.task.java.DexTask;
 import com.duy.android.compiler.builder.task.java.D8Task;
 import com.duy.android.compiler.project.AndroidAppProject;
 
@@ -71,7 +73,11 @@ public class AndroidAppBuilder extends BuilderImpl<AndroidAppProject> {
 
         tasks.add(new CompileJavaTask(this));
 
-        tasks.add(new D8Task(this));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            tasks.add(new D8Task(this));
+        } else {
+            tasks.add(new DexTask(this));
+        }
 
         tasks.add(new PackageApkTask(this));
 

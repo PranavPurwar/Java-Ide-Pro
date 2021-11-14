@@ -17,7 +17,7 @@ public class PackageDescription extends JavaSuggestItemImpl {
     private HashMap<String, PackageDescription> mChild = new HashMap<>();
 
     private PackageDescription(String childName, PackageDescription parent) {
-        this.mName = childName;
+        this.mName = childName.replace("$", ".");
         this.mParentPkg = parent;
     }
 
@@ -36,7 +36,7 @@ public class PackageDescription extends JavaSuggestItemImpl {
 
             if (isLeaf()) {
                 //static access
-                String text = mName.replace("$", ".");
+                String text = mName;
                 // why not add semicolon (;) , in some case you need declared variable with full class
                 // name, not import package
                 editable.replace(start, cursor, text);

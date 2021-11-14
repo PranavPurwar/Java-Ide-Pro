@@ -1,11 +1,13 @@
 package com.duy.android.compiler.builder;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.duy.android.compiler.builder.model.BuildType;
 import com.duy.android.compiler.builder.task.CleanTask;
 import com.duy.android.compiler.builder.task.Task;
 import com.duy.android.compiler.builder.task.java.CompileJavaTask;
+import com.duy.android.compiler.builder.task.java.DexTask;
 import com.duy.android.compiler.builder.task.java.D8Task;
 import com.duy.android.compiler.builder.task.java.JarTask;
 import com.duy.android.compiler.project.JavaProject;
@@ -43,7 +45,11 @@ public class JavaBuilder extends BuilderImpl<JavaProject> {
 
         tasks.add(new JarTask(this));
 
-        tasks.add(new D8Task(this));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            tasks.add(new D8Task(this));
+        } else {
+            tasks.add(new DexTask(this));
+        }
 
         return runTasks(tasks);
     }
