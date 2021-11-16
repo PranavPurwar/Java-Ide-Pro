@@ -1,6 +1,8 @@
 # Java-Ide-Pro
 The sources of java n ide pro in java
-
+# Note
+This repository is currently not being updated, because im working on other project.
+Btw pull requests will still be accepted
 ## For contributing
 
 You can compile these sources in sketchware pro or code assist or android studio
