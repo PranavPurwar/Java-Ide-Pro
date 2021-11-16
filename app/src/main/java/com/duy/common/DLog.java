@@ -1,4 +1,3 @@
-/* Decompiler 41ms, total 408ms, lines 216 */
 package com.duy.common;
 
 import android.support.annotation.NonNull;
@@ -6,211 +5,179 @@ import android.util.Log;
 import java.io.PrintStream;
 
 public class DLog {
-   public static boolean ANDROID;
-   public static final boolean DEBUG = false;
-   private static final String TAG = "DLog";
+    public static boolean ANDROID = true;
+    public static final boolean DEBUG = false;
+    private static final String TAG = "DLog";
 
-   public static void d(Object var0) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.d("DLog", var0.toString());
-         } else {
-            PrintStream var1 = System.out;
-            StringBuilder var2 = new StringBuilder();
-            var2.append("DLog: ");
-            var2.append(var0.toString());
-            var1.println(var2.toString());
-         }
-      }
+    /* renamed from: d */
+    public static void m0d(Object obj) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.d(TAG, obj.toString());
+            return;
+        }
+        PrintStream printStream = System.out;
+        printStream.println("DLog: " + obj.toString());
+    }
 
-   }
+    /* renamed from: d */
+    public static void m1d(String str, Object obj) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.d(str, obj.toString());
+            return;
+        }
+        PrintStream printStream = System.out;
+        printStream.println(str + ": " + obj.toString());
+    }
 
-   public static void d(String var0, Object var1) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.d(var0, var1.toString());
-         } else {
-            PrintStream var2 = System.out;
-            StringBuilder var3 = new StringBuilder();
-            var3.append(var0);
-            var3.append(": ");
-            var3.append(var1.toString());
-            var2.println(var3.toString());
-         }
-      }
+    /* renamed from: d */
+    public static void m2d(String str, String str2, Throwable th) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.d(str, str2, th);
+            return;
+        }
+        PrintStream printStream = System.out;
+        printStream.println("DLog: " + str2);
+    }
 
-   }
+    /* renamed from: e */
+    public static void m3e(@NonNull String str, @NonNull String str2) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.e(str, str2);
+            return;
+        }
+        PrintStream printStream = System.err;
+        printStream.println(str + ": " + str2);
+    }
 
-   public static void d(String var0, String var1, Throwable var2) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.d(var0, var1, var2);
-         } else {
-            PrintStream var4 = System.out;
-            StringBuilder var3 = new StringBuilder();
-            var3.append("DLog: ");
-            var3.append(var1);
-            var4.println(var3.toString());
-         }
-      }
+    /* renamed from: e */
+    public static void m4e(@NonNull String str, @NonNull String str2, @NonNull Throwable th) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.e(str, str2, th);
+            return;
+        }
+        PrintStream printStream = System.err;
+        printStream.println(str + ": " + str2);
+        th.printStackTrace();
+    }
 
-   }
+    /* renamed from: e */
+    public static void m5e(String str, Throwable th) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.e(str, "Error ", th);
+            return;
+        }
+        PrintStream printStream = System.err;
+        printStream.println(str + ": " + th.getMessage());
+        th.printStackTrace();
+    }
 
-   public static void e(@NonNull String var0, @NonNull String var1) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.e(var0, var1);
-         } else {
-            PrintStream var2 = System.err;
-            StringBuilder var3 = new StringBuilder();
-            var3.append(var0);
-            var3.append(": ");
-            var3.append(var1);
-            var2.println(var3.toString());
-         }
-      }
+    /* renamed from: e */
+    public static void m6e(Throwable th) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.e(TAG, "Error ", th);
+            return;
+        }
+        PrintStream printStream = System.err;
+        printStream.println("DLog: " + th.getMessage());
+        th.printStackTrace();
+    }
 
-   }
+    /* renamed from: i */
+    public static void m7i(@NonNull Object obj) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.i(TAG, obj.toString());
+            return;
+        }
+        PrintStream printStream = System.out;
+        printStream.println("DLog: " + obj.toString());
+    }
 
-   public static void e(@NonNull String var0, @NonNull String var1, @NonNull Throwable var2) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.e(var0, var1, var2);
-         } else {
-            PrintStream var3 = System.err;
-            StringBuilder var4 = new StringBuilder();
-            var4.append(var0);
-            var4.append(": ");
-            var4.append(var1);
-            var3.println(var4.toString());
-            var2.printStackTrace();
-         }
-      }
+    /* renamed from: i */
+    public static void m8i(String str, @NonNull Object obj) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.i(str, obj.toString());
+            return;
+        }
+        PrintStream printStream = System.err;
+        printStream.println(str + ": " + obj);
+    }
 
-   }
+    public static void reportException(@NonNull Throwable th) {
+        boolean z = DEBUG;
+    }
 
-   public static void e(String var0, Throwable var1) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.e(var0, "Error ", var1);
-         } else {
-            PrintStream var2 = System.err;
-            StringBuilder var3 = new StringBuilder();
-            var3.append(var0);
-            var3.append(": ");
-            var3.append(var1.getMessage());
-            var2.println(var3.toString());
-            var1.printStackTrace();
-         }
-      }
+    @Deprecated
+    public static void reportServer(Throwable th) {
+        if (!ANDROID) {
+            System.err.println("Fatal exception : ");
+            th.printStackTrace();
+        }
+    }
 
-   }
+    /* renamed from: w */
+    public static void m9w(Object obj) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.w(TAG, obj.toString());
+            return;
+        }
+        PrintStream printStream = System.out;
+        printStream.println("DLog: " + obj.toString());
+    }
 
-   public static void e(Throwable var0) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.e("DLog", "Error ", var0);
-         } else {
-            PrintStream var1 = System.err;
-            StringBuilder var2 = new StringBuilder();
-            var2.append("DLog: ");
-            var2.append(var0.getMessage());
-            var1.println(var2.toString());
-            var0.printStackTrace();
-         }
-      }
+    /* renamed from: w */
+    public static void m10w(String str, Object obj) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.w(str, obj.toString());
+            return;
+        }
+        PrintStream printStream = System.out;
+        printStream.println(str + ": " + obj.toString());
+    }
 
-   }
-
-   public static void i(@NonNull Object var0) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.i("DLog", var0.toString());
-         } else {
-            PrintStream var1 = System.out;
-            StringBuilder var2 = new StringBuilder();
-            var2.append("DLog: ");
-            var2.append(var0.toString());
-            var1.println(var2.toString());
-         }
-      }
-
-   }
-
-   public static void i(String var0, @NonNull Object var1) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.i(var0, var1.toString());
-         } else {
-            PrintStream var2 = System.err;
-            StringBuilder var3 = new StringBuilder();
-            var3.append(var0);
-            var3.append(": ");
-            var3.append(var1);
-            var2.println(var3.toString());
-         }
-      }
-
-   }
-
-   public static void reportException(@NonNull Throwable var0) {
-      boolean var1 = DEBUG;
-   }
-
-   @Deprecated
-   public static void reportServer(Throwable var0) {
-      if (!ANDROID) {
-         System.err.println("Fatal exception : ");
-         var0.printStackTrace();
-      }
-
-   }
-
-   public static void w(Object var0) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.w("DLog", var0.toString());
-         } else {
-            PrintStream var1 = System.out;
-            StringBuilder var2 = new StringBuilder();
-            var2.append("DLog: ");
-            var2.append(var0.toString());
-            var1.println(var2.toString());
-         }
-      }
-
-   }
-
-   public static void w(String var0, Object var1) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.w(var0, var1.toString());
-         } else {
-            PrintStream var2 = System.out;
-            StringBuilder var3 = new StringBuilder();
-            var3.append(var0);
-            var3.append(": ");
-            var3.append(var1.toString());
-            var2.println(var3.toString());
-         }
-      }
-
-   }
-
-   public static void w(String var0, Object var1, Throwable var2) {
-      if (DEBUG) {
-         if (ANDROID) {
-            Log.w(var0, var1.toString(), var2);
-         } else {
-            PrintStream var3 = System.out;
-            StringBuilder var4 = new StringBuilder();
-            var4.append(var0);
-            var4.append(": ");
-            var4.append(var1.toString());
-            var3.println(var4.toString());
-            var2.printStackTrace();
-         }
-      }
-
-   }
+    /* renamed from: w */
+    public static void m11w(String str, Object obj, Throwable th) {
+        if (!DEBUG) {
+            return;
+        }
+        if (ANDROID) {
+            Log.w(str, obj.toString(), th);
+            return;
+        }
+        PrintStream printStream = System.out;
+        printStream.println(str + ": " + obj.toString());
+        th.printStackTrace();
+    }
 }

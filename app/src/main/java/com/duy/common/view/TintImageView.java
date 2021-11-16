@@ -1,4 +1,3 @@
-/* Decompiler 17ms, total 416ms, lines 50 */
 package com.duy.common.view;
 
 import android.content.Context;
@@ -10,30 +9,30 @@ import android.util.AttributeSet;
 public class TintImageView extends AppCompatImageView {
    private ColorStateList colorList;
 
-   public TintImageView(Context var1) {
-      super(var1);
-      this.init(var1, (AttributeSet)null);
+   public TintImageView(Context context) {
+      super(context);
+      this.init(context, null);
    }
 
-   public TintImageView(Context var1, AttributeSet var2) {
-      super(var1, var2);
-      this.init(var1, var2);
+   public TintImageView(Context context, AttributeSet set) {
+      super(context, set);
+      this.init(context, set);
    }
 
-   public TintImageView(Context var1, AttributeSet var2, int var3) {
-      super(var1, var2, var3);
-      this.init(var1, var2);
+   public TintImageView(Context context, AttributeSet set, int n) {
+      super(context, set, n);
+      this.init(context, set);
    }
 
-   private void init(Context var1, AttributeSet var2) {
-      if (var2 != null) {
-         TypedArray var3 = var1.obtainStyledAttributes(var2, new int[]{16842904});
-         this.colorList = var3.getColorStateList(0);
+   private void init(Context context, AttributeSet set) {
+      if (set != null) {
+         TypedArray typedArr = context.obtainStyledAttributes(set, new int[]{16842904});
+         this.colorList = typedArr.getColorStateList(0);
          if (this.colorList != null) {
             this.setColorFilter(this.colorList.getDefaultColor());
          }
 
-         var3.recycle();
+         typedArr.recycle();
       }
 
    }
