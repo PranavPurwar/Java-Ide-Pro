@@ -25,7 +25,7 @@ public class PackageImporter {
     /**
      * Add import statement if import does not already exist.
      */
-    public static void importClass(Editable editor, String className) {
+    public static void importClass(final Editable editor, String className) {
         String packageName = JavaUtil.getPackageName(className);
         if (getImportedClassName(editor, className) == null
                 && !packageName.isEmpty()
@@ -39,7 +39,7 @@ public class PackageImporter {
         return getImportedClassName(editor, className);
     }
 
-    public static String getImportedClassName(CharSequence src, @Nullable String className) {
+    public static String getImportedClassName(final CharSequence src, @Nullable final String className) {
         if (className == null) return null;
 
         Pattern pattern = PatternFactory.makeImportClass(className);
@@ -52,6 +52,7 @@ public class PackageImporter {
 
 
     public static void organizeImports(Editable editor, String importStr) {
+        importStr = importStr.replace("$", ".");
         Log.d(TAG, "organizeImports() called with: editor = [" + editor + "], importStr = [" + importStr + "]");
 
         ArrayList<String> imports = getImports(editor);

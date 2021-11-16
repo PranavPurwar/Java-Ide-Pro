@@ -17,7 +17,7 @@ public class PackageDescription extends JavaSuggestItemImpl {
     private HashMap<String, PackageDescription> mChild = new HashMap<>();
 
     private PackageDescription(String childName, PackageDescription parent) {
-        this.mName = childName.replace("$", ".");
+        this.mName = childName;
         this.mParentPkg = parent;
     }
 
