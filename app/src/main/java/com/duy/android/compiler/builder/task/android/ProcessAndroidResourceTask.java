@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.regex.Pattern;
-import android.widget.Toast;
 
 /**
  * $ aapt

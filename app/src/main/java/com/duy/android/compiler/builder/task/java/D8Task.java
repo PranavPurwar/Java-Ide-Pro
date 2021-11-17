@@ -6,12 +6,10 @@ import android.util.Log;
 import com.duy.android.compiler.builder.IBuilder;
 import com.duy.android.compiler.builder.task.Task;
 import com.duy.android.compiler.builder.util.MD5Hash;
-import com.duy.android.compiler.builder.util.Argument;
 import com.duy.android.compiler.env.Environment;
 import com.duy.android.compiler.project.JavaProject;
 import com.android.tools.r8.D8;
 
-import java.lang.reflect.Method;
 import java.io.File;
 import java.util.List;
 import java.util.Arrays;
@@ -43,10 +41,7 @@ public class D8Task extends Task<JavaProject> {
         if (!dexBuildClasses(mProject)) {
             return false;
         }
-        if (!dexMerge(mProject)) {
-            return false;
-        }
-        return true;
+        return dexMerge(mProject);
     }
 
     private boolean dexLibs(@NonNull JavaProject project) throws Exception {
