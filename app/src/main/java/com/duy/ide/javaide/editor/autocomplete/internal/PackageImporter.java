@@ -52,7 +52,6 @@ public class PackageImporter {
 
 
     public static void organizeImports(Editable editor, String importStr) {
-        importStr = importStr.replace("$", ".");
         Log.d(TAG, "organizeImports() called with: editor = [" + editor + "], importStr = [" + importStr + "]");
 
         ArrayList<String> imports = getImports(editor);

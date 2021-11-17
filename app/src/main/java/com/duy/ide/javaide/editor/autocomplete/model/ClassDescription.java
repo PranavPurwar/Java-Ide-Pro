@@ -39,7 +39,7 @@ public class ClassDescription extends JavaSuggestItemImpl implements IClass {
     private IClass mSuperClass;
 
     public ClassDescription(Class c) {
-        mClassName = c.getName();
+        mClassName = c.getName().replace("$", ".");
         mModifiers = c.getModifiers();
         mPrimitive = c.isPrimitive();
         mAnnotation = c.isAnnotation();

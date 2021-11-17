@@ -9,8 +9,7 @@ public class DLog {
     public static final boolean DEBUG = false;
     private static final String TAG = "DLog";
 
-    /* renamed from: d */
-    public static void m0d(Object obj) {
+    public static void d(Object obj) {
         if (!DEBUG) {
             return;
         }
@@ -19,11 +18,10 @@ public class DLog {
             return;
         }
         PrintStream printStream = System.out;
-        printStream.println("DLog: " + obj.toString());
+        printStream.println(TAG + ": " + obj.toString());
     }
 
-    /* renamed from: d */
-    public static void m1d(String str, Object obj) {
+    public static void d(String str, Object obj) {
         if (!DEBUG) {
             return;
         }
@@ -35,8 +33,7 @@ public class DLog {
         printStream.println(str + ": " + obj.toString());
     }
 
-    /* renamed from: d */
-    public static void m2d(String str, String str2, Throwable th) {
+    public static void d(String str, String str2, Throwable th) {
         if (!DEBUG) {
             return;
         }
@@ -45,11 +42,10 @@ public class DLog {
             return;
         }
         PrintStream printStream = System.out;
-        printStream.println("DLog: " + str2);
+        printStream.println(TAG + ": " + str2);
     }
 
-    /* renamed from: e */
-    public static void m3e(@NonNull String str, @NonNull String str2) {
+    public static void e(@NonNull String str, @NonNull String str2) {
         if (!DEBUG) {
             return;
         }
@@ -61,8 +57,7 @@ public class DLog {
         printStream.println(str + ": " + str2);
     }
 
-    /* renamed from: e */
-    public static void m4e(@NonNull String str, @NonNull String str2, @NonNull Throwable th) {
+    public static void e(@NonNull String str, @NonNull String str2, @NonNull Throwable th) {
         if (!DEBUG) {
             return;
         }
@@ -75,8 +70,7 @@ public class DLog {
         th.printStackTrace();
     }
 
-    /* renamed from: e */
-    public static void m5e(String str, Throwable th) {
+    public static void e(String str, Throwable th) {
         if (!DEBUG) {
             return;
         }
@@ -89,8 +83,7 @@ public class DLog {
         th.printStackTrace();
     }
 
-    /* renamed from: e */
-    public static void m6e(Throwable th) {
+    public static void e(Throwable th) {
         if (!DEBUG) {
             return;
         }
@@ -99,12 +92,11 @@ public class DLog {
             return;
         }
         PrintStream printStream = System.err;
-        printStream.println("DLog: " + th.getMessage());
+        printStream.println(TAG + ": " + th.getMessage());
         th.printStackTrace();
     }
 
-    /* renamed from: i */
-    public static void m7i(@NonNull Object obj) {
+    public static void i(@NonNull Object obj) {
         if (!DEBUG) {
             return;
         }
@@ -113,11 +105,10 @@ public class DLog {
             return;
         }
         PrintStream printStream = System.out;
-        printStream.println("DLog: " + obj.toString());
+        printStream.println(TAG + ": " + obj.toString());
     }
 
-    /* renamed from: i */
-    public static void m8i(String str, @NonNull Object obj) {
+    public static void i(String str, @NonNull Object obj) {
         if (!DEBUG) {
             return;
         }
@@ -130,7 +121,7 @@ public class DLog {
     }
 
     public static void reportException(@NonNull Throwable th) {
-        boolean z = DEBUG;
+        // currently empty
     }
 
     @Deprecated
@@ -141,8 +132,7 @@ public class DLog {
         }
     }
 
-    /* renamed from: w */
-    public static void m9w(Object obj) {
+    public static void w(Object obj) {
         if (!DEBUG) {
             return;
         }
@@ -151,11 +141,10 @@ public class DLog {
             return;
         }
         PrintStream printStream = System.out;
-        printStream.println("DLog: " + obj.toString());
+        printStream.println(TAG + ": " + obj.toString());
     }
 
-    /* renamed from: w */
-    public static void m10w(String str, Object obj) {
+    public static void w(String str, Object obj) {
         if (!DEBUG) {
             return;
         }
@@ -167,8 +156,7 @@ public class DLog {
         printStream.println(str + ": " + obj.toString());
     }
 
-    /* renamed from: w */
-    public static void m11w(String str, Object obj, Throwable th) {
+    public static void w(String str, Object obj, Throwable th) {
         if (!DEBUG) {
             return;
         }

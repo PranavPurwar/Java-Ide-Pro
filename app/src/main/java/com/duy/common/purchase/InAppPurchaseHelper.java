@@ -61,7 +61,7 @@ public class InAppPurchaseHelper implements BillingProcessor.IBillingHandler {
      */
     @Override
     public void onPurchaseHistoryRestored() {
-
+        // do nothing
     }
 
     public void purchase(String sku) {

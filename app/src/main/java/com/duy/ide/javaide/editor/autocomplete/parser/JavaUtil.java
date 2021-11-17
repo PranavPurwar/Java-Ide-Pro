@@ -15,9 +15,9 @@ import javax.lang.model.element.Modifier;
 public class JavaUtil {
     public static String getSimpleName(String className) {
         if (className.contains(".")) {
-            return className.substring(className.lastIndexOf(".") + 1).replace("$", ".");
+            return className.substring(className.lastIndexOf(".") + 1);
         } else {
-            return className.replace("$", ".");
+            return className;
         }
     }
 
@@ -36,7 +36,7 @@ public class JavaUtil {
         for (String s : split) {
             result = s + result;
         }
-        return result.replace("$", ".");
+        return result;
     }
 
 
@@ -54,7 +54,7 @@ public class JavaUtil {
             if (filename.endsWith(".java")) {
                 filename = filename.substring(0, filename.lastIndexOf(".java"));
             }
-            return filename.replace("$", ".");
+            return filename;
         } else {
             return null;
         }

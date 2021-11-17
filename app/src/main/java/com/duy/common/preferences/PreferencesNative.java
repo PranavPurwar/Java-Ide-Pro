@@ -6,7 +6,6 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 
 public class PreferencesNative {
-    private static final String TAG = "PreferencesCompat";
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener =
             new Preference.OnPreferenceChangeListener() {
                 @Override

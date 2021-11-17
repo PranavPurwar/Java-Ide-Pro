@@ -170,7 +170,7 @@ public class JavaParser {
 
         if (member.getName().toString().equals(CONSTRUCTOR_NAME)) {
             ConstructorDescription constructor = new ConstructorDescription(
-                    clazz.getFullClassName().replace("$", "."),
+                    clazz.getFullClassName(),
                     methodParameters);
             clazz.addConstructor(constructor);
         } else {

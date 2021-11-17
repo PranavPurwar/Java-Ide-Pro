@@ -100,12 +100,9 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
    }
 
    private void postUpdatePosition() {
-      if (this.mSuggestionEnable) {
-         if (this.mHandler != null) {
-            this.mHandler.removeCallbacks(this.mPostChangePopupPosition);
-            this.mHandler.postDelayed(this.mPostChangePopupPosition, 50L);
-         }
-
+      if (this.mSuggestionEnable && this.mHandler != null) {
+         this.mHandler.removeCallbacks(this.mPostChangePopupPosition);
+         this.mHandler.postDelayed(this.mPostChangePopupPosition, 50L);
       }
    }
 
@@ -184,7 +181,7 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
          StringBuilder var2 = new StringBuilder();
          var2.append("rect = ");
          var2.append(var1);
-         DLog.d("SuggestionEditor", var2.toString());
+         DLog.d(TAG, var2.toString());
       }
 
       this.setDropDownWidth((int)((float)var1.width() * 0.65F));
@@ -195,10 +192,8 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
    @SuppressLint({"RestrictedApi"})
    protected void onFocusChanged(boolean var1, int var2, Rect var3) {
       super.onFocusChanged(var1, var2, var3);
-      if (VERSION.SDK_INT < 24 || !this.isTemporarilyDetached()) {
-         if (!var1 && !this.mPopup.isDropDownAlwaysVisible()) {
-            this.dismissDropDown();
-         }
+      if ((VERSION.SDK_INT < 24 || !this.isTemporarilyDetached()) && !var1 && !this.mPopup.isDropDownAlwaysVisible()) {
+         this.dismissDropDown();
 
       }
    }
@@ -259,12 +254,10 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
          Exception var10000;
          label56: {
             Layout var1;
-            boolean var10001;
             try {
                var1 = this.getLayout();
             } catch (Exception var7) {
                var10000 = var7;
-               var10001 = false;
                break label56;
             }
 
@@ -277,7 +270,6 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
                var2 = this.getSelectionStart();
             } catch (Exception var6) {
                var10000 = var6;
-               var10001 = false;
                break label56;
             }
 
@@ -299,7 +291,6 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
                }
             } catch (Exception var8) {
                var10000 = var8;
-               var10001 = false;
                break label56;
             }
 
@@ -308,13 +299,12 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
                return;
             } catch (Exception var5) {
                var10000 = var5;
-               var10001 = false;
             }
          }
 
          Exception var9 = var10000;
          if (DLog.DEBUG) {
-            DLog.e("SuggestionEditor", "onPopupChangePosition: ", var9);
+            DLog.e(TAG, "onPopupChangePosition: ", var9);
          }
 
       }
@@ -385,6 +375,7 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
    }
 
    public void setOnSuggestItemClickListener(@Nullable OnSuggestItemClickListener var1) {
+       // not implemented here
    }
 
    public void setSuggestData(@NonNull List<SuggestItem> var1) {
@@ -419,17 +410,14 @@ public class SuggestionEditor extends EditActionSupportEditor implements OnItemC
    }
 
    public void showDropDown() {
-      if (this.mSuggestionEnable) {
-         if (!this.isPopupShowing() && this.hasFocus()) {
-            try {
-               this.showDropDownImpl();
-            } catch (Exception var2) {
-               if (DLog.DEBUG) {
-                  DLog.e("SuggestionEditor", "showDropDown: ", var2);
-               }
+      if (this.mSuggestionEnable && !this.isPopupShowing() && this.hasFocus()) {
+         try {
+            this.showDropDownImpl();
+         } catch (Exception var2) {
+            if (DLog.DEBUG) {
+               DLog.e(TAG, "showDropDown: ", var2);
             }
          }
-
       }
    }
 }
