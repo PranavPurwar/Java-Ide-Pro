@@ -2,7 +2,7 @@
 <LinearLayout
     android:orientation="horizontal"
     android:id="@id/status_bar_latest_event_content"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="64.0dip"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <include
@@ -19,14 +19,14 @@
         android:orientation="horizontal"
         android:id="@id/media_actions"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_height="fill_parent" />
     <include
         android:layout_width="48.0dip"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:layout_marginRight="6.0dip"
         layout="@layout/notification_media_cancel_action" />
     <ImageView
         android:id="@id/end_padder"
         android:layout_width="6.0dip"
-        android:layout_height="match_parent" />
+        android:layout_height="fill_parent" />
 </LinearLayout>

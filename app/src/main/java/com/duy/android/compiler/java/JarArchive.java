@@ -17,6 +17,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+/**
+ * Created by duy on 19/07/2017.
+ */
 
 public class JarArchive {
     private boolean mVerbose;

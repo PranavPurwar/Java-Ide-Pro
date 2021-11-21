@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:paddingLeft="16.0dip"
     android:paddingRight="16.0dip"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -13,13 +13,13 @@
         android:background="?selectableItemBackground"
         android:padding="8.0dip"
         android:layout_width="0.0dip"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:layout_weight="1.0">
         <TextView
             android:textSize="16.0sp"
             android:ellipsize="marquee"
             android:paddingBottom="8.0dip"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/filter_choice_tag"
             android:maxLines="1" />
@@ -40,13 +40,13 @@
         android:background="?selectableItemBackground"
         android:padding="8.0dip"
         android:layout_width="0.0dip"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:layout_weight="1.0">
         <TextView
             android:textSize="16.0sp"
             android:ellipsize="marquee"
             android:paddingBottom="8.0dip"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/filter_choice_pid"
             android:maxLines="1" />

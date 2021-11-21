@@ -2,28 +2,28 @@
 <android.support.v4.widget.DrawerLayout
     android:id="@id/drawer_layout"
     android:fitsSystemWindows="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.design.widget.CoordinatorLayout
         android:orientation="vertical"
         android:id="@id/mainLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
         <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="false">
             <android.support.v7.widget.Toolbar
                 android:theme="?actionBarTheme"
                 android:id="@id/toolbar"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="40.0dip"
                 app:popupTheme="?actionBarPopupTheme" />
             <View
                 android:background="?android:listDivider"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="1.0px" />
             <android.support.v7.widget.AppCompatTextView
                 android:textSize="10.0sp"
@@ -32,11 +32,11 @@
                 android:paddingLeft="16.0dip"
                 android:paddingRight="16.0dip"
                 android:paddingBottom="2.0dip"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content" />
             <com.ogaclejapan.smarttablayout.SmartTabLayout
                 android:id="@id/tab_layout"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="36.0dip"
                 app:stl_clickable="true"
                 app:stl_distributeEvenly="false"
@@ -57,8 +57,8 @@
             android:gravity="bottom"
             android:orientation="vertical"
             android:id="@id/diagnostic_panel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:umanoDragView="@id/drag_view"
             app:umanoFadeColor="@android:color/transparent"
@@ -66,16 +66,16 @@
             app:umanoPanelHeight="@dimen/symbol_bar_height">
             <android.support.v4.view.ViewPager
                 android:id="@id/editor_view_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:orientation="horizontal"
                     android:id="@id/drag_view"
-                    android:layout_width="match_parent"
+                    android:layout_width="fill_parent"
                     android:layout_height="@dimen/symbol_bar_height"
                     android:fillViewport="true">
                     <com.duy.common.view.TintImageView
@@ -86,19 +86,19 @@
                         android:scaleType="centerInside"
                         app:srcCompat="@drawable/ic_keyboard_arrow_up_white_24dp" />
                     <HorizontalScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
                         <com.jecelyin.editor.v2.widget.SymbolBarLayout
                             android:id="@id/symbolBarLayout"
                             android:background="?android:windowBackground"
                             android:visibility="visible"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent" />
+                            android:layout_height="fill_parent" />
                     </HorizontalScrollView>
                 </LinearLayout>
                 <FrameLayout
                     android:id="@id/container_diagnostic_list_view"
-                    android:layout_width="match_parent"
+                    android:layout_width="fill_parent"
                     android:layout_height="200.0dip" />
             </LinearLayout>
         </com.sothree.slidinguppanel.SlidingUpPanelLayout>
@@ -108,16 +108,16 @@
         android:id="@id/left_navigation_view"
         android:fitsSystemWindows="false"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="fill_parent">
         <LinearLayout
             android:orientation="vertical"
             android:id="@id/left_navigation_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
             <RelativeLayout
                 android:orientation="horizontal"
                 android:background="?colorPrimary"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="?actionBarSize">
                 <android.support.v7.widget.AppCompatTextView
                     android:textSize="18.0sp"
@@ -148,5 +148,5 @@
         android:id="@id/right_navigation_view"
         android:fitsSystemWindows="false"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_height="fill_parent" />
 </android.support.v4.widget.DrawerLayout>

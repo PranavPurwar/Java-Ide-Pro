@@ -1,6 +1,5 @@
 package com.duy.android.compiler.builder;
 
-import com.duy.android.compiler.builder.AndroidAppBuilder;
 import com.duy.android.compiler.builder.task.Task;
 import com.duy.android.compiler.project.AndroidAppProject;
 

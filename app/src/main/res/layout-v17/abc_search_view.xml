@@ -2,8 +2,8 @@
 <LinearLayout
     android:orientation="horizontal"
     android:id="@id/search_bar"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView
         android:textAppearance="?android:textAppearanceMedium"
@@ -12,7 +12,7 @@
         android:id="@id/search_badge"
         android:visibility="gone"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:layout_marginBottom="2.0dip"
         android:drawablePadding="0.0dip" />
     <ImageView
@@ -20,14 +20,14 @@
         android:id="@id/search_button"
         android:focusable="true"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:contentDescription="@string/abc_searchview_description_search"
         style="?actionButtonStyle" />
     <LinearLayout
         android:orientation="horizontal"
         android:id="@id/search_edit_frame"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:layout_marginLeft="8.0dip"
         android:layout_marginRight="8.0dip"
         android:layout_weight="1.0"
@@ -45,7 +45,7 @@
             android:orientation="horizontal"
             android:id="@id/search_plate"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="fill_parent"
             android:layout_weight="1.0">
             <view
                 android:ellipsize="end"
@@ -73,14 +73,14 @@
                 android:paddingRight="8.0dip"
                 android:focusable="true"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="fill_parent"
                 android:contentDescription="@string/abc_searchview_description_clear" />
         </LinearLayout>
         <LinearLayout
             android:orientation="horizontal"
             android:id="@id/submit_area"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="fill_parent">
             <ImageView
                 android:layout_gravity="center_vertical"
                 android:id="@id/search_go_btn"
@@ -90,7 +90,7 @@
                 android:focusable="true"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="fill_parent"
                 android:contentDescription="@string/abc_searchview_description_submit" />
             <ImageView
                 android:layout_gravity="center_vertical"
@@ -101,7 +101,7 @@
                 android:focusable="true"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="fill_parent"
                 android:contentDescription="@string/abc_searchview_description_voice" />
         </LinearLayout>
     </LinearLayout>

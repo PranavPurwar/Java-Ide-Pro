@@ -1,7 +1,6 @@
 package com.duy.android.compiler.builder;
 
 import android.content.Context;
-import android.os.Build;
 
 import com.android.annotations.NonNull;
 import com.android.ide.common.process.ProcessExecutor;
@@ -15,12 +14,12 @@ import com.duy.android.compiler.builder.task.android.MergeManifestTask;
 import com.duy.android.compiler.builder.task.android.PackageApkTask;
 import com.duy.android.compiler.builder.task.android.ProcessAndroidResourceTask;
 import com.duy.android.compiler.builder.task.android.SignApkTask;
-import com.duy.android.compiler.builder.task.android.InstallTask;
+import com.duy.android.compiler.builder.task.android.InstallApkTask;
 import com.duy.android.compiler.builder.task.java.CompileJavaTask;
 import com.duy.android.compiler.builder.task.java.DexTask;
-import com.duy.android.compiler.builder.task.java.D8Task;
 import com.duy.android.compiler.project.AndroidAppProject;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 /**
@@ -31,7 +30,6 @@ import java.util.ArrayList;
  * {@link CompileAidlTask}
  * {@link CompileJavaTask}
  * {@link PackageApkTask}
- * {@link InstallTask}
  */
 public class AndroidAppBuilder extends BuilderImpl<AndroidAppProject> {
 
@@ -46,10 +44,6 @@ public class AndroidAppBuilder extends BuilderImpl<AndroidAppProject> {
         mProcessExecutor = new RuntimeProcessExecutor();
     }
 
-    @Override
-    public AndroidAppProject getProject() {
-        return mProject;
-    }
 
     @Override
     public boolean build(BuildType buildType) {
@@ -73,19 +67,46 @@ public class AndroidAppBuilder extends BuilderImpl<AndroidAppProject> {
 
         tasks.add(new CompileJavaTask(this));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            tasks.add(new D8Task(this));
-        } else {
-            tasks.add(new DexTask(this));
-        }
+        tasks.add(new DexTask(this));
 
         tasks.add(new PackageApkTask(this));
 
         tasks.add(new SignApkTask(this, buildType));
-
-        tasks.add(new InstallTask(this));
+        
+        tasks.add(new InstallApkTask(this));
         return tasks;
     }
 
 
+    public void stdout(String message) {
+        if (mVerbose) {
+            mStdout.println(message);
+        }
+    }
+
+    public void stderr(String stderr) {
+        if (mVerbose) {
+            mStderr.println(stderr);
+        }
+    }
+
+    public boolean isVerbose() {
+        return mVerbose;
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public AndroidAppProject getProject() {
+        return mProject;
+    }
+
+    public PrintStream getStdout() {
+        return mStdout;
+    }
+
+    public ProcessExecutor getProcessExecutor() {
+        return mProcessExecutor;
+    }
 }

@@ -6,9 +6,9 @@ import com.duy.android.compiler.project.AndroidAppProject;
 
 import com.duy.ide.javaide.utils.RootUtils;
 
-public class InstallTask extends Task<AndroidAppProject> {
+public class InstallApkTask extends Task<AndroidAppProject> {
 
-    public InstallTask(IBuilder<? extends AndroidAppProject> builder) {
+    public InstallApkTask(IBuilder<? extends AndroidAppProject> builder) {
         super(builder);
     }
 

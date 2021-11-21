@@ -8,10 +8,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.InvalidParameterException;
 
 import dalvik.system.DexClassLoader;
 
+/**
+ * Created by duy on 19/07/2017.
+ */
 
 public class Java {
 
@@ -34,7 +36,7 @@ public class Java {
                         jarfile = zArgs[i];
                     } else {
                         //Wrong Varibles
-                        throw new InvalidParameterException("Wrong parameters. No JAR file specified.");
+                        throw new InvokeException("Wrong parameters. No JAR file specified.");
                     }
                 } else if (zArgs[i].equals("-v") || zArgs[i].equals("-verbose")) {
                     //Property set
@@ -55,7 +57,7 @@ public class Java {
             }
 
             if (jarfile.equals("")) {
-                throw new InvalidParameterException("No JAR Files specified");
+                throw new InvokeException("No JAR Files specified");
             }
 
             if (tempDir == null) {
@@ -67,7 +69,7 @@ public class Java {
                     tempDir = System.getenv("TEMP");
                     if (tempDir == null || tempDir.equals("")) {
                         System.out.println("No TEMP OR ODEX_FOLDER specified!");
-                        throw new InvalidParameterException("Please specify ODEX_FOLDER or TEMP environment variable");
+                        throw new InvokeException("Please specify ODEX_FOLDER or TEMP environment variable");
                     }
                 }
             }
@@ -81,7 +83,7 @@ public class Java {
 
             //Check wee have the info we need..
             if (jarfile.equals("") || classname.equals("")) {
-                throw new InvalidParameterException("Incorrect parameters");
+                throw new InvokeException("Incorrect parameters");
             }
 
             //Now load this class..
@@ -98,7 +100,7 @@ public class Java {
                 mainArgs = new String[0];
             }
 
-            //Get public static void main
+            //Gat public static void main
             @SuppressWarnings({"unchecked", "RedundantArrayCreation"})
             Method main = loadedClass.getDeclaredMethod("main", new Class[]{mainArgs.getClass()});
 

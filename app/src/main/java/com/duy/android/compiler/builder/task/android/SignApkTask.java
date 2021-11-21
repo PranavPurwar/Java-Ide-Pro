@@ -40,7 +40,7 @@ public class SignApkTask extends Task<AndroidAppProject> {
 
     private boolean signDebug() throws IOException, GeneralSecurityException, IllegalAccessException,
             InstantiationException, ClassNotFoundException {
-        mBuilder.stdout("Signing debug apk");
+        mBuilder.stdout("Sign debug apk");
 
         String mode = "testkey";
 

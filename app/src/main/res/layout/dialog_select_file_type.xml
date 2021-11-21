@@ -2,14 +2,14 @@
 <LinearLayout
     android:orientation="vertical"
     android:padding="16.0dip"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:minWidth="200.0dip"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <android.support.v7.widget.AppCompatTextView
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:paddingBottom="8.0dip"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/create_new_file" />
     <android.support.v7.widget.AppCompatTextView
@@ -17,10 +17,10 @@
         android:textColor="?colorAccent"
         android:id="@id/txt_path"
         android:paddingBottom="8.0dip"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
     <ListView
         android:id="@id/file_types"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 </LinearLayout>

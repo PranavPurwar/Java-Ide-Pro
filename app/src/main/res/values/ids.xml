@@ -1,408 +1,409 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="action0">false</item>
-    <item type="id" name="action_bar">false</item>
-    <item type="id" name="action_bar_activity_content">false</item>
-    <item type="id" name="action_bar_container">false</item>
-    <item type="id" name="action_bar_root">false</item>
-    <item type="id" name="action_bar_spinner">false</item>
-    <item type="id" name="action_bar_subtitle">false</item>
-    <item type="id" name="action_bar_title">false</item>
-    <item type="id" name="action_compiler_setting">false</item>
-    <item type="id" name="action_container">false</item>
-    <item type="id" name="action_context_bar">false</item>
-    <item type="id" name="action_convert_to_lowercase">false</item>
-    <item type="id" name="action_convert_to_uppercase">false</item>
-    <item type="id" name="action_copy">false</item>
-    <item type="id" name="action_cursor_back">false</item>
-    <item type="id" name="action_cursor_forward">false</item>
-    <item type="id" name="action_cut">false</item>
-    <item type="id" name="action_divider">false</item>
-    <item type="id" name="action_duplicate">false</item>
-    <item type="id" name="action_editor_color_scheme">false</item>
-    <item type="id" name="action_editor_setting">false</item>
-    <item type="id" name="action_empty_btn">false</item>
-    <item type="id" name="action_encoding">false</item>
-    <item type="id" name="action_file_history">false</item>
-    <item type="id" name="action_find_replace">false</item>
-    <item type="id" name="action_format_source">false</item>
-    <item type="id" name="action_goto_end">false</item>
-    <item type="id" name="action_goto_home">false</item>
-    <item type="id" name="action_goto_line">false</item>
-    <item type="id" name="action_goto_top">false</item>
-    <item type="id" name="action_highlight">false</item>
-    <item type="id" name="action_image">false</item>
-    <item type="id" name="action_install_cpp_nide">false</item>
-    <item type="id" name="action_menu_divider">false</item>
-    <item type="id" name="action_menu_presenter">false</item>
-    <item type="id" name="action_mode_bar">false</item>
-    <item type="id" name="action_mode_bar_stub">false</item>
-    <item type="id" name="action_mode_close_button">false</item>
-    <item type="id" name="action_new_android_project">false</item>
-    <item type="id" name="action_new_class">false</item>
-    <item type="id" name="action_new_file">false</item>
-    <item type="id" name="action_new_java_project">false</item>
-    <item type="id" name="action_open">false</item>
-    <item type="id" name="action_open_android_project">false</item>
-    <item type="id" name="action_open_java_project">false</item>
-    <item type="id" name="action_paste">false</item>
-    <item type="id" name="action_premium">false</item>
-    <item type="id" name="action_rate">false</item>
-    <item type="id" name="action_redo">false</item>
-    <item type="id" name="action_report_bug">false</item>
-    <item type="id" name="action_run">false</item>
-    <item type="id" name="action_sample">false</item>
-    <item type="id" name="action_save">false</item>
-    <item type="id" name="action_save_all">false</item>
-    <item type="id" name="action_save_as">false</item>
-    <item type="id" name="action_search">false</item>
-    <item type="id" name="action_see_logcat">false</item>
-    <item type="id" name="action_select_all">false</item>
-    <item type="id" name="action_share">false</item>
-    <item type="id" name="action_share_code">false</item>
-    <item type="id" name="action_text">false</item>
-    <item type="id" name="action_undo">false</item>
-    <item type="id" name="action_up_btn">false</item>
-    <item type="id" name="action_voice_btn">false</item>
-    <item type="id" name="actions">false</item>
-    <item type="id" name="activity_chooser_view_content">false</item>
-    <item type="id" name="ad_view">false</item>
-    <item type="id" name="add_folder_menu">false</item>
-    <item type="id" name="alertTitle">false</item>
-    <item type="id" name="appNameTextView">false</item>
-    <item type="id" name="appbar">false</item>
-    <item type="id" name="avpa_view_tag_key">false</item>
-    <item type="id" name="backwards_compatibility">false</item>
-    <item type="id" name="btn_cancel">false</item>
-    <item type="id" name="btn_close">false</item>
-    <item type="id" name="btn_create">false</item>
-    <item type="id" name="btn_donate_1">false</item>
-    <item type="id" name="btn_donate_2">false</item>
-    <item type="id" name="btn_donate_3">false</item>
-    <item type="id" name="btn_donate_4">false</item>
-    <item type="id" name="btn_donate_5">false</item>
-    <item type="id" name="btn_ok">false</item>
-    <item type="id" name="btn_save">false</item>
-    <item type="id" name="btn_select">false</item>
-    <item type="id" name="btn_select_path">false</item>
-    <item type="id" name="btn_toggle_panel">false</item>
-    <item type="id" name="buttonPanel">false</item>
-    <item type="id" name="buttonsContainer">false</item>
-    <item type="id" name="cancel_action">false</item>
-    <item type="id" name="case_sensitive_check_box">false</item>
-    <item type="id" name="char_count_textView">false</item>
-    <item type="id" name="checkbox">false</item>
-    <item type="id" name="chronometer">false</item>
-    <item type="id" name="ckb_create_main_func">false</item>
-    <item type="id" name="clickable_linear_layout">false</item>
-    <item type="id" name="color_indicator">false</item>
-    <item type="id" name="compile_progress">false</item>
-    <item type="id" name="compiler_output_container">false</item>
-    <item type="id" name="console_view">false</item>
-    <item type="id" name="container">false</item>
-    <item type="id" name="container_diagnostic_list_view">false</item>
-    <item type="id" name="content">false</item>
-    <item type="id" name="contentPanel">false</item>
-    <item type="id" name="coordinator">false</item>
-    <item type="id" name="copy">false</item>
-    <item type="id" name="cursorView">false</item>
-    <item type="id" name="custom">false</item>
-    <item type="id" name="customPanel">false</item>
-    <item type="id" name="cut">false</item>
-    <item type="id" name="dataBinding">false</item>
-    <item type="id" name="dateTextView">false</item>
-    <item type="id" name="decor_content_parent">false</item>
-    <item type="id" name="default_activity_button">false</item>
-    <item type="id" name="delete">false</item>
-    <item type="id" name="design_bottom_sheet">false</item>
-    <item type="id" name="design_menu_item_action_area">false</item>
-    <item type="id" name="design_menu_item_action_area_stub">false</item>
-    <item type="id" name="design_menu_item_text">false</item>
-    <item type="id" name="design_navigation_view">false</item>
-    <item type="id" name="diagnostic_list_view">false</item>
-    <item type="id" name="diagnostic_panel">false</item>
-    <item type="id" name="diagnostic_view_pager">false</item>
-    <item type="id" name="dialog_searchby_pid_linear">false</item>
-    <item type="id" name="dialog_searchby_pid_text">false</item>
-    <item type="id" name="dialog_searchby_tag_linear">false</item>
-    <item type="id" name="dialog_searchby_tag_text">false</item>
-    <item type="id" name="down_load_from_github">false</item>
-    <item type="id" name="drag_view">false</item>
-    <item type="id" name="drawer_layout">false</item>
-    <item type="id" name="edit_activity_name">false</item>
-    <item type="id" name="edit_arg">false</item>
-    <item type="id" name="edit_class_name">false</item>
-    <item type="id" name="edit_file_name">false</item>
-    <item type="id" name="edit_input">false</item>
-    <item type="id" name="edit_layout_name">false</item>
-    <item type="id" name="edit_main_class">false</item>
-    <item type="id" name="edit_package_name">false</item>
-    <item type="id" name="edit_path">false</item>
-    <item type="id" name="edit_project_name">false</item>
-    <item type="id" name="edit_query">false</item>
-    <item type="id" name="edit_text">false</item>
-    <item type="id" name="editor_view">false</item>
-    <item type="id" name="editor_view_pager">false</item>
-    <item type="id" name="emptyLayout">false</item>
-    <item type="id" name="encoding_textView">false</item>
-    <item type="id" name="end_padder">false</item>
-    <item type="id" name="expand_activities_button">false</item>
-    <item type="id" name="expanded_menu">false</item>
-    <item type="id" name="explorer_swipe_refresh_layout">false</item>
-    <item type="id" name="extTextView">false</item>
-    <item type="id" name="fab">false</item>
-    <item type="id" name="file_encoding_textView">false</item>
-    <item type="id" name="file_text_view">false</item>
-    <item type="id" name="file_types">false</item>
-    <item type="id" name="filename_editText">false</item>
-    <item type="id" name="filename_layout">false</item>
-    <item type="id" name="find_edit_text">false</item>
-    <item type="id" name="ghost_view">false</item>
-    <item type="id" name="gutter_view">false</item>
-    <item type="id" name="hint">false</item>
-    <item type="id" name="home">false</item>
-    <item type="id" name="icon">false</item>
-    <item type="id" name="iconImageView">false</item>
-    <item type="id" name="icon_frame">false</item>
-    <item type="id" name="icon_group">false</item>
-    <item type="id" name="image">false</item>
-    <item type="id" name="imageView">false</item>
-    <item type="id" name="image_preview">false</item>
-    <item type="id" name="imageview">false</item>
-    <item type="id" name="img_add">false</item>
-    <item type="id" name="img_add_dependencies">false</item>
-    <item type="id" name="img_arrow">false</item>
-    <item type="id" name="img_collapse">false</item>
-    <item type="id" name="img_delete">false</item>
-    <item type="id" name="img_expand_all">false</item>
-    <item type="id" name="img_icon">false</item>
-    <item type="id" name="img_refresh">false</item>
-    <item type="id" name="info">false</item>
-    <item type="id" name="item_touch_helper_previous_elevation">false</item>
-    <item type="id" name="largeLabel">false</item>
-    <item type="id" name="launcher_activity">false</item>
-    <item type="id" name="left_navigation_content">false</item>
-    <item type="id" name="left_navigation_view">false</item>
-    <item type="id" name="line1">false</item>
-    <item type="id" name="line3">false</item>
-    <item type="id" name="line_count_textView">false</item>
-    <item type="id" name="linearLayout">false</item>
-    <item type="id" name="linearLayout3">false</item>
-    <item type="id" name="list">false</item>
-    <item type="id" name="list_item">false</item>
-    <item type="id" name="list_view">false</item>
-    <item type="id" name="log_level_text">false</item>
-    <item type="id" name="log_output_text">false</item>
-    <item type="id" name="m_color">false</item>
-    <item type="id" name="m_fullscreen">false</item>
-    <item type="id" name="m_info">false</item>
-    <item type="id" name="m_menu">false</item>
-    <item type="id" name="m_readonly">false</item>
-    <item type="id" name="m_symbol">false</item>
-    <item type="id" name="m_theme">false</item>
-    <item type="id" name="mainLayout">false</item>
-    <item type="id" name="main_background">false</item>
-    <item type="id" name="main_dark_progress_bar">false</item>
-    <item type="id" name="main_light_progress_bar">false</item>
-    <item type="id" name="masked">false</item>
-    <item type="id" name="md_buttonDefaultNegative">false</item>
-    <item type="id" name="md_buttonDefaultNeutral">false</item>
-    <item type="id" name="md_buttonDefaultPositive">false</item>
-    <item type="id" name="md_colorA">false</item>
-    <item type="id" name="md_colorALabel">false</item>
-    <item type="id" name="md_colorAValue">false</item>
-    <item type="id" name="md_colorB">false</item>
-    <item type="id" name="md_colorBLabel">false</item>
-    <item type="id" name="md_colorBValue">false</item>
-    <item type="id" name="md_colorChooserCustomFrame">false</item>
-    <item type="id" name="md_colorG">false</item>
-    <item type="id" name="md_colorGLabel">false</item>
-    <item type="id" name="md_colorGValue">false</item>
-    <item type="id" name="md_colorIndicator">false</item>
-    <item type="id" name="md_colorR">false</item>
-    <item type="id" name="md_colorRLabel">false</item>
-    <item type="id" name="md_colorRValue">false</item>
-    <item type="id" name="md_content">false</item>
-    <item type="id" name="md_contentListViewFrame">false</item>
-    <item type="id" name="md_contentRecyclerView">false</item>
-    <item type="id" name="md_contentScrollView">false</item>
-    <item type="id" name="md_control">false</item>
-    <item type="id" name="md_customViewFrame">false</item>
-    <item type="id" name="md_grid">false</item>
-    <item type="id" name="md_hexInput">false</item>
-    <item type="id" name="md_icon">false</item>
-    <item type="id" name="md_label">false</item>
-    <item type="id" name="md_minMax">false</item>
-    <item type="id" name="md_promptCheckbox">false</item>
-    <item type="id" name="md_root">false</item>
-    <item type="id" name="md_title">false</item>
-    <item type="id" name="md_titleFrame">false</item>
-    <item type="id" name="media_actions">false</item>
-    <item type="id" name="menu_clear">false</item>
-    <item type="id" name="menu_crazy_logger_service">false</item>
-    <item type="id" name="menu_delete_saved_log">false</item>
-    <item type="id" name="menu_edit">false</item>
-    <item type="id" name="menu_expand_all">false</item>
-    <item type="id" name="menu_file">false</item>
-    <item type="id" name="menu_filters">false</item>
-    <item type="id" name="menu_log_level">false</item>
-    <item type="id" name="menu_manage_saving">false</item>
-    <item type="id" name="menu_open_log">false</item>
-    <item type="id" name="menu_other">false</item>
-    <item type="id" name="menu_partial_select">false</item>
-    <item type="id" name="menu_play_pause">false</item>
-    <item type="id" name="menu_record_log">false</item>
-    <item type="id" name="menu_save_as_log">false</item>
-    <item type="id" name="menu_save_log">false</item>
-    <item type="id" name="menu_search">false</item>
-    <item type="id" name="menu_send_log">false</item>
-    <item type="id" name="menu_settings">false</item>
-    <item type="id" name="menu_view">false</item>
-    <item type="id" name="message">false</item>
-    <item type="id" name="modifiers">false</item>
-    <item type="id" name="nameTextView">false</item>
-    <item type="id" name="navigation_header_container">false</item>
-    <item type="id" name="node_header">false</item>
-    <item type="id" name="node_items">false</item>
-    <item type="id" name="node_value">false</item>
-    <item type="id" name="notification_background">false</item>
-    <item type="id" name="notification_main_column">false</item>
-    <item type="id" name="notification_main_column_container">false</item>
-    <item type="id" name="onAttachStateChangeListener">false</item>
-    <item type="id" name="onDateChanged">false</item>
-    <item type="id" name="parentPanel">false</item>
-    <item type="id" name="parent_matrix">false</item>
-    <item type="id" name="paste">false</item>
-    <item type="id" name="paste_menu">false</item>
-    <item type="id" name="pathScrollView">false</item>
-    <item type="id" name="path_textView">false</item>
-    <item type="id" name="pid_text">false</item>
-    <item type="id" name="progressBar3">false</item>
-    <item type="id" name="progress_bar">false</item>
-    <item type="id" name="progress_circular">false</item>
-    <item type="id" name="progress_horizontal">false</item>
-    <item type="id" name="rad_abstract">false</item>
-    <item type="id" name="rad_final">false</item>
-    <item type="id" name="rad_none">false</item>
-    <item type="id" name="rad_package_private">false</item>
-    <item type="id" name="rad_public">false</item>
-    <item type="id" name="radio">false</item>
-    <item type="id" name="record_badge_image_view">false</item>
-    <item type="id" name="recyclerView">false</item>
-    <item type="id" name="regex_check_box">false</item>
-    <item type="id" name="rename">false</item>
-    <item type="id" name="replaceTextView">false</item>
-    <item type="id" name="replace_check_box">false</item>
-    <item type="id" name="replace_edit_text">false</item>
-    <item type="id" name="right_icon">false</item>
-    <item type="id" name="right_navigation_view">false</item>
-    <item type="id" name="right_side">false</item>
-    <item type="id" name="root">false</item>
-    <item type="id" name="save_image_matrix">false</item>
-    <item type="id" name="save_non_transition_alpha">false</item>
-    <item type="id" name="save_scale_type">false</item>
-    <item type="id" name="scrollIndicatorDown">false</item>
-    <item type="id" name="scrollIndicatorUp">false</item>
-    <item type="id" name="scrollView">false</item>
-    <item type="id" name="searchTextView">false</item>
-    <item type="id" name="search_badge">false</item>
-    <item type="id" name="search_bar">false</item>
-    <item type="id" name="search_button">false</item>
-    <item type="id" name="search_close_btn">false</item>
-    <item type="id" name="search_edit_frame">false</item>
-    <item type="id" name="search_go_btn">false</item>
-    <item type="id" name="search_layout">false</item>
-    <item type="id" name="search_mag_icon">false</item>
-    <item type="id" name="search_plate">false</item>
-    <item type="id" name="search_src_text">false</item>
-    <item type="id" name="search_top_bar">false</item>
-    <item type="id" name="search_view">false</item>
-    <item type="id" name="search_voice_btn">false</item>
-    <item type="id" name="secondLineTextView">false</item>
-    <item type="id" name="seekbar">false</item>
-    <item type="id" name="seekbar_value">false</item>
-    <item type="id" name="select_all">false</item>
-    <item type="id" name="select_dialog_listview">false</item>
-    <item type="id" name="share">false</item>
-    <item type="id" name="shortcut">false</item>
-    <item type="id" name="show_hidden_files_menu">false</item>
-    <item type="id" name="smallLabel">false</item>
-    <item type="id" name="snackbar_action">false</item>
-    <item type="id" name="snackbar_text">false</item>
-    <item type="id" name="sort_by_datetime_menu">false</item>
-    <item type="id" name="sort_by_name_menu">false</item>
-    <item type="id" name="sort_by_size_menu">false</item>
-    <item type="id" name="sort_by_type_menu">false</item>
-    <item type="id" name="sort_group_menu">false</item>
-    <item type="id" name="spacer">false</item>
-    <item type="id" name="spinner">false</item>
-    <item type="id" name="spinner_exts">false</item>
-    <item type="id" name="spinner_kind">false</item>
-    <item type="id" name="spinner_main_class">false</item>
-    <item type="id" name="spinner_themes">false</item>
-    <item type="id" name="split_action_bar">false</item>
-    <item type="id" name="status_bar_latest_event_content">false</item>
-    <item type="id" name="submenuarrow">false</item>
-    <item type="id" name="submit_area">false</item>
-    <item type="id" name="suggestion_icon">false</item>
-    <item type="id" name="suggestion_list">false</item>
-    <item type="id" name="suggestion_text">false</item>
-    <item type="id" name="switchWidget">false</item>
-    <item type="id" name="symbolBarLayout">false</item>
-    <item type="id" name="tabRecyclerView">false</item>
-    <item type="id" name="tab_layout">false</item>
-    <item type="id" name="tag_text">false</item>
-    <item type="id" name="tag_transition_group">false</item>
-    <item type="id" name="text">false</item>
-    <item type="id" name="text2">false</item>
-    <item type="id" name="textSpacerNoButtons">false</item>
-    <item type="id" name="textSpacerNoTitle">false</item>
-    <item type="id" name="textView">false</item>
-    <item type="id" name="textView3">false</item>
-    <item type="id" name="textWatcher">false</item>
-    <item type="id" name="text_input_password_toggle">false</item>
-    <item type="id" name="textinput_counter">false</item>
-    <item type="id" name="textinput_error">false</item>
-    <item type="id" name="time">false</item>
-    <item type="id" name="timestamp_text">false</item>
-    <item type="id" name="title">false</item>
-    <item type="id" name="titleDividerNoCustom">false</item>
-    <item type="id" name="title_template">false</item>
-    <item type="id" name="title_text_view">false</item>
-    <item type="id" name="toolbar">false</item>
-    <item type="id" name="toolbar_actionbar">false</item>
-    <item type="id" name="toolbar_container">false</item>
-    <item type="id" name="topPanel">false</item>
-    <item type="id" name="touch_outside">false</item>
-    <item type="id" name="transition_current_scene">false</item>
-    <item type="id" name="transition_layout_save">false</item>
-    <item type="id" name="transition_position">false</item>
-    <item type="id" name="transition_scene_layoutid_cache">false</item>
-    <item type="id" name="transition_transform">false</item>
-    <item type="id" name="transparent_view">false</item>
-    <item type="id" name="tree_items">false</item>
-    <item type="id" name="txt_document_info">false</item>
-    <item type="id" name="txt_error">false</item>
-    <item type="id" name="txt_file">false</item>
-    <item type="id" name="txt_header">false</item>
-    <item type="id" name="txt_info">false</item>
-    <item type="id" name="txt_line_col">false</item>
-    <item type="id" name="txt_log">false</item>
-    <item type="id" name="txt_message">false</item>
-    <item type="id" name="txt_name">false</item>
-    <item type="id" name="txt_path">false</item>
-    <item type="id" name="txt_project_name">false</item>
-    <item type="id" name="txt_return_type">false</item>
-    <item type="id" name="txt_suggest_header">false</item>
-    <item type="id" name="txt_title">false</item>
-    <item type="id" name="txt_type">false</item>
-    <item type="id" name="up">false</item>
-    <item type="id" name="versionTextView">false</item>
-    <item type="id" name="view_offset_helper">false</item>
-    <item type="id" name="view_pager">false</item>
-    <item type="id" name="visibility">false</item>
-    <item type="id" name="visible">false</item>
-    <item type="id" name="whole_words_only_check_box">false</item>
-    <item type="id" name="widget_subtext">false</item>
-    <item type="id" name="word_count_textView">false</item>
+    <item type="id" name="action0" />
+    <item type="id" name="action_bar" />
+    <item type="id" name="action_bar_activity_content" />
+    <item type="id" name="action_bar_container" />
+    <item type="id" name="action_bar_root" />
+    <item type="id" name="action_bar_spinner" />
+    <item type="id" name="action_bar_subtitle" />
+    <item type="id" name="action_bar_title" />
+    <item type="id" name="action_compiler_setting" />
+    <item type="id" name="action_container" />
+    <item type="id" name="action_context_bar" />
+    <item type="id" name="action_convert_to_lowercase" />
+    <item type="id" name="action_convert_to_uppercase" />
+    <item type="id" name="action_copy" />
+    <item type="id" name="action_cursor_back" />
+    <item type="id" name="action_cursor_forward" />
+    <item type="id" name="action_cut" />
+    <item type="id" name="action_divider" />
+    <item type="id" name="action_duplicate" />
+    <item type="id" name="action_editor_color_scheme" />
+    
+    <item type="id" name="action_editor_setting" />
+    <item type="id" name="action_empty_btn" />
+    <item type="id" name="action_encoding" />
+    <item type="id" name="action_file_history" />
+    <item type="id" name="action_find_replace" />
+    <item type="id" name="action_format_source" />
+    <item type="id" name="action_goto_end" />
+    <item type="id" name="action_goto_home" />
+    <item type="id" name="action_goto_line" />
+    <item type="id" name="action_goto_top" />
+    <item type="id" name="action_highlight" />
+    <item type="id" name="action_image" />
+    <item type="id" name="action_install_cpp_nide" />
+    <item type="id" name="action_menu_divider" />
+    <item type="id" name="action_menu_presenter" />
+    <item type="id" name="action_mode_bar" />
+    <item type="id" name="action_mode_bar_stub" />
+    <item type="id" name="action_mode_close_button" />
+    <item type="id" name="action_new_android_project" />
+    <item type="id" name="action_new_class" />
+    <item type="id" name="action_new_file" />
+    <item type="id" name="action_new_java_project" />
+    <item type="id" name="action_open" />
+    <item type="id" name="action_open_android_project" />
+    <item type="id" name="action_open_java_project" />
+    <item type="id" name="action_paste" />
+    <item type="id" name="action_premium" />
+    <item type="id" name="action_rate" />
+    <item type="id" name="action_redo" />
+    <item type="id" name="action_report_bug" />
+    <item type="id" name="action_run" />
+    <item type="id" name="action_sample" />
+    <item type="id" name="action_save" />
+    <item type="id" name="action_save_all" />
+    <item type="id" name="action_save_as" />
+    <item type="id" name="action_search" />
+    <item type="id" name="action_see_logcat" />
+    <item type="id" name="action_select_all" />
+    <item type="id" name="action_share" />
+    <item type="id" name="action_share_code" />
+    <item type="id" name="action_text" />
+    <item type="id" name="action_undo" />
+    <item type="id" name="action_up_btn" />
+    <item type="id" name="action_voice_btn" />
+    <item type="id" name="actions" />
+    <item type="id" name="activity_chooser_view_content" />
+    <item type="id" name="ad_view" />
+    <item type="id" name="add_folder_menu" />
+    <item type="id" name="alertTitle" />
+    <item type="id" name="appNameTextView" />
+    <item type="id" name="appbar" />
+    <item type="id" name="avpa_view_tag_key" />
+    <item type="id" name="backwards_compatibility" />
+    <item type="id" name="btn_cancel" />
+    <item type="id" name="btn_close" />
+    <item type="id" name="btn_create" />
+    <item type="id" name="btn_donate_1" />
+    <item type="id" name="btn_donate_2" />
+    <item type="id" name="btn_donate_3" />
+    <item type="id" name="btn_donate_4" />
+    <item type="id" name="btn_donate_5" />
+    <item type="id" name="btn_ok" />
+    <item type="id" name="btn_save" />
+    <item type="id" name="btn_select" />
+    <item type="id" name="btn_select_path" />
+    <item type="id" name="btn_toggle_panel" />
+    <item type="id" name="buttonPanel" />
+    <item type="id" name="buttonsContainer" />
+    <item type="id" name="cancel_action" />
+    <item type="id" name="case_sensitive_check_box" />
+    <item type="id" name="char_count_textView" />
+    <item type="id" name="checkbox" />
+    <item type="id" name="chronometer" />
+    <item type="id" name="ckb_create_main_func" />
+    <item type="id" name="clickable_linear_layout" />
+    <item type="id" name="color_indicator" />
+    <item type="id" name="compile_progress" />
+    <item type="id" name="compiler_output_container" />
+    <item type="id" name="console_view" />
+    <item type="id" name="container" />
+    <item type="id" name="container_diagnostic_list_view" />
+    <item type="id" name="content" />
+    <item type="id" name="contentPanel" />
+    <item type="id" name="coordinator" />
+    <item type="id" name="copy" />
+    <item type="id" name="cursorView" />
+    <item type="id" name="custom" />
+    <item type="id" name="customPanel" />
+    <item type="id" name="cut" />
+    <item type="id" name="dataBinding" />
+    <item type="id" name="dateTextView" />
+    <item type="id" name="decor_content_parent" />
+    <item type="id" name="default_activity_button" />
+    <item type="id" name="delete" />
+    <item type="id" name="design_bottom_sheet" />
+    <item type="id" name="design_menu_item_action_area" />
+    <item type="id" name="design_menu_item_action_area_stub" />
+    <item type="id" name="design_menu_item_text" />
+    <item type="id" name="design_navigation_view" />
+    <item type="id" name="diagnostic_list_view" />
+    <item type="id" name="diagnostic_panel" />
+    <item type="id" name="diagnostic_view_pager" />
+    <item type="id" name="dialog_searchby_pid_linear" />
+    <item type="id" name="dialog_searchby_pid_text" />
+    <item type="id" name="dialog_searchby_tag_linear" />
+    <item type="id" name="dialog_searchby_tag_text" />
+    <item type="id" name="down_load_from_github" />
+    <item type="id" name="drag_view" />
+    <item type="id" name="drawer_layout" />
+    <item type="id" name="edit_activity_name" />
+    <item type="id" name="edit_arg" />
+    <item type="id" name="edit_class_name" />
+    <item type="id" name="edit_file_name" />
+    <item type="id" name="edit_input" />
+    <item type="id" name="edit_layout_name" />
+    <item type="id" name="edit_main_class" />
+    <item type="id" name="edit_package_name" />
+    <item type="id" name="edit_path" />
+    <item type="id" name="edit_project_name" />
+    <item type="id" name="edit_query" />
+    <item type="id" name="edit_text" />
+    <item type="id" name="editor_view" />
+    <item type="id" name="editor_view_pager" />
+    <item type="id" name="emptyLayout" />
+    <item type="id" name="encoding_textView" />
+    <item type="id" name="end_padder" />
+    <item type="id" name="expand_activities_button" />
+    <item type="id" name="expanded_menu" />
+    <item type="id" name="explorer_swipe_refresh_layout" />
+    <item type="id" name="extTextView" />
+    <item type="id" name="fab" />
+    <item type="id" name="file_encoding_textView" />
+    <item type="id" name="file_text_view" />
+    <item type="id" name="file_types" />
+    <item type="id" name="filename_editText" />
+    <item type="id" name="filename_layout" />
+    <item type="id" name="find_edit_text" />
+    <item type="id" name="ghost_view" />
+    <item type="id" name="gutter_view" />
+    <item type="id" name="hint" />
+    <item type="id" name="home" />
+    <item type="id" name="icon" />
+    <item type="id" name="iconImageView" />
+    <item type="id" name="icon_frame" />
+    <item type="id" name="icon_group" />
+    <item type="id" name="image" />
+    <item type="id" name="imageView" />
+    <item type="id" name="image_preview" />
+    <item type="id" name="imageview" />
+    <item type="id" name="img_add" />
+    <item type="id" name="img_add_dependencies" />
+    <item type="id" name="img_arrow" />
+    <item type="id" name="img_collapse" />
+    <item type="id" name="img_delete" />
+    <item type="id" name="img_expand_all" />
+    <item type="id" name="img_icon" />
+    <item type="id" name="img_refresh" />
+    <item type="id" name="info" />
+    <item type="id" name="item_touch_helper_previous_elevation" />
+    <item type="id" name="largeLabel" />
+    <item type="id" name="launcher_activity" />
+    <item type="id" name="left_navigation_content" />
+    <item type="id" name="left_navigation_view" />
+    <item type="id" name="line1" />
+    <item type="id" name="line3" />
+    <item type="id" name="line_count_textView" />
+    <item type="id" name="linearLayout" />
+    <item type="id" name="linearLayout3" />
+    <item type="id" name="list" />
+    <item type="id" name="list_item" />
+    <item type="id" name="list_view" />
+    <item type="id" name="log_level_text" />
+    <item type="id" name="log_output_text" />
+    <item type="id" name="m_color" />
+    <item type="id" name="m_fullscreen" />
+    <item type="id" name="m_info" />
+    <item type="id" name="m_menu" />
+    <item type="id" name="m_readonly" />
+    <item type="id" name="m_symbol" />
+    <item type="id" name="m_theme" />
+    <item type="id" name="mainLayout" />
+    <item type="id" name="main_background" />
+    <item type="id" name="main_dark_progress_bar" />
+    <item type="id" name="main_light_progress_bar" />
+    <item type="id" name="masked" />
+    <item type="id" name="md_buttonDefaultNegative" />
+    <item type="id" name="md_buttonDefaultNeutral" />
+    <item type="id" name="md_buttonDefaultPositive" />
+    <item type="id" name="md_colorA" />
+    <item type="id" name="md_colorALabel" />
+    <item type="id" name="md_colorAValue" />
+    <item type="id" name="md_colorB" />
+    <item type="id" name="md_colorBLabel" />
+    <item type="id" name="md_colorBValue" />
+    <item type="id" name="md_colorChooserCustomFrame" />
+    <item type="id" name="md_colorG" />
+    <item type="id" name="md_colorGLabel" />
+    <item type="id" name="md_colorGValue" />
+    <item type="id" name="md_colorIndicator" />
+    <item type="id" name="md_colorR" />
+    <item type="id" name="md_colorRLabel" />
+    <item type="id" name="md_colorRValue" />
+    <item type="id" name="md_content" />
+    <item type="id" name="md_contentListViewFrame" />
+    <item type="id" name="md_contentRecyclerView" />
+    <item type="id" name="md_contentScrollView" />
+    <item type="id" name="md_control" />
+    <item type="id" name="md_customViewFrame" />
+    <item type="id" name="md_grid" />
+    <item type="id" name="md_hexInput" />
+    <item type="id" name="md_icon" />
+    <item type="id" name="md_label" />
+    <item type="id" name="md_minMax" />
+    <item type="id" name="md_promptCheckbox" />
+    <item type="id" name="md_root" />
+    <item type="id" name="md_title" />
+    <item type="id" name="md_titleFrame" />
+    <item type="id" name="media_actions" />
+    <item type="id" name="menu_clear" />
+    <item type="id" name="menu_crazy_logger_service" />
+    <item type="id" name="menu_delete_saved_log" />
+    <item type="id" name="menu_edit" />
+    <item type="id" name="menu_expand_all" />
+    <item type="id" name="menu_file" />
+    <item type="id" name="menu_filters" />
+    <item type="id" name="menu_log_level" />
+    <item type="id" name="menu_manage_saving" />
+    <item type="id" name="menu_open_log" />
+    <item type="id" name="menu_other" />
+    <item type="id" name="menu_partial_select" />
+    <item type="id" name="menu_play_pause" />
+    <item type="id" name="menu_record_log" />
+    <item type="id" name="menu_save_as_log" />
+    <item type="id" name="menu_save_log" />
+    <item type="id" name="menu_search" />
+    <item type="id" name="menu_send_log" />
+    <item type="id" name="menu_settings" />
+    <item type="id" name="menu_view" />
+    <item type="id" name="message" />
+    <item type="id" name="modifiers" />
+    <item type="id" name="nameTextView" />
+    <item type="id" name="navigation_header_container" />
+    <item type="id" name="node_header" />
+    <item type="id" name="node_items" />
+    <item type="id" name="node_value" />
+    <item type="id" name="notification_background" />
+    <item type="id" name="notification_main_column" />
+    <item type="id" name="notification_main_column_container" />
+    <item type="id" name="onAttachStateChangeListener" />
+    <item type="id" name="onDateChanged" />
+    <item type="id" name="parentPanel" />
+    <item type="id" name="parent_matrix" />
+    <item type="id" name="paste" />
+    <item type="id" name="paste_menu" />
+    <item type="id" name="pathScrollView" />
+    <item type="id" name="path_textView" />
+    <item type="id" name="pid_text" />
+    <item type="id" name="progressBar3" />
+    <item type="id" name="progress_bar" />
+    <item type="id" name="progress_circular" />
+    <item type="id" name="progress_horizontal" />
+    <item type="id" name="rad_abstract" />
+    <item type="id" name="rad_final" />
+    <item type="id" name="rad_none" />
+    <item type="id" name="rad_package_private" />
+    <item type="id" name="rad_public" />
+    <item type="id" name="radio" />
+    <item type="id" name="record_badge_image_view" />
+    <item type="id" name="recyclerView" />
+    <item type="id" name="regex_check_box" />
+    <item type="id" name="rename" />
+    <item type="id" name="replaceTextView" />
+    <item type="id" name="replace_check_box" />
+    <item type="id" name="replace_edit_text" />
+    <item type="id" name="right_icon" />
+    <item type="id" name="right_navigation_view" />
+    <item type="id" name="right_side" />
+    <item type="id" name="root" />
+    <item type="id" name="save_image_matrix" />
+    <item type="id" name="save_non_transition_alpha" />
+    <item type="id" name="save_scale_type" />
+    <item type="id" name="scrollIndicatorDown" />
+    <item type="id" name="scrollIndicatorUp" />
+    <item type="id" name="scrollView" />
+    <item type="id" name="searchTextView" />
+    <item type="id" name="search_badge" />
+    <item type="id" name="search_bar" />
+    <item type="id" name="search_button" />
+    <item type="id" name="search_close_btn" />
+    <item type="id" name="search_edit_frame" />
+    <item type="id" name="search_go_btn" />
+    <item type="id" name="search_layout" />
+    <item type="id" name="search_mag_icon" />
+    <item type="id" name="search_plate" />
+    <item type="id" name="search_src_text" />
+    <item type="id" name="search_top_bar" />
+    <item type="id" name="search_view" />
+    <item type="id" name="search_voice_btn" />
+    <item type="id" name="secondLineTextView" />
+    <item type="id" name="seekbar" />
+    <item type="id" name="seekbar_value" />
+    <item type="id" name="select_all" />
+    <item type="id" name="select_dialog_listview" />
+    <item type="id" name="share" />
+    <item type="id" name="shortcut" />
+    <item type="id" name="show_hidden_files_menu" />
+    <item type="id" name="smallLabel" />
+    <item type="id" name="snackbar_action" />
+    <item type="id" name="snackbar_text" />
+    <item type="id" name="sort_by_datetime_menu" />
+    <item type="id" name="sort_by_name_menu" />
+    <item type="id" name="sort_by_size_menu" />
+    <item type="id" name="sort_by_type_menu" />
+    <item type="id" name="sort_group_menu" />
+    <item type="id" name="spacer" />
+    <item type="id" name="spinner" />
+    <item type="id" name="spinner_exts" />
+    <item type="id" name="spinner_kind" />
+    <item type="id" name="spinner_main_class" />
+    <item type="id" name="spinner_themes" />
+    <item type="id" name="split_action_bar" />
+    <item type="id" name="status_bar_latest_event_content" />
+    <item type="id" name="submenuarrow" />
+    <item type="id" name="submit_area" />
+    <item type="id" name="suggestion_icon" />
+    <item type="id" name="suggestion_list" />
+    <item type="id" name="suggestion_text" />
+    <item type="id" name="switchWidget" />
+    <item type="id" name="symbolBarLayout" />
+    <item type="id" name="tabRecyclerView" />
+    <item type="id" name="tab_layout" />
+    <item type="id" name="tag_text" />
+    <item type="id" name="tag_transition_group" />
+    <item type="id" name="text" />
+    <item type="id" name="text2" />
+    <item type="id" name="textSpacerNoButtons" />
+    <item type="id" name="textSpacerNoTitle" />
+    <item type="id" name="textView" />
+    <item type="id" name="textView3" />
+    <item type="id" name="textWatcher" />
+    <item type="id" name="text_input_password_toggle" />
+    <item type="id" name="textinput_counter" />
+    <item type="id" name="textinput_error" />
+    <item type="id" name="time" />
+    <item type="id" name="timestamp_text" />
+    <item type="id" name="title" />
+    <item type="id" name="titleDividerNoCustom" />
+    <item type="id" name="title_template" />
+    <item type="id" name="title_text_view" />
+    <item type="id" name="toolbar" />
+    <item type="id" name="toolbar_actionbar" />
+    <item type="id" name="toolbar_container" />
+    <item type="id" name="topPanel" />
+    <item type="id" name="touch_outside" />
+    <item type="id" name="transition_current_scene" />
+    <item type="id" name="transition_layout_save" />
+    <item type="id" name="transition_position" />
+    <item type="id" name="transition_scene_layoutid_cache" />
+    <item type="id" name="transition_transform" />
+    <item type="id" name="transparent_view" />
+    <item type="id" name="tree_items" />
+    <item type="id" name="txt_document_info" />
+    <item type="id" name="txt_error" />
+    <item type="id" name="txt_file" />
+    <item type="id" name="txt_header" />
+    <item type="id" name="txt_info" />
+    <item type="id" name="txt_line_col" />
+    <item type="id" name="txt_log" />
+    <item type="id" name="txt_message" />
+    <item type="id" name="txt_name" />
+    <item type="id" name="txt_path" />
+    <item type="id" name="txt_project_name" />
+    <item type="id" name="txt_return_type" />
+    <item type="id" name="txt_suggest_header" />
+    <item type="id" name="txt_title" />
+    <item type="id" name="txt_type" />
+    <item type="id" name="up" />
+    <item type="id" name="versionTextView" />
+    <item type="id" name="view_offset_helper" />
+    <item type="id" name="view_pager" />
+    <item type="id" name="visibility" />
+    <item type="id" name="visible" />
+    <item type="id" name="whole_words_only_check_box" />
+    <item type="id" name="widget_subtext" />
+    <item type="id" name="word_count_textView" />
 </resources>

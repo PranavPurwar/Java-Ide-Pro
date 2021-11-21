@@ -2,7 +2,7 @@
 <LinearLayout
     android:orientation="vertical"
     android:id="@id/topPanel"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
@@ -12,7 +12,7 @@
         android:paddingLeft="?dialogPreferredPadding"
         android:paddingTop="@dimen/abc_dialog_padding_top_material"
         android:paddingRight="?dialogPreferredPadding"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <ImageView
             android:id="@android:id/icon"
@@ -25,7 +25,7 @@
         <android.support.v7.widget.DialogTitle
             android:ellipsize="end"
             android:id="@id/alertTitle"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textAlignment="viewStart"
@@ -34,6 +34,6 @@
     <android.widget.Space
         android:id="@id/titleDividerNoCustom"
         android:visibility="gone"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="@dimen/abc_dialog_title_divider_material" />
 </LinearLayout>

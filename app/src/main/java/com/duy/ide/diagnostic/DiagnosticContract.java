@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiagnosticContract {
-   public static final int COMPILER_LOG = 1;
-   public static final int DIAGNOSTIC = 0;
+   public static final int COMPILER_LOG = 0;
+   public static final int DIAGNOSTIC = 1;
 
    public interface MessageFilter {
       boolean accept(Message message);

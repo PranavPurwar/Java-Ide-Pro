@@ -6,16 +6,20 @@ import com.duy.android.compiler.java.JarArchive;
 import com.duy.android.compiler.project.JavaProject;
 
 public class JarTask extends Task<JavaProject> {
-   public JarTask(IBuilder<JavaProject> builder) {
-      super(builder);
-   }
+    public JarTask(IBuilder<JavaProject> builder) {
+        super(builder);
+    }
 
-   public boolean doFullTaskAction() throws Exception {
-      new JarArchive(this.mBuilder.isVerbose()).createJarArchive(this.mProject);
-      return true;
-   }
+    @Override
+    public String getTaskName() {
+        return "Create jar archive";
+    }
 
-   public String getTaskName() {
-      return "Create jar archive";
-   }
+    @Override
+    public boolean doFullTaskAction() throws Exception {
+        //now create normal jar file
+        JarArchive jarArchive = new JarArchive(mBuilder.isVerbose());
+        jarArchive.createJarArchive(mProject);
+        return true;
+    }
 }

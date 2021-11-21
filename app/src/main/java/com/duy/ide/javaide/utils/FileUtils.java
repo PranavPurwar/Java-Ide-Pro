@@ -1,8 +1,27 @@
+/*
+ * Copyright (C) 2018 Tran Le Duy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.duy.ide.javaide.utils;
 
 import java.io.File;
 
-
+/**
+ * Created by duy on 18/07/2017.
+ */
 
 public class FileUtils {
     public static boolean hasExtension(File file, String... exts) {
@@ -33,101 +52,7 @@ public class FileUtils {
     }
 
     public static boolean canEdit(File file) {
-        String[] exts = {
-        ".java",
-        ".xml",
-        ".txt",
-        ".gradle",
-        ".json",
-        ".kt",
-        ".sh",
-        ".md",
-        ".yml",
-        ".py",
-        ".properties",
-        ".php",
-        ".pro",
-        ".bat",
-        ".rc",
-        ".mtd",
-        ".mtl",
-        ".m3u",
-        ".mf",
-        ".sf",
-        ".log",
-        ".css",
-        ".cfg",
-        ".ini",
-        ".conf",
-        ".prop",
-        ".htm",
-        ".html",
-        ".c",
-        ".h",
-        ".js",
-        ".cc",
-        ".go",
-        ".cpp",
-        ".hpp",
-        ".lua",
-        ".smali",
-        ".jj",
-        ".jjt",
-        ".as",
-        ".ada",
-        ".adb",
-        ".ads",
-        ".ahk",
-        ".build",
-        ".g",
-        ".ans",
-        ".inp",
-        ".h",
-        ".mak",
-        ".mac",
-        ".applescript",
-        ".asp",
-        ".asa",
-        ".aj",
-        ".agc",
-        ".aea",
-        ".mar",
-        ".mips",
-        ".cmd",
-        ".bsh",
-        ".c",
-        ".cfc",
-        ".chl",
-        ".mpol",
-        ".il",
-        ".coffee",
-        ".cc",
-        ".cpp",
-        ".hh",
-        ".hpp",
-        ".cxx",
-        ".cs",
-        ".dart",
-        ".dot",
-        ".flex",
-        ".jsp",
-        ".icn",
-        ".io",
-        ".fx",
-        ".l",
-        ".makefile",
-        ".pom",
-        ".objc",
-        ".r",
-        ".rb",
-        ".rbw",
-        ".rbs",
-        ".scala",
-        ".bashrc",
-        ".url",
-        ".vb",
-        ".yaml"
-        };
+        String[] exts = {".java", ".xml", ".txt", ".gradle", ".json"};
         return file.canWrite() && hasExtension(file, exts);
     }
 

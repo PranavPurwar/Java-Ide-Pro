@@ -2,13 +2,13 @@
 <LinearLayout
     android:gravity="center"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         android:gravity="center"
         android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="0.0dip"
         android:layout_weight="1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
@@ -28,13 +28,13 @@
             android:text="@string/java_for_android" />
         <ProgressBar
             android:id="@id/progressBar3"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             style="?android:progressBarStyleSmall" />
     </LinearLayout>
     <TextView
         android:gravity="center"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/copy_right" />
 </LinearLayout>

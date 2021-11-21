@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2018 Tran Le Duy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.duy.ide.javaide.run.dialog;
 
 import android.app.Dialog;
@@ -11,134 +28,154 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import com.duy.android.compiler.project.ClassFile;
 import com.duy.android.compiler.project.ClassUtil;
 import com.duy.android.compiler.project.JavaProject;
+import com.duy.ide.R;
+import com.duy.ide.javaide.run.activities.ExecuteActivity;
+
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import org.apache.commons.io.FileUtils;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
+/**
+ * Created by Duy on 17-Jul-17.
+ */
 
 public class DialogRunConfig extends AppCompatDialogFragment {
-   public static final String ARGS = "program_args";
-   public static final String TAG = "DialogRunConfig";
-   @Nullable
-   private DialogRunConfig.OnConfigChangeListener listener;
-   private EditText mArgs;
-   private Spinner mClasses;
-   private EditText mPackage;
-   private SharedPreferences mPref;
-   private JavaProject mProject;
+    public static final String TAG = "DialogRunConfig";
+    public static final String ARGS = "program_args";
+    private Spinner mClasses;
+    private EditText mArgs;
+    private EditText mPackage;
+    private SharedPreferences mPref;
+    private JavaProject mProject;
+    @Nullable
+    private OnConfigChangeListener listener;
 
-   public static DialogRunConfig newInstance(JavaProject var0) {
-      DialogRunConfig var1 = new DialogRunConfig();
-      var1.mProject = var0;
-      return var1;
-   }
+    public static DialogRunConfig newInstance(JavaProject project) {
 
-   private void save() {
-      this.mPref = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-      this.mPref.edit().putString("program_args", this.mArgs.getText().toString()).apply();
-      Object var1 = this.mClasses.getSelectedItem();
-      if (var1 != null) {
-         if (!ClassUtil.hasMainFunction(new File((new ClassFile(var1.toString())).getPath(this.mProject)))) {
-            Toast.makeText(this.getContext(), "Can not find main function", 0).show();
-         }
+        DialogRunConfig fragment = new DialogRunConfig();
+        fragment.mProject = project;
+        return fragment;
+    }
 
-         this.mProject.setPackageName(this.mPackage.getText().toString());
-         if (this.listener != null) {
-            this.listener.onConfigChange(this.mProject);
-         }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            this.listener = (OnConfigChangeListener) getActivity();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+    }
 
-         this.dismiss();
-      }
-
-   }
-
-   private void setupSpinnerMainClass(View var1, JavaProject var2) {
-      ArrayList var3 = this.listClassName((File)var2.getJavaSrcDirs().get(0));
-      ArrayAdapter var4 = new ArrayAdapter(this.getContext(), 17367043, var3);
-      var4.setDropDownViewResource(17367055);
-      this.mClasses = (Spinner)var1.findViewById(2131296668);
-      this.mClasses.setAdapter(var4);
-   }
-
-   public ArrayList<String> listClassName(File var1) {
-      if (!var1.exists()) {
-         return new ArrayList();
-      } else {
-         Collection var2 = FileUtils.listFiles(var1, new String[]{"java"}, true);
-         ArrayList var3 = new ArrayList();
-         String var5 = var1.getPath();
-         Iterator var6 = var2.iterator();
-
-         while(var6.hasNext()) {
-            String var4 = ((File)var6.next()).getPath();
-            var3.add(var4.substring(var5.length() + 1, var4.length() - 5).replace(File.separator, "."));
-         }
-
-         return var3;
-      }
-   }
-
-   public void onAttach(Context var1) {
-      super.onAttach(var1);
-
-      try {
-         this.listener = (DialogRunConfig.OnConfigChangeListener)this.getActivity();
-      } catch (ClassCastException var2) {
-         var2.printStackTrace();
-      }
-
-   }
-
-   @Nullable
-   public View onCreateView(LayoutInflater var1, @Nullable ViewGroup var2, @Nullable Bundle var3) {
-      return var1.inflate(2131427403, var2, false);
-   }
-
-   public void onStart() {
-      super.onStart();
-      Dialog var1 = this.getDialog();
-      if (var1 != null) {
-         Window var2 = var1.getWindow();
-         if (var2 != null) {
-            var2.setLayout(-1, -2);
-         }
-      }
-
-   }
-
-   public void onViewCreated(View var1, @Nullable Bundle var2) {
-      super.onViewCreated(var1, var2);
-      this.mProject = (JavaProject)this.getArguments().getSerializable("DEX_FILE");
-      this.mPref = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-      if (this.mProject != null) {
-         this.setupSpinnerMainClass(var1, this.mProject);
-         this.mArgs = (EditText)var1.findViewById(2131296419);
-         this.mArgs.setText(this.mPref.getString("program_args", ""));
-         this.mPackage = (EditText)var1.findViewById(2131296425);
-         this.mPackage.setText(this.mProject.getPackageName());
-         var1.findViewById(2131296350).setOnClickListener(new OnClickListener() {
-            public void onClick(View var1) {
-               DialogRunConfig.this.dismiss();
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT);
             }
-         });
-         var1.findViewById(2131296359).setOnClickListener(new OnClickListener() {
-            public void onClick(View var1) {
-               DialogRunConfig.this.save();
-            }
-         });
-      }
-   }
+        }
+    }
 
-   public interface OnConfigChangeListener {
-      void onConfigChange(JavaProject var1);
-   }
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.dialog_run_config, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mProject = (JavaProject) getArguments().getSerializable(ExecuteActivity.DEX_FILE);
+        mPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (mProject == null) {
+            return;
+        }
+        setupSpinnerMainClass(view, mProject);
+        mArgs = view.findViewById(R.id.edit_arg);
+        mArgs.setText(mPref.getString(ARGS, ""));
+        mPackage = view.findViewById(R.id.edit_package_name);
+        mPackage.setText(mProject.getPackageName());
+
+        view.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+        view.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                save();
+            }
+        });
+    }
+
+    private void save() {
+        mPref = getDefaultSharedPreferences(getContext());
+        mPref.edit().putString(ARGS, mArgs.getText().toString()).apply();
+
+        Object selectedItem = mClasses.getSelectedItem();
+        if (selectedItem != null) {
+
+            //check main class
+            ClassFile classFile = new ClassFile(selectedItem.toString());
+            String path = classFile.getPath(mProject);
+            if (!ClassUtil.hasMainFunction(new File(path))) {
+                Toast.makeText(getContext(), "Can not find main function", Toast.LENGTH_SHORT).show();
+            }
+            mProject.setPackageName(mPackage.getText().toString());
+
+            if (listener != null) listener.onConfigChange(mProject);
+            this.dismiss();
+        }
+    }
+
+    private void setupSpinnerMainClass(View view, JavaProject projectFile) {
+        ArrayList<String> names = listClassName(projectFile.getJavaSrcDirs().get(0));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_list_item_1, names);
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        mClasses = view.findViewById(R.id.spinner_main_class);
+        mClasses.setAdapter(adapter);
+    }
+
+    public ArrayList<String> listClassName(File src) {
+        if (!src.exists()) return new ArrayList<>();
+
+        String[] exts = new String[]{"java"};
+        Collection<File> files = FileUtils.listFiles(src, exts, true);
+
+        ArrayList<String> classes = new ArrayList<>();
+        String srcPath = src.getPath();
+        for (File file : files) {
+            String javaPath = file.getPath();
+            javaPath = javaPath.substring(srcPath.length() + 1, javaPath.length() - 5); //.java
+            javaPath = javaPath.replace(File.separator, ".");
+            classes.add(javaPath);
+        }
+        return classes;
+    }
+
+
+    public interface OnConfigChangeListener {
+        void onConfigChange(JavaProject projectFile);
+    }
 }

@@ -6,11 +6,6 @@
         android:id="@id/action_install_cpp_nide"
         android:title="C/C++ N-IDE" />
     <item
-        android:icon="@drawable/baseline_lock_open_24"
-        android:id="@id/action_premium"
-        android:visible="true"
-        android:title="@string/title_premium_version" />
-    <item
         android:icon="@drawable/ic_color_lens_white_24dp"
         android:id="@id/action_editor_color_scheme"
         android:visible="true"

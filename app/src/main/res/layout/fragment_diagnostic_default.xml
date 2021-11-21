@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.view.ViewPager
     android:id="@id/diagnostic_view_pager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <android.support.v4.view.PagerTabStrip
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="24.0dip" />
     <android.support.v7.widget.RecyclerView
         android:id="@id/diagnostic_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         xmlns:android="http://schemas.android.com/apk/res/android" />
     <ScrollView
         android:id="@id/compiler_output_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:fillViewport="true">
         <com.duy.ide.diagnostic.widget.LogView
             android:textSize="@dimen/smallest_text_size"
@@ -26,7 +26,7 @@
             android:focusable="true"
             android:scrollbars="vertical"
             android:clickable="true"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
     </ScrollView>
 </android.support.v4.view.ViewPager>

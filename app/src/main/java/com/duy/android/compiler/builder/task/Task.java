@@ -21,8 +21,4 @@ public abstract class Task<T extends JavaProject> {
 
     @WorkerThread
     public abstract boolean doFullTaskAction() throws Exception;
-
-    public IBuilder getBuilder() {
-        return mBuilder;
-    }
 }

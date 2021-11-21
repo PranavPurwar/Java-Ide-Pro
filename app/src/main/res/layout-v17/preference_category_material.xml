@@ -4,7 +4,7 @@
     android:textColor="@color/preference_fallback_accent_color"
     android:id="@android:id/title"
     android:paddingTop="16.0dip"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16.0dip"
     android:paddingStart="?android:listPreferredItemPaddingStart"

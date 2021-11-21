@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2018 Tran Le Duy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.duy.ide.javaide.uidesigner.dynamiclayoutinflator;
 
 import android.annotation.SuppressLint;
@@ -378,6 +395,7 @@ public class DynamicLayoutInflator {
                 }
             }
         }
+        // TODO: this is a giant mess; come up with a simpler way of deciding what to draw for the background
         if (attrs.containsKey("background") || attrs.containsKey("borderColor")) {
             String bgValue = attrs.containsKey("background") ? attrs.get("background") : null;
             if (bgValue != null && bgValue.startsWith("@drawable/")) {
@@ -528,7 +546,7 @@ public class DynamicLayoutInflator {
                             for (int i = 0; i < args.length; i++) {
                                 Class<?> argClass = args[i].getClass();
                                 if (argClass == Integer.class)
-                                    argClass = int.class;
+                                    argClass = int.class; // Nobody uses Integer...
                                 argClasses[i] = argClass;
                             }
                         }
@@ -594,7 +612,7 @@ public class DynamicLayoutInflator {
     public static int idNumFromIdString(View view, String id) {
         if (!(view instanceof ViewGroup)) return 0;
         Object tag = view.getTag();
-        if (!(tag instanceof DynamicLayoutInfo)) return 0;
+        if (!(tag instanceof DynamicLayoutInfo)) return 0; // not inflated by this class
         DynamicLayoutInfo info = (DynamicLayoutInfo) view.getTag();
         if (!info.nameToIdNumber.containsKey(id)) {
             ViewGroup grp = (ViewGroup) view;
@@ -869,6 +887,7 @@ public class DynamicLayoutInflator {
         viewRunnables.put("tag", new ViewParamRunnable() {
             @Override
             public void apply(View view, String value, ViewGroup parent, Map<String, String> attrs) {
+                // Sigh, this is dangerous because we use tags for other purposes
                 if (view.getTag() == null) view.setTag(value);
             }
         });

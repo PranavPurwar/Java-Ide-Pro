@@ -2,23 +2,23 @@
 <FrameLayout
     android:id="@id/search_layout"
     android:visibility="invisible"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <View
         android:id="@id/transparent_view"
         android:background="@color/search_layover_bg"
         android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
         <RelativeLayout
             android:id="@id/search_top_bar"
             android:background="@android:color/white"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="?actionBarSize">
             <EditText
                 android:textSize="16.0sp"
@@ -28,8 +28,8 @@
                 android:background="@null"
                 android:paddingLeft="@dimen/search_view_text_padding"
                 android:paddingRight="@dimen/search_view_text_padding"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:hint="@string/search_hint"
                 android:singleLine="true"
                 android:inputType="textNoSuggestions"
@@ -54,7 +54,7 @@
                 style="@style/MSV_ImageButton" />
             <View
                 android:background="#ffffffff"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="1.0dip"
                 android:layout_alignParentBottom="true"
                 android:backgroundTint="#10000000" />
@@ -62,7 +62,7 @@
         <ListView
             android:id="@id/suggestion_list"
             android:background="@android:color/white"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:divider="@android:color/transparent" />
     </LinearLayout>

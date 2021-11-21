@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2018 Tran Le Duy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.duy.ide.javaide.uidesigner.dynamiclayoutinflator;
 
 import android.util.DisplayMetrics;
@@ -11,11 +28,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * Created by nick on 8/10/15.
+ * <p>
+ * Taken from http://stackoverflow.com/questions/8343971/how-to-parse-a-dimension-string-and-convert-it-to-a-dimension-value
+ */
 public class DimensionConverter {
-
+    // -- Initialize dimension string to constant lookup.
     public static final Map<String, Integer> dimensionConstantLookup = initDimensionConstantLookup();
-
+    // -- Initialize pattern for dimension string.
     private static final Pattern DIMENSION_PATTERN = Pattern.compile("^\\s*(\\d+(\\.\\d+)*)\\s*([a-zA-Z]+)\\s*$");
     public static Map<String, Float> cached = new HashMap<>();
 
@@ -40,6 +61,7 @@ public class DimensionConverter {
     }
 
     public static int stringToDimensionPixelSize(String dimension, DisplayMetrics metrics) {
+        // -- Mimics TypedValue.complexToDimensionPixelSize(int data, DisplayMetrics metrics).
         final float f;
         if (cached.containsKey(dimension)) {
             f = cached.get(dimension);
@@ -58,27 +80,34 @@ public class DimensionConverter {
 
     public static float stringToDimension(String dimension, DisplayMetrics metrics) {
         if (cached.containsKey(dimension)) return cached.get(dimension);
+        // -- Mimics TypedValue.complexToDimension(int data, DisplayMetrics metrics).
         InternalDimension internalDimension = stringToInternalDimension(dimension);
-        float value = TypedValue.applyDimension(internalDimension.unit, internalDimension.value, metrics);
-        cached.put(dimension, value);
-        return value;
+        float val = TypedValue.applyDimension(internalDimension.unit, internalDimension.value, metrics);
+        cached.put(dimension, val);
+        return val;
     }
 
     private static InternalDimension stringToInternalDimension(String dimension) {
-
+        // -- Match target against pattern.
         Matcher matcher = DIMENSION_PATTERN.matcher(dimension);
         if (matcher.matches()) {
+            // -- Match found.
+            // -- Extract value.
             float value = Float.valueOf(matcher.group(1)).floatValue();
+            // -- Extract dimension units.
             String unit = matcher.group(3).toLowerCase();
+            // -- Get Android dimension constant.
             Integer dimensionUnit = dimensionConstantLookup.get(unit);
             if (dimensionUnit == null) {
+                // -- Invalid format.
                 throw new NumberFormatException();
             } else {
+                // -- Return valid dimension.
                 return new InternalDimension(value, dimensionUnit);
             }
         } else {
             Log.e("DimensionConverter", "Invalid number format: " + dimension);
-
+            // -- Invalid format.
             throw new NumberFormatException();
         }
     }

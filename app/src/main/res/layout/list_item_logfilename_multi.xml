@@ -2,7 +2,7 @@
 <RelativeLayout
     android:orientation="vertical"
     android:descendantFocusability="blocksDescendants"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="72.0dip"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBox
@@ -20,7 +20,7 @@
         android:ellipsize="marquee"
         android:gravity="center_vertical"
         android:id="@android:id/text1"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="80.0dip"
         android:layout_marginTop="16.0dip"
@@ -31,7 +31,7 @@
         android:textColor="@color/secondary_text_default_material_dark"
         android:ellipsize="marquee"
         android:id="@android:id/text2"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="80.0dip"
         android:layout_marginRight="24.0dip"

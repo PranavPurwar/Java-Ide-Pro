@@ -1,17 +1,33 @@
+/*
+ *  Copyright (c) 2017 Tran Le Duy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.duy.android.compiler.utils;
 
 import android.util.Log;
 
 
+
+/**
+ * Created by Duy on 27-Mar-17.
+ */
 public class DLog {
     public static String TAG = DLog.class.getSimpleName();
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
     public static boolean ANDROID = true;
 
-/*
- * Log some debug information
- * @param msg the message as an object to log, it can be a string, charsequence, exception, error...
- */
     public static void d(Object msg) {
         if (DEBUG) {
             if (ANDROID) {
@@ -22,11 +38,6 @@ public class DLog {
         }
     }
 
-/*
- * Same as previous but has support with tag
- * @param TAG teh tag to use for debugging
- * @param msg the message as an object
- */
     public static void d(String TAG, Object msg) {
         if (DEBUG) {
             if (ANDROID) {
@@ -36,10 +47,7 @@ public class DLog {
             }
         }
     }
-/*
- * Log some warning
- * @param msg the message as an object to log, it can be a string, charsequence, exception, error, etc.
- */
+
     public static void w(Object msg) {
         if (DEBUG) {
             if (ANDROID) {
@@ -50,11 +58,6 @@ public class DLog {
         }
     }
 
-/*
- * Log some warning
- * @param msg the message as an object to log, it can be a string, charsequence, exception, error, etc.
- * @param TAG the tag to use for debugging
- */
     public static void w(String TAG, Object msg) {
         if (DEBUG) {
             if (ANDROID) {
@@ -65,10 +68,6 @@ public class DLog {
         }
     }
 
-/*
- * Log some exception that occured at runtime
- * @param exception the exception caused
- */
     public static void e(Exception exception) {
         if (DEBUG) {
             if (ANDROID) {
@@ -79,11 +78,6 @@ public class DLog {
         }
     }
 
-/*
- * Log some error with tag and information about the exception
- * @param TAG the tag to use for debugging
- * @param exception the exception caused
- */
     public static void e(String TAG, Exception exception) {
         if (DEBUG) {
             if (ANDROID) {
@@ -94,11 +88,6 @@ public class DLog {
         }
     }
 
-/*
- * Log some error with tag and information about the exception
- * @param TAG the tag to use for debugging
- * @param exception the exception as a string object
- */
     public static void e(String TAG, String exception) {
         if (DEBUG) {
             if (ANDROID) {
@@ -109,12 +98,6 @@ public class DLog {
         }
     }
 
-/*
- * Log some error with tag, message and information about the exception
- * @param TAG the tag to use for debugging
- * @param msg the message
- * @param e the exception
- */
     public static void e(String TAG, String msg, Exception e) {
         if (DEBUG) {
             if (ANDROID) {
@@ -126,10 +109,6 @@ public class DLog {
         }
     }
 
-/*
- * Log some information about running processes
- * @param msg the message
- */
     public static void i(Object msg) {
         if (DEBUG) {
             if (ANDROID) {

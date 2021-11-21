@@ -3,15 +3,15 @@
     android:orientation="vertical"
     android:background="?android:windowBackground"
     android:clickable="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:gravity="center_vertical"
         android:layout_gravity="center_vertical"
         android:background="?android:windowBackground"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <android.support.v7.widget.AppCompatTextView
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -21,7 +21,7 @@
             android:gravity="center"
             android:id="@id/txt_project_name"
             android:padding="4.0dip"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/project"
             android:singleLine="true"
@@ -67,8 +67,8 @@
     </RelativeLayout>
     <RelativeLayout
         android:id="@id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_marginRight="2.0dip"
         xmlns:android="http://schemas.android.com/apk/res/android" />
 </LinearLayout>

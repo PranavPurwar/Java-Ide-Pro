@@ -2,64 +2,66 @@ package com.duy.android.compiler.builder;
 
 import android.content.Context;
 import android.os.AsyncTask;
+
 import com.duy.android.compiler.builder.model.BuildType;
 import com.duy.android.compiler.project.JavaProject;
+
 import java.io.File;
 import java.util.List;
+
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 
 public class BuildJar extends AsyncTask<JavaProject, Object, File> {
-   private Context context;
-   private Exception error;
-   private BuildJar.CompileListener listener;
-   private DiagnosticCollector mDiagnosticCollector;
+    private Context context;
+    private BuildJar.CompileListener listener;
+    private DiagnosticCollector mDiagnosticCollector;
+    private Exception error;
 
-   public BuildJar(Context context, BuildJar.CompileListener listener) {
-      this.context = context;
-      this.listener = listener;
-      this.mDiagnosticCollector = new DiagnosticCollector();
-   }
+    public BuildJar(Context context, CompileListener listener) {
+        this.context = context;
+        this.listener = listener;
+        mDiagnosticCollector = new DiagnosticCollector();
+    }
 
-   protected File doInBackground(JavaProject... project) {
-      JavaProject mProject = project[0];
-      if (project[0] == null) {
-         return null;
-      } else {
-         try {
-            JavaBuilder builder = new JavaBuilder(context, mProject);
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        listener.onStart();
+    }
+
+    @Override
+    protected File doInBackground(JavaProject... params) {
+        JavaProject projectFile = params[0];
+        if (params[0] == null) {
+            return null;
+        }
+        try {
+            JavaBuilder builder = new JavaBuilder(context, projectFile);
             if (builder.build(BuildType.DEBUG)) {
-               File out = mProject.getOutJarArchive();
-               return out;
+                return projectFile.getOutJarArchive();
             }
-         } catch (Exception e) {
-            error = e;
-         }
+        } catch (Exception e) {
+            this.error = e;
+        }
+        return null;
+    }
 
-         return null;
-      }
-   }
+    @Override
+    protected void onPostExecute(final File result) {
+        super.onPostExecute(result);
+        if (result == null) {
+            listener.onError(error, mDiagnosticCollector.getDiagnostics());
+        } else {
+            listener.onComplete(result, mDiagnosticCollector.getDiagnostics());
+        }
+    }
 
-   protected void onPostExecute(File file) {
-      super.onPostExecute(file);
-      if (file == null) {
-         listener.onError(error, mDiagnosticCollector.getDiagnostics());
-      } else {
-         listener.onComplete(file, mDiagnosticCollector.getDiagnostics());
-      }
+    public interface CompileListener {
+        void onStart();
 
-   }
+        void onError(Exception e, List<Diagnostic> diagnostics);
 
-   protected void onPreExecute() {
-      super.onPreExecute();
-      listener.onStart();
-   }
-
-   public interface CompileListener {
-      void onComplete(File jarFile, List<Diagnostic> diagnostic);
-
-      void onError(Exception e, List<Diagnostic> diagnostic);
-
-      void onStart();
-   }
+        void onComplete(File jarfile, List<Diagnostic> diagnostics);
+    }
 }

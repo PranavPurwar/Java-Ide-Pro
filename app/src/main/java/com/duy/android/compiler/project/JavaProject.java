@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Created by Duy on 16-Jul-17.
+ */
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class JavaProject {
@@ -276,9 +279,6 @@ public class JavaProject {
         return dirBuildIntermediates;
     }
 
-    public File getDirBuildOutput() {
-        return dirBuildOutput;
-    }
 
     @Override
     public String toString() {

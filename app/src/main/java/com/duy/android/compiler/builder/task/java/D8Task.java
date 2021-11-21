@@ -76,7 +76,7 @@ public class D8Task extends Task<JavaProject> {
             mBuilder.stdout("Dexed library " + dexLib.getAbsolutePath());
         }
 
-        mBuilder.stdout("Dex libraries completed");
+        mBuilder.stdout("Dexing libraries completed");
         return true;
     }
 
@@ -121,6 +121,11 @@ public class D8Task extends Task<JavaProject> {
 									   "--output",
 									   project.getDexFile().getAbsolutePath()
 				);
+				try {
+				    D8.main(args.toArray(new String[0]));
+				} catch (Throwable e) {
+				    mBuilder.stdout(e.getMessage());
+				}
             }
         }
         mBuilder.stdout("Merged all dexed files");

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="?actionBarSize"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView
@@ -20,7 +20,7 @@
         android:paddingRight="@dimen/search_icon_padding"
         android:focusable="false"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:src="@drawable/ic_suggestion"
         android:layout_centerVertical="true" />
 </RelativeLayout>

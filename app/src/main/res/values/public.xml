@@ -1455,12 +1455,12 @@
     <public type="drawable" name="notification_bg_normal_pressed" id="0x7f080164" />
     <public type="drawable" name="notify_panel_notification_icon_bg" id="0x7f080169" />
     <public type="drawable" name="scrollbar_handle_accelerated_anim2" id="0x7f08016d" />
-    <public type="drawable" name="$avd_hide_password__0" id="0x7f080000" />
-    <public type="drawable" name="$avd_hide_password__1" id="0x7f080001" />
-    <public type="drawable" name="$avd_hide_password__2" id="0x7f080002" />
-    <public type="drawable" name="$avd_show_password__0" id="0x7f080003" />
-    <public type="drawable" name="$avd_show_password__1" id="0x7f080004" />
-    <public type="drawable" name="$avd_show_password__2" id="0x7f080005" />
+    <public type="drawable" name="avd_hide_password__0" id="0x7f080000" />
+    <public type="drawable" name="avd_hide_password__1" id="0x7f080001" />
+    <public type="drawable" name="avd_hide_password__2" id="0x7f080002" />
+    <public type="drawable" name="avd_show_password__0" id="0x7f080003" />
+    <public type="drawable" name="avd_show_password__1" id="0x7f080004" />
+    <public type="drawable" name="avd_show_password__2" id="0x7f080005" />
     <public type="drawable" name="abc_action_bar_item_background_material" id="0x7f080007" />
     <public type="drawable" name="avd_hide_password" id="0x7f08005a" />
     <public type="drawable" name="avd_show_password" id="0x7f08005b" />

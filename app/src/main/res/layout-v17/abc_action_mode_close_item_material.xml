@@ -5,7 +5,7 @@
     android:focusable="true"
     android:clickable="true"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_height="fill_parent"
     android:layout_marginRight="16.0dip"
     android:contentDescription="@string/abc_action_mode_done"
     android:paddingStart="8.0dip"

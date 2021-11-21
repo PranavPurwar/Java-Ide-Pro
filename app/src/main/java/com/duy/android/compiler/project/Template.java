@@ -1,28 +1,45 @@
+/*
+ *  Copyright (c) 2017 Tran Le Duy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.duy.android.compiler.project;
 
 import android.support.annotation.NonNull;
 
 import java.lang.reflect.Modifier;
 
+/**
+ * Created by Duy on 22-May-17.
+ */
 public class Template {
     public static final String MAIN_CLASS_TEMPLATE =
             "package %2$s;\n" +
                     "\n" +
                     "public class %1$s {\n\n" +
                     "  public static void main(String[] args) {\n" +
-                    "   \n\tSystem.out.println(\"Hello world\");" +
+                    "   \n" +
                     "  }\n" +
                     "}\n";
 
     private static final String INTERFACE_TEMPLATE =
             "\n" +
                     "public interface %1$s {\n" +
-                    "\n\t" +
                     "}\n";
     private static final String ENUM_TEMPLATE =
             "\n" +
                     "public enum %1$s {\n" +
-                    "\n\t" +
                     "}\n";
 
     /**
@@ -34,7 +51,7 @@ public class Template {
     private static final String JAVA_TEMPLATE =
             "%5$s\n" + "\n" +
                     "%1$s%2$s%3$s %4$s {\n" +
-                    "  \n\t" +
+                    "  \n" +
                     "}\n";
 
     @NonNull

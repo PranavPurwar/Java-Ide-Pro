@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2018 Tran Le Duy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.duy.ide.javaide.editor.autocomplete.internal;
 
 import android.support.annotation.Nullable;
@@ -18,6 +35,9 @@ import static com.duy.ide.javaide.editor.autocomplete.internal.PatternFactory.fi
 import static com.duy.ide.javaide.editor.autocomplete.internal.PatternFactory.lastMatch;
 
 
+/**
+ * Created by Duy on 21-Jul-17.
+ */
 
 public class PackageImporter {
     private static final String TAG = "ImportUtil";
@@ -25,7 +45,7 @@ public class PackageImporter {
     /**
      * Add import statement if import does not already exist.
      */
-    public static void importClass(final Editable editor, String className) {
+    public static void importClass(Editable editor, String className) {
         String packageName = JavaUtil.getPackageName(className);
         if (getImportedClassName(editor, className) == null
                 && !packageName.isEmpty()
@@ -39,7 +59,7 @@ public class PackageImporter {
         return getImportedClassName(editor, className);
     }
 
-    public static String getImportedClassName(final CharSequence src, @Nullable final String className) {
+    public static String getImportedClassName(CharSequence src, @Nullable String className) {
         if (className == null) return null;
 
         Pattern pattern = PatternFactory.makeImportClass(className);

@@ -11,7 +11,7 @@ public class CleanTask extends Task<JavaProject> {
 
     @Override
     public String getTaskName() {
-        return "Clean Build";
+        return "Clean";
     }
 
     @Override

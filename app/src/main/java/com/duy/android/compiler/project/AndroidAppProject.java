@@ -20,7 +20,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * Created by Duy on 05-Aug-17.
+ */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class AndroidAppProject extends JavaProject {
 
@@ -42,18 +44,7 @@ public class AndroidAppProject extends JavaProject {
                              @Nullable String mainClassName,
                              @Nullable String packageName) {
         super(dirRoot, packageName);
-        new Thread(new Runnable() {
-            public void run() {
-                libraries = new ArrayList<>();
-                try {
-                    readLibraries();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        libraries = new ArrayList<>();
     }
 
 

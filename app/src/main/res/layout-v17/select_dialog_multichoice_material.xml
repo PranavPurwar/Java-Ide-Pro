@@ -7,7 +7,7 @@
     android:id="@android:id/text1"
     android:paddingLeft="@dimen/abc_select_dialog_padding_start_material"
     android:paddingRight="?dialogPreferredPadding"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:minHeight="?listPreferredItemHeightSmall"
     android:drawableLeft="?android:listChoiceIndicatorMultiple"

@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     android:fitsSystemWindows="false"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.design.widget.AppBarLayout
         android:fitsSystemWindows="false"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <FrameLayout
             android:id="@id/toolbar_container"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <android.support.v7.widget.Toolbar
                 android:id="@id/toolbar"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="?actionBarSize" />
             <com.miguelcatalan.materialsearchview.MaterialSearchView
                 android:textColorHint="?android:textColorPrimary"
                 android:id="@id/search_view"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 app:searchSuggestionBackground="?colorPrimary" />
         </FrameLayout>
     </android.support.design.widget.AppBarLayout>
     <FrameLayout
         android:id="@id/content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </android.support.design.widget.CoordinatorLayout>

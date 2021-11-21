@@ -70,7 +70,7 @@ public class CompileJavaTask extends Task<JavaProject> {
 
 
     private boolean runEcj() {
-        mBuilder.stdout(TAG + ": Compiling java files");
+        mBuilder.stdout(TAG + ": Compile java with javac");
         PrintWriter outWriter = new PrintWriter(mBuilder.getStdout());
         PrintWriter errWriter = new PrintWriter(mBuilder.getStderr());
         org.eclipse.jdt.internal.compiler.batch.Main main =

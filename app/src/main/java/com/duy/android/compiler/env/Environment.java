@@ -63,10 +63,8 @@ public class Environment {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         String classpathFile = pref.getString(context.getString(R.string.key_classpath), "");
         File file = new File(classpathFile);
-        if (!file.exists() || classpathFile.equals("default") || classpathFile.equals("")) {
+        if (classpathFile.equals("default") || classpathFile.isEmpty()) {
             file = new File(getPlatformApiDir(context, ANDROID_API), "android.jar");
-        } else {
-            System.out.printf("Classpath file %s not exist%n", classpathFile);
         }
         return file;
     }

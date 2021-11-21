@@ -5,6 +5,10 @@ import android.support.annotation.NonNull;
 import java.io.File;
 import java.io.Serializable;
 
+/**
+ * Created by Duy on 16-Jul-17.
+ */
+
 public class ClassFile implements Serializable, Cloneable {
     private String name;
 

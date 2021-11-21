@@ -1,281 +1,314 @@
+/*
+ * Copyright (C) 2018 Tran Le Duy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.duy.ide.javaide;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Build.VERSION;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v4.util.Pair;
+import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
-import com.duy.android.compiler.env.Environment;
+
+import com.duy.android.compiler.project.AndroidAppProject;
 import com.duy.android.compiler.project.AndroidProjectManager;
 import com.duy.android.compiler.project.JavaProject;
 import com.duy.android.compiler.project.JavaProjectManager;
 import com.duy.file.explorer.FileExplorerActivity;
+import com.duy.ide.R;
 import com.duy.ide.core.api.IdeActivity;
 import com.duy.ide.editor.EditorDelegate;
+import com.duy.ide.editor.IEditorDelegate;
+import com.duy.ide.javaide.projectview.ProjectFileContract;
 import com.duy.ide.javaide.projectview.ProjectFilePresenter;
-import com.duy.ide.javaide.projectview.ProjectFileContract.Presenter;
 import com.duy.ide.javaide.projectview.dialog.DialogNewAndroidProject;
 import com.duy.ide.javaide.projectview.dialog.DialogNewClass;
 import com.duy.ide.javaide.projectview.dialog.DialogNewJavaProject;
 import com.duy.ide.javaide.projectview.dialog.DialogSelectType;
-import com.duy.ide.javaide.projectview.dialog.DialogNewJavaProject.OnCreateProjectListener;
-import com.duy.ide.javaide.projectview.dialog.DialogSelectType.OnFileTypeSelectListener;
 import com.duy.ide.javaide.projectview.view.fragments.FolderStructureFragment;
 import com.duy.ide.javaide.utils.FileUtils;
-import com.duy.ide.R;
+
 import java.io.File;
 import java.io.IOException;
 
-public abstract class ProjectManagerActivity extends IdeActivity implements FileChangeListener, OnCreateProjectListener {
-   private static final int REQUEST_OPEN_ANDROID_PROJECT = 704;
-   private static final int REQUEST_OPEN_JAVA_PROJECT = 58;
-   private static final String TAG = "BaseEditorActivity";
-   protected Presenter mFilePresenter;
-   protected JavaProject mProject;
+/**
+ * Created by Duy on 09-Mar-17.
+ */
+public abstract class ProjectManagerActivity extends IdeActivity
+        implements FileChangeListener, DialogNewJavaProject.OnCreateProjectListener {
+    private static final String TAG = "BaseEditorActivity";
 
-   private void createProjectIfNeed() {
-      if (this.mProject == null) {
-         this.createJavaProject();
-      }
+    private static final int REQUEST_OPEN_JAVA_PROJECT = 58;
+    private static final int REQUEST_OPEN_ANDROID_PROJECT = 704;
 
-   }
+    protected JavaProject mProject;
+    protected ProjectFileContract.Presenter mFilePresenter;
 
-   private void openFileByAnotherApp(File file) {
-      Exception var10000;
-      label50: {
-         Uri var2;
-         boolean var10001;
-         label43: {
-            try {
-               if (VERSION.SDK_INT >= 24) {
-                  var2 = FileProvider.getUriForFile(this, this.getPackageName() + ".provider", file);
-                  break label43;
-               }
-            } catch (Exception e) {
-               var10000 = e;
-               var10001 = false;
-               break label50;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setupToolbar();
+        createProjectIfNeed();
+
+    }
+
+    @Override
+    protected int getRootLayoutId() {
+        return R.layout.activity_default_ide;
+    }
+
+    @Override
+    public int getThemeId() {
+        return R.style.AppThemeDark;
+    }
+
+    private void createProjectIfNeed() {
+        if (mProject == null) {
+            createJavaProject();
+        }
+    }
+
+    @Override
+    protected void initLeftNavigationView(@NonNull NavigationView nav) {
+        super.initLeftNavigationView(nav);
+        if (mProject == null) {
+            mProject = JavaProjectManager.getLastProject(this);
+        }
+
+        String tag = FolderStructureFragment.TAG;
+        FolderStructureFragment folderStructureFragment = FolderStructureFragment.newInstance(mProject);
+        ViewGroup viewGroup = nav.findViewById(R.id.left_navigation_content);
+        viewGroup.removeAllViews();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.left_navigation_content, folderStructureFragment, tag).commit();
+        mFilePresenter = new ProjectFilePresenter(folderStructureFragment);
+
+    }
+
+
+    public void setupToolbar() {
+//        if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+//            ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+//                    R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//            // Set the drawer toggle as the DrawerListener
+//            mDrawerLayout.setDrawerListener(mDrawerToggle);
+//            mDrawerToggle.syncState();
+//        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mProject != null) {
+            JavaProjectManager.saveProject(this, mProject);
+        }
+    }
+
+    @Override
+    public void onFileDeleted(File deleted) {
+        Pair<Integer, IEditorDelegate> position = mTabManager.getEditorDelegate(deleted);
+        if (position != null) {
+            mTabManager.closeTab(position.first);
+        }
+    }
+
+    /**
+     * @return current file selected
+     */
+    @Nullable
+    protected File getCurrentFile() {
+        EditorDelegate editorFragment = getCurrentEditorDelegate();
+        if (editorFragment != null) {
+            return editorFragment.getDocument().getFile();
+        }
+        return null;
+    }
+
+    public void openDrawer(int gravity) {
+        try {
+            mDrawerLayout.openDrawer(gravity);
+        } catch (Exception e) {
+            //not found drawer
+        }
+    }
+
+    @Override
+    public void onProjectCreated(@NonNull JavaProject projectFile) {
+        Log.d(TAG, "onProjectCreated() called with: projectFile = [" + projectFile + "]");
+
+        //save project
+        mProject = projectFile;
+        JavaProjectManager.saveProject(this, projectFile);
+
+        //remove all edit page
+        mTabManager.closeAllTab();
+
+        //show file structure of project
+        mFilePresenter.show(projectFile, true);
+        mDiagnosticPresenter.hidePanel();
+        mDiagnosticPresenter.clear();
+
+        openDrawer(GravityCompat.START);
+        startAutoCompleteService();
+    }
+
+    protected abstract void startAutoCompleteService();
+
+    @Override
+    public void onFileCreated(File newFile) {
+        mFilePresenter.refresh(mProject);
+        openFile(newFile.getPath());
+    }
+
+    @Override
+    public void doOpenFile(File toEdit) {
+        if (FileUtils.canEdit(toEdit)) {
+            //save current file
+            openFile(toEdit.getPath());
+            //close drawer
+            closeDrawers();
+        } else {
+            openFileByAnotherApp(toEdit);
+        }
+    }
+
+    private void openFileByAnotherApp(File file) {
+        try {
+            Uri uri;
+            if (Build.VERSION.SDK_INT >= 24) {
+                uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
+            } else {
+                uri = Uri.fromFile(file);
             }
+            //create intent open file
+            MimeTypeMap myMime = MimeTypeMap.getSingleton();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            String ext = FileUtils.fileExt(file.getPath());
+            String mimeType = myMime.getMimeTypeFromExtension(ext != null ? ext : "");
+            intent.setDataAndType(uri, mimeType);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
 
-            try {
-               var2 = Uri.fromFile(file);
-            } catch (Exception e) {
-               var10000 = e;
-               var10001 = false;
-               break label50;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_OPEN_JAVA_PROJECT: {
+                if (resultCode == RESULT_OK) {
+                    String path = FileExplorerActivity.getFile(data);
+                    if (path == null) {
+                        return;
+                    }
+                    JavaProjectManager manager = new JavaProjectManager(this);
+                    try {
+                        JavaProject javaProject = manager.loadProject(new File(path), true);
+                        onProjectCreated(javaProject);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Can not import project. Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
             }
-         }
-
-         MimeTypeMap var3;
-         Intent var4;
-         String var9;
-         try {
-            var3 = MimeTypeMap.getSingleton();
-            var4 = new Intent("android.intent.action.VIEW");
-            var9 = FileUtils.fileExt(file.getPath());
-         } catch (Exception e) {
-            var10000 = e;
-            var10001 = false;
-            break label50;
-         }
-
-         if (var9 == null) {
-            var9 = "";
-         }
-
-         try {
-            var4.setDataAndType(var2, var3.getMimeTypeFromExtension(var9));
-            var4.setFlags(268435456);
-            var4.addFlags(1);
-            this.startActivity(var4);
-            return;
-         } catch (Exception e) {
-            var10000 = e;
-            var10001 = false;
-         }
-      }
-
-      Exception except = var10000;
-      Toast.makeText(this, except.getMessage(), 1).show();
-   }
-
-   public void createAndroidProject() {
-      DialogNewAndroidProject.newInstance().show(this.getSupportFragmentManager(), "DialogNewAndroidProject");
-   }
-
-   public void createJavaProject() {
-      DialogNewJavaProject.newInstance().show(this.getSupportFragmentManager(), "DialogNewProject");
-   }
-
-   public void createNewClass(@Nullable File path) {
-      File mPath = path;
-      if (path == null) {
-         File current = this.getCurrentFile();
-         mPath = path;
-         if (current != null) {
-            mPath = current.getParentFile();
-         }
-      }
-
-      if (this.mProject != null && mPath != null) {
-         DialogNewClass.newInstance(this.mProject, this.mProject.getPackageName(), mPath).show(this.getSupportFragmentManager(), "DialogNewClass");
-      } else {
-         this.toast("Can not create new class");
-      }
-
-   }
-
-   public void doOpenFile(File file) {
-      if (FileUtils.canEdit(file)) {
-         this.openFile(file.getPath());
-         this.closeDrawers();
-      } else {
-         this.openFileByAnotherApp(file);
-      }
-
-   }
-
-   @Nullable
-   protected File getCurrentFile() {
-      EditorDelegate delegate = this.getCurrentEditorDelegate();
-      return delegate != null ? delegate.getDocument().getFile() : null;
-   }
-
-   protected int getRootLayoutId() {
-      return R.layout.activity_default_ide;
-   }
-
-   public int getThemeId() {
-      return 2131755016;
-   }
-
-   protected void initLeftNavigationView(@NonNull NavigationView view) {
-      super.initLeftNavigationView(view);
-      if (this.mProject == null) {
-         this.mProject = JavaProjectManager.getLastProject(this);
-      }
-
-      FolderStructureFragment structure = FolderStructureFragment.newInstance(this.mProject);
-      ((ViewGroup)view.findViewById(2131296487)).removeAllViews();
-      this.getSupportFragmentManager().beginTransaction().replace(2131296487, structure, "FolderStructureFragment").commit();
-      this.mFilePresenter = new ProjectFilePresenter(structure);
-   }
-
-   protected void onActivityResult(int var1, int var2, Intent var3) {
-      super.onActivityResult(var1, var2, var3);
-      File project;
-      StringBuilder var10;
-      if (var1 != 58) {
-         if (var1 == 704 && var2 == -1) {
-            AndroidProjectManager var4 = new AndroidProjectManager(this);
-            String var8 = FileExplorerActivity.getFile(var3);
-
-            try {
-               project = new File(var8);
-               this.onProjectCreated(var4.loadProject(project, true));
-            } catch (Exception var7) {
-               var7.printStackTrace();
-               var10 = new StringBuilder();
-               var10.append("Can not import project. Error: ");
-               var10.append(var7.getMessage());
-               Toast.makeText(this, var10.toString(), 0).show();
+            case REQUEST_OPEN_ANDROID_PROJECT: {
+                if (resultCode == RESULT_OK) {
+                    AndroidProjectManager manager = new AndroidProjectManager(this);
+                    String file = FileExplorerActivity.getFile(data);
+                    try {
+                        AndroidAppProject project = manager.loadProject(new File(file), true);
+                        onProjectCreated(project);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Can not import project. Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
             }
-         }
-      } else if (var2 == -1) {
-         String var11 = FileExplorerActivity.getFile(var3);
-         if (var11 == null) {
-            return;
-         }
+        }
+    }
 
-         JavaProjectManager manager = new JavaProjectManager(this);
 
-         try {
-            project = new File(var11);
-            this.onProjectCreated(manager.loadProject(project, true));
-         } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Cannot import project. Error: " + e.getMessage(), 0).show();
-         }
-      }
+    public void createNewClass(@Nullable File folder) {
+        if (folder == null) {
+            File file = getCurrentFile();
+            if (file != null) {
+                folder = file.getParentFile();
+            }
+        }
+        if (mProject != null && folder != null) {
+            DialogNewClass dialogNewClass;
+            dialogNewClass = DialogNewClass.newInstance(mProject, mProject.getPackageName(),
+                    folder);
+            dialogNewClass.show(getSupportFragmentManager(), DialogNewClass.TAG);
+        } else {
+            toast("Can not create new class");
+        }
+    }
 
-   }
+    public void openJavaProject() {
+        String destPath = com.duy.android.compiler.env.Environment.getSdkAppDir().getAbsolutePath();
+        FileExplorerActivity.startPickPathActivity(this, destPath,
+                "UTF-8", REQUEST_OPEN_JAVA_PROJECT);
+    }
 
-   protected void onCreate(@Nullable Bundle bundle) {
-      super.onCreate(bundle);
-      this.setupToolbar();
-      this.createProjectIfNeed();
-   }
+    public void openAndroidProject() {
+        String destPath = com.duy.android.compiler.env.Environment.getSdkAppDir().getAbsolutePath();
+        FileExplorerActivity.startPickPathActivity(this, destPath,
+                "UTF-8", REQUEST_OPEN_ANDROID_PROJECT);
 
-   public void onFileCreated(File file) {
-      this.mFilePresenter.refresh(this.mProject);
-      this.openFile(file.getPath());
-   }
+    }
 
-   public void onFileDeleted(File file) {
-      Pair pair = this.mTabManager.getEditorDelegate(file);
-      if (pair != null) {
-         this.mTabManager.closeTab((Integer)pair.first);
-      }
+    public void createJavaProject() {
+        DialogNewJavaProject dialogNewProject = DialogNewJavaProject.newInstance();
+        dialogNewProject.show(getSupportFragmentManager(), DialogNewJavaProject.TAG);
+    }
 
-   }
+    public void createAndroidProject() {
+        DialogNewAndroidProject dialogNewProject = DialogNewAndroidProject.newInstance();
+        dialogNewProject.show(getSupportFragmentManager(), DialogNewAndroidProject.TAG);
+    }
 
-   protected void onPause() {
-      super.onPause();
-      if (this.mProject != null) {
-         JavaProjectManager.saveProject(this, this.mProject);
-      }
+    public void showDialogNew(@Nullable File parent) {
+        DialogSelectType dialogSelectType = DialogSelectType.newInstance(parent, new DialogSelectType.OnFileTypeSelectListener() {
+            @Override
+            public void onTypeSelected(File parent, String ext) {
+            }
+        });
+        dialogSelectType.show(getSupportFragmentManager(), DialogNewAndroidProject.TAG);
+    }
 
-   }
+    protected void toast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
-   public void onProjectCreated(@NonNull JavaProject project) {
-      Log.d("BaseEditorActivity", "onProjectCreated() called with: projectFile = [" + project + "]");
-      this.mProject = project;
-      JavaProjectManager.saveProject(this, project);
-      this.mTabManager.closeAllTab();
-      this.mFilePresenter.show(project, true);
-      this.mDiagnosticPresenter.hidePanel();
-      this.mDiagnosticPresenter.clear();
-      this.openDrawer(8388611);
-      this.startAutoCompleteService();
-   }
 
-   public void openAndroidProject() {
-      FileExplorerActivity.startPickPathActivity(this, Environment.getSdkAppDir().getAbsolutePath(), "UTF-8", 704);
-   }
-
-   public void openDrawer(int pos) {
-      try {
-         this.mDrawerLayout.openDrawer(pos);
-      } catch (Exception ignored) {
-      }
-
-   }
-
-   public void openJavaProject() {
-      FileExplorerActivity.startPickPathActivity(this, Environment.getSdkAppDir().getAbsolutePath(), "UTF-8", 58);
-   }
-
-   public void setupToolbar() {
-   }
-
-   public void showDialogNew(@Nullable File file) {
-      DialogSelectType.newInstance(file, new OnFileTypeSelectListener() {
-         public void onTypeSelected(File file, String type) {
-         }
-      }).show(this.getSupportFragmentManager(), "DialogNewAndroidProject");
-   }
-
-   protected abstract void startAutoCompleteService();
-
-   protected void toast(String message) {
-      Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-   }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:minWidth="200.0dip"
     android:minHeight="200.0dip"
@@ -10,70 +10,70 @@
         android:paddingLeft="16.0dip"
         android:paddingTop="16.0dip"
         android:paddingRight="16.0dip"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         xmlns:android="http://schemas.android.com/apk/res/android">
         <android.support.v7.widget.AppCompatTextView
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/new_android_project" />
         <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <android.support.design.widget.TextInputEditText
                 android:id="@id/edit_project_name"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/application_name" />
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <android.support.design.widget.TextInputEditText
                 android:id="@id/edit_package_name"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="com.example.myapplication"
                 android:hint="@string/java_package_name_com_example" />
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <android.support.design.widget.TextInputEditText
                 android:id="@id/edit_activity_name"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="MainActivity"
                 android:hint="Activity name" />
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <android.support.design.widget.TextInputEditText
                 android:id="@id/edit_layout_name"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="activity_main.xml"
                 android:hint="Layout name" />
         </android.support.design.widget.TextInputLayout>
         <android.support.v7.widget.AppCompatCheckBox
             android:id="@id/launcher_activity"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="Launcher activity" />
         <android.support.v7.widget.AppCompatCheckBox
             android:id="@id/backwards_compatibility"
             android:visibility="gone"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:checked="false"
             android:text="Backwards Compatibility (Not recommend, If you want to using AppCompat, check it)" />
         <LinearLayout
             android:gravity="end"
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content">
             <android.support.v7.widget.AppCompatButton
                 android:id="@id/btn_cancel"

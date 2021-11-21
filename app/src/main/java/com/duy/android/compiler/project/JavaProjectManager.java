@@ -11,6 +11,9 @@ import com.duy.android.compiler.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Created by Duy on 16-Jul-17.
+ */
 
 public class JavaProjectManager implements IProjectManager<JavaProject> {
 

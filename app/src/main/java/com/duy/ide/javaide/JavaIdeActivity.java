@@ -1,24 +1,40 @@
+/*
+ * Copyright (C) 2018 Tran Le Duy
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.duy.ide.javaide;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import com.android.utils.StdLogger;
-import com.android.utils.StdLogger.Level;
 import com.duy.android.compiler.builder.AndroidAppBuilder;
 import com.duy.android.compiler.builder.BuildTask;
+import com.duy.android.compiler.builder.IBuilder;
 import com.duy.android.compiler.builder.JavaBuilder;
-import com.duy.android.compiler.builder.BuildTask.CompileListener;
 import com.duy.android.compiler.project.AndroidAppProject;
 import com.duy.android.compiler.project.FileCollection;
 import com.duy.android.compiler.project.JavaProject;
@@ -26,12 +42,11 @@ import com.duy.android.compiler.project.JavaProjectManager;
 import com.duy.android.compiler.utils.ProjectUtils;
 import com.duy.common.purchase.InAppPurchaseHelper;
 import com.duy.common.purchase.Premium;
+import com.duy.ide.R;
 import com.duy.ide.code.api.CodeFormatProvider;
 import com.duy.ide.code.api.SuggestionProvider;
-import com.duy.ide.diagnostic.DiagnosticContract.MessageFilter;
-import com.duy.ide.diagnostic.DiagnosticContract.Presenter;
+import com.duy.ide.diagnostic.DiagnosticContract;
 import com.duy.ide.diagnostic.model.Message;
-import com.duy.ide.diagnostic.model.Message.Kind;
 import com.duy.ide.diagnostic.parser.PatternAwareOutputParser;
 import com.duy.ide.editor.IEditorDelegate;
 import com.duy.ide.javaide.diagnostic.parser.aapt.AaptOutputParser;
@@ -40,7 +55,7 @@ import com.duy.ide.javaide.editor.autocomplete.JavaAutoCompleteProvider;
 import com.duy.ide.javaide.editor.format.JavaIdeCodeFormatProvider;
 import com.duy.ide.javaide.menu.JavaMenuManager;
 import com.duy.ide.javaide.run.activities.ExecuteActivity;
-import com.duy.ide.javaide.run.dialog.DialogRunConfig.OnConfigChangeListener;
+import com.duy.ide.javaide.run.dialog.DialogRunConfig;
 import com.duy.ide.javaide.sample.activities.JavaSampleActivity;
 import com.duy.ide.javaide.setting.CompilerSettingActivity;
 import com.duy.ide.javaide.theme.PremiumDialog;
@@ -49,342 +64,392 @@ import com.duy.ide.javaide.uidesigner.inflate.DialogLayoutPreview;
 import com.duy.ide.javaide.utils.RootUtils;
 import com.duy.ide.javaide.utils.StoreUtil;
 import com.jecelyin.editor.v2.common.Command;
-import com.jecelyin.editor.v2.common.Command.CommandEnum;
 import com.jecelyin.editor.v2.manager.MenuManager;
+import com.jecelyin.editor.v2.widget.menu.MenuDef;
 import com.pluscubed.logcat.ui.LogcatActivity;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import com.duy.ide.R;
-
-public class JavaIdeActivity extends ProjectManagerActivity implements OnConfigChangeListener {
-    private static final int RC_BUILD_PROJECT = 131;
-    private static final int RC_CHANGE_THEME = 350;
-    private static final int RC_OPEN_SAMPLE = 1015;
-    private static final int RC_REVIEW_LAYOUT = 741;
+public class JavaIdeActivity extends ProjectManagerActivity implements DialogRunConfig.OnConfigChangeListener {
     private static final String TAG = "MainActivity";
-    private SuggestionProvider mAutoCompleteProvider;
-    private ProgressBar mCompileProgress;
+
+    private static final int RC_OPEN_SAMPLE = 1015;
+    private static final int RC_BUILD_PROJECT = 131;
+    private static final int RC_REVIEW_LAYOUT = 741;
+    private static final int RC_CHANGE_THEME = 350;
     private InAppPurchaseHelper mInAppPurchaseHelper;
-    
-    private void compileAndroidProject() {
-        if (this.mProject instanceof AndroidAppProject) {
-            if (!((AndroidAppProject)this.mProject).getManifestFile().exists()) {
-                Toast.makeText(this, "Can not find AndroidManifest.xml", 0).show();
-                return;
-            }
-            
-            if (((AndroidAppProject)this.mProject).getLauncherActivity() == null) {
-                Toast.makeText(this, this.getString(2131689530), 0).show();
-                return;
-            }
-            
-            AndroidAppBuilder builder = new AndroidAppBuilder(this, (AndroidAppProject)this.mProject);
-            builder.setStdOut(new PrintStream(this.mDiagnosticPresenter.getStandardOutput()));
-            builder.setStdErr(new PrintStream(this.mDiagnosticPresenter.getErrorOutput()));
-            builder.setLogger(new StdLogger(Level.VERBOSE));
-            new BuildTask(builder, new CompileListener<AndroidAppProject>() {
-                public void onComplete() {
-                    JavaIdeActivity.this.updateUIFinish();
-                    Toast.makeText(JavaIdeActivity.this, 2131689525, 0).show();
-                    JavaIdeActivity.this.mFilePresenter.refresh(JavaIdeActivity.this.mProject);
-                }
-                
-                public void onError(Exception e) {
-                    JavaIdeActivity.this.updateUIFinish();
-                    Toast.makeText(JavaIdeActivity.this, 2131689658, 0).show();
-                }
-                
-                public void onStart() {
-                    JavaIdeActivity.this.updateUiStartCompile();
-                }
-            }).execute(new AndroidAppProject[0]);
-        } else if (this.mProject != null) {
-            this.toast("This is a Java project, please create a new Android project");
-        } else {
-            this.toast("You need to create an Android project");
-        }
-        
+    private ProgressBar mCompileProgress;
+    private SuggestionProvider mAutoCompleteProvider;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mCompileProgress = findViewById(R.id.compile_progress);
+        startAutoCompleteService();
+
+        mInAppPurchaseHelper = new InAppPurchaseHelper(this);
     }
-    
-    private void compileJavaProject() {
-        JavaBuilder builder = new JavaBuilder(this, this.mProject);
-        builder.setStdOut(new PrintStream(this.mDiagnosticPresenter.getStandardOutput()));
-        builder.setStdErr(new PrintStream(this.mDiagnosticPresenter.getErrorOutput()));
-        new BuildTask(builder, new CompileListener<JavaProject>() {
-            public void onComplete() {
-                JavaIdeActivity.this.updateUIFinish();
-                Toast.makeText(JavaIdeActivity.this, 2131689577, 0).show();
-                JavaIdeActivity.this.runJava(JavaIdeActivity.this.mProject);
+
+    @Override
+    protected void populateDiagnostic(@NonNull DiagnosticContract.Presenter diagnosticPresenter) {
+        PatternAwareOutputParser[] parsers = new PatternAwareOutputParser[]{
+                new AaptOutputParser(),
+                new JavaOutputParser()
+        };
+        diagnosticPresenter.setOutputParser(parsers);
+        diagnosticPresenter.setFilter(new DiagnosticContract.MessageFilter() {
+            @Override
+            public boolean accept(Message message) {
+                return message.getKind() == Message.Kind.ERROR
+                        || message.getKind() == Message.Kind.WARNING;
             }
-            
-            public void onError(Exception e) {
-                Toast.makeText(JavaIdeActivity.this, 2131689658, 0).show();
-                JavaIdeActivity.this.mDiagnosticPresenter.showPanel();
-                JavaIdeActivity.this.updateUIFinish();
-            }
-            
-            public void onStart() {
-                JavaIdeActivity.this.updateUiStartCompile();
-            }
-        }).execute(new AndroidAppProject[0]);
+        });
     }
-    
+
+    @Override
+    public void onEditorViewCreated(@NonNull IEditorDelegate editorDelegate) {
+        super.onEditorViewCreated(editorDelegate);
+        editorDelegate.setSuggestionProvider(mAutoCompleteProvider);
+    }
+
+    @Override
+    public void onEditorViewDestroyed(@NonNull IEditorDelegate editorDelegate) {
+        super.onEditorViewDestroyed(editorDelegate);
+
+    }
+
     private void populateAutoCompleteService(@NonNull SuggestionProvider provider) {
-        Iterator it = this.getTabManager().getEditorPagerAdapter().getAllEditor().iterator();
-        
-        while(it.hasNext()) {
-            IEditorDelegate delegate = (IEditorDelegate)it.next();
+        for (IEditorDelegate delegate : getTabManager().getEditorPagerAdapter().getAllEditor()) {
             if (delegate != null) {
                 delegate.setSuggestionProvider(provider);
             }
         }
-        
     }
-    
-    private void runJava(final JavaProject project) {
-        File current = this.getCurrentFile();
-        if (current != null && ProjectUtils.isFileBelongProject(project, current)) {
-            Intent intent = new Intent(this, ExecuteActivity.class);
-            intent.putExtra("DEX_FILE", project.getDexFile());
-            intent.putExtra("MAIN_CLASS_FILE", current);
-            this.startActivity(intent);
-        } else {
-            ArrayList list = new ArrayList();
-            list.add(project.getJavaSrcDir());
-            final ArrayList<File> javaSources = (new FileCollection(list)).filter(new FileFilter() {
-                public boolean accept(File file) {
-                    if (file.isFile() && file.getName().endsWith(".java")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            });
-            Builder dialog = new Builder(this);
-            String[] items = new String[javaSources.size()];
-            
-            for(int pos = 0; pos < javaSources.size(); ++pos) {
-                items[pos] = ((File)javaSources.get(pos)).getName();
-            }
-            
-            dialog.setTitle(R.string.select_class_to_run);
-            dialog.setItems(items, new OnClickListener() {
-                public void onClick(DialogInterface unused, int index) {
-                    Intent intent = new Intent(JavaIdeActivity.this, ExecuteActivity.class);
-                    intent.putExtra("DEX_FILE", project.getDexFile());
-                    intent.putExtra("MAIN_CLASS_FILE", (Serializable)javaSources.get(index));
-                    JavaIdeActivity.this.startActivity(intent);
-                }
-            });
-            dialog.create().show();
-        }
-        
-    }
-    
-    private void updateUIFinish() {
-        this.setMenuStatus(2131296314, 0);
-        if (this.mCompileProgress != null) {
-            this.mCompileProgress.setVisibility(8);
-        }
-        
-    }
-    
-    private void updateUiStartCompile() {
-        this.setMenuStatus(2131296314, 2);
-        if (this.mCompileProgress != null) {
-            this.mCompileProgress.setVisibility(0);
-        }
-        
-        this.mDiagnosticPresenter.setCurrentItem(0);
-        this.mDiagnosticPresenter.showPanel();
-        this.mDiagnosticPresenter.clear();
-    }
-    
-    public void createNewFile(View view) {
-    }
-    
+
+    @Override
     protected CodeFormatProvider getCodeFormatProvider() {
         return new JavaIdeCodeFormatProvider(this);
     }
-    
-    protected void onActivityResult(int var1, int var2, Intent intent) {
-        if (var1 != 350) {
-            if (var1 != 1015) {
-                super.onActivityResult(var1, var2, intent);
-            } else if (var2 == -1) {
-                String file = intent.getStringExtra("project_file");
-                JavaProjectManager manager = new JavaProjectManager(this);
-                
-                JavaProject project;
-                try {
-                    File path = new File(file);
-                    project = manager.loadProject(path, true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    project = null;
-                }
-                
-                if (project != null) {
-                    this.onProjectCreated(project);
-                }
-            }
-        } else {
-            this.doCommandForAllEditor(new Command(CommandEnum.REFRESH_THEME));
-        }
-        
-    }
-    
-    public void onConfigChange(JavaProject project) {
-        this.mProject = project;
-        if (project != null) {
-            JavaProjectManager.saveProject(this, project);
-        }
-        
-    }
-    
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        this.mCompileProgress = (ProgressBar)this.findViewById(2131296382);
-        this.startAutoCompleteService();
-        this.mInAppPurchaseHelper = new InAppPurchaseHelper(this);
-    }
-    
-    protected void onCreateNavigationMenu(Menu menu) {
-        this.getMenuInflater().inflate(2131492866, menu);
-        if (Premium.isPremiumUser(this)) {
-            menu.findItem(2131296310).setVisible(false);
-        }
-        
-        super.onCreateNavigationMenu(menu);
-    }
-    
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 2131296314, 0, 2131689951).setIcon(MenuManager.makeToolbarNormalIcon(this, 2131231026)).setShowAsAction(2);
-        super.onCreateOptionsMenu(menu);
-        MenuItem item = menu.findItem(2131296553);
-        new JavaMenuManager(this).createFileMenu(item.getSubMenu());
-        return true;
-    }
-    
-    public void onEditorViewCreated(@NonNull IEditorDelegate delegate) {
-        super.onEditorViewCreated(delegate);
-        delegate.setSuggestionProvider(this.mAutoCompleteProvider);
-    }
-    
-    public void onEditorViewDestroyed(@NonNull IEditorDelegate delegate) {
-        super.onEditorViewDestroyed(delegate);
-    }
-    
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case 2131296272:
-            this.startActivity(new Intent(this, CompilerSettingActivity.class));
-            return true;
-            case 2131296283:
-            this.startActivityForResult(new Intent(this, ThemeActivity.class), 350);
-            break;
-            case 2131296296:
-            StoreUtil.gotoPlayStore(this, "com.duy.c.cpp.compiler");
-            break;
-            case 2131296302:
-            this.createAndroidProject();
-            break;
-            case 2131296303:
-            this.createNewClass((File)null);
-            break;
-            case 2131296304:
-            this.createNewFile((View)null);
-            break;
-            case 2131296305:
-            this.createJavaProject();
-            break;
-            case 2131296307:
-            this.openAndroidProject();
-            break;
-            case 2131296308:
-            this.openJavaProject();
-            break;
-            case 2131296310:
-            new PremiumDialog(this, this.mInAppPurchaseHelper).show();
-            break;
-            case 2131296313:
-            this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("https://github.com/tranleduy2000/javaide/issues")));
-            break;
-            case 2131296314:
-            this.saveAll(131);
-            break;
-            case 2131296315:
-            this.startActivityForResult(new Intent(this, JavaSampleActivity.class), 1015);
-            break;
-            case 2131296320:
-            this.startActivity(new Intent(this, LogcatActivity.class));
-        }
-        
-        return super.onOptionsItemSelected(item);
-    }
-    
-    protected void onSaveComplete(int code) {
-        super.onSaveComplete(code);
-        if (code != 131) {
-            if (code == 741) {
-                File current = this.getCurrentFile();
-                if (current != null) {
-                    DialogLayoutPreview.newInstance(current).show(this.getSupportFragmentManager(), "DialogLayoutPreview");
-                } else {
-                    Toast.makeText(this, "Can not find file", 0).show();
-                }
-            }
-        } else if (this.mProject != null) {
-            if (this.mProject instanceof AndroidAppProject) {
-                this.compileAndroidProject();
-            } else {
-                this.compileJavaProject();
-            }
-        } else {
-            Toast.makeText(this, "You need to create a project", 0).show();
-        }
-        
-    }
-    
-    protected void populateDiagnostic(@NonNull Presenter presenter) {
-        presenter.setOutputParser(new PatternAwareOutputParser[]{new AaptOutputParser(), new JavaOutputParser()});
-        presenter.setFilter(new MessageFilter() {
-            public boolean accept(Message message) {
-                if (message.getKind() != Kind.ERROR && message.getKind() != Kind.WARNING) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        });
-    }
-    
-    public void previewLayout(String unused) {
-        this.saveAll(741);
-    }
-    
+
     protected void startAutoCompleteService() {
         Log.d(TAG, "startAutoCompleteService() called");
-        if (this.mAutoCompleteProvider == null) {
-            if (this.mProject != null) {
+        if (mAutoCompleteProvider == null) {
+            if (mProject != null) {
                 new Thread(new Runnable() {
+                    @Override
                     public void run() {
+//                        JavaAutoCompleteProvider provider;
+//                        provider = new JavaAutoCompleteProvider(JavaIdeActivity.this);
+//                        provider.load(mProject);
                         JavaAutoCompleteProvider provider = new JavaAutoCompleteProvider(JavaIdeActivity.this);
-                        provider.load(JavaIdeActivity.this.mProject);
-                        JavaIdeActivity.this.mAutoCompleteProvider = provider;
-                        JavaIdeActivity.this.populateAutoCompleteService(JavaIdeActivity.this.mAutoCompleteProvider);
+                        provider.load(mProject);
+                        mAutoCompleteProvider = provider;
+                        populateAutoCompleteService(mAutoCompleteProvider);
                     }
                 }).start();
             }
         } else {
-            this.populateAutoCompleteService(this.mAutoCompleteProvider);
+            populateAutoCompleteService(mAutoCompleteProvider);
         }
-        
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu container) {
+        container.add(0, R.id.action_run, 0, R.string.run)
+                .setIcon(MenuManager.makeToolbarNormalIcon(this,
+                        R.drawable.ic_play_arrow_white_24dp))
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onCreateOptionsMenu(container);
+        MenuItem fileMenu = container.findItem(R.id.menu_file);
+        new JavaMenuManager(this).createFileMenu(fileMenu.getSubMenu());
+        return true;
+    }
+
+    @Override
+    protected void onCreateNavigationMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_nav_javaide, menu);
+        super.onCreateNavigationMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_run:
+                saveAll(RC_BUILD_PROJECT);
+                break;
+            case R.id.action_new_java_project:
+                createJavaProject();
+                break;
+            case R.id.action_new_android_project:
+                createAndroidProject();
+                break;
+            case R.id.action_new_file:
+                createNewFile(null);
+                break;
+            case R.id.action_new_class:
+                createNewClass(null);
+                break;
+            case R.id.action_open_java_project:
+                openJavaProject();
+                break;
+            case R.id.action_open_android_project:
+                openAndroidProject();
+                break;
+            case R.id.action_sample:
+                startActivityForResult(
+                        new Intent(this, JavaSampleActivity.class),
+                        JavaIdeActivity.RC_OPEN_SAMPLE);
+                break;
+            case R.id.action_see_logcat:
+                startActivity(new Intent(this, LogcatActivity.class));
+                break;
+
+            case R.id.action_compiler_setting:
+                startActivity(new Intent(this, CompilerSettingActivity.class));
+                return true;
+
+            case R.id.action_install_cpp_nide:
+                StoreUtil.gotoPlayStore(this, "com.duy.c.cpp.compiler");
+                break;
+
+            case R.id.action_report_bug:
+                Intent intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/tranleduy2000/javaide/issues"));
+                startActivity(intent);
+                break;
+            
+            case R.id.action_editor_color_scheme:
+                startActivityForResult(new Intent(this, ThemeActivity.class), RC_CHANGE_THEME);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveComplete(int requestCode) {
+        super.onSaveComplete(requestCode);
+        switch (requestCode) {
+            case RC_BUILD_PROJECT:
+                if (mProject != null) {
+                    if (mProject instanceof AndroidAppProject) {
+                        compileAndroidProject();
+                    } else {
+                        compileJavaProject();
+                    }
+                } else {
+                    Toast.makeText(this, "You need to create a project", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case RC_REVIEW_LAYOUT:
+                File currentFile = getCurrentFile();
+                if (currentFile != null) {
+                    DialogLayoutPreview dialogPreview = DialogLayoutPreview.newInstance(currentFile);
+                    dialogPreview.show(getSupportFragmentManager(), DialogLayoutPreview.TAG);
+                } else {
+                    Toast.makeText(this, "Can not find file", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    private void compileAndroidProject() {
+        if (mProject instanceof AndroidAppProject) {
+            if (!((AndroidAppProject) mProject).getManifestFile().exists()) {
+                Toast.makeText(this, "Can not find AndroidManifest", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            //check launcher activity
+            if (((AndroidAppProject) mProject).getLauncherActivity() == null) {
+                String message = getString(R.string.can_not_find_launcher_activity);
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            final AndroidAppBuilder builder = new AndroidAppBuilder(this, (AndroidAppProject) mProject);
+            builder.setStdOut(new PrintStream(mDiagnosticPresenter.getStandardOutput()));
+            builder.setStdErr(new PrintStream(mDiagnosticPresenter.getErrorOutput()));
+            builder.setLogger(new StdLogger(StdLogger.Level.VERBOSE));
+
+            BuildTask.CompileListener<AndroidAppProject> listener = new BuildTask.CompileListener<AndroidAppProject>() {
+                @Override
+                public void onStart() {
+                    updateUiStartCompile();
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    updateUIFinish();
+                    Toast.makeText(JavaIdeActivity.this, R.string.failed_msg, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onComplete() {
+                    updateUIFinish();
+                    Toast.makeText(JavaIdeActivity.this, R.string.build_success, Toast.LENGTH_SHORT).show();
+                    mFilePresenter.refresh(mProject);
+                }
+
+            };
+            BuildTask<AndroidAppProject> buildTask = new BuildTask<>(builder, listener);
+            buildTask.execute();
+        } else {
+            if (mProject != null) {
+                toast("This is a Java project, please create a new Android project");
+            } else {
+                toast("You need to create an Android project");
+            }
+        }
+    }
+
+    private void compileJavaProject() {
+        final IBuilder<JavaProject> builder = new JavaBuilder(this, mProject);
+        builder.setStdOut(new PrintStream(mDiagnosticPresenter.getStandardOutput()));
+        builder.setStdErr(new PrintStream(mDiagnosticPresenter.getErrorOutput()));
+
+        final BuildTask.CompileListener<JavaProject> listener = new BuildTask.CompileListener<JavaProject>() {
+            @Override
+            public void onStart() {
+                updateUiStartCompile();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(JavaIdeActivity.this, R.string.failed_msg,
+                        Toast.LENGTH_SHORT).show();
+                mDiagnosticPresenter.showPanel();
+                updateUIFinish();
+            }
+
+            @Override
+            public void onComplete() {
+                updateUIFinish();
+                Toast.makeText(JavaIdeActivity.this, R.string.compile_success,
+                        Toast.LENGTH_SHORT).show();
+                runJava(mProject);
+            }
+        };
+        BuildTask<JavaProject> buildTask = new BuildTask<>(builder, listener);
+        buildTask.execute();
+    }
+
+    private void runJava(final JavaProject project) {
+        final File currentFile = getCurrentFile();
+        if (currentFile == null || !ProjectUtils.isFileBelongProject(project, currentFile)) {
+            ArrayList<File> javaSrcDirs = new ArrayList<>();
+            javaSrcDirs.add(project.getJavaSrcDir());
+            FileCollection fileCollection = new FileCollection(javaSrcDirs);
+            final ArrayList<File> javaSources = fileCollection.filter(new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    return pathname.isFile() && pathname.getName().endsWith(".java");
+                }
+            });
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            String[] names = new String[javaSources.size()];
+            for (int i = 0; i < javaSources.size(); i++) {
+                names[i] = javaSources.get(i).getName();
+            }
+            builder.setTitle(R.string.select_class_to_run);
+            builder.setItems(names, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(JavaIdeActivity.this, ExecuteActivity.class);
+                    intent.putExtra(ExecuteActivity.DEX_FILE, project.getDexFile());
+                    intent.putExtra(ExecuteActivity.MAIN_CLASS_FILE, javaSources.get(which));
+                    startActivity(intent);
+                }
+            });
+            builder.create().show();
+        } else {
+            Intent intent = new Intent(JavaIdeActivity.this, ExecuteActivity.class);
+            intent.putExtra(ExecuteActivity.DEX_FILE, project.getDexFile());
+            intent.putExtra(ExecuteActivity.MAIN_CLASS_FILE, currentFile);
+            startActivity(intent);
+        }
+    }
+
+    /**
+     * show dialog create new source file
+     */
+    public void createNewFile(View view) {
+//        DialogCreateNewFile dialogCreateNewFile = DialogCreateNewFile.Companion.getInstance();
+//        dialogCreateNewFile.show(getSupportFragmentManager(), DialogCreateNewFile.Companion.getTAG());
+//        dialogCreateNewFile.setListener(new DialogCreateNewFile.OnCreateNewFileListener() {
+//            @Override
+//            public void onFileCreated(@NonNull File file) {
+//                saveFile();
+//                //add to view
+//                addNewPageEditor(file, SELECT);
+//                mDrawerLayout.closeDrawers();
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//            }
+//        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case RC_OPEN_SAMPLE:
+                if (resultCode == RESULT_OK) {
+                    String projectPath = data.getStringExtra(JavaSampleActivity.PROJECT_PATH);
+                    JavaProjectManager manager = new JavaProjectManager(this);
+                    JavaProject javaProject = null;
+                    try {
+                        javaProject = manager.loadProject(new File(projectPath), true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (javaProject != null) {
+                        onProjectCreated(javaProject);
+                    }
+                }
+                break;
+            case RC_CHANGE_THEME:
+                doCommandForAllEditor(new Command(Command.CommandEnum.REFRESH_THEME));
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
+    }
+
+    public void previewLayout(String path) {
+        saveAll(RC_REVIEW_LAYOUT);
+    }
+
+    @Override
+    public void onConfigChange(JavaProject projectFile) {
+        this.mProject = projectFile;
+        if (projectFile != null) {
+            JavaProjectManager.saveProject(this, projectFile);
+        }
+    }
+
+    private void updateUiStartCompile() {
+        setMenuStatus(R.id.action_run, MenuDef.STATUS_DISABLED);
+        if (mCompileProgress != null) {
+            mCompileProgress.setVisibility(View.VISIBLE);
+        }
+
+        mDiagnosticPresenter.setCurrentItem(DiagnosticContract.COMPILER_LOG);
+        mDiagnosticPresenter.showPanel();
+        mDiagnosticPresenter.clear();
+    }
+
+    private void updateUIFinish() {
+        setMenuStatus(R.id.action_run, MenuDef.STATUS_NORMAL);
+        if (mCompileProgress != null) {
+            mCompileProgress.setVisibility(View.GONE);
+        }
+    }
+
 }

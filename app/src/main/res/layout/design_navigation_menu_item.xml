@@ -6,7 +6,7 @@
         android:gravity="start|center"
         android:id="@id/design_menu_item_text"
         android:layout_width="0.0dip"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:maxLines="1"
         android:drawablePadding="@dimen/design_navigation_icon_padding"
         android:layout_weight="1.0" />
@@ -15,5 +15,5 @@
         android:layout="@layout/design_menu_item_action_area"
         android:inflatedId="@id/design_menu_item_action_area"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_height="fill_parent" />
 </merge>
