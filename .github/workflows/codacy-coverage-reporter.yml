@@ -11,4 +11,4 @@ jobs:
       - name: Run codacy-coverage-reporter
         uses: ./
         with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          project-token: ${{ secrets.PROJECT_TOKEN }}
