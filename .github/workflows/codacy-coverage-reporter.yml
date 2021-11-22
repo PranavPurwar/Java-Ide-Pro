@@ -1,6 +1,6 @@
 name: codacy-coverage-reporter
 
-on: ["push"]
+on: ["push", "pull_request", "workflow_dispatch"]
 
 jobs:
   codacy-coverage-reporter:
