@@ -35,7 +35,6 @@ public class Premium {
     /**
      * access faster
      */
-    private static boolean IS_PREMIUM = false;
 
     static {
         BASE64_KEY = BuildConfig.BASE64_KEY.replaceAll("\\s+", "");

@@ -41,7 +41,6 @@ import com.duy.android.compiler.project.JavaProject;
 import com.duy.android.compiler.project.JavaProjectManager;
 import com.duy.android.compiler.utils.ProjectUtils;
 import com.duy.common.purchase.InAppPurchaseHelper;
-import com.duy.common.purchase.Premium;
 import com.duy.ide.R;
 import com.duy.ide.code.api.CodeFormatProvider;
 import com.duy.ide.code.api.SuggestionProvider;
@@ -58,7 +57,6 @@ import com.duy.ide.javaide.run.activities.ExecuteActivity;
 import com.duy.ide.javaide.run.dialog.DialogRunConfig;
 import com.duy.ide.javaide.sample.activities.JavaSampleActivity;
 import com.duy.ide.javaide.setting.CompilerSettingActivity;
-import com.duy.ide.javaide.theme.PremiumDialog;
 import com.duy.ide.javaide.theme.ThemeActivity;
 import com.duy.ide.javaide.uidesigner.inflate.DialogLayoutPreview;
 import com.duy.ide.javaide.utils.RootUtils;
@@ -81,7 +79,6 @@ public class JavaIdeActivity extends ProjectManagerActivity implements DialogRun
     private static final int RC_BUILD_PROJECT = 131;
     private static final int RC_REVIEW_LAYOUT = 741;
     private static final int RC_CHANGE_THEME = 350;
-    private InAppPurchaseHelper mInAppPurchaseHelper;
     private ProgressBar mCompileProgress;
     private SuggestionProvider mAutoCompleteProvider;
 
@@ -90,8 +87,6 @@ public class JavaIdeActivity extends ProjectManagerActivity implements DialogRun
         super.onCreate(savedInstanceState);
         mCompileProgress = findViewById(R.id.compile_progress);
         startAutoCompleteService();
-
-        mInAppPurchaseHelper = new InAppPurchaseHelper(this);
     }
 
     @Override

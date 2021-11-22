@@ -6,12 +6,8 @@ import android.graphics.Paint;
 import com.flask.colorpicker.ColorCircle;
 import com.flask.colorpicker.builder.PaintBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SimpleColorWheelRenderer extends AbsColorWheelRenderer {
 	private Paint selectorFill = PaintBuilder.newPaint().build();
-	private float[] hsv = new float[3];
 
 	@Override
 	public void draw() {
@@ -20,6 +16,7 @@ public class SimpleColorWheelRenderer extends AbsColorWheelRenderer {
 		float half = colorWheelRenderOption.targetCanvas.getWidth() / 2f;
 		int density = colorWheelRenderOption.density;
 		float maxRadius = colorWheelRenderOption.maxRadius;
+		float[] hsv = new float[3];
 
 		for (int i = 0; i < density; i++) {
 			float p = (float) i / (density - 1); // 0~1

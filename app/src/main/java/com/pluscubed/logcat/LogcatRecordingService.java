@@ -186,10 +186,8 @@ public class LogcatRecordingService extends IntentService {
             while ((line = mReader.readLine()) != null && !mKilled) {
 
                 // filter
-                if (!searchCriteriaWillAlwaysMatch || !logLevelAcceptsEverything) {
-                    if (!checkLogLine(line, searchCriteria, logLevelLimit)) {
-                        continue;
-                    }
+                if ((!searchCriteriaWillAlwaysMatch || !logLevelAcceptsEverything) && (!checkLogLine(line, searchCriteria, logLevelLimit))) {
+                    continue;
                 }
 
                 stringBuilder.append(line).append("\n");

@@ -38,8 +38,8 @@ public class LogFileAdapter extends ArrayAdapter<CharSequence> {
 
     @NonNull
     @Override
-    public View getView(int position, View view, @NonNull ViewGroup parent) {
-
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        View view = convertView;
         Context context = parent.getContext();
 
         if (view == null) {

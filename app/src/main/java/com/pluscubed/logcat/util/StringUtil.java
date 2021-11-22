@@ -89,19 +89,19 @@ public class StringUtil {
     }
 
 
-    public static int computeLevenshteinDistance(CharSequence str1, CharSequence str2) {
+    public static int computeLevenshteinDistance(CharSequence charSeq1, CharSequence charSeq2) {
 
 
-        int commonPrefixLength = findCommonPrefixLength(str1, str2);
+        int commonPrefixLength = findCommonPrefixLength(charSeq1, charSeq2);
 
-        if (commonPrefixLength == str1.length() && commonPrefixLength == str2.length()) {
+        if (commonPrefixLength == charSeq1.length() && commonPrefixLength == charSeq2.length()) {
             return 0; // same exact string
         }
 
-        int commonSuffixLength = findCommonSuffixLength(str1, str2, commonPrefixLength);
+        int commonSuffixLength = findCommonSuffixLength(charSeq1, charSeq2, commonPrefixLength);
 
-        str1 = str1.subSequence(commonPrefixLength, str1.length() - commonSuffixLength);
-        str2 = str2.subSequence(commonPrefixLength, str2.length() - commonSuffixLength);
+        CharSequence str1 = charSeq1.subSequence(commonPrefixLength, charSeq1.length() - commonSuffixLength);
+        CharSequence str2 = charSeq2.subSequence(commonPrefixLength, charSeq2.length() - commonSuffixLength);
 
         int[][] distance = new int[str1.length() + 1][str2.length() + 1];
 

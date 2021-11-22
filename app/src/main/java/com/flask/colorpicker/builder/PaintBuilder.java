@@ -60,8 +60,8 @@ public class PaintBuilder {
 		}
 	}
 
-	public static Shader createAlphaPatternShader(int size) {
-		size /= 2;
+	public static Shader createAlphaPatternShader(int provided) {
+		int size = provided/2;
 		size = Math.max(8, size * 2);
 		return new BitmapShader(createAlphaBackgroundPattern(size), Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
 	}

@@ -93,8 +93,9 @@ public class LogLine {
                 return Log.WARN;
             case 'F':
                 return LogLineAdapterUtil.LOG_WTF; // 'F' actually stands for 'WTF', which is a real Android log level in 2.2
+            default:
+                return -1;
         }
-        return -1;
     }
 
     private static char convertLogLevelToChar(int logLevel) {
@@ -112,8 +113,9 @@ public class LogLine {
                 return 'W';
             case LogLineAdapterUtil.LOG_WTF:
                 return 'F';
+            default:
+                return ' ';
         }
-        return ' ';
     }
 
     public String getOriginalLine() {

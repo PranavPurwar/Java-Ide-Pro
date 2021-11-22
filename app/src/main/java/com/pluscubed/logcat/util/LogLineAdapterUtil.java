@@ -35,9 +35,11 @@ public class LogLineAdapterUtil {
             case LOG_WTF:
                 result = R.color.background_wtf;
                 break;
+            default:
+                result = R.color.background_info;
+                break;
         }
-
-        return ContextCompat.getColor(context,result);
+        return ContextCompat.getColor(context, result);
     }
 
     public static int getForegroundColorForLogLevel(Context context, int logLevel) {
@@ -60,6 +62,9 @@ public class LogLineAdapterUtil {
                 break;
             case LOG_WTF:
                 result = R.color.foreground_wtf;
+                break;
+            default:
+                result = R.color.background_info;
                 break;
         }
         return ContextCompat.getColor(context,result);

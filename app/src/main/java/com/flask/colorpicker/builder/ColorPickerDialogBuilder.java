@@ -36,7 +36,6 @@ public class ColorPickerDialogBuilder {
 	private boolean isColorEditEnabled = false;
 	private boolean isPreviewEnabled = false;
 	private int pickerCount = 1;
-	private int defaultMargin = 0;
 	private Integer[] initialColor = new Integer[]{null, null, null, null, null};
 
 	private ColorPickerDialogBuilder(Context context) {
@@ -44,7 +43,7 @@ public class ColorPickerDialogBuilder {
 	}
 
 	private ColorPickerDialogBuilder(Context context, int theme) {
-		defaultMargin = getDimensionAsPx(context, R.dimen.default_slider_margin);
+		int defaultMargin = getDimensionAsPx(context, R.dimen.default_slider_margin);
 		final int dialogMarginBetweenTitle = getDimensionAsPx(context, R.dimen.default_slider_margin_btw_title);
 
 		builder = new AlertDialog.Builder(context, theme);

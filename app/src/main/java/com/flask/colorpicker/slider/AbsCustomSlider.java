@@ -113,7 +113,7 @@ public abstract class AbsCustomSlider extends View {
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
-			case MotionEvent.ACTION_MOVE: {
+			case MotionEvent.ACTION_MOVE:
 				if (bar != null) {
 					value = (event.getX() - barOffsetX) / bar.getWidth();
 					value = Math.max(0, Math.min(value, 1));
@@ -121,13 +121,14 @@ public abstract class AbsCustomSlider extends View {
 					invalidate();
 				}
 				break;
-			}
-			case MotionEvent.ACTION_UP: {
+			case MotionEvent.ACTION_UP:
 				onValueChanged(value);
 				if (onValueChangedListener != null)
 					onValueChangedListener.onValueChanged(value);
 				invalidate();
-			}
+				break;
+			default:
+				break;
 		}
 		return true;
 	}

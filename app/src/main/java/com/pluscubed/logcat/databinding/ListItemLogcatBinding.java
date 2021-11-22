@@ -24,8 +24,6 @@ public class ListItemLogcatBinding extends ViewDataBinding {
     public final TextView logOutputText;
     private long mDirtyFlags = -1;
     @NonNull
-    private final RelativeLayout mboundView0;
-    @NonNull
     public final TextView pidText;
     @NonNull
     public final TextView tagText;
@@ -50,11 +48,12 @@ public class ListItemLogcatBinding extends ViewDataBinding {
 
     public ListItemLogcatBinding(@NonNull DataBindingComponent dataBindingComponent, @NonNull View view) {
         super(dataBindingComponent, view, 0);
+        final RelativeLayout mboundView;
         Object[] mapBindings = mapBindings(dataBindingComponent, view, 6, sIncludes, sViewsWithIds);
         this.logLevelText = (TextView) mapBindings[4];
         this.logOutputText = (TextView) mapBindings[5];
-        this.mboundView0 = (RelativeLayout) mapBindings[0];
-        this.mboundView0.setTag((Object) null);
+        mboundView = (RelativeLayout) mapBindings[0];
+        mboundView.setTag((Object) null);
         this.pidText = (TextView) mapBindings[1];
         this.tagText = (TextView) mapBindings[3];
         this.timestampText = (TextView) mapBindings[2];
@@ -71,16 +70,12 @@ public class ListItemLogcatBinding extends ViewDataBinding {
 
     public boolean hasPendingBindings() {
         synchronized (this) {
-            if (this.mDirtyFlags != 0) {
-                return true;
-            }
-            return false;
+            return this.mDirtyFlags != 0;
         }
     }
 
     protected void executeBindings() {
         synchronized (this) {
-            long j = this.mDirtyFlags;
             this.mDirtyFlags = 0;
         }
     }
@@ -112,9 +107,9 @@ public class ListItemLogcatBinding extends ViewDataBinding {
 
     @NonNull
     public static ListItemLogcatBinding bind(@NonNull View view, @Nullable DataBindingComponent dataBindingComponent) {
-        if ("layout/list_item_logcat_0".equals(view.getTag())) {
+        if (view.getTag().equals("layout/list_item_logcat_0")) {
             return new ListItemLogcatBinding(dataBindingComponent, view);
         }
-        throw new RuntimeException("view tag isn't correct on view:" + view.getTag());
+        throw new IllegalArgumentException("view tag isn't correct on view:" + view.getTag());
     }
 }

@@ -31,7 +31,8 @@ public class ScrubberUtils {
     private static final String IGNORE_DATA_DALVIK_CACHE = "/data/dalvik-cache";
     private static final String IGNORE_CACHE_DALVIK_CACHE = "/cache/dalvik-cache";
 
-    public static String scrubLine(String line) {
+    public static String scrubLine(String rawInput) {
+        String line = rawInput;
         if (line.contains(IGNORE_DATA_RESOURCE_CACHE)
                 || line.contains(IGNORE_DATA_DALVIK_CACHE)
                 || line.contains(IGNORE_CACHE_DALVIK_CACHE)) {

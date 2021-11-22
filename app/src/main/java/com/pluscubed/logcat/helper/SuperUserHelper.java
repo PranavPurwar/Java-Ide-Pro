@@ -1,23 +1,12 @@
 package com.pluscubed.logcat.helper;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.text.Html;
-import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.pluscubed.logcat.R;
 import com.pluscubed.logcat.util.UtilLogger;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -38,10 +27,6 @@ public class SuperUserHelper {
     private static final Pattern SPACES_PATTERN = Pattern.compile("\\s+");
     private static UtilLogger log = new UtilLogger(SuperUserHelper.class);
     private static boolean failedToObtainRoot = false;
-
-    private static boolean haveReadLogsPermission(Context context) {
-        return context.getPackageManager().checkPermission("android.permission.READ_LOGS", context.getPackageName()) == PackageManager.PERMISSION_GRANTED;
-    }
 
     private static List<Integer> getAllRelatedPids(final int pid) {
         List<Integer> result = new ArrayList<>();
@@ -68,7 +53,7 @@ public class SuperUserHelper {
                     }
 
                 }
-            }).run();
+            }).start();
 
             if (suProcess != null) {
                 try {

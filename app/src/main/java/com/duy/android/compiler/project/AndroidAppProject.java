@@ -45,6 +45,7 @@ public class AndroidAppProject extends JavaProject {
                              @Nullable String packageName) {
         super(dirRoot, packageName);
         libraries = new ArrayList<>();
+        // readLibraries();
     }
 
 

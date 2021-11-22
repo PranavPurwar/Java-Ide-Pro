@@ -24,7 +24,8 @@ public class FilterAdapter extends ArrayAdapter<FilterItem> {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+    public View getView(int position, View view, @NonNull ViewGroup parent) {
+        View convertView = view;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item_filter, parent, false);

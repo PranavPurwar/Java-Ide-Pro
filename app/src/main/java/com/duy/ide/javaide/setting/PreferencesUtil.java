@@ -41,7 +41,6 @@ public class PreferencesUtil {
                         // Set the summary to reflect the new value.
                         preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 
-                    } else if (preference instanceof RingtonePreference) {
                     } else if (preference instanceof EditTextPreference) {
                         EditTextPreference editTextPreference = (EditTextPreference) preference;
                         editTextPreference.setSummary(editTextPreference.getText());

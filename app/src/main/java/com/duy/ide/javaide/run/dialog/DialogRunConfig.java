@@ -104,7 +104,7 @@ public class DialogRunConfig extends AppCompatDialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mProject = (JavaProject) getArguments().getSerializable(ExecuteActivity.DEX_FILE);
-        mPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mPref = getDefaultSharedPreferences(getContext());
         if (mProject == null) {
             return;
         }

@@ -1,13 +1,13 @@
 ``^`` is cursor index
 
 ### Complete package name
-1. Type ``import``
+ 1. Type ``import``
 ```java
 import java.
             ^
             (show suggest 'io', 'util', ...)
 ```
-2. Type package
+ 2. Type package
 ```java
 void method(){
     java.la

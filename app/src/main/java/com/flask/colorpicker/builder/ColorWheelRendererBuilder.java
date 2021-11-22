@@ -12,7 +12,8 @@ public class ColorWheelRendererBuilder {
 				return new SimpleColorWheelRenderer();
 			case FLOWER:
 				return new FlowerColorWheelRenderer();
+			default:
+				throw new IllegalArgumentException("wrong WHEEL_TYPE");
 		}
-		throw new IllegalArgumentException("wrong WHEEL_TYPE");
 	}
 }

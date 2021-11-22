@@ -74,16 +74,12 @@ public class ActivityLogcatBinding extends ViewDataBinding {
 
     public boolean hasPendingBindings() {
         synchronized (this) {
-            if (this.mDirtyFlags != 0) {
-                return true;
-            }
-            return false;
+            return this.mDirtyFlags != 0;
         }
     }
 
     protected void executeBindings() {
         synchronized (this) {
-            long j = this.mDirtyFlags;
             this.mDirtyFlags = 0;
         }
     }
@@ -115,9 +111,9 @@ public class ActivityLogcatBinding extends ViewDataBinding {
 
     @NonNull
     public static ActivityLogcatBinding bind(@NonNull View view, @Nullable DataBindingComponent dataBindingComponent) {
-        if ("layout/activity_logcat_0".equals(view.getTag())) {
+        if (view.getTag().equals("layout/activity_logcat_0")) {
             return new ActivityLogcatBinding(dataBindingComponent, view);
         }
-        throw new RuntimeException("view tag isn't correct on view:" + view.getTag());
+        throw new IllegalArgumentException("view tag isn't correct on view:" + view.getTag());
     }
 }

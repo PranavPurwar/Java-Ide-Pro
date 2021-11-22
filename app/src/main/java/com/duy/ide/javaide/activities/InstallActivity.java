@@ -105,7 +105,7 @@ public class InstallActivity extends BaseActivity {
         @Override
         protected Void doInBackground(File... params) {
             try {
-                com.duy.android.compiler.env.Environment.install(context);
+                Environment.install(context);
             } catch (IOException e) {
                 e.printStackTrace();
                 error = e;

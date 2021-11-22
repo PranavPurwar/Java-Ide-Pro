@@ -57,6 +57,7 @@ public class ColorPickerView extends View {
 	private TextWatcher colorTextChange = new TextWatcher() {
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		    // empty
 		}
 
 		@Override
@@ -73,13 +74,15 @@ public class ColorPickerView extends View {
 
 		@Override
 		public void afterTextChanged(Editable s) {
+		    // empty
 		}
 	};
 	private LinearLayout colorPreview;
 
 	private ColorWheelRenderer renderer;
 
-	private int alphaSliderViewId, lightnessSliderViewId;
+	private int alphaSliderViewId;
+	private int lightnessSliderViewId;
 
 	public ColorPickerView(Context context) {
 		super(context);
@@ -248,6 +251,8 @@ public class ColorPickerView extends View {
 				invalidate();
 				break;
 			}
+			default:
+			   break;
 		}
 		return true;
 	}
@@ -443,7 +448,8 @@ public class ColorPickerView extends View {
 		invalidate();
 	}
 
-	public void setColorPreview(LinearLayout colorPreview, Integer selectedColor) {
+	public void setColorPreview(LinearLayout colorPreview, Integer colour) {
+	    Integer selectedColor = colour;
 		if (colorPreview == null)
 			return;
 		this.colorPreview = colorPreview;
@@ -545,8 +551,9 @@ public class ColorPickerView extends View {
 					return FLOWER;
 				case 1:
 					return CIRCLE;
+				default:
+					return FLOWER;
 			}
-			return FLOWER;
 		}
 	}
 }

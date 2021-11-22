@@ -20,8 +20,6 @@ public class ToolbarStubBinding extends ViewDataBinding {
     private static final SparseIntArray sViewsWithIds = new SparseIntArray();
     private long mDirtyFlags = -1;
     @NonNull
-    private final AppBarLayout mboundView0;
-    @NonNull
     public final Toolbar toolbarActionbar;
 
     protected boolean onFieldChange(int i, Object obj, int i2) {
@@ -38,10 +36,11 @@ public class ToolbarStubBinding extends ViewDataBinding {
 
     public ToolbarStubBinding(@NonNull DataBindingComponent dataBindingComponent, @NonNull View view) {
         super(dataBindingComponent, view, 0);
+        final AppBarLayout mBoundView;
         Object[] mapBindings = mapBindings(dataBindingComponent, view, 2, sIncludes, sViewsWithIds);
-        this.mboundView0 = (AppBarLayout) mapBindings[0];
-        this.mboundView0.setTag((Object) null);
-        this.toolbarActionbar = (Toolbar) mapBindings[1];
+        mBoundView = (AppBarLayout) mapBindings[0];
+        mBoundView.setTag(null);
+        toolbarActionbar = (Toolbar) mapBindings[1];
         setRootTag(view);
         invalidateAll();
     }
@@ -92,9 +91,9 @@ public class ToolbarStubBinding extends ViewDataBinding {
 
     @NonNull
     public static ToolbarStubBinding bind(@NonNull View view, @Nullable DataBindingComponent dataBindingComponent) {
-        if ("layout/toolbar_stub_0".equals(view.getTag())) {
+        if (view.getTag().equals("layout/toolbar_stub_0")) {
             return new ToolbarStubBinding(dataBindingComponent, view);
         }
-        throw new RuntimeException("view tag isn't correct on view:" + view.getTag());
+        throw new IllegalArgumentException("view tag isn't correct on view:" + view.getTag());
     }
 }

@@ -253,18 +253,18 @@ public abstract class ProjectManagerActivity extends IdeActivity
                 }
                 break;
             }
-            default: {
+            default:
                 break;
-            }
         }
     }
 
 
-    public void createNewClass(@Nullable File folder) {
-        if (folder == null) {
-            File file = getCurrentFile();
-            if (file != null) {
-                folder = file.getParentFile();
+    public void createNewClass(@Nullable File file) {
+        File folder = file;
+        if (file == null) {
+            File current = getCurrentFile();
+            if (current != null) {
+                folder = current.getParentFile();
             }
         }
         if (mProject != null && folder != null) {
@@ -304,6 +304,7 @@ public abstract class ProjectManagerActivity extends IdeActivity
         DialogSelectType dialogSelectType = DialogSelectType.newInstance(parent, new DialogSelectType.OnFileTypeSelectListener() {
             @Override
             public void onTypeSelected(File parent, String ext) {
+                // nothing here
             }
         });
         dialogSelectType.show(getSupportFragmentManager(), DialogNewAndroidProject.TAG);

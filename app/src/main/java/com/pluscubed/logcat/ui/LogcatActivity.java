@@ -189,6 +189,8 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
             case SHOW_RECORD_LOG_REQUEST_SHORTCUT:
                 handleShortcuts("record");
                 break;
+            default:
+                break;
         }
     }
 
@@ -236,27 +238,24 @@ public class LogcatActivity extends AppCompatActivity implements FilterListener,
     private void handleShortcuts(String action) {
         if (action == null) return;
 
-        switch (action) {
-            case "record":
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            SHOW_RECORD_LOG_REQUEST_SHORTCUT);
-                    return;
+        if (action == "record") {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        SHOW_RECORD_LOG_REQUEST_SHORTCUT);
+                return;
+            }
+
+            String logFilename = DialogHelper.createLogFilename();
+            String defaultLogLevel = Character.toString(PreferenceHelper.getDefaultLogLevelPreference(this));
+
+            DialogHelper.startRecordingWithProgressDialog(logFilename, "", defaultLogLevel, new Runnable() {
+                @Override
+                public void run() {
+                    finish();
                 }
-
-                String logFilename = DialogHelper.createLogFilename();
-                String defaultLogLevel = Character.toString(PreferenceHelper.getDefaultLogLevelPreference(this));
-
-                DialogHelper.startRecordingWithProgressDialog(logFilename, "", defaultLogLevel, new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                }, this);
-
-                break;
+            }, this);
         }
     }
 
