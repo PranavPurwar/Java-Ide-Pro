@@ -35,7 +35,6 @@ import java.io.IOException;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 class PremiumFileUtil {
 
-    private static final String TAG = "FileUtil";
     private static final String LICENSE_FILE_NAME = "license";
 
     @Nullable

@@ -226,6 +226,8 @@ public class JavaIdeActivity extends ProjectManagerActivity implements DialogRun
             case R.id.action_editor_color_scheme:
                 startActivityForResult(new Intent(this, ThemeActivity.class), RC_CHANGE_THEME);
                 break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -253,6 +255,8 @@ public class JavaIdeActivity extends ProjectManagerActivity implements DialogRun
                 } else {
                     Toast.makeText(this, "Can not find file", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            default:
                 break;
         }
     }

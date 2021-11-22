@@ -253,6 +253,9 @@ public abstract class ProjectManagerActivity extends IdeActivity
                 }
                 break;
             }
+            default: {
+                break;
+            }
         }
     }
 
