@@ -3,7 +3,12 @@ package com.duy.android.compiler.d8;
 import android.os.Build.VERSION;
 import java.util.Objects;
 
+/*
+ * This class is used internally by D8
+ * It's available here, outside the "com.android.tools.r8" package, because it's a backport
+ */
 public class StringHelper {
+
     public static String join(CharSequence charSequence, Iterable<? extends CharSequence> iterable) {
         if (VERSION.SDK_INT >= 26) {
             return String.join(charSequence, iterable);
